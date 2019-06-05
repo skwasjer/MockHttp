@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,15 +13,13 @@ namespace HttpClientMock
 		/// <param name="request">The HTTP request message to send.</param>
 		/// <param name="cancellationToken">The cancellation token to cancel operation.</param>
 		/// <returns>The task object representing the asynchronous operation.</returns>
-		/// <exception cref="T:System.ArgumentNullException">The <paramref name="request" /> was <see langword="null" />.</exception>
+		/// <exception cref="ArgumentNullException">The <paramref name="request" /> was <see langword="null" />.</exception>
 		Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);
-	}
 
-	public class MockedHttpRequest : IMockedHttpRequest
-	{
-		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-		{
-			throw new System.NotImplementedException();
-		}
+		bool Matches(HttpRequestMessage request);
+		IMockedHttpRequest With(IHttpRequestMatcher matcher);
+		IMockedHttpRequest RespondsWith(Func<Task<HttpResponseMessage>> response);
+		IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response);
+		IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, HttpResponseMessage> response);
 	}
 }

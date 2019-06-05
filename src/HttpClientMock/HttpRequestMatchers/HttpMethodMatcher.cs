@@ -22,5 +22,10 @@ namespace HttpClientMock.HttpRequestMatchers
 		{
 			return request.Method == ExpectedMethod;
 		}
+
+		public override string ToString()
+		{
+			return $"Method: {ExpectedMethod.Method}";
+		}
 	}
 }
