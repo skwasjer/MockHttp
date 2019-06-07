@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace HttpClientMock.HttpRequestMatchers
@@ -34,28 +35,33 @@ namespace HttpClientMock.HttpRequestMatchers
 
 		protected override bool IsMatch(byte[] receivedContent)
 		{
-			if (receivedContent == null)
-			{
-				return false;
-			}
-
-			return FindIndex(receivedContent, ExpectedContent) != -1;
+			return receivedContent != null && Contains(receivedContent, ExpectedContent);
 		}
 
-		// TODO: move to util?
-		private static int FindIndex(byte[] data, byte[] pattern, int offset = 0)
+		// TODO: move to util/extension?
+		private static bool Contains<T>(IReadOnlyList<T> source, IReadOnlyList<T> value)
 		{
-			if (pattern.Length > data.Length)
+			return Contains(source, value, EqualityComparer<T>.Default);
+		}
+
+		private static bool Contains<T>(IReadOnlyList<T> source, IReadOnlyList<T> value, IEqualityComparer<T> comparer)
+		{
+			return IndexOf(source, value, 0, comparer) != -1;
+		}
+
+		private static int IndexOf<T>(IReadOnlyList<T> data, IReadOnlyList<T> pattern, int offset, IEqualityComparer<T> comparer)
+		{
+			if (pattern.Count > data.Count)
 			{
 				return -1;
 			}
 
-			for (int i = offset; i < data.Length;)
+			for (int i = offset; i < data.Count;)
 			{
 				int j = 0;
-				for (; j < pattern.Length; j++)
+				for (; j < pattern.Count; j++)
 				{
-					if (pattern[j] != data[i])
+					if (!comparer.Equals(pattern[j], data[i]))
 					{
 						break;
 					}
@@ -63,9 +69,9 @@ namespace HttpClientMock.HttpRequestMatchers
 					i++;
 				}
 
-				if (j == pattern.Length)
+				if (j == pattern.Count)
 				{
-					return i - pattern.Length;
+					return i - pattern.Count;
 				}
 
 				if (j != 0)

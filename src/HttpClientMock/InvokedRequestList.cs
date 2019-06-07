@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace HttpClientMock
 {
 	internal class InvokedRequestList : IInvokedRequestList
 	{
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly object _syncLock = new object();
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private List<IMockedHttpRequest> _invokedRequests;
 
 		public void Add(IMockedHttpRequest request)

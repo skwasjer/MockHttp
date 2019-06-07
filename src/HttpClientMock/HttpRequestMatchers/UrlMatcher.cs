@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using DotNet.Globbing;
 
@@ -6,8 +7,11 @@ namespace HttpClientMock.HttpRequestMatchers
 {
 	public class UrlMatcher : IHttpRequestMatcher
 	{
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly string _requestUri;
-		private Glob _glob;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private readonly Glob _glob;
 
 		public UrlMatcher(string requestUri)
 		{

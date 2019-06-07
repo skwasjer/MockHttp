@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -8,7 +9,10 @@ namespace HttpClientMock.HttpRequestMatchers
 {
 	public class ContentMatcher : IHttpRequestMatcher
 	{
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private static readonly Encoding DefaultEncoding = Encoding.UTF8;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly Encoding _encoding;
 
 		public ContentMatcher()
@@ -50,10 +54,7 @@ namespace HttpClientMock.HttpRequestMatchers
 
 		protected virtual bool IsMatch(byte[] receivedContent)
 		{
-			return ExpectedContent.Length == receivedContent?.Length
-			 && ExpectedContent
-					.TakeWhile((b, index) => receivedContent[index] == b)
-					.Count() == ExpectedContent.Length;
+			return receivedContent != null && receivedContent.SequenceEqual(ExpectedContent);
 		}
 
 		public override string ToString()
