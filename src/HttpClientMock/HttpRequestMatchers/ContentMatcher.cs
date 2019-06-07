@@ -44,7 +44,12 @@ namespace HttpClientMock.HttpRequestMatchers
 			// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
 			// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
 			byte[] receivedContent = request.Content?.ReadAsByteArrayAsync().GetAwaiter().GetResult();
-			if (receivedContent == null && ExpectedContent.Length == 0)
+			if (receivedContent == null)
+			{
+				return ExpectedContent.Length == 0;
+			}
+
+			if (receivedContent.Length == 0 && ExpectedContent.Length == 0)
 			{
 				return true;
 			}
@@ -54,7 +59,7 @@ namespace HttpClientMock.HttpRequestMatchers
 
 		protected virtual bool IsMatch(byte[] receivedContent)
 		{
-			return receivedContent != null && receivedContent.SequenceEqual(ExpectedContent);
+			return receivedContent.SequenceEqual(ExpectedContent);
 		}
 
 		public override string ToString()

@@ -9,7 +9,7 @@ namespace HttpClientMock.HttpRequestMatchers
 		public PartialContentMatcher(string content)
 			: base(content)
 		{
-			if (content.Length == 0)
+			if (ExpectedContent.Length == 0)
 			{
 				throw new ArgumentException("Content can not be empty.", nameof(content));
 			}
@@ -18,7 +18,7 @@ namespace HttpClientMock.HttpRequestMatchers
 		public PartialContentMatcher(string content, Encoding encoding)
 			: base(content, encoding)
 		{
-			if (content.Length == 0)
+			if (ExpectedContent.Length == 0)
 			{
 				throw new ArgumentException("Content can not be empty.", nameof(content));
 			}
@@ -27,7 +27,7 @@ namespace HttpClientMock.HttpRequestMatchers
 		public PartialContentMatcher(byte[] content)
 			: base(content)
 		{
-			if (content.Length == 0)
+			if (ExpectedContent.Length == 0)
 			{
 				throw new ArgumentException("Content can not be empty.", nameof(content));
 			}
@@ -35,7 +35,7 @@ namespace HttpClientMock.HttpRequestMatchers
 
 		protected override bool IsMatch(byte[] receivedContent)
 		{
-			return receivedContent != null && Contains(receivedContent, ExpectedContent);
+			return Contains(receivedContent, ExpectedContent);
 		}
 
 		// TODO: move to util/extension?
