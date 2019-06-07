@@ -9,10 +9,9 @@ using HttpClientMock.Language;
 
 namespace HttpClientMock
 {
-	public class HttpClientMockHandler : HttpMessageHandler
+	public sealed class HttpClientMockHandler : HttpMessageHandler
 	{
 		private readonly List<IMockedHttpRequest> _mockedRequests;
-		private readonly InvokedRequestList _invokedRequests;
 		private readonly List<HttpRequestMessage> _invokedRequestMessages;
 		private readonly Queue<IMockedHttpRequest> _expectations;
 		private IMockedHttpRequest _fallback;
@@ -20,14 +19,14 @@ namespace HttpClientMock
 		public HttpClientMockHandler()
 		{
 			_mockedRequests = new List<IMockedHttpRequest>();
-			_invokedRequests = new InvokedRequestList();
+			InvokedRequests = new InvokedRequestCollection();
 			_invokedRequestMessages = new List<HttpRequestMessage>();
 			_expectations = new Queue<IMockedHttpRequest>();
 
 			SetFallback(_ => CreateDefaultResponse());
 		}
 
-		public IInvokedRequestList InvokedRequests => _invokedRequests;
+		public IInvokedRequestCollection InvokedRequests { get; }
 
 		public void SetFallback(Func<HttpRequestMessage, HttpResponseMessage> response)
 		{
@@ -74,7 +73,7 @@ namespace HttpClientMock
 
 		private Task<HttpResponseMessage> SendAsync(IMockedHttpRequest mockedRequest, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			_invokedRequests.Add(mockedRequest);
+			((InvokedRequestCollection)InvokedRequests).Add(mockedRequest);
 			_invokedRequestMessages.Add(request);
 			return mockedRequest.SendAsync(request, cancellationToken);
 		}
@@ -86,7 +85,7 @@ namespace HttpClientMock
 
 		public void Verify(IMockedHttpRequest request, string because = null)
 		{
-			if (_invokedRequests.All(httpRequest => request != httpRequest))
+			if (InvokedRequests.All(httpRequest => request != httpRequest))
 			{
 				throw new InvalidOperationException($"Expected request to have been sent at least once{BecauseMessage(because)}, but it was not.{Environment.NewLine}   Expected = {request}");
 			}
@@ -94,7 +93,7 @@ namespace HttpClientMock
 
 		public void Verify(IMockedHttpRequest request, int count, string because = null)
 		{
-			int actualCount = _invokedRequests.Count(httpRequest => request == httpRequest);
+			int actualCount = InvokedRequests.Count(httpRequest => request == httpRequest);
 			if (actualCount != count)
 			{
 				throw new InvalidOperationException($"Expected request to have been sent {count} time(s){BecauseMessage(because)}, but instead was sent {actualCount} time(s).{Environment.NewLine}   Expected = {request}");

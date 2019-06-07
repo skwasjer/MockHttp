@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace HttpClientMock
 {
-	internal class InvokedRequestList : IInvokedRequestList
+	internal class InvokedRequestCollection : IInvokedRequestCollection
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly object _syncLock = new object();
