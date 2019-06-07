@@ -15,6 +15,7 @@ namespace HttpClientMock
 		private readonly InvokedRequestList _invokedRequests;
 		private readonly List<HttpRequestMessage> _invokedRequestMessages;
 		private readonly Queue<IMockedHttpRequest> _expectations;
+		private IMockedHttpRequest _fallback;
 
 		public HttpClientMockHandler()
 		{
@@ -23,15 +24,18 @@ namespace HttpClientMock
 			_invokedRequestMessages = new List<HttpRequestMessage>();
 			_expectations = new Queue<IMockedHttpRequest>();
 
-			Fallback = new MockedHttpRequest(
-				new List<IHttpRequestMatcher>(),
-				_ => Task.FromResult(CreateDefaultResponse()),
-				null);
+			SetFallback(_ => CreateDefaultResponse());
 		}
 
 		public IInvokedRequestList InvokedRequests => _invokedRequests;
 
-		public IMockedHttpRequest Fallback { get; set; }
+		public void SetFallback(Func<HttpRequestMessage, HttpResponseMessage> response)
+		{
+			_fallback = new MockedHttpRequest(
+				new List<IHttpRequestMatcher>(),
+				r => Task.FromResult(response(r)),
+				null);
+		}
 
 		/// <inheritdoc />
 		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -65,7 +69,7 @@ namespace HttpClientMock
 				}
 			}
 
-			return SendAsync(Fallback, request, cancellationToken);
+			return SendAsync(_fallback, request, cancellationToken);
 		}
 
 		private Task<HttpResponseMessage> SendAsync(IMockedHttpRequest mockedRequest, HttpRequestMessage request, CancellationToken cancellationToken)
