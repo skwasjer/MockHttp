@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace HttpClientMock
 {
-	public interface IMockedHttpRequest
+	public interface IMockedHttpRequest //: IVerifies
 	{
 		/// <summary>Send an HTTP request as an asynchronous operation.</summary>
 		/// <param name="request">The HTTP request message to send.</param>
@@ -17,9 +15,5 @@ namespace HttpClientMock
 		Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);
 
 		bool Matches(HttpRequestMessage request);
-		IMockedHttpRequest With(IHttpRequestMatcher matcher);
-		IMockedHttpRequest RespondsWith(Func<Task<HttpResponseMessage>> response);
-		IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response);
-		IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, HttpResponseMessage> response);
 	}
 }

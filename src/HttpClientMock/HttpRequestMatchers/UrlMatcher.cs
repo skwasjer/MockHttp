@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Net.Http;
+using DotNet.Globbing;
 
 namespace HttpClientMock.HttpRequestMatchers
 {
 	public class UrlMatcher : IHttpRequestMatcher
 	{
 		private readonly string _requestUri;
+		private Glob _glob;
 
 		public UrlMatcher(string requestUri)
 		{
 			_requestUri = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
+
+			// Parse with default options, in case externally default options were set.
+			var options = new GlobOptions();
+			_glob = Glob.Parse(requestUri, options);
 		}
 
 		public bool IsMatch(HttpRequestMessage request)
 		{
-			return request.RequestUri.ToString() == _requestUri;
+			return _glob.IsMatch(request.RequestUri.ToString());
 		}
 
 		public override string ToString()

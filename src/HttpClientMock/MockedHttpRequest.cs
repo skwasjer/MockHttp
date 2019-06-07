@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace HttpClientMock
 {
-	public class MockedHttpRequest : IMockedHttpRequest
+	internal sealed class MockedHttpRequest : IMockedHttpRequest, IFluentInterface
 	{
-		private readonly IMockHttpRequestBuilder _builder;
 		private readonly List<IHttpRequestMatcher> _matchers;
-		private Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
-		private Action<HttpRequestMessage, HttpResponseMessage> _callback;
+		private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
+		private readonly Action<HttpRequestMessage, HttpResponseMessage> _callback;
 
-		public MockedHttpRequest(IMockHttpRequestBuilder builder)
+		public MockedHttpRequest(IEnumerable<IHttpRequestMatcher> matchers, Func<HttpRequestMessage, Task<HttpResponseMessage>> response, Action<HttpRequestMessage, HttpResponseMessage> callback)
 		{
-			_builder = builder ?? throw new ArgumentNullException(nameof(builder));
-			_matchers = new List<IHttpRequestMatcher>(1);
+			_matchers = matchers?.ToList() ?? throw new ArgumentNullException(nameof(matchers));
+			_response = response ?? throw new ArgumentNullException(nameof(response));
+			_callback = callback;
 		}
 
 		public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -32,44 +32,6 @@ namespace HttpClientMock
 		public bool Matches(HttpRequestMessage request)
 		{
 			return _matchers.All(m => m.IsMatch(request));
-		}
-
-		public IMockedHttpRequest With(IHttpRequestMatcher matcher)
-		{
-			_matchers.Add(matcher);
-			return this;
-		}
-
-		public IMockedHttpRequest Callback(Action callback)
-		{
-			return Callback(_ => callback());
-		}
-
-		public IMockedHttpRequest Callback(Action<HttpRequestMessage> callback)
-		{
-			return Callback((r, _) => callback(r));
-		}
-
-		public IMockedHttpRequest Callback(Action<HttpRequestMessage, HttpResponseMessage> callback)
-		{
-			_callback = callback;
-			return this;
-		}
-
-		public IMockedHttpRequest RespondsWith(Func<Task<HttpResponseMessage>> response)
-		{
-			return RespondsWith(_ => response());
-		}
-
-		public IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
-		{
-			_response = response;
-			return this;
-		}
-
-		public IMockedHttpRequest RespondsWith(Func<HttpRequestMessage, HttpResponseMessage> response)
-		{
-			return RespondsWith(request => Task.FromResult(response(request)));
 		}
 
 		public override string ToString()

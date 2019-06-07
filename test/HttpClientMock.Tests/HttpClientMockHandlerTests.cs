@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using HttpClientMock.HttpRequestMatchers;
+using HttpClientMock.Language;
 using Moq;
 using Xunit;
 
@@ -31,19 +29,34 @@ namespace HttpClientMock.Tests
 		[Fact]
 		public async Task Test()
 		{
-			MockedHttpRequest mockedRequest = _sut
-				.WhenRequesting("http://0.0.0.0/")
-				.With(new HttpMethodMatcher("GET"))
-				.RespondsWith(message => new HttpResponseMessage(HttpStatusCode.Accepted)) as MockedHttpRequest;
+			Mock<object> mock;
+//			mock.Setup().Callback()
+			//mock.Setup(o => o).Throws().Verifiable();
+			//mock.Verify(o => o);
 
-			mockedRequest.Callback(() =>
-			{
+			IConfiguredRequest r;
 
-			});
+			IResponseResult mockedRequest = _sut
+				.When(matching => matching
+					.Url("http://0.0.0.1/**")
+					.Method("GET")
+					.Content("")
+				)
+				.Callback(() =>
+				{
+				})
+				//.Throws<Exception>();
+				.RespondWithAsync(() => new HttpResponseMessage(HttpStatusCode.Accepted));
 
-			var response = await _httpClient.GetAsync("http://0.0.0.0/");
+			mockedRequest.Verifiable();
 
-			_sut.Verify(mockedRequest, 1, "a request was posted");
+			//			_sut.Add(mockedRequest);
+
+			var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+
+			_sut.Verify(matching => matching.Url("**/controller/**"));
+			_sut.Verify((IMockedHttpRequest)mockedRequest, 1, "a request was posted");
+			_sut.Verify();
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
 		}
