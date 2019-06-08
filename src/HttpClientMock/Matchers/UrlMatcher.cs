@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using DotNet.Globbing;
 
-namespace HttpClientMock.HttpRequestMatchers
+namespace HttpClientMock.Matchers
 {
 	public class UrlMatcher : IHttpRequestMatcher
 	{

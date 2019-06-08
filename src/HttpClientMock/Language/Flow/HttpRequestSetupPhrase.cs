@@ -1,17 +1,18 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net.Http;
 using System.Threading.Tasks;
-using HttpClientMock.Language;
 
-namespace HttpClientMock
+namespace HttpClientMock.Language.Flow
 {
-	internal sealed class HttpRequestSetupPhrase : IConfiguredRequest
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	internal sealed class HttpRequestSetupPhrase : IConfiguredRequest, IFluentInterface
 	{
-		private readonly MockedHttpRequest _mockedHttpRequest;
+		private readonly HttpCall _setup;
 
-		public HttpRequestSetupPhrase(MockedHttpRequest mockedHttpRequest)
+		public HttpRequestSetupPhrase(HttpCall setup)
 		{
-			_mockedHttpRequest = mockedHttpRequest ?? throw new ArgumentNullException(nameof(mockedHttpRequest));
+			_setup = setup ?? throw new ArgumentNullException(nameof(setup));
 		}
 
 		public IResponseResult RespondWithAsync(Func<HttpResponseMessage> response)
@@ -26,7 +27,7 @@ namespace HttpClientMock
 
 		public IResponseResult RespondWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
-			_mockedHttpRequest.SetResponse(response);
+			_setup.SetResponse(response);
 			return this;
 		}
 
@@ -37,7 +38,7 @@ namespace HttpClientMock
 
 		public void Verifiable()
 		{
-			_mockedHttpRequest.SetVerifiable(null);
+			_setup.SetVerifiable(null);
 		}
 
 		public void Verifiable(string because)
@@ -47,7 +48,7 @@ namespace HttpClientMock
 				throw new ArgumentNullException(nameof(because));
 			}
 
-			_mockedHttpRequest.SetVerifiable(because);
+			_setup.SetVerifiable(because);
 		}
 
 		public IThrowsResult Throws(Exception exception)
@@ -65,7 +66,7 @@ namespace HttpClientMock
 
 		public ICallbackResult Callback(Action<HttpRequestMessage> callback)
 		{
-			_mockedHttpRequest.SetCallback(callback);
+			_setup.SetCallback(callback);
 			return this;
 		}
 

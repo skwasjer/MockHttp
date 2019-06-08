@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace HttpClientMock
 {
-	internal sealed class MockedHttpRequest
+	/// <summary>
+	/// Contains the setup that controls the behavior of a mocked HTTP request.
+	/// </summary>
+	internal sealed class HttpCall
 	{
 		private Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
 		private Action<HttpRequestMessage> _callback;
@@ -28,9 +31,9 @@ namespace HttpClientMock
 			}
 		}
 
-		internal bool IsVerifiable { get; set; }
+		public bool IsVerifiable { get; set; }
 
-		internal bool IsVerified { get; set; }
+		public bool IsVerified { get; set; }
 
 		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
@@ -51,12 +54,12 @@ namespace HttpClientMock
 			return Matchers.All(m => m.IsMatch(request));
 		}
 
-		internal void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
 			_response = response ?? throw new ArgumentNullException(nameof(response));
 		}
 
-		internal void SetMatchers(IEnumerable<IHttpRequestMatcher> matchers)
+		public void SetMatchers(IEnumerable<IHttpRequestMatcher> matchers)
 		{
 			if (matchers == null)
 			{
@@ -66,12 +69,12 @@ namespace HttpClientMock
 			_matchers = new ReadOnlyCollection<IHttpRequestMatcher>(matchers.ToList());
 		}
 
-		internal void SetCallback(Action<HttpRequestMessage> callback)
+		public void SetCallback(Action<HttpRequestMessage> callback)
 		{
 			_callback = callback ?? throw new ArgumentNullException(nameof(callback));
 		}
 
-		internal void SetVerifiable(string because)
+		public void SetVerifiable(string because)
 		{
 			IsVerifiable = true;
 			_verifiableBecause = because;

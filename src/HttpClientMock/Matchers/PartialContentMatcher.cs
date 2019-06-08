@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HttpClientMock.HttpRequestMatchers
+namespace HttpClientMock.Matchers
 {
 	public class PartialContentMatcher : ContentMatcher
 	{

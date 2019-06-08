@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using HttpClientMock.Utilities;
 using Microsoft.Extensions.Primitives;
 
-namespace HttpClientMock.HttpRequestMatchers
+namespace HttpClientMock.Matchers
 {
 	public class HttpHeadersMatcher : IHttpRequestMatcher
 	{

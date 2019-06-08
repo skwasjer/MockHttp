@@ -1,9 +1,9 @@
 ﻿using System.Net.Http;
 using FluentAssertions;
-using HttpClientMock.HttpRequestMatchers;
+using HttpClientMock.Matchers;
 using Xunit;
 
-namespace HttpClientMock.Tests.HttpRequestMatchers
+namespace HttpClientMock.Tests.Matchers
 {
 	public class HttpMethodMatcherTests
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 
-namespace HttpClientMock.HttpRequestMatchers
+namespace HttpClientMock.Matchers
 {
 	public class ContentMatcher : IHttpRequestMatcher
 	{

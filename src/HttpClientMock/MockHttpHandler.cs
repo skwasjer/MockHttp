@@ -6,21 +6,22 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpClientMock.Language;
+using HttpClientMock.Language.Flow;
 
 namespace HttpClientMock
 {
-	public sealed class HttpClientMockHandler : HttpMessageHandler
+	public sealed class MockHttpHandler : HttpMessageHandler
 	{
-		private readonly List<MockedHttpRequest> _mockedRequests;
-		private readonly MockedHttpRequest _fallback;
+		private readonly List<HttpCall> _setups;
+		private readonly HttpCall _fallbackSetup;
 
-		public HttpClientMockHandler()
+		public MockHttpHandler()
 		{
-			_mockedRequests = new List<MockedHttpRequest>();
+			_setups = new List<HttpCall>();
 			InvokedRequests = new InvokedHttpRequestCollection();
 
-			_fallback = new MockedHttpRequest();
-			Fallback = new HttpRequestSetupPhrase(_fallback);
+			_fallbackSetup = new HttpCall();
+			Fallback = new HttpRequestSetupPhrase(_fallbackSetup);
 			Fallback.RespondWithAsync(_ => CreateDefaultResponse());
 		}
 
@@ -32,25 +33,25 @@ namespace HttpClientMock
 		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			// Not thread safe...
-			foreach (MockedHttpRequest mockedRequest in _mockedRequests)
+			foreach (HttpCall setup in _setups)
 			{
-				if (mockedRequest.Matches(request))
+				if (setup.Matches(request))
 				{
-					return SendAsync(mockedRequest, request, cancellationToken);
+					return SendAsync(setup, request, cancellationToken);
 				}
 			}
 
-			return SendAsync(_fallback, request, cancellationToken);
+			return SendAsync(_fallbackSetup, request, cancellationToken);
 		}
 
-		private Task<HttpResponseMessage> SendAsync(MockedHttpRequest mockedRequest, HttpRequestMessage request, CancellationToken cancellationToken)
+		private Task<HttpResponseMessage> SendAsync(HttpCall setup, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest
 			{
-				MockedRequest = mockedRequest,
+				Setup = setup,
 				Request = request
 			});
-			return mockedRequest.SendAsync(request, cancellationToken);
+			return setup.SendAsync(request, cancellationToken);
 		}
 
 		public IConfiguredRequest When(Action<RequestMatching> matching)
@@ -58,10 +59,10 @@ namespace HttpClientMock
 			var b = new RequestMatching();
 			matching(b);
 
-			var newRequest = new MockedHttpRequest();
-			newRequest.SetMatchers(b.Build());
-			Add(newRequest);
-			return new HttpRequestSetupPhrase(newRequest);
+			var newSetup = new HttpCall();
+			newSetup.SetMatchers(b.Build());
+			Add(newSetup);
+			return new HttpRequestSetupPhrase(newSetup);
 		}
 
 		//public void Verify(IMockedHttpRequest request, string because = null)
@@ -99,25 +100,24 @@ namespace HttpClientMock
 
 		public void Verify()
 		{
-			IEnumerable<MockedHttpRequest> verifiableMockedRequests = _mockedRequests
+			IEnumerable<HttpCall> verifiableSetups = _setups
 				.Where(r => !r.IsVerified && r.IsVerifiable);
 
-			var expectedInvocations = new List<MockedHttpRequest>();
-			foreach (MockedHttpRequest verifiableMockedRequest in verifiableMockedRequests)
+			var expectedInvocations = new List<HttpCall>();
+			foreach (HttpCall setup in verifiableSetups)
 			{
-				var shouldMatch = verifiableMockedRequest.Matchers;
-				if (shouldMatch.Count == 0)
+				if (setup.Matchers.Count == 0)
 				{
 					continue;
 				}
 
-				if (!InvokedRequests.Any(r => shouldMatch.All(m => m.IsMatch(r.Request))))
+				if (!InvokedRequests.Any(r => setup.Matchers.All(m => m.IsMatch(r.Request))))
 				{
-					expectedInvocations.Add(verifiableMockedRequest);
+					expectedInvocations.Add(setup);
 				}
 				else
 				{
-					verifiableMockedRequest.IsVerified = true;
+					setup.IsVerified = true;
 				}
 			}
 
@@ -127,11 +127,11 @@ namespace HttpClientMock
 			}
 		}
 
-		private void Add(MockedHttpRequest mockedRequest)
+		private void Add(HttpCall setup)
 		{
-			if (!_mockedRequests.Contains(mockedRequest))
+			if (!_setups.Contains(setup))
 			{
-				_mockedRequests.Add(mockedRequest);
+				_setups.Add(setup);
 			}
 		}
 

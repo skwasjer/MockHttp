@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using HttpClientMock.Language;
+using HttpClientMock.Language.Flow;
 using Moq;
 using Xunit;
 
 namespace HttpClientMock.Tests
 {
-	public class HttpClientMockHandlerTests : IDisposable
+	public class MockHttpHandlerTests : IDisposable
 	{
-		private readonly HttpClientMockHandler _sut;
+		private readonly MockHttpHandler _sut;
 		private readonly HttpClient _httpClient;
 
-		public HttpClientMockHandlerTests()
+		public MockHttpHandlerTests()
 		{
-			_sut = new HttpClientMockHandler();
+			_sut = new MockHttpHandler();
 			_httpClient = new HttpClient(_sut);
 		}
 

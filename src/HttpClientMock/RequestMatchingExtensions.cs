@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Text;
-using HttpClientMock.HttpRequestMatchers;
+using HttpClientMock.Matchers;
 
 namespace HttpClientMock
 {

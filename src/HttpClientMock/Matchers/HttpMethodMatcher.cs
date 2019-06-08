@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace HttpClientMock.HttpRequestMatchers
+namespace HttpClientMock.Matchers
 {
 	public class HttpMethodMatcher : IHttpRequestMatcher
 	{

@@ -2,10 +2,10 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using FluentAssertions;
-using HttpClientMock.HttpRequestMatchers;
+using HttpClientMock.Matchers;
 using Xunit;
 
-namespace HttpClientMock.Tests.HttpRequestMatchers
+namespace HttpClientMock.Tests.Matchers
 {
 	public class HttpHeadersMatcherTests
 	{
