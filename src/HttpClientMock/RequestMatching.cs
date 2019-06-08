@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace HttpClientMock
 {
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public class RequestMatching : IFluentInterface
 	{
 		private readonly List<IHttpRequestMatcher> _matchers = new List<IHttpRequestMatcher>();

@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.Glob" Version="3.0.5" />
+    <PackageReference Include="DotNet.Glob" Version="2.1.4" />
     <PackageReference Include="IFluentInterface" Version="2.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

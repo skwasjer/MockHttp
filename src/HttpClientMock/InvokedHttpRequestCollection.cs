@@ -5,31 +5,31 @@ using System.Diagnostics;
 
 namespace HttpClientMock
 {
-	internal class InvokedRequestCollection : IInvokedRequestCollection
+	internal class InvokedHttpRequestCollection : IInvokedHttpRequestCollection
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly object _syncLock = new object();
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private List<IMockedHttpRequest> _invokedRequests;
+		private List<IInvokedHttpRequest> _invokedRequests;
 
-		public void Add(IMockedHttpRequest request)
+		public void Add(IInvokedHttpRequest request)
 		{
 			lock (_syncLock)
 			{
 				if (_invokedRequests == null)
 				{
-					_invokedRequests = new List<IMockedHttpRequest>();
+					_invokedRequests = new List<IInvokedHttpRequest>();
 				}
 
 				_invokedRequests.Add(request);
 			}
 		}
 
-		public IEnumerator<IMockedHttpRequest> GetEnumerator()
+		public IEnumerator<IInvokedHttpRequest> GetEnumerator()
 		{
 			// Take local copies of collection and count so they are isolated from changes by other threads.
-			List<IMockedHttpRequest> requests;
+			List<IInvokedHttpRequest> requests;
 			int count;
 
 			lock (_syncLock)
@@ -73,7 +73,7 @@ namespace HttpClientMock
 			}
 		}
 
-		public IMockedHttpRequest this[int index]
+		public IInvokedHttpRequest this[int index]
 		{
 			get
 			{

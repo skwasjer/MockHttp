@@ -2,7 +2,7 @@
 
 namespace HttpClientMock
 {
-	public interface IInvokedRequestCollection : IReadOnlyList<IMockedHttpRequest>
+	public interface IInvokedHttpRequestCollection : IReadOnlyList<IInvokedHttpRequest>
 	{
 		/// <summary>
 		/// Resets the invoked requests.
