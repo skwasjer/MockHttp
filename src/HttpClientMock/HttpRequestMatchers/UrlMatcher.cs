@@ -29,7 +29,7 @@ namespace HttpClientMock.HttpRequestMatchers
 
 		public override string ToString()
 		{
-			return $"Uri: {_requestUri}";
+			return $"Uri: '{_requestUri}'";
 		}
 	}
 }
