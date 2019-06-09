@@ -136,14 +136,9 @@ namespace HttpClientMock
 			}
 		}
 
-		private bool IsInvoked(IReadOnlyCollection<IHttpRequestMatcher> shouldMatch)
+		private bool IsInvoked(IReadOnlyCollection<IHttpRequestMatcher> matchers)
 		{
-			return InvokedRequests.Any(r => IsMatch(shouldMatch, r.Request));
-		}
-
-		private static bool IsMatch(IEnumerable<IHttpRequestMatcher> matchers, HttpRequestMessage request)
-		{
-			return matchers.All(m => m.IsMatch(request));
+			return InvokedRequests.Any(r => matchers.AreAllMatching(r.Request));
 		}
 
 		private void Add(HttpCall setup)

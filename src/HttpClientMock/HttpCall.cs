@@ -51,7 +51,7 @@ namespace HttpClientMock
 
 		public bool Matches(HttpRequestMessage request)
 		{
-			return Matchers.All(m => m.IsMatch(request));
+			return Matchers.AreAllMatching(request);
 		}
 
 		public void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
