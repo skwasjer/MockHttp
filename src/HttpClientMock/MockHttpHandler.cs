@@ -166,7 +166,7 @@ namespace HttpClientMock
 		{
 			return new HttpResponseMessage(HttpStatusCode.NotFound)
 			{
-				ReasonPhrase = "No request/response mocked."
+				ReasonPhrase = "No request is configured, returning default response."
 			};
 		}
 
