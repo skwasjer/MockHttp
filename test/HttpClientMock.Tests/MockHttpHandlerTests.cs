@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using HttpClientMock.Language.Flow;
 using Moq;
 using Xunit;
 
@@ -37,6 +37,9 @@ namespace HttpClientMock.Tests
 			}
 		}
 
+		/// <summary>
+		/// Exception that we can test <see cref="IThrows"/> logic with.
+		/// </summary>
 		private class TestableException : Exception
 		{
 		}
@@ -162,7 +165,125 @@ namespace HttpClientMock.Tests
 			);
 
 			// Assert
-			verifyGet.Should().NotThrow();
+			verifyGet.Should().NotThrow<HttpMockException>();
+		}
+
+		[Fact]
+		public async Task Given_expectation_fails_when_verifying_should_throw()
+		{
+			_sut.When(matching => matching.Method(HttpMethod.Post))
+				.RespondWith(HttpStatusCode.OK)
+				.Verifiable();
+
+			await _httpClient.GetAsync("");
+
+			// Act
+			Action verifyPost = () => _sut.Verify();
+
+			// Assert
+			verifyPost.Should()
+				.Throw<HttpMockException>("a GET request was sent instead of POST")
+				.WithMessage("There are 1 unfulfilled expectations*");
+		}
+
+		[Fact]
+		public async Task Given_expectation_succeeds_when_verifying_should_throw()
+		{
+			_sut.When(matching => matching.Method(HttpMethod.Get))
+				.RespondWith(HttpStatusCode.OK)
+				.Verifiable();
+
+			await _httpClient.GetAsync("");
+
+			// Act
+			Action verifyGet = () => _sut.Verify();
+
+			// Assert
+			verifyGet.Should().NotThrow<HttpMockException>();
+		}
+
+		[Theory]
+		[MemberData(nameof(IsSentVerifiesSuccessfullyTestCases))]
+		public async Task Given_number_of_requests_match_expected_callCount_when_verifying_should_not_throw(int requestCount, IsSent isSent)
+		{
+			for (int i = 0; i < requestCount; i++)
+			{
+				await _httpClient.GetAsync("url");
+			}
+
+			// Act
+			Action verifyGet = () => _sut.Verify(
+				matching => matching.Url("**/url"),
+				isSent
+			);
+
+			// Assert
+			verifyGet.Should().NotThrow<HttpMockException>();
+		}
+
+		// ReSharper disable once MemberCanBePrivate.Global
+		public static IEnumerable<object[]> IsSentVerifiesSuccessfullyTestCases
+		{
+			get
+			{
+				yield return new object[] { 1, IsSent.AtLeast(1) };
+				yield return new object[] { 3, IsSent.AtLeast(3) };
+				yield return new object[] { 5, IsSent.AtLeast(3) };
+				yield return new object[] { 1, IsSent.AtLeastOnce() };
+				yield return new object[] { 3, IsSent.AtLeastOnce() };
+				yield return new object[] { 1, IsSent.AtMost(1) };
+				yield return new object[] { 3, IsSent.AtMost(3) };
+				yield return new object[] { 3, IsSent.AtMost(5) };
+				yield return new object[] { 0, IsSent.AtMostOnce() };
+				yield return new object[] { 1, IsSent.AtMostOnce() };
+				yield return new object[] { 1, IsSent.Exactly(1) };
+				yield return new object[] { 3, IsSent.Exactly(3) };
+				yield return new object[] { 0, IsSent.Never() };
+				yield return new object[] { 1, IsSent.Once() };
+			}
+		}
+
+		[Theory]
+		[MemberData(nameof(IsSentFailsVerificationTestCases))]
+		public async Task Given_number_of_requests_does_not_match_expected_callCount_when_verifying_should_throw(int requestCount, IsSent isSent)
+		{
+			for (int i = 0; i < requestCount; i++)
+			{
+				await _httpClient.GetAsync("url");
+			}
+
+			// Act
+			Action verifyGet = () => _sut.Verify(
+				matching => matching.Url("**/url"),
+				isSent
+			);
+
+			// Assert
+			verifyGet.Should().Throw<HttpMockException>()
+				.WithMessage("Expected request to have*");
+		}
+
+		// ReSharper disable once MemberCanBePrivate.Global
+		public static IEnumerable<object[]> IsSentFailsVerificationTestCases
+		{
+			get
+			{
+				yield return new object[] { 0, IsSent.AtLeast(1) };
+				yield return new object[] { 1, IsSent.AtLeast(3) };
+				yield return new object[] { 2, IsSent.AtLeast(3) };
+				yield return new object[] { 0, IsSent.AtLeastOnce() };
+				yield return new object[] { 2, IsSent.AtMost(1) };
+				yield return new object[] { 4, IsSent.AtMost(2) };
+				yield return new object[] { 2, IsSent.AtMostOnce() };
+				yield return new object[] { 4, IsSent.AtMostOnce() };
+				yield return new object[] { 0, IsSent.Exactly(1) };
+				yield return new object[] { 3, IsSent.Exactly(2) };
+				yield return new object[] { 1, IsSent.Never() };
+				yield return new object[] { 3, IsSent.Never() };
+				yield return new object[] { 0, IsSent.Once() };
+				yield return new object[] { 2, IsSent.Once() };
+				yield return new object[] { 3, IsSent.Once() };
+			}
 		}
 
 		[Fact]
