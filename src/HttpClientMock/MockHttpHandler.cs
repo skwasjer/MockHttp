@@ -92,7 +92,7 @@ namespace HttpClientMock
 				throw new ArgumentException($"At least one match needs to be configured.", nameof(matching));
 			}
 
-			if (!InvokedRequests.Any(r => shouldMatch.All(m => m.IsMatch(r.Request))))
+			if (!IsInvoked(shouldMatch))
 			{
 				throw new InvalidOperationException($"Expected request to have been sent at least once{BecauseMessage(because)}, but it was not.{Environment.NewLine}");
 			}
@@ -100,9 +100,18 @@ namespace HttpClientMock
 
 		public void Verify()
 		{
-			IEnumerable<HttpCall> verifiableSetups = _setups
-				.Where(r => !r.IsVerified && r.IsVerifiable);
+			IEnumerable<HttpCall> verifiableSetups = _setups.Where(r => !r.IsVerified && r.IsVerifiable);
 
+			Verify(verifiableSetups);
+		}
+
+		public void VerifyAll()
+		{
+			Verify(_setups);
+		}
+
+		private void Verify(IEnumerable<HttpCall> verifiableSetups)
+		{
 			var expectedInvocations = new List<HttpCall>();
 			foreach (HttpCall setup in verifiableSetups)
 			{
@@ -111,7 +120,7 @@ namespace HttpClientMock
 					continue;
 				}
 
-				if (!InvokedRequests.Any(r => setup.Matchers.All(m => m.IsMatch(r.Request))))
+				if (!IsInvoked(setup.Matchers))
 				{
 					expectedInvocations.Add(setup);
 				}
@@ -125,6 +134,16 @@ namespace HttpClientMock
 			{
 				throw new InvalidOperationException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");
 			}
+		}
+
+		private bool IsInvoked(IReadOnlyCollection<IHttpRequestMatcher> shouldMatch)
+		{
+			return InvokedRequests.Any(r => IsMatch(shouldMatch, r.Request));
+		}
+
+		private static bool IsMatch(IEnumerable<IHttpRequestMatcher> matchers, HttpRequestMessage request)
+		{
+			return matchers.All(m => m.IsMatch(request));
 		}
 
 		private void Add(HttpCall setup)
