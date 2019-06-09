@@ -2,10 +2,9 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using FluentAssertions;
-using HttpClientMock.Matchers;
 using Xunit;
 
-namespace HttpClientMock.Tests.Matchers
+namespace HttpClientMock.Matchers
 {
 	public class HttpHeadersMatcherTests
 	{
@@ -23,7 +22,7 @@ namespace HttpClientMock.Tests.Matchers
 				}
 			};
 
-			_sut = new HttpHeadersMatcher(new Dictionary<string, string[]>
+			_sut = new HttpHeadersMatcher(new Dictionary<string, IEnumerable<string>>
 			{
 				{ "Cache-Control", new [] { "must-revalidate", "public", "max-age=31536000" } },
 				{ "Accept", new [] { "application/json" } }

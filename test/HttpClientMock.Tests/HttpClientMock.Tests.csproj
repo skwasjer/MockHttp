@@ -5,6 +5,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+    <RootNamespace>HttpClientMock</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
