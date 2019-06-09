@@ -34,13 +34,14 @@ namespace HttpClientMock
 		public bool IsVerifiable { get; set; }
 
 		public bool IsVerified { get; set; }
+		public bool IsInvoked { get; set; }
 
 		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (_response == null)
 			{
 				// TODO: clarify which mock.
-				throw new InvalidOperationException("No response configured for mock.");
+				throw new HttpMockException("No response configured for mock.");
 			}
 
 			cancellationToken.ThrowIfCancellationRequested();
@@ -83,6 +84,17 @@ namespace HttpClientMock
 		public override string ToString()
 		{
 			return string.Join(" ", Matchers.Select(m => m.ToString()).ToArray());
+		}
+
+		public void Reset()
+		{
+			IsInvoked = false;
+			IsVerified = false;
+			IsVerifiable = false;
+			_verifiableBecause = null;
+			_response = null;
+			_callback = null;
+			_matchers = null;
 		}
 	}
 }

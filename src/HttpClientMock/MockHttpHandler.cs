@@ -22,7 +22,7 @@ namespace HttpClientMock
 
 			_fallbackSetup = new HttpCall();
 			Fallback = new HttpRequestSetupPhrase(_fallbackSetup);
-			Fallback.RespondWithAsync(_ => CreateDefaultResponse());
+			Reset();
 		}
 
 		public IInvokedHttpRequestCollection InvokedRequests { get; }
@@ -46,11 +46,7 @@ namespace HttpClientMock
 
 		private Task<HttpResponseMessage> SendAsync(HttpCall setup, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest
-			{
-				Setup = setup,
-				Request = request
-			});
+			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest(setup, request));
 			return setup.SendAsync(request, cancellationToken);
 		}
 
@@ -65,80 +61,97 @@ namespace HttpClientMock
 			return new HttpRequestSetupPhrase(newSetup);
 		}
 
-		//public void Verify(IMockedHttpRequest request, string because = null)
-		//{
-		//	if (InvokedRequests.Cast<InvokedHttpRequest>().All(ir => request != ir.MockedRequest))
-		//	{
-		//		throw new InvalidOperationException($"Expected request to have been sent at least once{BecauseMessage(because)}, but it was not.{Environment.NewLine}   Expected = {request}");
-		//	}
-		//}
+		/// <summary>
+		/// Resets this mock's state. This includes its setups, configured default return values, and all recorded invocations.
+		/// </summary>
+		public void Reset()
+		{
+			InvokedRequests.Reset();
+			_fallbackSetup.Reset();
+			_setups.Clear();
 
-		//public void Verify(IMockedHttpRequest request, int count, string because = null)
-		//{
-		//	int actualCount = InvokedRequests.Cast<InvokedHttpRequest>().Count(ir => request == ir.MockedRequest);
-		//	if (actualCount != count)
-		//	{
-		//		throw new InvalidOperationException($"Expected request to have been sent {count} time(s){BecauseMessage(because)}, but instead was sent {actualCount} time(s).{Environment.NewLine}   Expected = {request}");
-		//	}
-		//}
+			Fallback.RespondWithAsync(_ => CreateDefaultResponse());
+		}
 
-		public void Verify(Action<RequestMatching> matching, string because = null)
+		/// <summary>
+		/// Verifies that a request matching the specified match conditions has been sent.
+		/// </summary>
+		/// <param name="matching">The conditions to match.</param>
+		/// <param name="times">The number of times a request is allowed to be sent.</param>
+		/// <param name="because">The reasoning for this expectation.</param>
+		public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
+		{
+			Verify(matching, times(), because);
+		}
+
+		/// <summary>
+		/// Verifies that a request matching the specified match conditions has been sent.
+		/// </summary>
+		/// <param name="matching">The conditions to match.</param>
+		/// <param name="times">The number of times a request is allowed to be sent.</param>
+		/// <param name="because">The reasoning for this expectation.</param>
+		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
 			var rm = new RequestMatching();
 			matching(rm);
 			IReadOnlyCollection<IHttpRequestMatcher> shouldMatch = rm.Build();
-			if (shouldMatch.Count == 0)
-			{
-				throw new ArgumentException($"At least one match needs to be configured.", nameof(matching));
-			}
 
-			if (!IsInvoked(shouldMatch))
+			int callCount = shouldMatch.Count == 0
+				? InvokedRequests.Count
+				: InvokedRequests.Count(r => shouldMatch.AreAllMatching(r.Request));
+
+			if (!times.Verify(callCount))
 			{
-				throw new InvalidOperationException($"Expected request to have been sent at least once{BecauseMessage(because)}, but it was not.{Environment.NewLine}");
+				throw new HttpMockException(times.GetErrorMessage(callCount, BecauseMessage(because)));
 			}
 		}
 
+		/// <summary>
+		/// Verifies that all verifiable expected requests have been sent.
+		/// </summary>
 		public void Verify()
 		{
-			IEnumerable<HttpCall> verifiableSetups = _setups.Where(r => !r.IsVerified && r.IsVerifiable);
+			IEnumerable<HttpCall> verifiableSetups = _setups.Where(r => r.IsVerifiable);
 
 			Verify(verifiableSetups);
 		}
 
+		/// <summary>
+		/// Verifies all expected requests regardless of whether they have been flagged as verifiable.
+		/// </summary>
 		public void VerifyAll()
 		{
 			Verify(_setups);
 		}
 
-		private void Verify(IEnumerable<HttpCall> verifiableSetups)
+		/// <summary>
+		/// Verifies that there were no requests sent other than those already verified.
+		/// </summary>
+		public void VerifyNoOtherCalls()
+		{
+			IEnumerable<HttpCall> unverifiedSetups = _setups.Where(r => !r.IsVerified);
+			Verify(unverifiedSetups);
+		}
+
+		private static void Verify(IEnumerable<HttpCall> verifiableSetups)
 		{
 			var expectedInvocations = new List<HttpCall>();
 			foreach (HttpCall setup in verifiableSetups)
 			{
-				if (setup.Matchers.Count == 0)
+				if (setup.IsInvoked)
 				{
-					continue;
-				}
-
-				if (!IsInvoked(setup.Matchers))
-				{
-					expectedInvocations.Add(setup);
+					setup.IsVerified = true;
 				}
 				else
 				{
-					setup.IsVerified = true;
+					expectedInvocations.Add(setup);
 				}
 			}
 
 			if (expectedInvocations.Any())
 			{
-				throw new InvalidOperationException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");
+				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");
 			}
-		}
-
-		private bool IsInvoked(IReadOnlyCollection<IHttpRequestMatcher> matchers)
-		{
-			return InvokedRequests.Any(r => matchers.AreAllMatching(r.Request));
 		}
 
 		private void Add(HttpCall setup)

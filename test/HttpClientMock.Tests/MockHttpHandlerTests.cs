@@ -55,10 +55,12 @@ namespace HttpClientMock.Tests
 			//			_sut.Add(mockedRequest);
 
 			var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+			response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
 
-			_sut.Verify(matching => matching.Url("**/controller/**"));
-			//_sut.Verify((IMockedHttpRequest)mockedRequest, 1, "a request was posted");
+			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
 			_sut.Verify();
+			_sut.VerifyAll();
+			_sut.VerifyNoOtherCalls();
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
 		}
@@ -67,6 +69,8 @@ namespace HttpClientMock.Tests
 		public void T()
 		{
 			Mock<TestClass> mock = new Mock<TestClass>();
+			//mock.Verify(_ => {}, new Times());
+			mock.Reset();
 			int i = 0;
 			mock
 				.Setup(c => c.Test())

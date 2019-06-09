@@ -11,25 +11,26 @@ namespace HttpClientMock
 		private readonly object _syncLock = new object();
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private List<IInvokedHttpRequest> _invokedRequests;
+		private List<InvokedHttpRequest> _invokedRequests;
 
-		public void Add(IInvokedHttpRequest request)
+		public void Add(InvokedHttpRequest request)
 		{
 			lock (_syncLock)
 			{
 				if (_invokedRequests == null)
 				{
-					_invokedRequests = new List<IInvokedHttpRequest>();
+					_invokedRequests = new List<InvokedHttpRequest>();
 				}
 
 				_invokedRequests.Add(request);
+				request.Setup.IsInvoked = true;
 			}
 		}
 
 		public IEnumerator<IInvokedHttpRequest> GetEnumerator()
 		{
 			// Take local copies of collection and count so they are isolated from changes by other threads.
-			List<IInvokedHttpRequest> requests;
+			List<InvokedHttpRequest> requests;
 			int count;
 
 			lock (_syncLock)
