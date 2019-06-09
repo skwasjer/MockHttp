@@ -23,7 +23,6 @@ namespace HttpClientMock
 				}
 
 				_invokedRequests.Add(request);
-				request.Setup.IsInvoked = true;
 			}
 		}
 

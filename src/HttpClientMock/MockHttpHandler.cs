@@ -35,7 +35,7 @@ namespace HttpClientMock
 			// Not thread safe...
 			foreach (HttpCall setup in _setups)
 			{
-				if (setup.Matches(request))
+				if (setup.Matchers.AreAllMatching(request))
 				{
 					return SendAsync(setup, request, cancellationToken);
 				}
@@ -70,7 +70,7 @@ namespace HttpClientMock
 			_fallbackSetup.Reset();
 			_setups.Clear();
 
-			Fallback.RespondWithAsync(_ => CreateDefaultResponse());
+			Fallback.RespondWith(_ => CreateDefaultResponse());
 		}
 
 		/// <summary>
@@ -135,19 +135,7 @@ namespace HttpClientMock
 
 		private static void Verify(IEnumerable<HttpCall> verifiableSetups)
 		{
-			var expectedInvocations = new List<HttpCall>();
-			foreach (HttpCall setup in verifiableSetups)
-			{
-				if (setup.IsInvoked)
-				{
-					setup.IsVerified = true;
-				}
-				else
-				{
-					expectedInvocations.Add(setup);
-				}
-			}
-
+			List<HttpCall> expectedInvocations = verifiableSetups.Where(setup => !setup.VerifyIfInvoked()).ToList();
 			if (expectedInvocations.Any())
 			{
 				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");

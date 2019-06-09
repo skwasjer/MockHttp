@@ -15,16 +15,6 @@ namespace HttpClientMock.Language.Flow
 			_setup = setup ?? throw new ArgumentNullException(nameof(setup));
 		}
 
-		public IResponseResult RespondWithAsync(Func<HttpResponseMessage> response)
-		{
-			return RespondWithAsync(_ => response());
-		}
-
-		public IResponseResult RespondWithAsync(Func<HttpRequestMessage, HttpResponseMessage> response)
-		{
-			return RespondWith(request => Task.FromResult(response(request)));
-		}
-
 		public IResponseResult RespondWith(Func<Task<HttpResponseMessage>> response)
 		{
 			return RespondWith(_ => response());
@@ -53,14 +43,14 @@ namespace HttpClientMock.Language.Flow
 
 		public IThrowsResult Throws(Exception exception)
 		{
-			RespondWithAsync(_ => throw exception);
+			RespondWith(() => throw exception);
 			return this;
 		}
 
 		public IThrowsResult Throws<TException>()
 			where TException : Exception, new()
 		{
-			RespondWithAsync(_ => throw new TException());
+			RespondWith(_ => throw new TException());
 			return this;
 		}
 

@@ -15,18 +15,6 @@ namespace HttpClientMock.Language
 		/// <summary>
 		/// Specifies a function that returns the response for a request.
 		/// </summary>
-		/// <param name="response">The function that provides the response message to return for a request.</param>
-		IResponseResult RespondWithAsync(Func<HttpResponseMessage> response);
-
-		/// <summary>
-		/// Specifies a function that returns the response for a request.
-		/// </summary>
-		/// <param name="response">The function that provides the response message to return for given request.</param>
-		IResponseResult RespondWithAsync(Func<HttpRequestMessage, HttpResponseMessage> response);
-
-		/// <summary>
-		/// Specifies a function that returns the response for a request.
-		/// </summary>
 		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for a request.</param>
 		IResponseResult RespondWith(Func<Task<HttpResponseMessage>> response);
 

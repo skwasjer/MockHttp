@@ -76,7 +76,7 @@ namespace HttpClientMock.Tests
 		{
 			var response = new HttpResponseMessage();
 			_sut.When(matching => { })
-				.RespondWithAsync(() => response);
+				.RespondWith(response);
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -101,20 +101,20 @@ namespace HttpClientMock.Tests
 		[Fact]
 		public async Task Given_a_callback_is_configured_when_sending_request_should_invoke_callback_before_sending_request()
 		{
-			 bool callbackCalled = false;
-			 const string expectedReason = "Callback is called = True";
-			 _sut.When(matching => { })
-				 .Callback(() => callbackCalled = true)
-				 .RespondWithAsync(() => new HttpResponseMessage
-				 {
-					 ReasonPhrase = $"Callback is called = {callbackCalled}"
-				 });
+			bool callbackCalled = false;
+			const string expectedReason = "Callback is called = True";
+			_sut.When(matching => { })
+				.Callback(() => callbackCalled = true)
+				.RespondWith(() => new HttpResponseMessage
+				{
+					ReasonPhrase = $"Callback is called = {callbackCalled}"
+				});
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
 
 			// Assert
-			actualResponse.ReasonPhrase.Should().Be(expectedReason, "the callback should be called before we built the response");
+			actualResponse.ReasonPhrase.Should().Be(expectedReason, "the callback should be called before we returned the response");
 			_sut.Verify(m => { }, IsSent.Once);
 		}
 
@@ -128,60 +128,93 @@ namespace HttpClientMock.Tests
 
 			// Assert
 			act.Should()
-				.Throw<HttpMockException>()
+				.Throw<HttpMockException>("the mock is configured without a response")
 				.WithMessage("No response configured for mock.");
 		}
 
-		//[Fact]
-		//public async Task Test()
-		//{
-		//	_sut
-		//		.When(matching => matching
-		//			.Url("http://0.0.0.1/**")
-		//			.Method("GET")
-		//			.Content("")
-		//		)
-		//		.Callback(() =>
+		[Fact]
+		public async Task Given_verification_by_condition_fails_when_verifying_should_throw()
+		{
+			await _httpClient.GetAsync("");
+
+			// Act
+			Action verifyPost = () => _sut.Verify(
+				// Matching by POST should cause verification to throw.
+				matching => matching.Method(HttpMethod.Post),
+				IsSent.Once
+			);
+
+			// Assert
+			verifyPost.Should()
+				.Throw<HttpMockException>("a GET request was sent instead of POST")
+				.WithMessage("Expected request to have been sent exactly once* 0 time*");
+		}
+
+		[Fact]
+		public async Task Given_verification_by_condition_succeeds_when_verifying_should_not_throw()
+		{
+			await _httpClient.GetAsync("");
+
+			// Act
+			Action verifyGet = () => _sut.Verify(
+				matching => matching.Method(HttpMethod.Get),
+				IsSent.Once
+			);
+
+			// Assert
+			verifyGet.Should().NotThrow();
+		}
+
+		[Fact]
+		public async Task Test()
+		{
+			_sut
+				.When(matching => matching
+					.Url("http://0.0.0.1/**")
+					.Method("GET")
+					.Content("")
+				)
+				.Callback(() =>
+				{
+				})
+				//.Throws<Exception>();
+				.RespondWith(() =>
+					new HttpResponseMessage(HttpStatusCode.Accepted)
+				)
+				.Verifiable();
+
+			var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+			response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+
+			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
+			_sut.Verify();
+			_sut.VerifyAll();
+
+			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+		}
+
+		//		[Fact]
+		//		public void T()
 		//		{
-		//		})
-		//		//.Throws<Exception>();
-		//		.RespondWithAsync(() => 
-		//			new HttpResponseMessage(HttpStatusCode.Accepted)
-		//		)
-		//		.Verifiable();
+		//			Mock<TestClass> mock = new Mock<TestClass>();
+		//			//mock.Verify(_ => {}, new Times());
+		//			mock.Reset();
+		//			int i = 0;
+		//			mock
+		//				.Setup(c => c.Test())
+		//				.Callback(
+		//					() => 
+		//						i += 1)
+		//				.Returns(
+		//					() =>
+		//						i
+		//					);
+		////			mock.Invocations.Any(i => i.)
+		//			var result = mock.Object.Test();
 
-		//	var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
-		//	response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+		//			result.Should().Be(1);
 
-		//	_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
-		//	_sut.Verify();
-		//	_sut.VerifyAll();
-
-		//	response.StatusCode.Should().Be(HttpStatusCode.Accepted);
-		//}
-
-//		[Fact]
-//		public void T()
-//		{
-//			Mock<TestClass> mock = new Mock<TestClass>();
-//			//mock.Verify(_ => {}, new Times());
-//			mock.Reset();
-//			int i = 0;
-//			mock
-//				.Setup(c => c.Test())
-//				.Callback(
-//					() => 
-//						i += 1)
-//				.Returns(
-//					() =>
-//						i
-//					);
-////			mock.Invocations.Any(i => i.)
-//			var result = mock.Object.Test();
-
-//			result.Should().Be(1);
-
-//			//			mock.Verify();
-//		}
+		//			//			mock.Verify();
+		//		}
 	}
 }

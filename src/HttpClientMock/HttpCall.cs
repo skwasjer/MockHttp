@@ -31,13 +31,16 @@ namespace HttpClientMock
 			}
 		}
 
-		public bool IsVerifiable { get; set; }
+		public bool IsVerifiable { get; private set; }
 
-		public bool IsVerified { get; set; }
-		public bool IsInvoked { get; set; }
+		public bool IsVerified { get; private set; }
+
+		public bool IsInvoked { get; private set; }
 
 		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			IsInvoked = true;
+
 			if (_response == null)
 			{
 				// TODO: clarify which mock.
@@ -48,11 +51,6 @@ namespace HttpClientMock
 
 			_callback?.Invoke(request);
 			return _response(request);
-		}
-
-		public bool Matches(HttpRequestMessage request)
-		{
-			return Matchers.AreAllMatching(request);
 		}
 
 		public void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
@@ -84,6 +82,16 @@ namespace HttpClientMock
 		public override string ToString()
 		{
 			return string.Join(" ", Matchers.Select(m => m.ToString()).ToArray());
+		}
+
+		public bool VerifyIfInvoked()
+		{
+			if (IsInvoked)
+			{
+				IsVerified = true;
+			}
+
+			return IsVerified;
 		}
 
 		public void Reset()
