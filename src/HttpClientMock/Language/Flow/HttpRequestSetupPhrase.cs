@@ -25,15 +25,15 @@ namespace HttpClientMock.Language.Flow
 			return RespondWith(request => Task.FromResult(response(request)));
 		}
 
+		public IResponseResult RespondWith(Func<Task<HttpResponseMessage>> response)
+		{
+			return RespondWith(_ => response());
+		}
+
 		public IResponseResult RespondWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
 			_setup.SetResponse(response);
 			return this;
-		}
-
-		public IResponseResult RespondWith(Func<Task<HttpResponseMessage>> response)
-		{
-			return RespondWith(_ => response());
 		}
 
 		public void Verifiable()
