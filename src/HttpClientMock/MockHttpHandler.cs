@@ -30,18 +30,20 @@ namespace HttpClientMock
 		public IRespondsThrows Fallback { get; }
 
 		/// <inheritdoc />
-		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
+
 			// Not thread safe...
 			foreach (HttpCall setup in _setups)
 			{
-				if (setup.Matchers.AreAllMatching(request))
+				if (setup.Matchers.AreAllMatching(request, out IEnumerable<IHttpRequestMatcher> notMatchedOn))
 				{
-					return SendAsync(setup, request, cancellationToken);
+					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
 				}
 			}
 
-			return SendAsync(_fallbackSetup, request, cancellationToken);
+			return await SendAsync(_fallbackSetup, request, cancellationToken).ConfigureAwait(false);
 		}
 
 		private Task<HttpResponseMessage> SendAsync(HttpCall setup, HttpRequestMessage request, CancellationToken cancellationToken)
@@ -98,7 +100,7 @@ namespace HttpClientMock
 
 			int callCount = shouldMatch.Count == 0
 				? InvokedRequests.Count
-				: InvokedRequests.Count(r => shouldMatch.AreAllMatching(r.Request));
+				: InvokedRequests.Count(r => shouldMatch.AreAllMatching(r.Request, out _));
 
 			if (!times.Verify(callCount))
 			{
@@ -156,6 +158,18 @@ namespace HttpClientMock
 			{
 				ReasonPhrase = "No request is configured, returning default response."
 			};
+		}
+
+		private static async Task LoadIntoBufferAsync(HttpContent httpContent)
+		{
+			if (httpContent != null)
+			{
+				// Force read content, so content can be checked more than once.
+				await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);
+				// Force read content length, in case it will be checked via header matcher.
+				// ReSharper disable once UnusedVariable
+				long? cl = httpContent.Headers.ContentLength;
+			}
 		}
 
 		private static string BecauseMessage(string because)
