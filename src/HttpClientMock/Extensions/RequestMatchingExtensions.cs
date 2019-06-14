@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -135,5 +136,11 @@ namespace HttpClientMock
 			return builder.Replace(new PartialContentMatcher(content));
 		}
 
+		public static RequestMatching Any(this RequestMatching builder, Action<RequestMatching> anyBuilder)
+		{
+			var anyRequestMatching = new RequestMatching();
+			anyBuilder(anyRequestMatching);
+			return builder.With(new AnyMatcher(anyRequestMatching.Build()));
+		}
 	}
 }

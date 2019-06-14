@@ -30,14 +30,6 @@ namespace HttpClientMock
 			_httpClient?.Dispose();
 		}
 
-		public class TestClass
-		{
-			public virtual int Test()
-			{
-				return 0;
-			}
-		}
-
 		/// <summary>
 		/// Exception that we can test <see cref="IThrows"/> logic with.
 		/// </summary>
@@ -70,8 +62,10 @@ namespace HttpClientMock
 			Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TestableException>()
-				.Which.Should().Be(exception);
+			act.Should()
+				.Throw<TestableException>()
+				.Which.Should()
+				.Be(exception);
 			_sut.Verify(m => { }, IsSent.Once);
 		}
 
@@ -109,10 +103,7 @@ namespace HttpClientMock
 			const string expectedReason = "Callback is called = True";
 			_sut.When(matching => { })
 				.Callback(() => callbackCalled = true)
-				.RespondWith(() => new HttpResponseMessage
-				{
-					ReasonPhrase = $"Callback is called = {callbackCalled}"
-				});
+				.RespondWith(() => new HttpResponseMessage { ReasonPhrase = $"Callback is called = {callbackCalled}" });
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -260,7 +251,8 @@ namespace HttpClientMock
 			);
 
 			// Assert
-			verifyGet.Should().Throw<HttpMockException>()
+			verifyGet.Should()
+				.Throw<HttpMockException>()
 				.WithMessage("Expected request to have*");
 		}
 
@@ -308,6 +300,10 @@ namespace HttpClientMock
 					.Content(jsonPostContent)
 					.ContentType("application/json; charset=utf-8")
 					.Headers("Content-Length", 76)
+					.Any(any => any
+						.Url("not-matching")
+						.Url("**controller**")
+					)
 				)
 				.Callback(() =>
 				{
@@ -321,7 +317,7 @@ namespace HttpClientMock
 			// Act
 			await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
 			HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value", postContent);
-			
+
 
 			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
 			_sut.Verify();

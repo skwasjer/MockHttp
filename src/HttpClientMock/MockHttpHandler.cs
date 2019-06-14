@@ -37,7 +37,7 @@ namespace HttpClientMock
 			// Not thread safe...
 			foreach (HttpCall setup in _setups)
 			{
-				if (setup.Matchers.AreAllMatching(request, out IEnumerable<IHttpRequestMatcher> notMatchedOn))
+				if (setup.Matchers.All(request, out IEnumerable<IHttpRequestMatcher> notMatchedOn))
 				{
 					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
 				}
@@ -100,7 +100,7 @@ namespace HttpClientMock
 
 			int callCount = shouldMatch.Count == 0
 				? InvokedRequests.Count
-				: InvokedRequests.Count(r => shouldMatch.AreAllMatching(r.Request, out _));
+				: InvokedRequests.Count(r => shouldMatch.All(r.Request, out _));
 
 			if (!times.Verify(callCount))
 			{
