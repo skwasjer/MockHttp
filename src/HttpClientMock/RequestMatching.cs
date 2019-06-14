@@ -13,7 +13,7 @@ namespace HttpClientMock
 		{
 		}
 
-		public RequestMatching Replace<TMatcher>(IHttpRequestMatcher matcher)
+		public RequestMatching Replace<TMatcher>(TMatcher matcher)
 			where TMatcher : IHttpRequestMatcher
 		{
 			_matchers.RemoveAll(m => m.GetType() == typeof(TMatcher));

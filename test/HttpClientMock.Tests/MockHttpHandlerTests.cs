@@ -291,6 +291,8 @@ namespace HttpClientMock
 			_sut
 				.When(matching => matching
 					.Url("http://0.0.0.1/**")
+					.QueryString("test", "$%^&*")
+					.QueryString("test2", "value")
 					.Method("GET")
 					.Content("")
 				)
@@ -304,7 +306,8 @@ namespace HttpClientMock
 				.Verifiable();
 
 			var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
-			response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+			response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value");
+			
 
 			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
 			_sut.Verify();
