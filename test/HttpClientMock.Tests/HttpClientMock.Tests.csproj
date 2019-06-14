@@ -9,12 +9,16 @@
     <RootNamespace>HttpClientMock</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="Newtonsoft.Json" Version="*" />
+  </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" Condition="$(TargetFramework.StartsWith('netcoreapp'))" />
-    <PackageReference Include="FluentAssertions" Version="5.6.0" />
-    <PackageReference Include="Moq" Version="4.10.1" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" Condition="$(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="FluentAssertions" Version="5.*" />
+    <PackageReference Include="Moq" Version="4.10.*" />
+    <PackageReference Include="xunit" Version="2.*" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -23,7 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\HttpClientMock\HttpClientMock.csproj" AdditionalProperties="TargetFramework=netstandard1.1" Condition="'$(TargetFramework)'=='netcoreapp1.1'" />
     <ProjectReference Include="..\..\src\HttpClientMock\HttpClientMock.csproj" AdditionalProperties="TargetFramework=$(TargetFramework)" Condition="$(TargetFramework.StartsWith('net4'))" />
-
   </ItemGroup>
 
 </Project>

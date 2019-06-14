@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace HttpClientMock
@@ -286,15 +288,26 @@ namespace HttpClientMock
 		}
 
 		[Fact]
-		public async Task Test()
+		public async Task Given_a_request_expectation_when_sending_requests_it_should_correctly_match_and_verify_the_response()
 		{
+			var postObject = new
+			{
+				Field1 = true,
+				Field2 = "some text",
+				Field3 = DateTime.UtcNow
+			};
+			string jsonPostContent = JsonConvert.SerializeObject(postObject);
+			var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json");
+
 			_sut
 				.When(matching => matching
 					.Url("http://0.0.0.1/**")
 					.QueryString("test", "$%^&*")
 					.QueryString("test2", "value")
-					.Method("GET")
-					.Content("")
+					.Method("POST")
+					.Content(jsonPostContent)
+					.ContentType("application/json; charset=utf-8")
+					.Headers("Content-Length", 76)
 				)
 				.Callback(() =>
 				{
@@ -305,8 +318,9 @@ namespace HttpClientMock
 				)
 				.Verifiable();
 
-			var response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
-			response = await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value");
+			// Act
+			await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
+			HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value", postContent);
 			
 
 			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
@@ -315,29 +329,5 @@ namespace HttpClientMock
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
 		}
-
-		//		[Fact]
-		//		public void T()
-		//		{
-		//			Mock<TestClass> mock = new Mock<TestClass>();
-		//			//mock.Verify(_ => {}, new Times());
-		//			mock.Reset();
-		//			int i = 0;
-		//			mock
-		//				.Setup(c => c.Test())
-		//				.Callback(
-		//					() => 
-		//						i += 1)
-		//				.Returns(
-		//					() =>
-		//						i
-		//					);
-		////			mock.Invocations.Any(i => i.)
-		//			var result = mock.Object.Test();
-
-		//			result.Should().Be(1);
-
-		//			//			mock.Verify();
-		//		}
 	}
 }

@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using HttpClientMock.Http;
 using HttpClientMock.Matchers;
 
 namespace HttpClientMock
@@ -50,6 +54,53 @@ namespace HttpClientMock
 			return builder.With(new HttpMethodMatcher(httpMethod));
 		}
 
+		public static RequestMatching Headers(this RequestMatching builder, string name, string value)
+		{
+			return builder.With(new HttpHeadersMatcher(name, value));
+		}
+
+		public static RequestMatching Headers<T>(this RequestMatching builder, string name, T value)
+			where T : struct
+		{
+			TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+			return builder.Headers(name, converter.ConvertToString(value));
+		}
+
+		public static RequestMatching Headers(this RequestMatching builder, string headers)
+		{
+			return builder.Headers(HttpHeadersCollection.Parse(headers));
+		}
+
+		public static RequestMatching Headers(this RequestMatching builder, string name, IEnumerable<string> values)
+		{
+			return builder.With(new HttpHeadersMatcher(name, values));
+		}
+
+		public static RequestMatching Headers(this RequestMatching builder, string name, params string[] values)
+		{
+			return builder.Headers(name, values.AsEnumerable());
+		}
+
+		public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> headers)
+		{
+			return builder.With(new HttpHeadersMatcher(headers));
+		}
+
+		public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
+		{
+			return builder.With(new HttpHeadersMatcher(headers));
+		}
+
+		public static RequestMatching ContentType(this RequestMatching builder, string contentType)
+		{
+			return builder.Headers("Content-Type", contentType);
+		}
+
+		public static RequestMatching ContentType(this RequestMatching builder, MediaTypeHeaderValue mediaType)
+		{
+			return builder.ContentType(mediaType.ToString());
+		}
+
 		public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding = null)
 		{
 			return builder.Replace(new ContentMatcher(content, encoding));
@@ -60,9 +111,29 @@ namespace HttpClientMock
 			return builder.Replace(new ContentMatcher(content));
 		}
 
+		public static RequestMatching Content(this RequestMatching builder, Stream stream)
+		{
+			using (var ms = new MemoryStream())
+			{
+				stream.CopyTo(ms);
+				return builder.Replace(new ContentMatcher(ms.ToArray()));
+			}
+		}
+
 		public static RequestMatching WithoutContent(this RequestMatching builder)
 		{
 			return builder.Replace(new ContentMatcher());
 		}
+
+		public static RequestMatching PartialContent(this RequestMatching builder, string content, Encoding encoding = null)
+		{
+			return builder.Replace(new PartialContentMatcher(content, encoding));
+		}
+
+		public static RequestMatching PartialContent(this RequestMatching builder, byte[] content)
+		{
+			return builder.Replace(new PartialContentMatcher(content));
+		}
+
 	}
 }
