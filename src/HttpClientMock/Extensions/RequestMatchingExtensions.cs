@@ -94,15 +94,25 @@ namespace HttpClientMock
 
 		public static RequestMatching ContentType(this RequestMatching builder, string contentType)
 		{
-			return builder.Headers("Content-Type", contentType);
+			return builder.ContentType(MediaTypeHeaderValue.Parse(contentType));
 		}
 
 		public static RequestMatching ContentType(this RequestMatching builder, MediaTypeHeaderValue mediaType)
 		{
-			return builder.ContentType(mediaType.ToString());
+			if (mediaType == null)
+			{
+				throw new ArgumentNullException(nameof(mediaType));
+			}
+
+			return builder.Headers("Content-Type", mediaType.ToString());
 		}
 
-		public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding = null)
+		public static RequestMatching Content(this RequestMatching builder, string content)
+		{
+			return builder.Replace(new ContentMatcher(content, Encoding.UTF8));
+		}
+
+		public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding)
 		{
 			return builder.Replace(new ContentMatcher(content, encoding));
 		}
@@ -134,6 +144,11 @@ namespace HttpClientMock
 		public static RequestMatching PartialContent(this RequestMatching builder, byte[] content)
 		{
 			return builder.Replace(new PartialContentMatcher(content));
+		}
+
+		internal static RequestMatching Any(this RequestMatching builder)
+		{
+			return builder;
 		}
 
 		public static RequestMatching Any(this RequestMatching builder, Action<RequestMatching> anyBuilder)

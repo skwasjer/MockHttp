@@ -54,12 +54,17 @@ namespace HttpClientMock
 
 		public IConfiguredRequest When(Action<RequestMatching> matching)
 		{
+			if (matching == null)
+			{
+				throw new ArgumentNullException(nameof(matching));
+			}
+
 			var b = new RequestMatching();
 			matching(b);
 
 			var newSetup = new HttpCall();
 			newSetup.SetMatchers(b.Build());
-			Add(newSetup);
+			_setups.Add(newSetup);
 			return new HttpRequestSetupPhrase(newSetup);
 		}
 
@@ -83,6 +88,11 @@ namespace HttpClientMock
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
+			if (times == null)
+			{
+				throw new ArgumentNullException(nameof(times));
+			}
+
 			Verify(matching, times(), because);
 		}
 
@@ -94,6 +104,11 @@ namespace HttpClientMock
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
+			if (matching == null)
+			{
+				throw new ArgumentNullException(nameof(matching));
+			}
+
 			var rm = new RequestMatching();
 			matching(rm);
 			IReadOnlyCollection<IHttpRequestMatcher> shouldMatch = rm.Build();
@@ -141,14 +156,6 @@ namespace HttpClientMock
 			if (expectedInvocations.Any())
 			{
 				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");
-			}
-		}
-
-		private void Add(HttpCall setup)
-		{
-			if (!_setups.Contains(setup))
-			{
-				_setups.Add(setup);
 			}
 		}
 

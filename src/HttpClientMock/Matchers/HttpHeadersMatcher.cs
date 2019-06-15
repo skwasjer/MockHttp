@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,6 +11,11 @@ namespace HttpClientMock.Matchers
 	{
 		public HttpHeadersMatcher(string name, string value)
 		{
+			if (name == null)
+			{
+				throw new ArgumentNullException(nameof(name));
+			}
+
 			ExpectedHeaders = new HttpHeadersCollection
 			{
 				{ name, value }
@@ -17,6 +23,11 @@ namespace HttpClientMock.Matchers
 		}
 		public HttpHeadersMatcher(string name, IEnumerable<string> values)
 		{
+			if (name == null)
+			{
+				throw new ArgumentNullException(nameof(name));
+			}
+
 			ExpectedHeaders = new HttpHeadersCollection
 			{
 				{ name, values }
@@ -25,6 +36,11 @@ namespace HttpClientMock.Matchers
 
 		public HttpHeadersMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
 		{
+			if (headers == null)
+			{
+				throw new ArgumentNullException(nameof(headers));
+			}
+
 			ExpectedHeaders = new HttpHeadersCollection();
 			foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
 			{
