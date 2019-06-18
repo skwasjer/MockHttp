@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -81,7 +82,21 @@ namespace HttpClientMock
 
 		public override string ToString()
 		{
-			return string.Join(" ", Matchers.Select(m => m.ToString()).ToArray());
+			if (_matchers == null || _matchers.Count == 0)
+			{
+				return string.Empty;
+			}
+
+			var sb = new StringBuilder();
+			foreach (IHttpRequestMatcher m in _matchers)
+			{
+				sb.Append(m);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 
 		public bool VerifyIfInvoked()

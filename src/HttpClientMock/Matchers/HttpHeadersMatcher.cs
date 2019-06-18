@@ -61,6 +61,11 @@ namespace HttpClientMock.Matchers
 			return ExpectedHeaders.All(h => IsMatch(h, request.Headers) || IsMatch(h, request.Content?.Headers));
 		}
 
+		public override string ToString()
+		{
+			return $"Headers: {ExpectedHeaders.ToString().TrimEnd('\r', '\n')}";
+		}
+
 		private static bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
 			return headers != null
