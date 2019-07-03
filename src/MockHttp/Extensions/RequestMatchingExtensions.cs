@@ -160,11 +160,17 @@ namespace MockHttp
 		{
 			// https://tools.ietf.org/html/rfc2616#section-3.3.1
 			CultureInfo ci = CultureInfo.InvariantCulture;
+#if NETFRAMEWORK
+				// .NET Framework does not normalize other common date formats,
+				// so we use multiple matches.
 			return builder.Any(any => any
 				.Headers(name, date.ToString("R", ci))
-				.Headers(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))
-				.Headers(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))
+				.Headers(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))	// RFC 1036
+				.Headers(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))		// ANSI C's asctime()
 			);
+#else
+			return builder.Headers(name, date.ToString("R", ci));
+#endif
 		}
 
 		/// <summary>
