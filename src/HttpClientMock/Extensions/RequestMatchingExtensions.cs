@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -134,6 +135,36 @@ namespace HttpClientMock
 		{
 			TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
 			return builder.Headers(name, converter.ConvertToString(value));
+		}
+		
+		/// <summary>
+		/// Matches a request by HTTP header.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="name">The header name.</param>
+		/// <param name="date">The header value.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Headers(this RequestMatching builder, string name, DateTime date)
+		{
+			return builder.Headers(name, (DateTimeOffset)date.ToUniversalTime());
+		}
+
+		/// <summary>
+		/// Matches a request by HTTP header.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="name">The header name.</param>
+		/// <param name="date">The header value.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Headers(this RequestMatching builder, string name, DateTimeOffset date)
+		{
+			// https://tools.ietf.org/html/rfc2616#section-3.3.1
+			CultureInfo ci = CultureInfo.InvariantCulture;
+			return builder.Any(any => any
+				.Headers(name, date.ToString("R", ci))
+				.Headers(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))
+				.Headers(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))
+			);
 		}
 
 		/// <summary>

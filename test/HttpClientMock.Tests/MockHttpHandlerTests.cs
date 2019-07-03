@@ -289,7 +289,14 @@ namespace HttpClientMock
 				Field3 = DateTime.UtcNow
 			};
 			string jsonPostContent = JsonConvert.SerializeObject(postObject);
-			var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json");
+			var lastModified = new DateTime(2018, 4, 12, 7, 22, 43, DateTimeKind.Local);
+			var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json")
+			{
+				Headers =
+				{
+					LastModified = lastModified
+				}
+			};
 
 			_sut
 				.When(matching => matching
@@ -298,8 +305,10 @@ namespace HttpClientMock
 					.QueryString("test2", "value")
 					.Method("POST")
 					.Content(jsonPostContent)
+					.PartialContent(jsonPostContent.Substring(10))
 					.ContentType("application/json; charset=utf-8")
 					.Headers("Content-Length", 76)
+					.Headers("Last-Modified", lastModified)
 					.Any(any => any
 						.Url("not-matching")
 						.Url("**controller**")
@@ -316,7 +325,11 @@ namespace HttpClientMock
 
 			// Act
 			await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
-			HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value", postContent);
+			var req = new HttpRequestMessage(HttpMethod.Post, "http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value")
+			{
+				Content = postContent
+			};
+			HttpResponseMessage response = await _httpClient.SendAsync(req);
 
 
 			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
