@@ -6,6 +6,12 @@
 
   <Import Project="..\Package.props" />
 
+  <PropertyGroup>
+    <Description>Configure mock HTTP responses on HttpClient and verify request expectations, with an experience inspired by Moq.</Description>
+    <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
+    <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
+  </PropertyGroup>
+  
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />

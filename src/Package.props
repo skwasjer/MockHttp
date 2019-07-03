@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Martijn Bodeman</Authors>
+    <Authors>skwas</Authors>
     <Company></Company>
     <Copyright>Copyright © 2019</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/skwasjer/[TODO]</RepositoryUrl>
+    <RepositoryUrl>https://github.com/skwasjer/MockHttp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageIconUrl>https://raw.githubusercontent.com/skwasjer/[TODO]/master/assets/PackageIcon64.png</PackageIconUrl>
+    <!--PackageIconUrl>https://raw.githubusercontent.com/skwasjer/MockHttp/master/assets/PackageIcon64.png</PackageIconUrl-->
   </PropertyGroup>
 
   <PropertyGroup>
