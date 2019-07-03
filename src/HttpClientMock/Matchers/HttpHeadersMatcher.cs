@@ -65,10 +65,12 @@ namespace HttpClientMock.Matchers
 		{
 			return headers != null
 				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> values)
-				&& values.Any(v =>
-					expectedHeader.Value.All(
-						eh => HttpHeadersCollection.ParseHttpHeaderValue(v).Contains(eh)
-					)
+				&& values.Any(v => 
+					expectedHeader.Value
+						.SelectMany(HttpHeadersCollection.ParseHttpHeaderValue)
+						.All(
+							eh => HttpHeadersCollection.ParseHttpHeaderValue(v).Contains(eh)
+						)
 				);
 		}
 	}

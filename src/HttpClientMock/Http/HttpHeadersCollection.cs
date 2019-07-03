@@ -57,6 +57,7 @@ namespace HttpClientMock.Http
 			return headerValue
 				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(v => v.Trim())
+				.Where(v => v.Length > 0)
 				.ToArray();
 		}
 	}
