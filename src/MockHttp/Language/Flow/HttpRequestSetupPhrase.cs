@@ -15,12 +15,12 @@ namespace MockHttp.Language.Flow
 			_setup = setup ?? throw new ArgumentNullException(nameof(setup));
 		}
 
-		public IResponseResult RespondWith(Func<Task<HttpResponseMessage>> response)
+		public IResponseResult Respond(Func<Task<HttpResponseMessage>> response)
 		{
-			return RespondWith(_ => response());
+			return Respond(_ => response());
 		}
 
-		public IResponseResult RespondWith(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public IResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
 			_setup.SetResponse(response);
 			return this;
@@ -43,14 +43,14 @@ namespace MockHttp.Language.Flow
 
 		public IThrowsResult Throws(Exception exception)
 		{
-			RespondWith(() => throw exception);
+			Respond(() => throw exception);
 			return this;
 		}
 
 		public IThrowsResult Throws<TException>()
 			where TException : Exception, new()
 		{
-			RespondWith(_ => throw new TException());
+			Respond(_ => throw new TException());
 			return this;
 		}
 

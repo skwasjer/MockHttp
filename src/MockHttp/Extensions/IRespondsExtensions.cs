@@ -23,9 +23,9 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="response">The function that provides the response message to return for a request.</param>
-		public static IResponseResult RespondWith(this IResponds responds, Func<HttpResponseMessage> response)
+		public static IResponseResult Respond(this IResponds responds, Func<HttpResponseMessage> response)
 		{
-			return responds.RespondWith(_ => response());
+			return responds.Respond(_ => response());
 		}
 
 		/// <summary>
@@ -33,9 +33,9 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="response">The function that provides the response message to return for given request.</param>
-		public static IResponseResult RespondWith(this IResponds responds, Func<HttpRequestMessage, HttpResponseMessage> response)
+		public static IResponseResult Respond(this IResponds responds, Func<HttpRequestMessage, HttpResponseMessage> response)
 		{
-			return responds.RespondWith(request => Task.FromResult(response(request)));
+			return responds.Respond(request => Task.FromResult(response(request)));
 		}
 
 		/// <summary>
@@ -43,9 +43,9 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="response">The response message to return for given request.</param>
-		public static IResponseResult RespondWith(this IResponds responds, HttpResponseMessage response)
+		public static IResponseResult Respond(this IResponds responds, HttpResponseMessage response)
 		{
-			return responds.RespondWith(() => response);
+			return responds.Respond(() => response);
 		}
 
 		/// <summary>
@@ -53,9 +53,9 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
-		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode)
+		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode)
 		{
-			return responds.RespondWith(new HttpResponseMessage(statusCode));
+			return responds.Respond(new HttpResponseMessage(statusCode));
 		}
 
 		/// <summary>
@@ -65,11 +65,11 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, string content, string mediaType)
+		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content, string mediaType)
 		{
 			var sc = new StringContent(content);
 			sc.Headers.ContentType = MediaTypeHeaderValue.Parse(mediaType);
-			return responds.RespondWith(new HttpResponseMessage(statusCode)
+			return responds.Respond(new HttpResponseMessage(statusCode)
 			{
 				Content = sc
 			});
@@ -83,9 +83,9 @@ namespace MockHttp
 		/// <param name="content">The response content.</param>
 		/// <param name="encoding">The encoding.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
+		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
 		{
-			return responds.RespondWith(new HttpResponseMessage(statusCode)
+			return responds.Respond(new HttpResponseMessage(statusCode)
 			{
 				Content = new StringContent(content, encoding, mediaType)
 			});
@@ -97,9 +97,9 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, Stream content)
+		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, Stream content)
 		{
-			return responds.RespondWith(new HttpResponseMessage(statusCode)
+			return responds.Respond(new HttpResponseMessage(statusCode)
 			{
 				Content = new StreamContent(content)
 			});
@@ -115,9 +115,9 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult RespondWith<T>(this IResponds responds, HttpStatusCode statusCode, T content)
+		public static IResponseResult Respond<T>(this IResponds responds, HttpStatusCode statusCode, T content)
 		{
-			return responds.RespondWith(statusCode, content, JsonFormatter);
+			return responds.Respond(statusCode, content, JsonFormatter);
 		}
 
 		/// <summary>
@@ -127,9 +127,9 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaTypeFormatter">The media type formatter</param>
-		public static IResponseResult RespondWith<T>(this IResponds responds, HttpStatusCode statusCode, T content, MediaTypeFormatter mediaTypeFormatter)
+		public static IResponseResult Respond<T>(this IResponds responds, HttpStatusCode statusCode, T content, MediaTypeFormatter mediaTypeFormatter)
 		{
-			return responds.RespondWith(new HttpResponseMessage(statusCode)
+			return responds.Respond(new HttpResponseMessage(statusCode)
 			{
 				Content = new ObjectContent<T>(content, mediaTypeFormatter)
 			});

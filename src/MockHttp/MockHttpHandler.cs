@@ -94,7 +94,7 @@ namespace MockHttp
 			_fallbackSetup.Reset();
 			_setups.Clear();
 
-			Fallback.RespondWith(_ => CreateDefaultResponse());
+			Fallback.Respond(_ => CreateDefaultResponse());
 		}
 
 		/// <summary>

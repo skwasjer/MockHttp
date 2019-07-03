@@ -75,7 +75,7 @@ namespace MockHttp
 		{
 			var response = new HttpResponseMessage();
 			_sut.When(matching => { })
-				.RespondWith(response);
+				.Respond(response);
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -104,7 +104,7 @@ namespace MockHttp
 			const string expectedReason = "Callback is called = True";
 			_sut.When(matching => { })
 				.Callback(() => callbackCalled = true)
-				.RespondWith(() => new HttpResponseMessage { ReasonPhrase = $"Callback is called = {callbackCalled}" });
+				.Respond(() => new HttpResponseMessage { ReasonPhrase = $"Callback is called = {callbackCalled}" });
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -165,7 +165,7 @@ namespace MockHttp
 		public async Task Given_expectation_fails_when_verifying_should_throw()
 		{
 			_sut.When(matching => matching.Method(HttpMethod.Post))
-				.RespondWith(HttpStatusCode.OK)
+				.Respond(HttpStatusCode.OK)
 				.Verifiable();
 
 			await _httpClient.GetAsync("");
@@ -183,7 +183,7 @@ namespace MockHttp
 		public async Task Given_expectation_succeeds_when_verifying_should_throw()
 		{
 			_sut.When(matching => matching.Method(HttpMethod.Get))
-				.RespondWith(HttpStatusCode.OK)
+				.Respond(HttpStatusCode.OK)
 				.Verifiable();
 
 			await _httpClient.GetAsync("");
@@ -320,7 +320,7 @@ namespace MockHttp
 				{
 				})
 				//.Throws<Exception>();
-				.RespondWith(() =>
+				.Respond(() =>
 					new HttpResponseMessage(HttpStatusCode.Accepted)
 				)
 				.Verifiable();
