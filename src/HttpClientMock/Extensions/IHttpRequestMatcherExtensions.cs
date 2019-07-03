@@ -11,6 +11,7 @@ namespace HttpClientMock
 		/// </summary>
 		/// <param name="matchers">The matchers to check against the <paramref name="request"/>.</param>
 		/// <param name="request">The request to check.</param>
+		/// <param name="notMatchedOn">A list of matches that were not matched by the request.</param>
 		/// <returns><see langword="true" /> if all <paramref name="matchers"/> match the <paramref name="request"/>.</returns>
 		public static bool All(this IEnumerable<IHttpRequestMatcher> matchers, HttpRequestMessage request, out IEnumerable<IHttpRequestMatcher> notMatchedOn)
 		{

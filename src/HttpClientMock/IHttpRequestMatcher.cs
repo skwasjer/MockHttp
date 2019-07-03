@@ -3,7 +3,7 @@
 namespace HttpClientMock
 {
 	/// <summary>
-	/// Describes a condition for matching a <see cref="HttpRequestMessage"/>.
+	/// Represents a condition for matching a <see cref="HttpRequestMessage"/>.
 	/// </summary>
 	public interface IHttpRequestMatcher
 	{

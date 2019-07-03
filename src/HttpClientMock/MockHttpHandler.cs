@@ -10,11 +10,17 @@ using HttpClientMock.Language.Flow;
 
 namespace HttpClientMock
 {
+	/// <summary>
+	/// Represents a message handler that can be used to mock HTTP responses and verify HTTP requests sent via <see cref="HttpClient"/>.
+	/// </summary>
 	public sealed class MockHttpHandler : HttpMessageHandler
 	{
 		private readonly List<HttpCall> _setups;
 		private readonly HttpCall _fallbackSetup;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MockHttpHandler"/> class.
+		/// </summary>
 		public MockHttpHandler()
 		{
 			_setups = new List<HttpCall>();
@@ -25,8 +31,14 @@ namespace HttpClientMock
 			Reset();
 		}
 
+		/// <summary>
+		/// Gets a collection of invoked requests that were handled.
+		/// </summary>
 		public IInvokedHttpRequestCollection InvokedRequests { get; }
 
+		/// <summary>
+		/// Gets a fallback configurer that can be used to configure the default response if no expectation was matched.
+		/// </summary>
 		public IRespondsThrows Fallback { get; }
 
 		/// <inheritdoc />
@@ -52,6 +64,11 @@ namespace HttpClientMock
 			return setup.SendAsync(request, cancellationToken);
 		}
 
+		/// <summary>
+		/// Configures a condition for an expectation. If the condition evaluates to <see langword="false"/>, the expectation is not matched.
+		/// </summary>
+		/// <param name="matching">The request match builder.</param>
+		/// <returns>The configured request.</returns>
 		public IConfiguredRequest When(Action<RequestMatching> matching)
 		{
 			if (matching == null)
@@ -73,7 +90,7 @@ namespace HttpClientMock
 		/// </summary>
 		public void Reset()
 		{
-			InvokedRequests.Reset();
+			InvokedRequests.Clear();
 			_fallbackSetup.Reset();
 			_setups.Clear();
 

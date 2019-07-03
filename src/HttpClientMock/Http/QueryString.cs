@@ -53,10 +53,7 @@ namespace HttpClientMock.Http
 			// If query string contains terminator, strip it off.
 			string stripped = queryString.Split(TokenTerminator)[0];
 			// If begins with question mark, strip it off.
-			if (stripped.StartsWith(TokenQuestionMark.ToString(), StringComparison.OrdinalIgnoreCase))
-			{
-				stripped = stripped.TrimStart(TokenQuestionMark);
-			}
+			stripped = stripped.TrimStart(TokenQuestionMark);
 
 			if (stripped.Length == 0)
 			{

@@ -4,6 +4,8 @@
     <TargetFrameworks>netstandard2.0;netstandard1.1;net45</TargetFrameworks>
   </PropertyGroup>
 
+  <Import Project="..\Package.props" />
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />

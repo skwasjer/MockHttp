@@ -65,7 +65,7 @@ namespace HttpClientMock
 			}
 		}
 
-		public void Reset()
+		public void Clear()
 		{
 			lock (_syncLock)
 			{

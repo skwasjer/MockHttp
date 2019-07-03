@@ -4,6 +4,9 @@ using System.ComponentModel;
 
 namespace HttpClientMock
 {
+	/// <summary>
+	/// A builder to configure request matchers.
+	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public class RequestMatching : IFluentInterface
 	{
@@ -13,6 +16,12 @@ namespace HttpClientMock
 		{
 		}
 
+		/// <summary>
+		/// Adds or replaces an existing matcher by type.
+		/// </summary>
+		/// <typeparam name="TMatcher">The type of matcher to add or replace.</typeparam>
+		/// <param name="matcher">The new matcher instance.</param>
+		/// <returns>The request matching builder.</returns>
 		public RequestMatching Replace<TMatcher>(TMatcher matcher)
 			where TMatcher : IHttpRequestMatcher
 		{
@@ -20,6 +29,11 @@ namespace HttpClientMock
 			return With(matcher);
 		}
 
+		/// <summary>
+		/// Adds a matcher.
+		/// </summary>
+		/// <param name="matcher">The matcher instance.</param>
+		/// <returns>The request matching builder.</returns>
 		public RequestMatching With(IHttpRequestMatcher matcher)
 		{
 			_matchers.Add(matcher);

@@ -3,13 +3,24 @@ using System.Net.Http;
 
 namespace HttpClientMock.Matchers
 {
+	/// <summary>
+	/// Matches a request by HTTP method.
+	/// </summary>
 	public class HttpMethodMatcher : ValueMatcher<HttpMethod>
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HttpMethodMatcher"/> class using specified <paramref name="method"/>.
+		/// </summary>
+		/// <param name="method">The HTTP method.</param>
 		public HttpMethodMatcher(string method)
 			: this(new HttpMethod(method))
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HttpMethodMatcher"/> class using specified <paramref name="method"/>.
+		/// </summary>
+		/// <param name="method">The HTTP method.</param>
 		public HttpMethodMatcher(HttpMethod method)
 			: base(method)
 		{
@@ -25,6 +36,7 @@ namespace HttpClientMock.Matchers
 			return request.Method == Value;
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Method: {Value.Method}";

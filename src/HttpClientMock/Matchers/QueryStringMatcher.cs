@@ -7,32 +7,45 @@ using HttpClientMock.Http;
 
 namespace HttpClientMock.Matchers
 {
+	/// <summary>
+	/// Matches a request by the request URI query string.
+	/// </summary>
 	public class QueryStringMatcher : IHttpRequestMatcher
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly QueryString _matchQs;
 
-		public QueryStringMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> values)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="QueryStringMatcher"/> class using specified query string parameters.
+		/// </summary>
+		/// <param name="parameters">The query string parameters.</param>
+		public QueryStringMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters)
 		{
-			if (values == null)
+			if (parameters == null)
 			{
-				throw new ArgumentNullException(nameof(values));
+				throw new ArgumentNullException(nameof(parameters));
 			}
 
-			_matchQs = new QueryString(values);
+			_matchQs = new QueryString(parameters);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="QueryStringMatcher"/> class using specified query string.
+		/// </summary>
+		/// <param name="queryString">The query string.</param>
 		public QueryStringMatcher(string queryString)
 			: this(QueryString.Parse(queryString))
 		{
 		}
 
+		/// <inheritdoc />
 		public bool IsMatch(HttpRequestMessage request)
 		{
 			QueryString query = QueryString.Parse(request.RequestUri.Query);
 			return _matchQs.All(q => query.ContainsKey(q.Key) && query[q.Key].Any(qv => q.Value.Contains(qv)));
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Query string: '{_matchQs}'";

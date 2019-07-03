@@ -13,6 +13,9 @@ using HttpClientMock.Language.Flow;
 
 namespace HttpClientMock
 {
+	/// <summary>
+	/// Extensions for <see cref="IResponds"/>.
+	/// </summary>
 	public static class IRespondsExtensions
 	{
 		/// <summary>
@@ -34,17 +37,34 @@ namespace HttpClientMock
 		{
 			return responds.RespondWith(request => Task.FromResult(response(request)));
 		}
-		
+
+		/// <summary>
+		/// Specifies the <paramref name="response"/> message for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="response">The response message to return for given request.</param>
 		public static IResponseResult RespondWith(this IResponds responds, HttpResponseMessage response)
 		{
 			return responds.RespondWith(() => response);
 		}
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> response for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
 		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode)
 		{
 			return responds.RespondWith(new HttpResponseMessage(statusCode));
 		}
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/>, <paramref name="content"/> and <paramref name="mediaType"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaType">The media type.</param>
 		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, string content, string mediaType)
 		{
 			var sc = new StringContent(content);
@@ -55,6 +75,14 @@ namespace HttpClientMock
 			});
 		}
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/>, <paramref name="content"/>, <paramref name="encoding"/> and <paramref name="mediaType"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		/// <param name="encoding">The encoding.</param>
+		/// <param name="mediaType">The media type.</param>
 		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
 		{
 			return responds.RespondWith(new HttpResponseMessage(statusCode)
@@ -63,6 +91,12 @@ namespace HttpClientMock
 			});
 		}
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
 		public static IResponseResult RespondWith(this IResponds responds, HttpStatusCode statusCode, Stream content)
 		{
 			return responds.RespondWith(new HttpResponseMessage(statusCode)
@@ -75,11 +109,24 @@ namespace HttpClientMock
 #if !NETSTANDARD1_1
 		private static readonly JsonMediaTypeFormatter JsonFormatter = new JsonMediaTypeFormatter();
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
 		public static IResponseResult RespondWith<T>(this IResponds responds, HttpStatusCode statusCode, T content)
 		{
 			return responds.RespondWith(statusCode, content, JsonFormatter);
 		}
 
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaTypeFormatter">The media type formatter</param>
 		public static IResponseResult RespondWith<T>(this IResponds responds, HttpStatusCode statusCode, T content, MediaTypeFormatter mediaTypeFormatter)
 		{
 			return responds.RespondWith(new HttpResponseMessage(statusCode)

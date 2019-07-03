@@ -101,6 +101,7 @@ namespace HttpClientMock
 
 		internal string GetErrorMessage(int actualCount, string becauseMessage) => string.Format(CultureInfo.CurrentCulture, _message, becauseMessage, actualCount);
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"{GetType().Name}.{_name}";

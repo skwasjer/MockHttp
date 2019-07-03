@@ -34,6 +34,7 @@ namespace HttpClientMock
 		}
 
 #if NETFRAMEWORK
+		/// <inheritdoc />
 		protected HttpMockException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{

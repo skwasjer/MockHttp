@@ -4,8 +4,15 @@ using System.Text;
 
 namespace HttpClientMock.Matchers
 {
+	/// <summary>
+	/// Matches a request by partially matching the request content.
+	/// </summary>
 	public class PartialContentMatcher : ContentMatcher
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PartialContentMatcher"/> class using specified <paramref name="content"/> and <see cref="ContentMatcher.DefaultEncoding"/>.
+		/// </summary>
+		/// <param name="content">The request content to match.</param>
 		public PartialContentMatcher(string content)
 			: base(content)
 		{
@@ -15,6 +22,11 @@ namespace HttpClientMock.Matchers
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PartialContentMatcher"/> class using specified <paramref name="content"/>.
+		/// </summary>
+		/// <param name="content">The request content to match.</param>
+		/// <param name="encoding">The content encoding.</param>
 		public PartialContentMatcher(string content, Encoding encoding)
 			: base(content, encoding)
 		{
@@ -24,6 +36,10 @@ namespace HttpClientMock.Matchers
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PartialContentMatcher"/> class using specified raw <paramref name="content"/>.
+		/// </summary>
+		/// <param name="content">The request content to match.</param>
 		public PartialContentMatcher(byte[] content)
 			: base(content)
 		{
@@ -33,9 +49,10 @@ namespace HttpClientMock.Matchers
 			}
 		}
 
-		protected override bool IsMatch(byte[] receivedContent)
+		/// <inheritdoc />
+		protected override bool IsMatch(byte[] requestContent)
 		{
-			return Contains(receivedContent, Value);
+			return Contains(requestContent, Value);
 		}
 
 		// TODO: move to util/extension?
