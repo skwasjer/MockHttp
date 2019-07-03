@@ -307,7 +307,7 @@ namespace MockHttp
 					.Content(jsonPostContent)
 					.PartialContent(jsonPostContent.Substring(10))
 					.ContentType("application/json; charset=utf-8")
-					.Headers("Content-Length", 76)
+					.Headers("Content-Length", jsonPostContent.Length)
 					.Headers("Last-Modified", lastModified)
 					.Any(any => any
 						.Url("not-matching")
