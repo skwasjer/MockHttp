@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -366,6 +367,17 @@ namespace MockHttp
 			var anyRequestMatching = new RequestMatching();
 			anyBuilder(anyRequestMatching);
 			return builder.With(new AnyMatcher(anyRequestMatching.Build()));
+		}
+
+		/// <summary>
+		/// Matches a request using a custom expression.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="expression">The expression.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching When(this RequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
+		{
+			return builder.With(new ExpressionMatcher(expression));
 		}
 	}
 }

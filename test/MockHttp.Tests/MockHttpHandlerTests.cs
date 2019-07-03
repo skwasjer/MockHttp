@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using MockHttp.Language;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -313,6 +314,7 @@ namespace MockHttp
 						.Url("not-matching")
 						.Url("**controller**")
 					)
+					.When(r => 0 < r.Version.Major)
 				)
 				.Callback(() =>
 				{
