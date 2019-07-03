@@ -3,7 +3,7 @@ using System.Net.Http;
 
 namespace HttpClientMock.Matchers
 {
-	public class HttpMethodMatcher : IHttpRequestMatcher
+	public class HttpMethodMatcher : ValueMatcher<HttpMethod>
 	{
 		public HttpMethodMatcher(string method)
 			: this(new HttpMethod(method))
@@ -11,21 +11,23 @@ namespace HttpClientMock.Matchers
 		}
 
 		public HttpMethodMatcher(HttpMethod method)
+			: base(method)
 		{
-			ExpectedMethod = method ?? throw new ArgumentNullException(nameof(method));
+			if (method == null)
+			{
+				throw new ArgumentNullException(nameof(method));
+			}
 		}
 
-		public HttpMethod ExpectedMethod { get; }
-
 		/// <inheritdoc />
-		public bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
-			return request.Method == ExpectedMethod;
+			return request.Method == Value;
 		}
 
 		public override string ToString()
 		{
-			return $"Method: {ExpectedMethod.Method}";
+			return $"Method: {Value.Method}";
 		}
 	}
 }

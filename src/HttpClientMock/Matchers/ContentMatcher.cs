@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HttpClientMock.Matchers
 {
-	public class ContentMatcher : IHttpRequestMatcher
+	public class ContentMatcher : ValueMatcher<byte[]>
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private static readonly Encoding DefaultEncoding = Encoding.UTF8;
@@ -32,24 +32,26 @@ namespace HttpClientMock.Matchers
 		}
 
 		public ContentMatcher(byte[] content)
+			: base(content)
 		{
-			ExpectedContent = content ?? throw new ArgumentNullException(nameof(content));
+			if (content == null)
+			{
+				throw new ArgumentNullException(nameof(content));
+			}
 		}
 
-		public byte[] ExpectedContent { get; }
-
 		/// <inheritdoc />
-		public virtual bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
 			// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
 			// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
 			byte[] receivedContent = request.Content?.ReadAsByteArrayAsync().GetAwaiter().GetResult();
 			if (receivedContent == null)
 			{
-				return ExpectedContent.Length == 0;
+				return Value.Length == 0;
 			}
 
-			if (receivedContent.Length == 0 && ExpectedContent.Length == 0)
+			if (receivedContent.Length == 0 && Value.Length == 0)
 			{
 				return true;
 			}
@@ -59,17 +61,17 @@ namespace HttpClientMock.Matchers
 
 		protected virtual bool IsMatch(byte[] receivedContent)
 		{
-			return receivedContent.SequenceEqual(ExpectedContent);
+			return receivedContent.SequenceEqual(Value);
 		}
 
 		public override string ToString()
 		{
 			if (_encoding != null)
 			{
-				return $"Content: {_encoding.GetString(ExpectedContent, 0, ExpectedContent.Length)}";
+				return $"Content: {_encoding.GetString(Value, 0, Value.Length)}";
 			}
 
-			string msg = string.Join(",", ExpectedContent.Take(Math.Min(10, ExpectedContent.Length)).Select(b => b.ToString("x2", CultureInfo.InvariantCulture)));
+			string msg = string.Join(",", Value.Take(Math.Min(10, Value.Length)).Select(b => b.ToString("x2", CultureInfo.InvariantCulture)));
 			return $"Content: [{msg}]";
 		}
 	}
