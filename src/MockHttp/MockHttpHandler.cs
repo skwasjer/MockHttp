@@ -167,12 +167,17 @@ namespace MockHttp
 			Verify(unverifiedSetups);
 		}
 
-		private static void Verify(IEnumerable<HttpCall> verifiableSetups)
+		private void Verify(IEnumerable<HttpCall> verifiableSetups)
 		{
 			List<HttpCall> expectedInvocations = verifiableSetups.Where(setup => !setup.VerifyIfInvoked()).ToList();
 			if (expectedInvocations.Any())
 			{
-				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}");
+				var requestsSeen = string.Join(Environment.NewLine, InvokedRequests.Select(ir => ir.Request.ToString()));
+				if (requestsSeen.Length > 0)
+				{
+					requestsSeen = Environment.NewLine + "Seen requests: " + requestsSeen;
+				}
+				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}{requestsSeen}");
 			}
 		}
 
