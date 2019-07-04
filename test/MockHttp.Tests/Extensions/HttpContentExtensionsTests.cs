@@ -81,12 +81,7 @@ namespace MockHttp.Extensions
 
 			var mpc = new MultipartContent("subtype", "boundary");
 			mpc.Add(new StringContent(data));
-			yield return CreateTestCase(mpc, @"--boundary
-Content-Type: text/plain; charset=utf-8
-
-<b>data</b>
---boundary--
-");
+			yield return CreateTestCase(mpc, $"--boundary{Environment.NewLine}Content-Type: text/plain; charset=utf-8{Environment.NewLine}{Environment.NewLine}<b>data</b>{Environment.NewLine}--boundary--{Environment.NewLine}");
 #if !NETCOREAPP1_1
 			yield return CreateTestCase(new ObjectContent(typeof(string), data, new JsonMediaTypeFormatter()), $"\"{data}\"");
 #endif
