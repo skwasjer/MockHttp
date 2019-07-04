@@ -1,6 +1,8 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -60,7 +62,7 @@ namespace MockHttp.Matchers
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(request).Should().BeTrue("the content should be buffered and matchable more than once");
 		}
 
 		[Fact]
@@ -91,6 +93,83 @@ namespace MockHttp.Matchers
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
+		}
+
+		[Fact]
+		public void Given_null_content_string_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher((string)null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_empty_content_string_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher(string.Empty);
+
+			// Assert
+			act.Should().Throw<ArgumentException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_null_content_string_with_encoding_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher(null, Encoding.UTF8);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_empty_content_string_with_encoding_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher(string.Empty, Encoding.UTF8);
+
+			// Assert
+			act.Should().Throw<ArgumentException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_content_string_with_null_encoding_when_creating_matcher_should_not_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher("data", null);
+
+			// Assert
+			act.Should().NotThrow("default encoding should be used instead");
+		}
+
+		[Fact]
+		public void Given_null_content_bytes_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher((byte[])null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_empty_content_bytes_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new PartialContentMatcher(new byte[0]);
+
+			// Assert
+			act.Should().Throw<ArgumentException>().WithParamName("content");
 		}
 	}
 }

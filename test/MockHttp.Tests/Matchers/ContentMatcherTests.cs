@@ -1,6 +1,8 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -61,7 +63,7 @@ namespace MockHttp.Matchers
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(request).Should().BeTrue("the content should be buffered and matchable more than once");
 		}
 
 		[Fact]
@@ -84,6 +86,50 @@ namespace MockHttp.Matchers
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
+		}
+
+		[Fact]
+		public void Given_null_content_string_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new ContentMatcher((string)null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_null_content_string_with_encoding_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new ContentMatcher(null, Encoding.UTF8);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
+		}
+
+		[Fact]
+		public void Given_content_string_with_null_encoding_when_creating_matcher_should_not_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new ContentMatcher("data", null);
+
+			// Assert
+			act.Should().NotThrow("default encoding should be used instead");
+		}
+
+		[Fact]
+		public void Given_null_content_bytes_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new ContentMatcher((byte[])null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("content");
 		}
 	}
 }

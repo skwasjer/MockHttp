@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -53,5 +54,40 @@ namespace MockHttp.Matchers
 			_sut.IsMatch(request).Should().BeFalse();
 		}
 
+		[Fact]
+		public void Given_queryString_and_no_expected_queryString_when_matching_should_not_match()
+		{
+			_sut = new QueryStringMatcher("");
+
+			var request = new HttpRequestMessage
+			{
+				RequestUri = new Uri("http://localhost/?unexpected=query")
+			};
+
+			// Act & assert
+			_sut.IsMatch(request).Should().BeFalse("no query string was expected");
+		}
+
+		[Fact]
+		public void Given_null_queryString_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new QueryStringMatcher((string)null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("queryString");
+		}
+
+		[Fact]
+		public void Given_null_parameters_when_creating_matcher_should_throw()
+		{
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
+
+			// Assert
+			act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
+		}
 	}
 }

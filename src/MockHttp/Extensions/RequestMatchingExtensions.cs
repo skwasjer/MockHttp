@@ -91,6 +91,16 @@ namespace MockHttp
 		}
 
 		/// <summary>
+		/// Matches a request explicitly that has no request content.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching WithoutQueryString(this RequestMatching builder)
+		{
+			return builder.Replace(new QueryStringMatcher(""));
+		}
+
+		/// <summary>
 		/// Matches a request by HTTP method.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>

@@ -33,7 +33,7 @@ namespace MockHttp.Matchers
 		/// </summary>
 		/// <param name="content">The request content to match.</param>
 		public ContentMatcher(string content)
-			: this(content, DefaultEncoding)
+			: this(content ?? throw new ArgumentNullException(nameof(content)), DefaultEncoding)
 		{
 		}
 
@@ -43,7 +43,7 @@ namespace MockHttp.Matchers
 		/// <param name="content">The request content to match.</param>
 		/// <param name="encoding">The content encoding.</param>
 		public ContentMatcher(string content, Encoding encoding)
-			: this((encoding ?? DefaultEncoding).GetBytes(content))
+			: this((encoding ?? DefaultEncoding).GetBytes(content ?? throw new ArgumentNullException(nameof(content))))
 		{
 			_encoding = encoding ?? DefaultEncoding;
 		}

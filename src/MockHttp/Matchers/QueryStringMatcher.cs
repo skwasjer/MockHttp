@@ -42,6 +42,13 @@ namespace MockHttp.Matchers
 		public bool IsMatch(HttpRequestMessage request)
 		{
 			QueryString query = QueryString.Parse(request.RequestUri.Query);
+
+			// When match collection is empty, behavior is flipped, and we expect no query string parameters on request.
+			if (_matchQs.Count == 0 && query.Count > 0)
+			{
+				return false;
+			}
+
 			return _matchQs.All(q => query.ContainsKey(q.Key) && query[q.Key].Any(qv => q.Value.Contains(qv)));
 		}
 
