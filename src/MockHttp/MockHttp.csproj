@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard2.0;netstandard1.1;net45</TargetFrameworks>
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <Import Project="..\Package.props" />
