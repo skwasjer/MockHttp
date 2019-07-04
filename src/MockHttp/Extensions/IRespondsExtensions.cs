@@ -205,7 +205,7 @@ namespace MockHttp
 
 #if !NETSTANDARD1_1
 		private static readonly JsonMediaTypeFormatter JsonFormatter = new JsonMediaTypeFormatter();
-
+#endif
 		/// <summary>
 		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
 		/// </summary>
@@ -226,7 +226,21 @@ namespace MockHttp
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
 		public static IResponseResult RespondJson<T>(this IResponds responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType)
 		{
+#if !NETSTANDARD1_1
 			return responds.Respond(statusCode, content, JsonFormatter, mediaType);
+#else
+			var jsonContent = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(content))
+			{
+				Headers =
+				{
+					ContentType = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8")
+				}
+			};
+			return responds.Respond(() => new HttpResponseMessage(statusCode)
+			{
+				Content = jsonContent
+			});
+#endif
 		}
 
 		/// <summary>
@@ -238,9 +252,14 @@ namespace MockHttp
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
 		public static IResponseResult RespondJson<T>(this IResponds responds, HttpStatusCode statusCode, T content, string mediaType)
 		{
+#if !NETSTANDARD1_1
 			return responds.Respond(statusCode, content, JsonFormatter, mediaType);
+#else
+			return responds.RespondJson(statusCode, content, mediaType == null ? null : new MediaTypeHeaderValue(mediaType));
+#endif
 		}
 
+#if !NETSTANDARD1_1
 		/// <summary>
 		/// Specifies the <paramref name="statusCode"/> and <paramref name="value"/> to respond with for a request.
 		/// </summary>

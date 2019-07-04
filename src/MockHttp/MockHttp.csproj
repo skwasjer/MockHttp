@@ -23,6 +23,7 @@
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard1'))">
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard2'))">

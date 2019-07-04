@@ -306,7 +306,7 @@ namespace MockHttp
 				.When(matching => matching
 					.Url("http://0.0.0.1/**")
 					.QueryString("test", "$%^&*")
-					.QueryString("test2", "value")
+					.QueryString("test2=value")
 					.Method("POST")
 					.Content(jsonPostContent)
 					.PartialContent(jsonPostContent.Substring(10))
@@ -323,7 +323,11 @@ namespace MockHttp
 				{
 				})
 				//.Throws<Exception>();
-				.Respond(HttpStatusCode.Accepted)
+				.RespondJson(HttpStatusCode.Accepted, new
+				{
+					firstName = "John",
+					lastName = "Doe"
+				})
 				.Verifiable();
 
 			// Act
@@ -340,6 +344,11 @@ namespace MockHttp
 			_sut.VerifyAll();
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+			(await response.Content.ReadAsStringAsync()).Should().Be(JsonConvert.SerializeObject(new
+			{
+				firstName = "John",
+				lastName = "Doe"
+			}));
 		}
 
 		[Theory]
