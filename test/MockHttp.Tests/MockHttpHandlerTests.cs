@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -73,7 +74,11 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_request_is_configured_to_return_response_when_sending_request_should_return_response()
 		{
-			var response = new HttpResponseMessage();
+			const string data = "data";
+			var response = new HttpResponseMessage
+			{
+				Content = new StringContent(data)
+			};
 			_sut.When(matching => { })
 				.Respond(response);
 
@@ -81,7 +86,9 @@ namespace MockHttp
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
 
 			// Assert
-			actualResponse.Should().BeSameAs(response);
+			actualResponse.Should().NotBeNull();
+			actualResponse.Content.Should().NotBeNull();
+			(await actualResponse.Content.ReadAsStringAsync()).Should().Be(data);
 			_sut.Verify(m => { }, IsSent.Once);
 		}
 
@@ -320,9 +327,7 @@ namespace MockHttp
 				{
 				})
 				//.Throws<Exception>();
-				.Respond(() =>
-					new HttpResponseMessage(HttpStatusCode.Accepted)
-				)
+				.Respond(HttpStatusCode.Accepted)
 				.Verifiable();
 
 			// Act
@@ -339,6 +344,87 @@ namespace MockHttp
 			_sut.VerifyAll();
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+		}
+
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public async Task Given_stream_response_when_sending_requests_it_should_not_throw_for_second_stream_read(bool isSeekableStream)
+		{
+			const string data = "data";
+			byte[] buffer = Encoding.UTF8.GetBytes(data);
+			using (Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream))
+			{
+				_sut.When(matching => { })
+					.Respond(HttpStatusCode.OK, stream, "text/plain")
+					.Verifiable();
+
+				// Act
+				HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
+				HttpResponseMessage secondResponse = null;
+				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
+
+				act.Should().NotThrow();
+
+				_sut.Verify(matching => { }, IsSent.Exactly(2));
+				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+				(await firstResponse.Content.ReadAsStringAsync())
+					.Should().Be(await secondResponse.Content.ReadAsStringAsync())
+					.And.Be(data);
+
+				if (isSeekableStream)
+				{
+					firstResponse.Content.Should().BeOfType<StreamContent>("the content stream is seekable, thus is reset to its original position and read each time");
+				}
+				else
+				{
+					firstResponse.Content.Should().BeOfType<ByteArrayContent>("the content stream is not seekable, thus a buffered byte array is returned");
+				}
+
+				_sut.VerifyNoOtherCalls();
+			}
+		}
+
+		[Fact]
+		public async Task Given_httpContent_response_when_sending_requests_it_should_not_throw_for_second_request_and_return_same_content()
+		{
+			const string data = "data";
+			using (HttpContent httpContent = new StringContent(data))
+			{
+				_sut.When(matching => { })
+					.Respond(HttpStatusCode.OK, httpContent)
+					.Verifiable();
+
+				// Act
+				HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
+				HttpResponseMessage secondResponse = null;
+				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
+
+				act.Should().NotThrow();
+
+				_sut.Verify(matching => { }, IsSent.Exactly(2));
+				firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
+				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+				(await firstResponse.Content.ReadAsStringAsync())
+					.Should().Be(await secondResponse.Content.ReadAsStringAsync())
+					.And.Be(data);
+
+				_sut.VerifyNoOtherCalls();
+			}
+		}
+
+		private class CanSeekMemoryStream : MemoryStream
+		{
+			public CanSeekMemoryStream(byte[] buffer, bool isSeekable)
+				: base(buffer, 0, buffer.Length)
+			{
+				CanSeek = isSeekable;
+			}
+
+			public override bool CanSeek
+			{
+				get;
+			}
 		}
 	}
 }
