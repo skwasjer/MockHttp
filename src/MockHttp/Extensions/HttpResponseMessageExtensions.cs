@@ -14,7 +14,7 @@ namespace MockHttp
 		/// <param name="response"></param>
 		/// <returns></returns>
 		/// <remarks>This does not create a true clone, because inherited messages could have extra properties, and we're not using reflection.</remarks>
-		public static async Task<T> CloneAsync<T>(this T response)
+		public static async Task<T> CloneResponseAsync<T>(this T response)
 			where T : HttpResponseMessage, new()
 		{
 			if (response == default)

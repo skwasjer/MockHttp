@@ -16,7 +16,7 @@ namespace MockHttp.Extensions
 
 			// Act
 			// ReSharper disable once ExpressionIsAlwaysNull
-			HttpResponseMessage clone = await response.CloneAsync();
+			HttpResponseMessage clone = await response.CloneResponseAsync();
 
 			// Assert
 			clone.Should().BeNull();
@@ -39,7 +39,7 @@ namespace MockHttp.Extensions
 			};
 
 			// Act
-			HttpResponseMessage clone = await response.CloneAsync();
+			HttpResponseMessage clone = await response.CloneResponseAsync();
 
 			// Assert
 			clone.Should().BeEquivalentTo(response);

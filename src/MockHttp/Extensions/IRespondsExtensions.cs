@@ -46,7 +46,7 @@ namespace MockHttp
 		/// <param name="response">The response message to return for given request.</param>
 		public static IResponseResult Respond(this IResponds responds, HttpResponseMessage response)
 		{
-			return responds.Respond(response.CloneAsync);
+			return responds.Respond(response.CloneResponseAsync);
 		}
 
 		/// <summary>
