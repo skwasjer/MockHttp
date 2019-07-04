@@ -314,7 +314,7 @@ namespace MockHttp
 						.Url("not-matching")
 						.Url("**controller**")
 					)
-					.When(r => 0 < r.Version.Major)
+					.Where(r => 0 < r.Version.Major)
 				)
 				.Callback(() =>
 				{
