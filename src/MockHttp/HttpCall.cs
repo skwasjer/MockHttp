@@ -38,7 +38,7 @@ namespace MockHttp
 
 		public bool IsInvoked { get; private set; }
 
-		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			IsInvoked = true;
 
@@ -51,7 +51,9 @@ namespace MockHttp
 			cancellationToken.ThrowIfCancellationRequested();
 
 			_callback?.Invoke(request);
-			return _response(request);
+			HttpResponseMessage responseMessage = await _response(request).ConfigureAwait(false);
+			responseMessage.RequestMessage = request;
+			return responseMessage;
 		}
 
 		public void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
