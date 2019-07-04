@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Http
@@ -16,7 +17,7 @@ namespace MockHttp.Http
 			// Assert
 			act.Should()
 				.Throw<ArgumentNullException>()
-				.Which.ParamName.Should().Be("queryString");
+				.WithParamName("queryString");
 		}
 
 		[Fact]
