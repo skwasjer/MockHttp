@@ -75,12 +75,8 @@ namespace MockHttp
 		public async Task Given_request_is_configured_to_return_response_when_sending_request_should_return_response()
 		{
 			const string data = "data";
-			var response = new HttpResponseMessage
-			{
-				Content = new StringContent(data)
-			};
 			_sut.When(matching => { })
-				.Respond(response);
+				.Respond(HttpStatusCode.OK, new StringContent(data));
 
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");

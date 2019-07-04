@@ -40,16 +40,6 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Specifies the <paramref name="response"/> message for a request.
-		/// </summary>
-		/// <param name="responds"></param>
-		/// <param name="response">The response message to return for given request.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpResponseMessage response)
-		{
-			return responds.Respond(response.CloneResponseAsync);
-		}
-
-		/// <summary>
 		/// Specifies the <paramref name="statusCode"/> response for a request.
 		/// </summary>
 		/// <param name="responds"></param>
@@ -286,7 +276,7 @@ namespace MockHttp
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
 		public static IResponseResult Respond<T>(this IResponds responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
 		{
-			return responds.Respond(new HttpResponseMessage(statusCode)
+			return responds.Respond(() => new HttpResponseMessage(statusCode)
 			{
 				Content = new ObjectContent<T>(value, formatter, mediaType)
 			});
