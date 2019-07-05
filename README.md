@@ -41,7 +41,7 @@ mockHttp
 // Set default response.
 mockHttp.Fallback.Respond(HttpStatusCode.BadRequest);
 
-var client = new HttpClient(_sut)
+var client = new HttpClient(mockHttp)
 
 var response = await client.GetAsync("http://localhost/controller/action?test=1");
 
@@ -86,7 +86,7 @@ mockHttp
 
 mockHttp
     .When(...)
-    .RespondJson(..)
+    .RespondJson(new Person { FullName = "John Doe" })
 ```
 
 ## Throwing an exception
