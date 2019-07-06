@@ -49,7 +49,10 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			return _matchQs.All(q => query.ContainsKey(q.Key) && query[q.Key].Any(qv => q.Value.Contains(qv)));
+			return _matchQs.All(q => 
+				query.ContainsKey(q.Key) 
+				&& (query[q.Key].Count() == q.Value.Count() && !q.Value.Any()
+					|| query[q.Key].Any(qv => q.Value.Contains(qv))));
 		}
 
 		/// <inheritdoc />

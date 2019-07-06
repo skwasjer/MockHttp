@@ -12,6 +12,8 @@ namespace MockHttp.Matchers
 		private QueryStringMatcher _sut;
 
 		[Theory]
+		[InlineData("?key", "key", null)]
+		[InlineData("?key=", "key", "")]
 		[InlineData("?key=value", "key", "value")]
 		[InlineData("?key1=value1&key2=value2", "key2", "value2")]
 		[InlineData("?key=value1&key=value2", "key", "value1")]
@@ -25,7 +27,7 @@ namespace MockHttp.Matchers
 
 			_sut = new QueryStringMatcher(new[]
 			{
-				new KeyValuePair<string, IEnumerable<string>>(expectedKey, new [] { expectedValue })
+				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue == null ? null : new [] { expectedValue })
 			});
 
 			// Act & assert
