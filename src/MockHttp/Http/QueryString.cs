@@ -31,9 +31,10 @@ namespace MockHttp.Http
 					throw new FormatException("Key can not be null or empty.");
 				}
 
-				// Accept null values enumerable, but convert individual null values to empty string.
-				// TODO: implement Add, because empty string is possible but not allowed. Even though we checked here, still possible to call Add externally.
-				Add(kvp.Key, kvp.Value?.Select(v => v ?? string.Empty).ToList() ?? new List<string>());
+				// TODO: implement/override Add, because empty string for key is possible but not allowed. Even though we checked here, still possible to call Add externally.
+				// Accept null values enumerable, but then use empty list.
+				// Null values in values enumerable are filtered.
+				Add(kvp.Key, kvp.Value?.Where(v => v != null).ToList() ?? new List<string>());
 			}
 		}
 
@@ -76,7 +77,7 @@ namespace MockHttp.Http
 						}
 
 						string key = Uri.UnescapeDataString(kvp[0]);
-						string value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : string.Empty;
+						string value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : null;
 						return new KeyValuePair<string, string>(key, value);
 					})
 					// Group values for same key.
