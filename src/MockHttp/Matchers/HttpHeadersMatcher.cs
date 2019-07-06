@@ -78,6 +78,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public override bool IsExclusive => false;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Headers: {Value.ToString().TrimEnd('\r', '\n')}";

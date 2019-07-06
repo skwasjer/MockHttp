@@ -13,5 +13,10 @@ namespace MockHttp
 		/// <param name="request">The request to check.</param>
 		/// <returns><see langword="true"/> if the request matches, <see langword="false"/> otherwise.</returns>
 		bool IsMatch(HttpRequestMessage request);
+
+		/// <summary>
+		/// Gets whether the matcher is mutually exclusive to other matchers of the same type.
+		/// </summary>
+		bool IsExclusive { get; }
 	}
 }

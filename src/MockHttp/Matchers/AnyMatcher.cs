@@ -28,6 +28,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public bool IsExclusive => false;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			if (_matchers.Count == 0)

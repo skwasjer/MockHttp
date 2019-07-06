@@ -53,6 +53,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public bool IsExclusive => _matchQs.Count == 0;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Query string: '{_matchQs}'";

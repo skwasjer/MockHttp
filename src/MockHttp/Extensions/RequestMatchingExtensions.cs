@@ -97,7 +97,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching WithoutQueryString(this RequestMatching builder)
 		{
-			return builder.Replace(new QueryStringMatcher(""));
+			return builder.With(new QueryStringMatcher(""));
 		}
 
 		/// <summary>
@@ -276,7 +276,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, string content)
 		{
-			return builder.Replace(new ContentMatcher(content, Encoding.UTF8));
+			return builder.With(new ContentMatcher(content, Encoding.UTF8));
 		}
 
 		/// <summary>
@@ -288,7 +288,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding)
 		{
-			return builder.Replace(new ContentMatcher(content, encoding));
+			return builder.With(new ContentMatcher(content, encoding));
 		}
 
 		/// <summary>
@@ -299,7 +299,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, byte[] content)
 		{
-			return builder.Replace(new ContentMatcher(content));
+			return builder.With(new ContentMatcher(content));
 		}
 
 		/// <summary>
@@ -313,7 +313,7 @@ namespace MockHttp
 			using (var ms = new MemoryStream())
 			{
 				content.CopyTo(ms);
-				return builder.Replace(new ContentMatcher(ms.ToArray()));
+				return builder.With(new ContentMatcher(ms.ToArray()));
 			}
 		}
 
@@ -324,7 +324,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching WithoutContent(this RequestMatching builder)
 		{
-			return builder.Replace(new ContentMatcher());
+			return builder.With(new ContentMatcher());
 		}
 
 		/// <summary>
@@ -369,7 +369,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Any(this RequestMatching builder, Action<RequestMatching> anyBuilder)
 		{
-			var anyRequestMatching = new RequestMatching();
+			var anyRequestMatching = new AnyRequestMatching();
 			anyBuilder(anyRequestMatching);
 			return builder.With(new AnyMatcher(anyRequestMatching.Build()));
 		}

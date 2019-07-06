@@ -37,6 +37,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public override bool IsExclusive => true;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Method: {Value.Method}";

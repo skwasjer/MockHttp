@@ -19,22 +19,6 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Adds or replaces an existing matcher by type.
-		/// </summary>
-		/// <param name="matcher">The new matcher instance.</param>
-		/// <returns>The request matching builder.</returns>
-		public RequestMatching Replace(IHttpRequestMatcher matcher)
-		{
-			if (matcher == null)
-			{
-				throw new ArgumentNullException(nameof(matcher));
-			}
-
-			_matchers.RemoveAll(m => m.GetType() == matcher.GetType());
-			return With(matcher);
-		}
-
-		/// <summary>
 		/// Adds a matcher.
 		/// </summary>
 		/// <param name="matcher">The matcher instance.</param>
@@ -46,13 +30,35 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(matcher));
 			}
 
+			if (_matchers.Contains(matcher))
+			{
+				return this;
+			}
+
+			ValidateMatcher(matcher);
+
 			_matchers.Add(matcher);
 			return this;
 		}
 
+		/// <summary>
+		/// </summary>
+		// ReSharper disable once MemberCanBeProtected.Global
+		protected internal virtual void ValidateMatcher(IHttpRequestMatcher matcher)
+		{
+			List<IHttpRequestMatcher> sameTypeMatchers = _matchers
+				.Where(m => m.GetType() == matcher.GetType())
+				.ToList();
+
+			if (matcher.IsExclusive && sameTypeMatchers.Any() || !matcher.IsExclusive && sameTypeMatchers.Any(m => m.IsExclusive))
+			{
+				throw new InvalidOperationException($"Cannot add matcher, another matcher of type '{matcher.GetType().FullName}' already is configured.");
+			}
+		}
+
 		internal IReadOnlyCollection<IHttpRequestMatcher> Build()
 		{
-			return new ReadOnlyCollection<IHttpRequestMatcher>(_matchers.Distinct().ToArray());
+			return new ReadOnlyCollection<IHttpRequestMatcher>(_matchers.ToArray());
 		}
 	}
 }

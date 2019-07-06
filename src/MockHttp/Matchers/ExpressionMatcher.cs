@@ -34,6 +34,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public bool IsExclusive => false;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return $"Expression: {_funcDisplay}";

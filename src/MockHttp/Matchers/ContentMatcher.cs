@@ -80,6 +80,9 @@ namespace MockHttp.Matchers
 			return IsMatch(requestContent);
 		}
 
+		/// <inheritdoc />
+		public override bool IsExclusive => true;
+
 		/// <summary>
 		/// Checks that the request matches the specified <paramref name="requestContent"/>.
 		/// </summary>

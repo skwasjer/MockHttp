@@ -24,5 +24,8 @@ namespace MockHttp.Matchers
 
 		/// <inheritdoc />
 		public abstract bool IsMatch(HttpRequestMessage request);
+
+		/// <inheritdoc />
+		public abstract bool IsExclusive { get; }
 	}
 }
