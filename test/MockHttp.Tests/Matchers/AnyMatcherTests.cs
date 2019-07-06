@@ -32,22 +32,20 @@ namespace MockHttp.Matchers
 			_sut.IsMatch(request).Should().BeTrue("the request url '{0}' should match one of the matchers", requestUrl);
 		}
 
-		[Theory]
-		[InlineData("url11")]
-		[InlineData("url21")]
-		public void Given_request_uri_matches_none_of_the_matchers_when_matching_should_not_match(string requestUrl)
+		[Fact]
+		public void Given_request_uri_matches_none_of_the_matchers_when_matching_should_not_match()
 		{
-			_matchers.Add(new UrlMatcher("url1"));
-			_matchers.Add(new UrlMatcher("url2"));
+			_matchers.Add(new UrlMatcher("http://127.0.0.1"));
+			_matchers.Add(new UrlMatcher("http://127.0.0.2"));
 
-			var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+			var request = new HttpRequestMessage(HttpMethod.Get, "http://127.0.0.3");
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse("the request url '{0}' should not match any of the matchers", requestUrl);
+			_sut.IsMatch(request).Should().BeFalse("the request url should not match any of the matchers");
 		}
 
 		[Fact]
-		public void Given_null_expression_when_creating_matcher_should_throw()
+		public void Given_null_matchers_when_creating_matcher_should_throw()
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
