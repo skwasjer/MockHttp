@@ -335,7 +335,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, string partialContent)
 		{
-			return builder.Replace(new PartialContentMatcher(partialContent));
+			return builder.With(new PartialContentMatcher(partialContent));
 		}
 
 		/// <summary>
@@ -347,7 +347,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, string partialContent, Encoding encoding)
 		{
-			return builder.Replace(new PartialContentMatcher(partialContent, encoding));
+			return builder.With(new PartialContentMatcher(partialContent, encoding));
 		}
 
 		/// <summary>
@@ -358,12 +358,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, byte[] partialContent)
 		{
-			return builder.Replace(new PartialContentMatcher(partialContent));
-		}
-
-		internal static RequestMatching Any(this RequestMatching builder)
-		{
-			return builder;
+			return builder.With(new PartialContentMatcher(partialContent));
 		}
 
 		/// <summary>
@@ -388,7 +383,7 @@ namespace MockHttp
 		[Obsolete("Replaced by " + nameof(Where) + ".")]
 		public static RequestMatching When(this RequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
 		{
-			return builder.With(new ExpressionMatcher(expression));
+			return builder.Where(expression);
 		}
 
 		/// <summary>
