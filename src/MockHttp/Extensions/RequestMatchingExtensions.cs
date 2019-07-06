@@ -152,7 +152,7 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="value">The header value.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Headers(this RequestMatching builder, string name, string value)
+		public static RequestMatching Header(this RequestMatching builder, string name, string value)
 		{
 			return builder.With(new HttpHeadersMatcher(name, value));
 		}
@@ -164,11 +164,11 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="value">The header value.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Headers<T>(this RequestMatching builder, string name, T value)
+		public static RequestMatching Header<T>(this RequestMatching builder, string name, T value)
 			where T : struct
 		{
 			TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-			return builder.Headers(name, converter.ConvertToString(value));
+			return builder.Header(name, converter.ConvertToString(value));
 		}
 
 		/// <summary>
@@ -178,9 +178,9 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="date">The header value.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Headers(this RequestMatching builder, string name, DateTime date)
+		public static RequestMatching Header(this RequestMatching builder, string name, DateTime date)
 		{
-			return builder.Headers(name, (DateTimeOffset)date.ToUniversalTime());
+			return builder.Header(name, (DateTimeOffset)date.ToUniversalTime());
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="date">The header value.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Headers(this RequestMatching builder, string name, DateTimeOffset date)
+		public static RequestMatching Header(this RequestMatching builder, string name, DateTimeOffset date)
 		{
 			// https://tools.ietf.org/html/rfc2616#section-3.3.1
 			CultureInfo ci = CultureInfo.InvariantCulture;
@@ -198,13 +198,25 @@ namespace MockHttp
 				// .NET Framework does not normalize other common date formats,
 				// so we use multiple matches.
 			return builder.Any(any => any
-				.Headers(name, date.ToString("R", ci))
-				.Headers(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))	// RFC 1036
-				.Headers(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))		// ANSI C's asctime()
+				.Header(name, date.ToString("R", ci))
+				.Header(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))	// RFC 1036
+				.Header(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))		// ANSI C's asctime()
 			);
 #else
-			return builder.Headers(name, date.ToString("R", ci));
+			return builder.Header(name, date.ToString("R", ci));
 #endif
+		}
+
+		/// <summary>
+		/// Matches a request by HTTP header.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="name">The header name.</param>
+		/// <param name="values">The header values.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Header(this RequestMatching builder, string name, IEnumerable<string> values)
+		{
+			return builder.With(new HttpHeadersMatcher(name, values));
 		}
 
 		/// <summary>
@@ -225,21 +237,9 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="values">The header values.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Headers(this RequestMatching builder, string name, IEnumerable<string> values)
-		{
-			return builder.With(new HttpHeadersMatcher(name, values));
-		}
-
-		/// <summary>
-		/// Matches a request by HTTP header.
-		/// </summary>
-		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="name">The header name.</param>
-		/// <param name="values">The header values.</param>
-		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Headers(this RequestMatching builder, string name, params string[] values)
 		{
-			return builder.Headers(name, values.AsEnumerable());
+			return builder.Header(name, values.AsEnumerable());
 		}
 
 		/// <summary>

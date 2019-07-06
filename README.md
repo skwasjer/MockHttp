@@ -62,8 +62,8 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | <pre>.Content("text content")<br/>.Content("text content", Encoding.UTF8)<br/>.Content(stream)<br/>.Content(byteArray)</pre> | Matches the request content body. |
 | <pre>.WithoutContent()</pre> | Matches a request without content. |
 | <pre>.PartialContent("text content")<br/>.PartialContent("text content", Encoding.UTF8)<br/>.PartialContent(byteArray)</pre> | Matches the content body partially. |
-| <pre>.ContentType("application/json")</pre> | Matches the request content type. | 
-| <pre>.Headers("Authorization", "Bearer 123")<br/>.Headers("Authorization: Bearer 123")<br/>.Headers(new Dictionary<string, string><br/>{<br/>  { "Authorization", "Bearer 123" }<br/>})</pre> | Matches request headers by one or more key/value pairs. | 
+| <pre>.ContentType("application/json; charset=utf-8")<br/>.ContentType("text/plain", Encoding.ASCII)</pre> | Matches the request content type. | 
+| <pre>.Header("Authorization", "Bearer 123")<br/>.Header("Content-Length", 123)<br/>.Header("Last-Modified", Date.UtcNow)<br/>.Headers("Accept: text/html")<br/>.Headers(new Dictionary<string, string><br/>{<br/>  { "Authorization", "Bearer 123" }<br/>})</pre> | Matches request headers by one or more key/value pairs. | 
 | <pre>.Any(any => any<br/>    .Method("GET")<br/>    .Method("POST")<br/>)</pre> | Matches when at least one of the inner configured conditions is true. | 
 | <pre>.Where(request => true\|false)</pre> | Matches the request using a custom predicate/expression. | 
 
