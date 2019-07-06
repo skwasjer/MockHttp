@@ -24,16 +24,11 @@ namespace MockHttp.Matchers
 		/// Initializes a new instance of the <see cref="ContentMatcher"/> class.
 		/// </summary>
 		public ContentMatcher()
-			: this(string.Empty)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ContentMatcher"/> class using specified <paramref name="content"/> and <see cref="DefaultEncoding"/>.
-		/// </summary>
-		/// <param name="content">The request content to match.</param>
-		public ContentMatcher(string content)
-			: this(content ?? throw new ArgumentNullException(nameof(content)), DefaultEncoding)
+#if NETSTANDARD2_0
+			: base(Array.Empty<byte>())
+#else
+			: base(new byte[0])
+#endif
 		{
 		}
 
@@ -96,6 +91,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override string ToString()
 		{
+			if (Value.Length == 0)
+			{
+				return $"Content: <empty>";
+			}
+
 			if (_encoding != null)
 			{
 				return $"Content: {_encoding.GetString(Value, 0, Value.Length)}";

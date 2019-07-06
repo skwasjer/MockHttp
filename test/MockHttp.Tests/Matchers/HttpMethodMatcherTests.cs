@@ -21,7 +21,7 @@ namespace MockHttp.Matchers
 				Method = new HttpMethod(httpMethod)
 			};
 
-			_sut = new HttpMethodMatcher(httpMethod);
+			_sut = new HttpMethodMatcher(new HttpMethod(httpMethod));
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
@@ -38,21 +38,10 @@ namespace MockHttp.Matchers
 				Method = new HttpMethod(httpMethod)
 			};
 
-			_sut = new HttpMethodMatcher("PUT");
+			_sut = new HttpMethodMatcher(HttpMethod.Put);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
-		}
-
-		[Fact]
-		public void Given_null_method_string_when_creating_matcher_should_throw()
-		{
-			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpMethodMatcher((string)null);
-
-			// Assert
-			act.Should().Throw<ArgumentException>().WithParamName("method");
 		}
 
 		[Fact]

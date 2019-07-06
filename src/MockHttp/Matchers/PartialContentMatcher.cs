@@ -10,19 +10,6 @@ namespace MockHttp.Matchers
 	public class PartialContentMatcher : ContentMatcher
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PartialContentMatcher"/> class using specified <paramref name="content"/> and <see cref="ContentMatcher.DefaultEncoding"/>.
-		/// </summary>
-		/// <param name="content">The request content to match.</param>
-		public PartialContentMatcher(string content)
-			: base(content)
-		{
-			if (Value.Length == 0)
-			{
-				throw new ArgumentException("Content can not be empty.", nameof(content));
-			}
-		}
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="PartialContentMatcher"/> class using specified <paramref name="content"/>.
 		/// </summary>
 		/// <param name="content">The request content to match.</param>

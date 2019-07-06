@@ -38,7 +38,15 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string key, string value)
 		{
-			return builder.QueryString(key, new[] { value });
+			return builder.QueryString(
+				key,
+				value == null
+#if NETSTANDARD2_0
+					? Array.Empty<string>()
+#else
+					? new string[0]
+#endif
+					: new[] { value });
 		}
 
 		/// <summary>
@@ -50,6 +58,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string key, IEnumerable<string> values)
 		{
+			if (key == null)
+			{
+				throw new ArgumentNullException(nameof(key));
+			}
+
+			if (values == null)
+			{
+				throw new ArgumentNullException(nameof(values));
+			}
+
 			return builder.QueryString(new Dictionary<string, IEnumerable<string>>
 			{
 				{ key, values }
@@ -87,6 +105,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string queryString)
 		{
+			if (string.Empty.Equals(queryString, StringComparison.OrdinalIgnoreCase))
+			{
+				throw new ArgumentException("Specify a query string, or use 'WithoutQueryString'.", nameof(queryString));
+			}
+
 			return builder.With(new QueryStringMatcher(queryString));
 		}
 
@@ -108,7 +131,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Method(this RequestMatching builder, string httpMethod)
 		{
-			return builder.With(new HttpMethodMatcher(httpMethod));
+			return builder.Method(new HttpMethod(httpMethod));
 		}
 
 		/// <summary>
@@ -147,7 +170,7 @@ namespace MockHttp
 			TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
 			return builder.Headers(name, converter.ConvertToString(value));
 		}
-		
+
 		/// <summary>
 		/// Matches a request by HTTP header.
 		/// </summary>
@@ -245,11 +268,23 @@ namespace MockHttp
 		/// Matches a request by content type.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="contentType">The content type.</param>
+		/// <param name="mediaType">The content type.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching ContentType(this RequestMatching builder, string contentType)
+		public static RequestMatching ContentType(this RequestMatching builder, string mediaType)
 		{
-			return builder.ContentType(MediaTypeHeaderValue.Parse(contentType));
+			return builder.ContentType(MediaTypeHeaderValue.Parse(mediaType));
+		}
+
+		/// <summary>
+		/// Matches a request by content type.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="encoding">The content encoding.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching ContentType(this RequestMatching builder, string contentType, Encoding encoding)
+		{
+			return builder.ContentType($"{contentType}; charset={encoding.WebName}");
 		}
 
 		/// <summary>
@@ -265,7 +300,7 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(mediaType));
 			}
 
-			return builder.Headers("Content-Type", mediaType.ToString());
+			return builder.With(new MediaTypeHeaderMatcher(mediaType));
 		}
 
 		/// <summary>
@@ -276,7 +311,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, string content)
 		{
-			return builder.With(new ContentMatcher(content, Encoding.UTF8));
+			return builder.Content(content, ContentMatcher.DefaultEncoding);
 		}
 
 		/// <summary>
@@ -335,7 +370,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, string partialContent)
 		{
-			return builder.With(new PartialContentMatcher(partialContent));
+			return builder.PartialContent(partialContent, ContentMatcher.DefaultEncoding);
 		}
 
 		/// <summary>

@@ -12,15 +12,6 @@ namespace MockHttp.Matchers
 		/// Initializes a new instance of the <see cref="HttpMethodMatcher"/> class using specified <paramref name="method"/>.
 		/// </summary>
 		/// <param name="method">The HTTP method.</param>
-		public HttpMethodMatcher(string method)
-			: this(new HttpMethod(method))
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HttpMethodMatcher"/> class using specified <paramref name="method"/>.
-		/// </summary>
-		/// <param name="method">The HTTP method.</param>
 		public HttpMethodMatcher(HttpMethod method)
 			: base(method)
 		{

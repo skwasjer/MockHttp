@@ -41,7 +41,7 @@ namespace MockHttp.Matchers
 				Content = new StringContent(content)
 			};
 
-			_sut = new PartialContentMatcher(expectedContent);
+			_sut = new PartialContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
@@ -58,7 +58,7 @@ namespace MockHttp.Matchers
 				Content = new StringContent(content)
 			};
 
-			_sut = new PartialContentMatcher(expectedContent);
+			_sut = new PartialContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
@@ -70,7 +70,7 @@ namespace MockHttp.Matchers
 		{
 			var request = new HttpRequestMessage();
 
-			_sut = new PartialContentMatcher("some data");
+			_sut = new PartialContentMatcher("some data", Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
@@ -96,22 +96,11 @@ namespace MockHttp.Matchers
 		}
 
 		[Fact]
-		public void Given_null_content_string_when_creating_matcher_should_throw()
-		{
-			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new PartialContentMatcher((string)null);
-
-			// Assert
-			act.Should().Throw<ArgumentNullException>().WithParamName("content");
-		}
-
-		[Fact]
 		public void Given_empty_content_string_when_creating_matcher_should_throw()
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new PartialContentMatcher(string.Empty);
+			Action act = () => new PartialContentMatcher(string.Empty, Encoding.UTF8);
 
 			// Assert
 			act.Should().Throw<ArgumentException>().WithParamName("content");

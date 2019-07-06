@@ -42,7 +42,7 @@ namespace MockHttp.Matchers
 				Content = new StringContent(content)
 			};
 
-			_sut = new ContentMatcher(expectedContent);
+			_sut = new ContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
@@ -59,7 +59,7 @@ namespace MockHttp.Matchers
 				Content = new StringContent(content)
 			};
 
-			_sut = new ContentMatcher(expectedContent);
+			_sut = new ContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeTrue();
@@ -82,21 +82,10 @@ namespace MockHttp.Matchers
 		{
 			var request = new HttpRequestMessage();
 
-			_sut = new ContentMatcher("some data");
+			_sut = new ContentMatcher("some data", Encoding.UTF8);
 
 			// Act & assert
 			_sut.IsMatch(request).Should().BeFalse();
-		}
-
-		[Fact]
-		public void Given_null_content_string_when_creating_matcher_should_throw()
-		{
-			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new ContentMatcher((string)null);
-
-			// Assert
-			act.Should().Throw<ArgumentNullException>().WithParamName("content");
 		}
 
 		[Fact]
