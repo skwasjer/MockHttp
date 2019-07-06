@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace MockHttp
 {
@@ -19,13 +21,16 @@ namespace MockHttp
 		/// <summary>
 		/// Adds or replaces an existing matcher by type.
 		/// </summary>
-		/// <typeparam name="TMatcher">The type of matcher to add or replace.</typeparam>
 		/// <param name="matcher">The new matcher instance.</param>
 		/// <returns>The request matching builder.</returns>
-		public RequestMatching Replace<TMatcher>(TMatcher matcher)
-			where TMatcher : IHttpRequestMatcher
+		public RequestMatching Replace(IHttpRequestMatcher matcher)
 		{
-			_matchers.RemoveAll(m => m.GetType() == typeof(TMatcher));
+			if (matcher == null)
+			{
+				throw new ArgumentNullException(nameof(matcher));
+			}
+
+			_matchers.RemoveAll(m => m.GetType() == matcher.GetType());
 			return With(matcher);
 		}
 
@@ -36,13 +41,18 @@ namespace MockHttp
 		/// <returns>The request matching builder.</returns>
 		public RequestMatching With(IHttpRequestMatcher matcher)
 		{
+			if (matcher == null)
+			{
+				throw new ArgumentNullException(nameof(matcher));
+			}
+
 			_matchers.Add(matcher);
 			return this;
 		}
 
 		internal IReadOnlyCollection<IHttpRequestMatcher> Build()
 		{
-			return new ReadOnlyCollection<IHttpRequestMatcher>(_matchers.ToArray());
+			return new ReadOnlyCollection<IHttpRequestMatcher>(_matchers.Distinct().ToArray());
 		}
 	}
 }
