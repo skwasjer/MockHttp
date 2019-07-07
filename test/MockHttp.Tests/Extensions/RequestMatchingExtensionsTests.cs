@@ -24,14 +24,14 @@ namespace MockHttp.Extensions
 			public void When_configuring_url_should_match()
 			{
 				// Act
-				_sut.Url("http://127.0.0.1");
+				_sut.Url("http://127.0.0.1/");
 				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<UrlMatcher>();
 				matchers.Any(new HttpRequestMessage
 				{
-					RequestUri = new Uri("http://127.0.0.1")
+					RequestUri = new Uri("http://127.0.0.1/")
 				}).Should().BeTrue();
 			}
 		}

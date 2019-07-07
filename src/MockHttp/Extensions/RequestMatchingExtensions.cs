@@ -22,9 +22,20 @@ namespace MockHttp
 		/// Matches a request by specified <paramref name="requestUri"/>.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="requestUri">The request URI or a URI wildcard (based on glob).</param>
+		/// <param name="requestUri">The request URI or a URI wildcard.</param>
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Url(this RequestMatching builder, string requestUri)
+		{
+			return builder.With(new UrlMatcher(requestUri, true));
+		}
+
+		/// <summary>
+		/// Matches a request by specified <paramref name="requestUri"/>.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="requestUri">The relative or absolute request URI.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Url(this RequestMatching builder, Uri requestUri)
 		{
 			return builder.With(new UrlMatcher(requestUri));
 		}

@@ -304,7 +304,7 @@ namespace MockHttp
 
 			_sut
 				.When(matching => matching
-					.Url("http://0.0.0.1/**")
+					.Url("http://0.0.0.1/*/action*")
 					.QueryString("test", "$%^&*")
 					.QueryString("test2=value")
 					.Method("POST")
