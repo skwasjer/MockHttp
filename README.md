@@ -56,7 +56,7 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | Method | Description |
 | -- | -- |
 | <pre>.Method("POST")<br/>.Method(HttpMethod.Put)</pre> | Matches the request method. | 
-| <pre>.Url("http://localhost/exact/match")<br/>.Url("**/match")</pre> | Matches an url. Use a glob pattern to match an url partially<br/><br/><blockquote>subject to change</blockquote> . | 
+| <pre>.Url("http://localhost/exact/match?query=string")<br/>.Url("*/match")</pre> | Matches an url. Accepts wildcard `*`. | 
 | <pre>.QueryString("key", "value")<br/>.QueryString("?key=value1&other=value&key=value2")<br/>.QueryString(new Dictionary<string, string><br/>{<br/>  { "key", "value" }<br/>}</pre> | Matches a query string by one or more key/value pairs. Note: the overload that accepts a full query string must be URI data escaped. |
 | <pre>.WithoutQueryString()</pre> | Matches a request without query string. |
 | <pre>.Content("text content")<br/>.Content("text content", Encoding.UTF8)<br/>.Content(stream)<br/>.Content(byteArray)</pre> | Matches the request content body. |
