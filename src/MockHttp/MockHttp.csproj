@@ -5,6 +5,7 @@
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
     <LangVersion>latest</LangVersion>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <Import Project="..\Package.props" />
