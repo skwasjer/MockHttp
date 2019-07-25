@@ -9,6 +9,35 @@ namespace MockHttp.Http
 	public class QueryStringTests
 	{
 		[Fact]
+		public void Given_null_queryString_when_creating_should_throw()
+		{
+			// Act
+			Action act = () => new QueryString(null);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName("values");
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData(null)]
+		public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string key)
+		{
+			// Act
+			Action act = () => new QueryString(new []
+			{
+				new KeyValuePair<string, IEnumerable<string>>(key, new List<string>())
+			});
+
+			// Assert
+			act.Should()
+				.Throw<FormatException>()
+				.WithMessage("Key can not be null or empty.");
+		}
+
+		[Fact]
 		public void Given_null_queryString_when_parsing_should_throw()
 		{
 			// Act
@@ -33,7 +62,10 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_starts_with_questionMark_when_parsing_should_ignore_it()
 		{
-			var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value" } } };
+			var expected = new Dictionary<string, IEnumerable<string>>
+			{
+				{ "key", new[] { "value" } }
+			};
 
 			// Act
 			QueryString actual = QueryString.Parse("?key=value");
@@ -45,7 +77,10 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_contains_hashTerminator_when_parsing_should_ignore_it()
 		{
-			var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value" } } };
+			var expected = new Dictionary<string, IEnumerable<string>>
+			{
+				{ "key", new[] { "value" } }
+			};
 
 			// Act
 			QueryString actual = QueryString.Parse("key=value#hash");
@@ -57,7 +92,10 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_contains_encoded_key_or_value_when_parsing_should_url_decode()
 		{
-			var expected = new Dictionary<string, IEnumerable<string>> { { "éôxÄ", new[] { "$%^&*" } } };
+			var expected = new Dictionary<string, IEnumerable<string>>
+			{
+				{ "éôxÄ", new[] { "$%^&*" } }
+			};
 
 			// Act
 			QueryString actual = QueryString.Parse("%C3%A9%C3%B4x%C3%84=%24%25%5E%26*");
@@ -69,7 +107,10 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_contains_multiple_same_keys_when_parsing_should_combine_into_single_entry()
 		{
-			var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^ &*", "another value" } } };
+			var expected = new Dictionary<string, IEnumerable<string>>
+			{
+				{ "key", new[] { "value", "$%^ &*", "another value" } }
+			};
 
 			// Act
 			QueryString actual = QueryString.Parse("?key=value&key=%24%25%5E%20%26%2A&key=another%20value");
@@ -81,7 +122,10 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_contains_multiple_same_keys_when_formatting_should_produce_correct_string()
 		{
-			var queryStringData = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^&*", "another value" } } };
+			var queryStringData = new Dictionary<string, IEnumerable<string>>
+			{
+				{ "key", new[] { "value", "$%^&*", "another value" } }
+			};
 			const string expected = "?key=value&key=%24%25%5E%26%2A&key=another%20value";
 			var queryString = new QueryString(queryStringData);
 
@@ -95,6 +139,7 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_queryString_contains_variation_of_keys_with_or_without_value_when_parsing_should_return_keys_with_correct_values()
 		{
+			const string queryString = "?key1&key2=value&key3=&key4=value1&key4=value2";
 			var expected = new Dictionary<string, IEnumerable<string>>
 			{
 				{ "key1", new string[0] },
@@ -104,10 +149,60 @@ namespace MockHttp.Http
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse("?key1&key2=value&key3=&key4=value1&key4=value2");
+			QueryString actual = QueryString.Parse(queryString);
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
+			actual.ToString().Should().BeEquivalentTo(queryString);
+		}
+
+		[Theory]
+		[InlineData("http://0.0.0.0/controller/action/?query=string")]
+		[InlineData("/controller/action/?query=string")]
+		[InlineData("/controller/action/?query=string#ignore")]
+		public void Given_uri_with_queryString_when_parsing_should_ignore_path_part(string uri)
+		{
+			const string expectedQueryString = "?query=string";
+
+			// Act
+			QueryString actual = QueryString.Parse(uri);
+
+			// Assert
+			actual.ToString().Should().BeEquivalentTo(expectedQueryString);
+		}
+
+		[Fact]
+		public void Given_empty_queryString_when_formatting_should_return_empty_string()
+		{
+			// Act
+			QueryString actual = QueryString.Parse("");
+
+			// Assert
+			actual.ToString().Should().BeEmpty();
+		}
+
+		[Fact]
+		public void Given_null_key_when_parsing_should_throw()
+		{
+			// Act
+			Action act = () => QueryString.Parse("?=value");
+
+			// Assert
+			act.Should()
+				.Throw<FormatException>()
+				.WithMessage("Key can not be null or empty.");
+		}
+
+		[Fact]
+		public void Given_invalid_query_string_format_when_parsing_should_throw()
+		{
+			// Act
+			Action act = () => QueryString.Parse("?key=value=another-value");
+
+			// Assert
+			act.Should()
+				.Throw<FormatException>()
+				.WithMessage("The query string format is invalid.");
 		}
 	}
 }

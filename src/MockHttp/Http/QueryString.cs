@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace MockHttp.Http
 {
+	[DebuggerDisplay("{ToString(),nq}")]
 	internal class QueryString : Dictionary<string, IEnumerable<string>>
 	{
+		private static readonly Uri UnknownBaseUri = new Uri("http://0.0.0.0");
+
 		private const char TokenQuestionMark = '?';
 		private const char TokenAmpersand = '&';
 		private const char TokenEquals = '=';
@@ -50,18 +55,24 @@ namespace MockHttp.Http
 				throw new ArgumentNullException(nameof(queryString));
 			}
 
-			// If query string contains terminator, strip it off.
-			string stripped = queryString.Split(TokenTerminator)[0];
-			// If begins with question mark, strip it off.
-			stripped = stripped.TrimStart(TokenQuestionMark);
+			if (!TryGetQueryFromUri(queryString, out string qs))
+			{
+				qs = queryString;
 
-			if (stripped.Length == 0)
+				// If query string contains terminator, strip it off.
+				qs = qs.Split(TokenTerminator)[0];
+			}
+
+			// If begins with question mark, strip it off.
+			qs = qs.TrimStart(TokenQuestionMark);
+
+			if (qs.Length == 0)
 			{
 				return new QueryString();
 			}
 
 			return new QueryString(
-				stripped
+				qs
 					.Split(TokenAmpersand)
 					.Select(segments =>
 					{
@@ -86,6 +97,28 @@ namespace MockHttp.Http
 				);
 		}
 
+		private static bool TryGetQueryFromUri(string uri, out string queryString)
+		{
+#if NETSTANDARD1_1
+			if (uri.Contains(TokenQuestionMark.ToString())
+#else
+			if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))
+#endif
+				&& Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri u))
+			{
+				if (!u.IsAbsoluteUri)
+				{
+					u = new Uri(UnknownBaseUri, uri);
+				}
+
+				queryString = u.Query;
+				return true;
+			}
+
+			queryString = null;
+			return false;
+		}
+
 		private static string FormatQueryString(IDictionary<string, IEnumerable<string>> queryString)
 		{
 			if (queryString.Count == 0)
@@ -97,14 +130,12 @@ namespace MockHttp.Http
 			sb.Append(TokenQuestionMark);
 			foreach (KeyValuePair<string, IEnumerable<string>> qsPair in queryString)
 			{
-				if (qsPair.Value != null && qsPair.Value.Any())
+				bool hasValues = qsPair.Value != null && qsPair.Value.Any();
+				if (hasValues)
 				{
 					foreach (string v in qsPair.Value)
 					{
-						sb.Append(Uri.EscapeDataString(qsPair.Key));
-						sb.Append(TokenEquals);
-						sb.Append(Uri.EscapeDataString(v));
-						sb.Append(TokenAmpersand);
+						sb.Append(CreateQueryStringKeyValuePair(qsPair.Key, v));
 					}
 
 					// Remove last ampersand.
@@ -114,7 +145,6 @@ namespace MockHttp.Http
 				{
 					// No values, so only add key.
 					sb.Append(Uri.EscapeDataString(qsPair.Key));
-					sb.Append(TokenEquals);
 				}
 
 				sb.Append(TokenAmpersand);
@@ -124,6 +154,14 @@ namespace MockHttp.Http
 			sb.Remove(sb.Length - 1, 1);
 
 			return sb.ToString();
+		}
+
+		private static string CreateQueryStringKeyValuePair(string key, string value)
+		{
+			return Uri.EscapeDataString(key) 
+			  + TokenEquals 
+			  + Uri.EscapeDataString(value) 
+			  + TokenAmpersand;
 		}
 	}
 }
