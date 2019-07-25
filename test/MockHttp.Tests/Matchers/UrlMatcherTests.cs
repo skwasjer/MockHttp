@@ -81,5 +81,18 @@ namespace MockHttp.Matchers
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("uriString");
 		}
+
+		[Fact]
+		public void When_formatting_should_return_human_readable_representation()
+		{
+			const string expectedText = "Url: '*/controller/*'";
+			_sut = new UrlMatcher("*/controller/*");
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
+		}
 	}
 }

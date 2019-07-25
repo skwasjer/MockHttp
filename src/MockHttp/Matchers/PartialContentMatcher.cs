@@ -42,6 +42,12 @@ namespace MockHttp.Matchers
 			return Contains(requestContent, Value);
 		}
 
+		/// <inheritdoc />
+		public override string ToString()
+		{
+			return "Partial" + base.ToString();
+		}
+
 		// TODO: move to util/extension?
 		private static bool Contains<T>(IReadOnlyList<T> source, IReadOnlyList<T> value)
 		{

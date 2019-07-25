@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -97,6 +98,38 @@ namespace MockHttp.Matchers
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("headers");
+		}
+
+		[Fact]
+		public void When_formatting_single_header_should_return_human_readable_representation()
+		{
+			string expectedText = "Headers: header-name: header-value";
+			_sut = new HttpHeadersMatcher("header-name", "header-value");
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
+		}
+
+		[Fact]
+		public void When_formatting_multiple_headers_should_return_human_readable_representation()
+		{
+			const string expectedText = @"Headers: Content-Type: text/plain
+Accept: text/plain, text/html";
+			var headers = new HttpHeadersCollection
+			{
+				{ "Content-Type", "text/plain" },
+				{ "Accept", new[] { "text/plain", "text/html" } }
+			};
+			_sut = new HttpHeadersMatcher(headers);
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
 		}
 
 		private static HttpRequestMessage GetRequestWithHeaders(DateTimeOffset? lastModified = null)

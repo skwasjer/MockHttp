@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -53,6 +54,29 @@ namespace MockHttp.Matchers
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("matchers");
+		}
+
+		[Fact]
+		public void When_formatting_should_return_human_readable_representation()
+		{
+			const string innerMatcherText = "Type: text";
+			string expectedText = string.Format(@"Any:
+{{
+	{0}1
+	{0}2
+}}", innerMatcherText);
+			var matcherMock1 = new Mock<IHttpRequestMatcher>();
+			var matcherMock2 = new Mock<IHttpRequestMatcher>();
+			matcherMock1.Setup(m => m.ToString()).Returns(innerMatcherText + "1");
+			matcherMock2.Setup(m => m.ToString()).Returns(innerMatcherText + "2");
+			_matchers.Add(matcherMock1.Object);
+			_matchers.Add(matcherMock2.Object);
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
 		}
 	}
 }

@@ -98,5 +98,18 @@ namespace MockHttp.Matchers
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("headerValue");
 		}
+
+		[Fact]
+		public void When_formatting_should_return_human_readable_representation()
+		{
+			const string expectedText = "ContentType: text/html";
+			_sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/html"));
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
+		}
 	}
 }

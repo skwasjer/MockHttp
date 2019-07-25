@@ -160,5 +160,24 @@ namespace MockHttp.Matchers
 			// Assert
 			act.Should().Throw<ArgumentException>().WithParamName("content");
 		}
+
+		[Theory]
+		[InlineData("text response data", "PartialContent: text response data")]
+		[InlineData("ByteArray", "PartialContent: [0x42,0x79,0x74,0x65,0x41,0x72,0x72,0x61,0x79]")]
+		[InlineData("ByteArrays", "PartialContent: [0x42,0x79,0x74,0x65,0x41,0x72,0x72,0x61,0x79,0x73]")]
+		[InlineData("ByteArrayWithBigDataGetsTruncated", "PartialContent: [0x42,0x79,0x74,0x65,0x41,0x72,0x72,0x61,0x79,0x57,...](Size = 33)")]
+		public void When_formatting_should_return_human_readable_representation(string content, string expectedText)
+		{
+			// If theory starts with ByteArray string, we will actually act as if the content was in binary form (thus no encoding)
+			_sut = content.StartsWith("ByteArray")
+				? new PartialContentMatcher(Encoding.UTF8.GetBytes(content))
+				: new PartialContentMatcher(content, Encoding.UTF8);
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
+		}
 	}
 }

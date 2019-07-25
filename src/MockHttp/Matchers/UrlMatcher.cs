@@ -86,7 +86,7 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return $"Uri: '{_formattedUri}'";
+			return $"Url: '{_formattedUri}'";
 		}
 
 		private static string GetMatchPattern(string value)

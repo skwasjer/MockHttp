@@ -12,6 +12,8 @@ namespace MockHttp.Matchers
 	/// </summary>
 	public class ContentMatcher : ValueMatcher<byte[]>
 	{
+		private const int MaxBytesDisplayed = 10;
+
 		/// <summary>
 		/// The default content encoding.
 		/// </summary>
@@ -101,8 +103,28 @@ namespace MockHttp.Matchers
 				return $"Content: {_encoding.GetString(Value, 0, Value.Length)}";
 			}
 
-			string msg = string.Join(",", Value.Take(Math.Min(10, Value.Length)).Select(b => b.ToString("x2", CultureInfo.InvariantCulture)));
-			return $"Content: [{msg}]";
+			int charsToOutput = Math.Min(MaxBytesDisplayed, Value.Length);
+			var sb = new StringBuilder();
+			sb.Append("Content: [");
+			for (int i = 0; i < charsToOutput; i++)
+			{
+				sb.AppendFormat(CultureInfo.InvariantCulture, "0x{0:x2}", Value[i]);
+				if (i < charsToOutput - 1)
+				{
+					sb.Append(",");
+				}
+			}
+
+			if (charsToOutput < Value.Length)
+			{
+				sb.AppendFormat(CultureInfo.InvariantCulture, ",...](Size = {0})", Value.Length);
+			}
+			else
+			{
+				sb.Append("]");
+			}
+
+			return sb.ToString();
 		}
 	}
 }

@@ -38,5 +38,18 @@ namespace MockHttp.Matchers
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("expression");
 		}
+
+		[Fact]
+		public void When_formatting_should_return_human_readable_representation()
+		{
+			const string expectedText = "Expression: message => (message.RequestUri.ToString() == \"some-uri\")";
+			_sut = new ExpressionMatcher(message => message.RequestUri.ToString() == "some-uri");
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
+		}
 	}
 }

@@ -49,10 +49,23 @@ namespace MockHttp.Matchers
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpMethodMatcher((HttpMethod)null);
+			Action act = () => new HttpMethodMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("method");
+		}
+
+		[Fact]
+		public void When_formatting_should_return_human_readable_representation()
+		{
+			const string expectedText = "Method: OPTIONS";
+			_sut = new HttpMethodMatcher(HttpMethod.Options);
+
+			// Act
+			string displayText = _sut.ToString();
+
+			// Assert
+			displayText.Should().Be(expectedText);
 		}
 	}
 }
