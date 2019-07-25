@@ -25,7 +25,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.Url("http://127.0.0.1/");
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<UrlMatcher>();
@@ -43,7 +43,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.QueryString("key", (string)null);
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
@@ -58,7 +58,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.QueryString("key", string.Empty);
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
@@ -105,7 +105,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.WithoutQueryString();
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
@@ -149,7 +149,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.Method(httpMethod);
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpMethodMatcher>();
@@ -182,7 +182,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.ContentType(mediaType);
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<MediaTypeHeaderMatcher>();
@@ -218,7 +218,7 @@ namespace MockHttp.Extensions
 					.Method("GET")
 					.Method("POST")
 				);
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<AnyMatcher>();
@@ -252,7 +252,7 @@ namespace MockHttp.Extensions
 			{
 				// Act
 				_sut.Where(r => r.Method.Method == "GET" || r.Method.Method == "POST");
-				IReadOnlyCollection<IHttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<ExpressionMatcher>();

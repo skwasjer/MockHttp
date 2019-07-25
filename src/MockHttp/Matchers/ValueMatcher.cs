@@ -6,7 +6,7 @@ namespace MockHttp.Matchers
 	/// Base class that matches a request by a value.
 	/// </summary>
 	/// <typeparam name="T">The type of the value to match.</typeparam>
-	public abstract class ValueMatcher<T> : IHttpRequestMatcher
+	public abstract class ValueMatcher<T> : HttpRequestMatcher
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueMatcher{T}"/> class using specified <paramref name="value"/>.
@@ -21,11 +21,5 @@ namespace MockHttp.Matchers
 		/// Gets the expected value.
 		/// </summary>
 		protected T Value { get; }
-
-		/// <inheritdoc />
-		public abstract bool IsMatch(HttpRequestMessage request);
-
-		/// <inheritdoc />
-		public abstract bool IsExclusive { get; }
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Matchers;
 using Moq;
 using Xunit;
 
@@ -10,16 +11,16 @@ namespace MockHttp
 	public class RequestMatchingTests
 	{
 		private readonly RequestMatching _sut;
-		private readonly IHttpRequestMatcher _matcher1;
-		private readonly IHttpRequestMatcher _matcher2;
+		private readonly HttpRequestMatcher _matcher1;
+		private readonly HttpRequestMatcher _matcher2;
 		private bool _isExclusive1;
 		private bool _isExclusive2;
 
 		public RequestMatchingTests()
 		{
-			IHttpRequestMatcher CreateMatcherMock(Func<bool> returns)
+			HttpRequestMatcher CreateMatcherStub(Func<bool> returns)
 			{
-				var matcherMock = new Mock<IHttpRequestMatcher>();
+				var matcherMock = new Mock<HttpRequestMatcher>();
 				matcherMock
 					.Setup(m => m.IsExclusive)
 					.Returns(returns);
@@ -28,8 +29,8 @@ namespace MockHttp
 
 			_sut = new RequestMatching();
 
-			_matcher1 = CreateMatcherMock(() => _isExclusive1);
-			_matcher2 = CreateMatcherMock(() => _isExclusive2);
+			_matcher1 = CreateMatcherStub(() => _isExclusive1);
+			_matcher2 = CreateMatcherStub(() => _isExclusive2);
 		}
 
 		[Fact]
@@ -42,7 +43,7 @@ namespace MockHttp
 				.With(_matcher2);
 
 			// Act
-			IReadOnlyCollection<IHttpRequestMatcher> actual = _sut.Build();
+			IReadOnlyCollection<HttpRequestMatcher> actual = _sut.Build();
 
 			// Assert
 			actual.Should().BeEquivalentTo(_matcher1, _matcher2);
@@ -97,7 +98,7 @@ namespace MockHttp
 				.With(_matcher1);
 
 			// Act
-			IReadOnlyCollection<IHttpRequestMatcher> actual = _sut.Build();
+			IReadOnlyCollection<HttpRequestMatcher> actual = _sut.Build();
 
 			// Assert
 			actual.Should().BeEquivalentTo(_matcher1);

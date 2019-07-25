@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Matchers;
 
 namespace MockHttp
 {
@@ -49,7 +50,7 @@ namespace MockHttp
 			// Not thread safe...
 			foreach (HttpCall setup in _setups)
 			{
-				if (setup.Matchers.All(request, out IEnumerable<IHttpRequestMatcher> notMatchedOn))
+				if (setup.Matchers.All(request, out IEnumerable<HttpRequestMatcher> notMatchedOn))
 				{
 					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
 				}
@@ -128,7 +129,7 @@ namespace MockHttp
 
 			var rm = new RequestMatching();
 			matching(rm);
-			IReadOnlyCollection<IHttpRequestMatcher> shouldMatch = rm.Build();
+			IReadOnlyCollection<HttpRequestMatcher> shouldMatch = rm.Build();
 
 			int callCount = shouldMatch.Count == 0
 				? InvokedRequests.Count

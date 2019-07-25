@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using MockHttp.Matchers;
 
 namespace MockHttp
 {
@@ -16,6 +17,6 @@ namespace MockHttp
 		/// <summary>
 		/// Gets the matchers that matched the request.
 		/// </summary>
-		IReadOnlyCollection<IHttpRequestMatcher> Matchers { get; }
+		IReadOnlyCollection<HttpRequestMatcher> Matchers { get; }
 	}
 }

@@ -10,12 +10,12 @@ namespace MockHttp.Matchers
 {
 	public class AnyMatcherTests
 	{
-		private readonly List<IHttpRequestMatcher> _matchers;
+		private readonly List<HttpRequestMatcher> _matchers;
 		private readonly AnyMatcher _sut;
 
 		public AnyMatcherTests()
 		{
-			_matchers = new List<IHttpRequestMatcher>();
+			_matchers = new List<HttpRequestMatcher>();
 			_sut = new AnyMatcher(_matchers);
 		}
 
@@ -65,8 +65,8 @@ namespace MockHttp.Matchers
 	{0}1
 	{0}2
 }}", innerMatcherText);
-			var matcherMock1 = new Mock<IHttpRequestMatcher>();
-			var matcherMock2 = new Mock<IHttpRequestMatcher>();
+			var matcherMock1 = new Mock<HttpRequestMatcher>();
+			var matcherMock2 = new Mock<HttpRequestMatcher>();
 			matcherMock1.Setup(m => m.ToString()).Returns(innerMatcherText + "1");
 			matcherMock2.Setup(m => m.ToString()).Returns(innerMatcherText + "2");
 			_matchers.Add(matcherMock1.Object);

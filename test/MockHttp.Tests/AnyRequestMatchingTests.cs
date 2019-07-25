@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Matchers;
 using Moq;
 using Xunit;
 
@@ -10,16 +11,16 @@ namespace MockHttp
 	public class AnyRequestMatchingTests
 	{
 		private readonly RequestMatching _sut;
-		private readonly IHttpRequestMatcher _matcher1;
-		private readonly IHttpRequestMatcher _matcher2;
+		private readonly HttpRequestMatcher _matcher1;
+		private readonly HttpRequestMatcher _matcher2;
 		private bool _isExclusive1;
 		private bool _isExclusive2;
 
 		public AnyRequestMatchingTests()
 		{
-			IHttpRequestMatcher CreateMatcherMock(Func<bool> returns)
+			HttpRequestMatcher CreateMatcherMock(Func<bool> returns)
 			{
-				var matcherMock = new Mock<IHttpRequestMatcher>();
+				var matcherMock = new Mock<HttpRequestMatcher>();
 				matcherMock
 					.Setup(m => m.IsExclusive)
 					.Returns(returns);

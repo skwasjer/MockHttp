@@ -10,7 +10,7 @@ namespace MockHttp.Matchers
 	/// <summary>
 	/// Matches a request by the request URI query string.
 	/// </summary>
-	public class QueryStringMatcher : IHttpRequestMatcher
+	public class QueryStringMatcher : HttpRequestMatcher
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly QueryString _matchQs;
@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
 			QueryString query = QueryString.Parse(request.RequestUri.Query);
 
@@ -56,7 +56,7 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public bool IsExclusive => _matchQs.Count == 0;
+		public override bool IsExclusive => _matchQs.Count == 0;
 
 		/// <inheritdoc />
 		public override string ToString()

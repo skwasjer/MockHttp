@@ -7,7 +7,7 @@ namespace MockHttp.Matchers
 	/// <summary>
 	/// Matches a request using a custom expression.
 	/// </summary>
-	public class ExpressionMatcher : IHttpRequestMatcher
+	public class ExpressionMatcher : HttpRequestMatcher
 	{
 		private readonly string _funcDisplay;
 		private readonly Func<HttpRequestMessage, bool> _func;
@@ -28,13 +28,10 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
 			return _func(request);
 		}
-
-		/// <inheritdoc />
-		public bool IsExclusive => false;
 
 		/// <inheritdoc />
 		public override string ToString()

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MockHttp.Matchers;
 
 namespace MockHttp
 {
@@ -17,15 +18,15 @@ namespace MockHttp
 		private Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
 		private Action<HttpRequestMessage> _callback;
 		private string _verifiableBecause;
-		private IReadOnlyCollection<IHttpRequestMatcher> _matchers;
+		private IReadOnlyCollection<HttpRequestMatcher> _matchers;
 
-		public IReadOnlyCollection<IHttpRequestMatcher> Matchers
+		public IReadOnlyCollection<HttpRequestMatcher> Matchers
 		{
 			get
 			{
 				if (_matchers == null)
 				{
-					SetMatchers(new List<IHttpRequestMatcher>());
+					SetMatchers(new List<HttpRequestMatcher>());
 				}
 
 				return _matchers;
@@ -61,14 +62,14 @@ namespace MockHttp
 			_response = response ?? throw new ArgumentNullException(nameof(response));
 		}
 
-		public void SetMatchers(IEnumerable<IHttpRequestMatcher> matchers)
+		public void SetMatchers(IEnumerable<HttpRequestMatcher> matchers)
 		{
 			if (matchers == null)
 			{
 				throw new ArgumentNullException(nameof(matchers));
 			}
 
-			_matchers = new ReadOnlyCollection<IHttpRequestMatcher>(matchers.ToList());
+			_matchers = new ReadOnlyCollection<HttpRequestMatcher>(matchers.ToList());
 		}
 
 		public void SetCallback(Action<HttpRequestMessage> callback)
@@ -90,7 +91,7 @@ namespace MockHttp
 			}
 
 			var sb = new StringBuilder();
-			foreach (IHttpRequestMatcher m in _matchers)
+			foreach (HttpRequestMatcher m in _matchers)
 			{
 				sb.Append(m);
 				sb.Append(", ");

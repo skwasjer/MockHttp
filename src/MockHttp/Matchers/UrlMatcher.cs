@@ -11,7 +11,7 @@ namespace MockHttp.Matchers
 	/// <summary>
 	/// Matches a request by the request URI.
 	/// </summary>
-	public class UrlMatcher : IHttpRequestMatcher
+	public class UrlMatcher : HttpRequestMatcher
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private Uri _requestUri;
@@ -62,7 +62,7 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
 			if (request.RequestUri == null)
 			{
@@ -79,9 +79,6 @@ namespace MockHttp.Matchers
 			return _uriPatternMatcher.IsMatch(request.RequestUri.ToString());
 
 		}
-
-		/// <inheritdoc />
-		public bool IsExclusive => false;
 
 		/// <inheritdoc />
 		public override string ToString()
@@ -116,14 +113,7 @@ namespace MockHttp.Matchers
 
 			pattern.Append(string.Join(".+", matchGroups));
 
-			if (endsWithWildcard)
-			{
-				pattern.Append(".*");
-			}
-			else
-			{
-				pattern.Append("$");
-			}
+			pattern.Append(endsWithWildcard ? ".*" : "$");
 
 			return pattern.ToString();
 		}

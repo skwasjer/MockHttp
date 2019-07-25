@@ -8,27 +8,24 @@ namespace MockHttp.Matchers
 	/// <summary>
 	/// Matches a request by verifying it against a list of constraints, for which at least one has to match the request.
 	/// </summary>
-	public class AnyMatcher : IHttpRequestMatcher
+	public class AnyMatcher : HttpRequestMatcher
 	{
-		private readonly IReadOnlyCollection<IHttpRequestMatcher> _matchers;
+		private readonly IReadOnlyCollection<HttpRequestMatcher> _matchers;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AnyMatcher"/> class using specified list of <paramref name="matchers"/>.
 		/// </summary>
 		/// <param name="matchers">A list of matchers for which at least one has to match.</param>
-		public AnyMatcher(IReadOnlyCollection<IHttpRequestMatcher> matchers)
+		public AnyMatcher(IReadOnlyCollection<HttpRequestMatcher> matchers)
 		{
 			_matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
 		}
 
 		/// <inheritdoc />
-		public bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(HttpRequestMessage request)
 		{
 			return _matchers.Any(request);
 		}
-
-		/// <inheritdoc />
-		public bool IsExclusive => false;
 
 		/// <inheritdoc />
 		public override string ToString()
@@ -41,7 +38,7 @@ namespace MockHttp.Matchers
 			var sb = new StringBuilder();
 			sb.AppendLine("Any:");
 			sb.AppendLine("{");
-			foreach (IHttpRequestMatcher m in _matchers)
+			foreach (HttpRequestMatcher m in _matchers)
 			{
 				sb.Append('\t');
 				sb.AppendLine(m.ToString());

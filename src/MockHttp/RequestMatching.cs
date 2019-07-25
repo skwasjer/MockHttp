@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using MockHttp.Matchers;
 
 namespace MockHttp
 {
@@ -12,7 +13,7 @@ namespace MockHttp
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public class RequestMatching : IFluentInterface
 	{
-		private readonly List<IHttpRequestMatcher> _matchers = new List<IHttpRequestMatcher>();
+		private readonly List<HttpRequestMatcher> _matchers = new List<HttpRequestMatcher>();
 
 		internal RequestMatching()
 		{
@@ -23,7 +24,7 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="matcher">The matcher instance.</param>
 		/// <returns>The request matching builder.</returns>
-		public RequestMatching With(IHttpRequestMatcher matcher)
+		public RequestMatching With(HttpRequestMatcher matcher)
 		{
 			if (matcher == null)
 			{
@@ -44,9 +45,9 @@ namespace MockHttp
 		/// <summary>
 		/// </summary>
 		// ReSharper disable once MemberCanBeProtected.Global
-		protected internal virtual void ValidateMatcher(IHttpRequestMatcher matcher)
+		protected internal virtual void ValidateMatcher(HttpRequestMatcher matcher)
 		{
-			List<IHttpRequestMatcher> sameTypeMatchers = _matchers
+			List<HttpRequestMatcher> sameTypeMatchers = _matchers
 				.Where(m => m.GetType() == matcher.GetType())
 				.ToList();
 
@@ -56,9 +57,9 @@ namespace MockHttp
 			}
 		}
 
-		internal IReadOnlyCollection<IHttpRequestMatcher> Build()
+		internal IReadOnlyCollection<HttpRequestMatcher> Build()
 		{
-			return new ReadOnlyCollection<IHttpRequestMatcher>(_matchers.ToArray());
+			return new ReadOnlyCollection<HttpRequestMatcher>(_matchers.ToArray());
 		}
 	}
 }
