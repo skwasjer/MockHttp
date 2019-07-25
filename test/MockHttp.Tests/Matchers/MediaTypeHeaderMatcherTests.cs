@@ -102,7 +102,7 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void When_formatting_should_return_human_readable_representation()
 		{
-			const string expectedText = "ContentType: text/html";
+			const string expectedText = "MediaType: text/html";
 			_sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/html"));
 
 			// Act

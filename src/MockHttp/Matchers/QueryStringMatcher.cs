@@ -61,7 +61,7 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return $"Query string: '{_matchQs}'";
+			return $"QueryString: '{_matchQs}'";
 		}
 	}
 }

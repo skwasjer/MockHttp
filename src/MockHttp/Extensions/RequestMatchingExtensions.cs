@@ -26,7 +26,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Url(this RequestMatching builder, string requestUri)
 		{
-			return builder.With(new UrlMatcher(requestUri, true));
+			return builder.With(new RequestUriMatcher(requestUri, true));
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Url(this RequestMatching builder, Uri requestUri)
 		{
-			return builder.With(new UrlMatcher(requestUri));
+			return builder.With(new RequestUriMatcher(requestUri));
 		}
 
 		/// <summary>

@@ -6,9 +6,9 @@ using Xunit;
 
 namespace MockHttp.Matchers
 {
-	public class UrlMatcherTests
+	public class RequestUriMatcherTests
 	{
-		private UrlMatcher _sut;
+		private RequestUriMatcher _sut;
 
 		[Theory]
 		[InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", true)]
@@ -20,7 +20,7 @@ namespace MockHttp.Matchers
 		[InlineData("http://127.0.0.1/absolute.htm", UriKind.Absolute, "http://127.0.0.1/folder/absolute.htm", false)]
 		public void Given_uri_when_matching_should_match(string matchUri, UriKind uriKind, string requestUri, bool isMatch)
 		{
-			_sut = new UrlMatcher(new Uri(matchUri, uriKind));
+			_sut = new RequestUriMatcher(new Uri(matchUri, uriKind));
 
 			// Act & assert
 			_sut.IsMatch(new HttpRequestMessage
@@ -51,7 +51,7 @@ namespace MockHttp.Matchers
 		[InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/folder/absolute.htm", true)]
 		public void Given_uriString_when_matching_should_match(string uriString, bool hasWildcard, string requestUri, bool isMatch)
 		{
-			_sut = new UrlMatcher(uriString, hasWildcard);
+			_sut = new RequestUriMatcher(uriString, hasWildcard);
 
 			// Act & assert
 			_sut.IsMatch(new HttpRequestMessage
@@ -65,7 +65,7 @@ namespace MockHttp.Matchers
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new UrlMatcher(null);
+			Action act = () => new RequestUriMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("uri");
@@ -76,7 +76,7 @@ namespace MockHttp.Matchers
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new UrlMatcher(null, false);
+			Action act = () => new RequestUriMatcher(null, false);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("uriString");
@@ -85,8 +85,8 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void When_formatting_should_return_human_readable_representation()
 		{
-			const string expectedText = "Url: '*/controller/*'";
-			_sut = new UrlMatcher("*/controller/*");
+			const string expectedText = "RequestUri: '*/controller/*'";
+			_sut = new RequestUriMatcher("*/controller/*");
 
 			// Act
 			string displayText = _sut.ToString();

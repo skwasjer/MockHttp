@@ -95,7 +95,7 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void When_formatting_should_return_human_readable_representation()
 		{
-			const string expectedText = "Query string: '?key=value1'";
+			const string expectedText = "QueryString: '?key=value1'";
 			_sut = new QueryStringMatcher("?key=value1");
 
 			// Act

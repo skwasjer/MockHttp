@@ -33,7 +33,7 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return $"ContentType: {Value}";
+			return $"MediaType: {Value}";
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace MockHttp.Extensions
 				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
-				matchers.Should().HaveCount(1).And.AllBeOfType<UrlMatcher>();
+				matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
 				matchers.Any(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1/")
