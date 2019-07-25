@@ -60,11 +60,7 @@ namespace MockHttp.Matchers
 		public void When_formatting_should_return_human_readable_representation()
 		{
 			const string innerMatcherText = "Type: text";
-			string expectedText = string.Format(@"Any:
-{{
-	{0}1
-	{0}2
-}}", innerMatcherText);
+			string expectedText = string.Format(@"Any:{1}{{{1}	{0}1{1}	{0}2{1}}}", innerMatcherText, Environment.NewLine);
 			var matcherMock1 = new Mock<HttpRequestMatcher>();
 			var matcherMock2 = new Mock<HttpRequestMatcher>();
 			matcherMock1.Setup(m => m.ToString()).Returns(innerMatcherText + "1");

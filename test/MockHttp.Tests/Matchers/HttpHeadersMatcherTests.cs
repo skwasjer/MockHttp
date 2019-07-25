@@ -116,8 +116,7 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void When_formatting_multiple_headers_should_return_human_readable_representation()
 		{
-			const string expectedText = @"Headers: Content-Type: text/plain
-Accept: text/plain, text/html";
+			string expectedText = $"Headers: Content-Type: text/plain{Environment.NewLine}Accept: text/plain, text/html";
 			var headers = new HttpHeadersCollection
 			{
 				{ "Content-Type", "text/plain" },
