@@ -24,7 +24,19 @@ namespace MockHttp
 		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="requestUri">The request URI or a URI wildcard.</param>
 		/// <returns>The request matching builder instance.</returns>
+		[Obsolete("Use `RequestUri` instead, will be removed.")]
 		public static RequestMatching Url(this RequestMatching builder, string requestUri)
+		{
+			return builder.RequestUri(requestUri);
+		}
+
+		/// <summary>
+		/// Matches a request by specified <paramref name="requestUri"/>.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="requestUri">The request URI or a URI wildcard.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
 		{
 			return builder.With(new RequestUriMatcher(requestUri, true));
 		}
@@ -33,9 +45,21 @@ namespace MockHttp
 		/// Matches a request by specified <paramref name="requestUri"/>.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="requestUri">The request URI or a URI wildcard.</param>
+		/// <returns>The request matching builder instance.</returns>
+		[Obsolete("Use `RequestUri` instead, will be removed.")]
+		public static RequestMatching Url(this RequestMatching builder, Uri requestUri)
+		{
+			return builder.RequestUri(requestUri);
+		}
+
+		/// <summary>
+		/// Matches a request by specified <paramref name="requestUri"/>.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="requestUri">The relative or absolute request URI.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Url(this RequestMatching builder, Uri requestUri)
+		public static RequestMatching RequestUri(this RequestMatching builder, Uri requestUri)
 		{
 			return builder.With(new RequestUriMatcher(requestUri));
 		}

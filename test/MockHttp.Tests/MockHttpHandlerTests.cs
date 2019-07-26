@@ -209,7 +209,7 @@ namespace MockHttp
 
 			// Act
 			Action verifyGet = () => _sut.Verify(
-				matching => matching.Url("**/url"),
+				matching => matching.RequestUri("**/url"),
 				isSent
 			);
 
@@ -250,7 +250,7 @@ namespace MockHttp
 
 			// Act
 			Action verifyGet = () => _sut.Verify(
-				matching => matching.Url("**/url"),
+				matching => matching.RequestUri("**/url"),
 				isSent
 			);
 
@@ -304,7 +304,7 @@ namespace MockHttp
 
 			_sut
 				.When(matching => matching
-					.Url("http://0.0.0.1/*/action*")
+					.RequestUri("http://0.0.0.1/*/action*")
 					.QueryString("test", "$%^&*")
 					.QueryString("test2=value")
 					.Method("POST")
@@ -319,8 +319,8 @@ namespace MockHttp
 					.Version("1.1")
 #endif
 					.Any(any => any
-						.Url("not-matching")
-						.Url("**controller**")
+						.RequestUri("not-matching")
+						.RequestUri("**controller**")
 					)
 					.Where(r => 0 < r.Version.Major)
 				)
@@ -344,7 +344,7 @@ namespace MockHttp
 			HttpResponseMessage response = await _httpClient.SendAsync(req);
 
 
-			_sut.Verify(matching => matching.Url("**/controller/**"), IsSent.Exactly(2), "we sent it");
+			_sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
 			_sut.Verify();
 			_sut.VerifyAll();
 

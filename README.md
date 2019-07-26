@@ -29,7 +29,7 @@ MockHttpHandler mockHttp = new MockHttpHandler();
 mockHttp
     .When(matching => matching
         .Method("GET")
-        .Url("http://localhost/controller/**")
+        .RequestUri("http://localhost/controller/**")
     )
     .RespondJson(HttpStatusCode.OK, new
     {
@@ -57,7 +57,7 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | Method | Description |
 | -- | -- |
 | <pre>.Method("POST")<br/>.Method(HttpMethod.Put)</pre> | Matches the request method. | 
-| <pre>.Url("http://localhost/exact/match?query=string")<br/>.Url("*/match")</pre> | Matches an url. Accepts wildcard `*`. | 
+| <pre>.RequestUri("http://localhost/exact/match?query=string")<br/>.RequestUri("*/match\*")</pre> | Matches an url. Accepts wildcard `*`. | 
 | <pre>.QueryString("key", "value")<br/>.QueryString("?key=value1&other=value&key=value2")<br/>.QueryString(new Dictionary<string, string><br/>{<br/>  { "key", "value" }<br/>}</pre> | Matches a query string by one or more key/value pairs. Note: the overload that accepts a full query string must be URI data escaped. |
 | <pre>.WithoutQueryString()</pre> | Matches a request without query string. |
 | <pre>.Content("text content")<br/>.Content("text content", Encoding.UTF8)<br/>.Content(stream)<br/>.Content(byteArray)</pre> | Matches the request content body. |
@@ -127,7 +127,7 @@ When the expectation is not met a `MockException` is thrown when calling `Verify
 You also have the option, similar to Moq, to verify without having configured a verifiable expected request. For example, to verify a specific url has been called twice:
 
 ```csharp
-mockHttp.Verify(matching => matching.Url("http://localhost/controller/**"), IsSent.Exactly(2));
+mockHttp.Verify(matching => matching.RequestUri("http://localhost/controller/**"), IsSent.Exactly(2));
 ```
 
 ## Callback

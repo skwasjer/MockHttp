@@ -24,7 +24,7 @@ namespace MockHttp.Extensions
 			public void When_configuring_url_should_match()
 			{
 				// Act
-				_sut.Url("http://127.0.0.1/");
+				_sut.RequestUri("http://127.0.0.1/");
 				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
