@@ -98,11 +98,6 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			if (values == null)
-			{
-				throw new ArgumentNullException(nameof(values));
-			}
-
 			return builder.QueryString(new Dictionary<string, IEnumerable<string>>
 			{
 				{ key, values }
@@ -140,7 +135,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string queryString)
 		{
-			if (string.Empty.Equals(queryString, StringComparison.OrdinalIgnoreCase))
+			if (string.IsNullOrEmpty(queryString))
 			{
 				throw new ArgumentException("Specify a query string, or use 'WithoutQueryString'.", nameof(queryString));
 			}
@@ -193,7 +188,7 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Matches a request by HTTP header.
+		/// Matches a request by HTTP header. A type converter is used to convert the <paramref name="value"/> to string.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="name">The header name.</param>
@@ -207,7 +202,7 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Matches a request by HTTP header.
+		/// Matches a request by HTTP header on a datetime value (per RFC-2616).
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="name">The header name.</param>
@@ -219,7 +214,7 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Matches a request by HTTP header.
+		/// Matches a request by HTTP header on a datetime value (per RFC-2616).
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="name">The header name.</param>
@@ -230,8 +225,8 @@ namespace MockHttp
 			// https://tools.ietf.org/html/rfc2616#section-3.3.1
 			CultureInfo ci = CultureInfo.InvariantCulture;
 #if NETFRAMEWORK
-				// .NET Framework does not normalize other common date formats,
-				// so we use multiple matches.
+			// .NET Framework does not normalize other common date formats,
+			// so we use multiple matches.
 			return builder.Any(any => any
 				.Header(name, date.ToString("R", ci))
 				.Header(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))	// RFC 1036
@@ -307,6 +302,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching ContentType(this RequestMatching builder, string mediaType)
 		{
+			if (mediaType == null)
+			{
+				throw new ArgumentNullException(nameof(mediaType));
+			}
+
 			return builder.ContentType(MediaTypeHeaderValue.Parse(mediaType));
 		}
 
@@ -319,7 +319,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching ContentType(this RequestMatching builder, string contentType, Encoding encoding)
 		{
-			return builder.ContentType($"{contentType}; charset={encoding.WebName}");
+			if (contentType == null)
+			{
+				throw new ArgumentNullException(nameof(contentType));
+			}
+
+			var mediaType = new MediaTypeHeaderValue(contentType)
+			{
+				CharSet = encoding?.WebName
+			};
+			return builder.ContentType(mediaType);
 		}
 
 		/// <summary>
@@ -383,7 +392,7 @@ namespace MockHttp
 			using (var ms = new MemoryStream())
 			{
 				content.CopyTo(ms);
-				return builder.With(new ContentMatcher(ms.ToArray()));
+				return builder.Content(ms.ToArray());
 			}
 		}
 
@@ -432,6 +441,21 @@ namespace MockHttp
 		}
 
 		/// <summary>
+		/// Matches a request by partially matching the request content.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="content">The request content.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching PartialContent(this RequestMatching builder, Stream content)
+		{
+			using (var ms = new MemoryStream())
+			{
+				content.CopyTo(ms);
+				return builder.PartialContent(ms.ToArray());
+			}
+		}
+
+		/// <summary>
 		/// Matches a request by verifying it against a list of constraints, for which at least one has to match the request.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
@@ -475,7 +499,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Version(this RequestMatching builder, string version)
 		{
-			return builder.Version(System.Version.Parse(version));
+			return builder.Version(version == null ? null : System.Version.Parse(version));
 		}
 
 		/// <summary>

@@ -43,6 +43,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
+		public override bool IsExclusive => false;
+
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return "Partial" + base.ToString();
