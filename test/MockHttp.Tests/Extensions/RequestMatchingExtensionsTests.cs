@@ -18,13 +18,30 @@ namespace MockHttp.Extensions
 			_sut = new RequestMatching();
 		}
 
-		public class Url : RequestMatchingExtensionsTests
+		public class RequestUri : RequestMatchingExtensionsTests
 		{
 			[Fact]
-			public void When_configuring_url_should_match()
+			public void When_configuring_requestUri_as_string_should_match()
 			{
 				// Act
 				_sut.RequestUri("http://127.0.0.1/");
+				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
+				matchers.Any(new HttpRequestMessage
+				{
+					RequestUri = new Uri("http://127.0.0.1/")
+				}).Should().BeTrue();
+			}
+
+			[Fact]
+			public void When_configuring_requestUri_as_uri_should_match()
+			{
+				var uri = new Uri("http://127.0.0.1/");
+
+				// Act
+				_sut.RequestUri(uri);
 				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
