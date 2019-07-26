@@ -10,27 +10,30 @@ namespace MockHttp.Matchers
 	/// </summary>
 	public class AnyMatcher : HttpRequestMatcher
 	{
-		private readonly IReadOnlyCollection<HttpRequestMatcher> _matchers;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AnyMatcher"/> class using specified list of <paramref name="matchers"/>.
 		/// </summary>
 		/// <param name="matchers">A list of matchers for which at least one has to match.</param>
 		public AnyMatcher(IReadOnlyCollection<HttpRequestMatcher> matchers)
 		{
-			_matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
+			Matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
 		}
+
+		/// <summary>
+		/// Gets the inner matchers.
+		/// </summary>
+		public IReadOnlyCollection<HttpRequestMatcher> Matchers { get; }
 
 		/// <inheritdoc />
 		public override bool IsMatch(HttpRequestMessage request)
 		{
-			return _matchers.Any(request);
+			return Matchers.Any(request);
 		}
 
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			if (_matchers.Count == 0)
+			if (Matchers.Count == 0)
 			{
 				return string.Empty;
 			}
@@ -38,7 +41,7 @@ namespace MockHttp.Matchers
 			var sb = new StringBuilder();
 			sb.AppendLine("Any:");
 			sb.AppendLine("{");
-			foreach (HttpRequestMatcher m in _matchers)
+			foreach (HttpRequestMatcher m in Matchers)
 			{
 				sb.Append('\t');
 				sb.AppendLine(m.ToString());
