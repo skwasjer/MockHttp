@@ -8,7 +8,7 @@
 
 ## v1.2
 
-- Fix: query string constraint for only a key `?key` (no = sign or value) is now accepted and will be matched as `null`.
+- Fix: query string constraint for only a key `?key` (no = sign or value) is now accepted and will be matched as `null`, ie.: (`.QueryString("key", null)`).
 - Fix: multiple partial match constraints can now be used.
 - Fix: some matchers are mutually exclusive. An exception will be thrown if this is the case.
 - Remove glob URI matcher for now, as this requires an extra dependency. Rethink this for future.
