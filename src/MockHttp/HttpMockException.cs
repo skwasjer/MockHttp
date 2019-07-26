@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Diagnostics.CodeAnalysis;
 #if NETFRAMEWORK
 using System.Runtime.Serialization;
 using System.Security;
@@ -36,20 +36,11 @@ namespace MockHttp
 
 #if NETFRAMEWORK
 		/// <inheritdoc />
+		[ExcludeFromCodeCoverage]
 		protected HttpMockException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
 		}
-
-		///// <summary>Sets the <see cref="SerializationInfo" /> with information about the exception.</summary>
-		///// <param name="info">The <see cref="SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
-		///// <param name="context">The <see cref="StreamingContext" /> that contains contextual information about the source or destination. </param>
-		///// <exception cref="ArgumentNullException">The <paramref name="info" /> parameter is a null reference (<see langword="Nothing" /> in Visual Basic). </exception>
-		//[SecurityCritical]
-		//public override void GetObjectData(SerializationInfo info, StreamingContext context)
-		//{
-		//	base.GetObjectData(info, context);
-		//}
 #endif
 	}
 }
