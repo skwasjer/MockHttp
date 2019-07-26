@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -479,7 +477,11 @@ namespace MockHttp.Extensions
 				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
+#if NETFRAMEWORK
+				matchers.Should().HaveCount(1);
+#else
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+#endif
 				matchers.Any(new HttpRequestMessage
 				{
 					Content = new StringContent("content")
