@@ -313,6 +313,11 @@ namespace MockHttp
 					.ContentType("application/json; charset=utf-8")
 					.Header("Content-Length", jsonPostContent.Length)
 					.Header("Last-Modified", lastModified)
+#if NETCOREAPP2_2
+					.Version("2.0")
+#else
+					.Version("1.1")
+#endif
 					.Any(any => any
 						.Url("not-matching")
 						.Url("**controller**")

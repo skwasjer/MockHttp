@@ -442,5 +442,27 @@ namespace MockHttp
 		{
 			return builder.With(new ExpressionMatcher(expression));
 		}
+
+		/// <summary>
+		/// Matches a request by matching the request message version.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="version">The message version.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Version(this RequestMatching builder, string version)
+		{
+			return builder.Version(System.Version.Parse(version));
+		}
+
+		/// <summary>
+		/// Matches a request by matching the request message version.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="version">The message version.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Version(this RequestMatching builder, Version version)
+		{
+			return builder.With(new VersionMatcher(version));
+		}
 	}
 }

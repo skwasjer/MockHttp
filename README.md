@@ -67,6 +67,7 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | <pre>.Header("Authorization", "Bearer 123")<br/>.Header("Content-Length", 123)<br/>.Header("Last-Modified", Date.UtcNow)<br/>.Headers("Accept: text/html")<br/>.Headers(new Dictionary<string, string><br/>{<br/>  { "Authorization", "Bearer 123" }<br/>})</pre> | Matches request headers by one or more key/value pairs. | 
 | <pre>.Any(any => any<br/>    .Method("GET")<br/>    .Method("POST")<br/>)</pre> | Matches when at least one of the inner configured conditions is true. | 
 | <pre>.Where(request => true\|false)</pre> | Matches the request using a custom predicate/expression. | 
+| <pre>.Version("2.0")<br/>.Version(new Version(1, 1))</pre> | Matches the request by HTTP message version. | 
 
 ## Configuring a response
 

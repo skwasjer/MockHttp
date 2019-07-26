@@ -2,6 +2,7 @@
 
 ## v1.3
 
+- added matcher to match request by HTTP message version.
 - (breaking) replaced `IHttpRequestMatcher` with abstract class `HttpRequestMatcher`. This breaks the public API, but acceptable since no big audience ;)
 
 ## v1.2
@@ -14,8 +15,8 @@
 
 ## v1.1
 
-- Some refactoring of Fluent API
-- Add response extensions for HttpContent, Stream and others
+- Some refactoring of Fluent API.
+- Add response extensions for HttpContent, Stream and others.
 
 ## v1.0
 
