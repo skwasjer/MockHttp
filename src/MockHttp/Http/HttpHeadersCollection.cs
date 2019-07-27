@@ -31,9 +31,14 @@ namespace MockHttp.Http
 				while (true)
 				{
 					string header = sr.ReadLine();
-					if (string.IsNullOrWhiteSpace(header))
+					if (header == null)
 					{
 						break;
+					}
+
+					if (string.IsNullOrWhiteSpace(header))
+					{
+						continue;
 					}
 
 					string[] hvp = header.Split(new[] { ':' }, 2, StringSplitOptions.None);

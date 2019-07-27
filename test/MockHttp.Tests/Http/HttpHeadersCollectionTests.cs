@@ -66,5 +66,18 @@ namespace MockHttp.Http
 			act.Should().Throw<Exception>()
 				.WithMessage(exceptionMessage);
 		}
+
+		[Fact]
+		public void Given_multiple_empty_newlines_when_parsing_should_ignore_newlines()
+		{
+			string headers = Environment.NewLine + Environment.NewLine + "Header: Value";
+
+			// Act
+			HttpHeaders actual = HttpHeadersCollection.Parse(headers);
+
+			// Assert
+			actual.Should().HaveCount(1);
+			actual.Should().Contain(h => h.Key == "Header");
+		}
 	}
 }
