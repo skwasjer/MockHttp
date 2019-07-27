@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using Newtonsoft.Json;
 using Xunit;
@@ -84,7 +85,7 @@ namespace MockHttp
 			// Assert
 			actualResponse.Should().NotBeNull();
 			actualResponse.Content.Should().NotBeNull();
-			(await actualResponse.Content.ReadAsStringAsync()).Should().Be(data);
+			actualResponse.Should().HaveContent(data);
 			_sut.Verify(m => { }, IsSent.Once);
 		}
 
@@ -349,11 +350,13 @@ namespace MockHttp
 			_sut.VerifyAll();
 
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
-			(await response.Content.ReadAsStringAsync()).Should().Be(JsonConvert.SerializeObject(new
-			{
-				firstName = "John",
-				lastName = "Doe"
-			}));
+			response.Should().HaveContent(JsonConvert.SerializeObject(
+				new
+				{
+					firstName = "John",
+					lastName = "Doe"
+				})
+			);
 		}
 
 		[Theory]
@@ -378,9 +381,9 @@ namespace MockHttp
 
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
 				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				(await firstResponse.Content.ReadAsStringAsync())
-					.Should().Be(await secondResponse.Content.ReadAsStringAsync())
-					.And.Be(data);
+				firstResponse.Should()
+					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
+					.And.HaveContent(data);
 
 				if (isSeekableStream)
 				{
@@ -415,9 +418,9 @@ namespace MockHttp
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
 				firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
 				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				(await firstResponse.Content.ReadAsStringAsync())
-					.Should().Be(await secondResponse.Content.ReadAsStringAsync())
-					.And.Be(data);
+				firstResponse.Should()
+					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
+					.And.HaveContent(data);
 
 				_sut.VerifyNoOtherCalls();
 			}
