@@ -5,6 +5,7 @@
 - `.Url()` is replaced with `.RequestUri()`, but left in for compatibility (will be removed).
 - added matcher to match request by HTTP message version.
 - (breaking) replaced `IHttpRequestMatcher` with abstract class `HttpRequestMatcher`. This breaks the public API, but acceptable since no big audience ;)
+- added more overloads for configuring responses.
 
 ## v1.2
 
