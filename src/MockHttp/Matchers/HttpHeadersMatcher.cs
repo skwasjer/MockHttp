@@ -12,6 +12,8 @@ namespace MockHttp.Matchers
 	/// </summary>
 	public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 	{
+		private static readonly HttpHeaderEqualityComparer EqualityComparer = new HttpHeaderEqualityComparer();
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
 		/// </summary>
@@ -89,13 +91,10 @@ namespace MockHttp.Matchers
 		private static bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
 			return headers != null
-				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> values)
-				&& values.Any(v => 
-					expectedHeader.Value
-						.SelectMany(HttpHeadersCollection.ParseHttpHeaderValue)
-						.All(
-							eh => HttpHeadersCollection.ParseHttpHeaderValue(v).Contains(eh)
-						)
+				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls) 
+				&& EqualityComparer.Equals(
+					expectedHeader, 
+					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)
 				);
 		}
 	}
