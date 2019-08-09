@@ -479,5 +479,40 @@ namespace MockHttp
 			});
 		}
 #endif
+
+		/// <summary>
+		/// Specifies to throw a <see cref="TaskCanceledException"/> simulating a HTTP request timeout.
+		/// </summary>
+		/// <param name="responds"></param>
+		public static IResponseResult TimesOut(this IResponds responds)
+		{
+			return responds.TimesOutAfter(0);
+		}
+
+		/// <summary>
+		/// Specifies to throw a <see cref="TaskCanceledException"/> after a specified amount of time, simulating a HTTP request timeout.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="timeoutAfterMilliseconds">The number of milliseconds after which the timeout occurs.</param>
+		public static IResponseResult TimesOutAfter(this IResponds responds, int timeoutAfterMilliseconds)
+		{
+			return responds.TimesOutAfter(TimeSpan.FromMilliseconds(timeoutAfterMilliseconds));
+		}
+
+		/// <summary>
+		/// Specifies to throw a <see cref="TaskCanceledException"/> after a specified amount of time, simulating a HTTP request timeout.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="timeoutAfter">The time after which the timeout occurs.</param>
+		public static IResponseResult TimesOutAfter(this IResponds responds, TimeSpan timeoutAfter)
+		{
+			return responds.Respond(() =>
+			{
+				// It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm.
+				// https://github.com/dotnet/corefx/issues/20296
+				return Task.Delay(timeoutAfter)
+					.ContinueWith<HttpResponseMessage>(t => throw new TaskCanceledException("The request timed out."), TaskScheduler.Current);
+			});
+		}
 	}
 }

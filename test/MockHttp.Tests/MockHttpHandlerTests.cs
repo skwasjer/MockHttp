@@ -425,5 +425,21 @@ namespace MockHttp
 				_sut.VerifyNoOtherCalls();
 			}
 		}
+
+		[Fact]
+		public void Given_request_is_configured_to_time_out_when_sending_request_should_throw()
+		{
+			_sut.When(_ => { })
+				.TimesOut()
+				.Verifiable();
+
+			// Act
+			Func<Task> act = () => _httpClient.GetAsync("");
+
+			// Assert
+			act.Should().Throw<TaskCanceledException>()
+				.WithMessage("The request timed out.");
+			_sut.Verify();
+		}
 	}
 }
