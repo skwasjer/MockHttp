@@ -98,6 +98,25 @@ mockHttp
     .Throws<InvalidOperationException>();
 ```
 
+## Setting up a response sequence
+
+Multiple responses can be configured to form a sequence. This is useful when a request is expected to happen multiple times, but with different responses.
+
+The `Respond`, `RespondJson`, `Throws`, `TimesOut`, `TimesOutAfter` response configuration extensions can be chained to form a sequence.
+
+```csharp
+mockHttp
+    .When(...)
+    .Respond(HttpStatusCode.BadGateway)
+    .Respond(HttpStatusCode.Ok)
+    .TimesOutAfter(500)
+    .Respond(HttpStatusCode.Ok)
+    .Throws<HttpRequestException>
+    .Respond(HttpStatusCode.Ok)
+```
+
+> The last configured response will be repeated if more requests are executed.
+
 ## Verifying requests
 
 Similar to Moq, each setup can be configured as `Verifiable()`, turning it into an expectation that can be verified later on using `Verify()`.
