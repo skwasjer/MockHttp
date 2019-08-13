@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
@@ -15,7 +14,7 @@ using System.Net.Http.Formatting;
 namespace MockHttp
 {
 	/// <summary>
-	/// Extensions for <see cref="IResponds"/>.
+	/// Extensions for <see cref="IResponds{TResult}"/>.
 	/// </summary>
 	// ReSharper disable once InconsistentNaming
 	public static class IRespondsExtensions
@@ -25,7 +24,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="response">The function that provides the response message to return for a request.</param>
-		public static IResponseResult Respond(this IResponds responds, Func<HttpResponseMessage> response)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, Func<HttpResponseMessage> response)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(() => Task.FromResult(response()));
 		}
@@ -35,7 +35,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="response">The function that provides the response message to return for given request.</param>
-		public static IResponseResult Respond(this IResponds responds, Func<HttpRequestMessage, HttpResponseMessage> response)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, HttpResponseMessage> response)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(request => Task.FromResult(response(request)));
 		}
@@ -45,7 +46,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(() => new HttpResponseMessage(statusCode));
 		}
@@ -55,7 +57,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, string content)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, string content)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content);
 		}
@@ -66,7 +69,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(statusCode, content, (string)null);
 		}
@@ -77,7 +81,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, string content, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content, mediaType);
 		}
@@ -89,7 +94,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(statusCode, content, null, mediaType);
 		}
@@ -100,7 +106,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, string content, MediaTypeHeaderValue mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content, mediaType);
 		}
@@ -112,7 +119,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content, MediaTypeHeaderValue mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			if (content == null)
 			{
@@ -138,7 +146,8 @@ namespace MockHttp
 		/// <param name="content">The response content.</param>
 		/// <param name="encoding">The encoding.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, string content, Encoding encoding, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, Encoding encoding, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content, encoding, mediaType);
 		}
@@ -151,7 +160,8 @@ namespace MockHttp
 		/// <param name="content">The response content.</param>
 		/// <param name="encoding">The encoding.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(statusCode, content, new MediaTypeHeaderValue(mediaType ?? "text/plain")
 			{
@@ -164,7 +174,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, Stream content)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream content)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content);
 		}
@@ -175,7 +186,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, Stream content, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream content, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content, mediaType);
 		}
@@ -186,7 +198,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, Stream content)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(statusCode, content, "application/octet-stream");
 		}
@@ -198,7 +211,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, Stream content, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(statusCode, content, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
 		}
@@ -209,7 +223,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, Stream content, MediaTypeHeaderValue mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content, mediaType);
 		}
@@ -221,7 +236,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, Stream content, MediaTypeHeaderValue mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			if (content == null)
 			{
@@ -289,7 +305,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpContent content)
+		public static T Respond<T>(this IResponds<T> responds, HttpContent content)
+			where T : IResponseResult
 		{
 			return responds.Respond(HttpStatusCode.OK, content);
 		}
@@ -300,7 +317,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult Respond(this IResponds responds, HttpStatusCode statusCode, HttpContent content)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, HttpContent content)
+			where TResult : IResponseResult
 		{
 			if (content == null)
 			{
@@ -321,7 +339,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, T content)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content)
+			where TResult : IResponseResult
 		{
 			return responds.RespondJson(content, (MediaTypeHeaderValue)null);
 		}
@@ -332,7 +351,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, HttpStatusCode statusCode, T content)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content)
+			where TResult : IResponseResult
 		{
 			return responds.RespondJson(statusCode, content, (MediaTypeHeaderValue)null);
 		}
@@ -343,7 +363,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, T content, MediaTypeHeaderValue mediaType)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
 		}
@@ -355,7 +376,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
 
@@ -382,7 +404,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, T content, string mediaType)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
 		}
@@ -394,7 +417,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-		public static IResponseResult RespondJson<T>(this IResponds responds, HttpStatusCode statusCode, T content, string mediaType)
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, string mediaType)
+			where TResult : IResponseResult
 		{
 #if !NETSTANDARD1_1
 			return responds.RespondObject(statusCode, content, JsonFormatter, mediaType);
@@ -410,7 +434,8 @@ namespace MockHttp
 		/// <param name="responds"></param>
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, T value, MediaTypeFormatter formatter)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter)
+			where TResult : IResponseResult
 		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter);
 		}
@@ -422,7 +447,8 @@ namespace MockHttp
 		/// <param name="statusCode">The status code response for given request.</param>
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter)
+			where TResult : IResponseResult
 		{
 			return responds.RespondObject(statusCode, value, formatter, (MediaTypeHeaderValue)null);
 		}
@@ -434,7 +460,8 @@ namespace MockHttp
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, T value, MediaTypeFormatter formatter, string mediaType)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter, mediaType);
 		}
@@ -447,7 +474,8 @@ namespace MockHttp
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, string mediaType)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, string mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.RespondObject(statusCode, value, formatter, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
 		}
@@ -459,7 +487,8 @@ namespace MockHttp
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter, mediaType);
 		}
@@ -472,7 +501,8 @@ namespace MockHttp
 		/// <param name="value">The response value.</param>
 		/// <param name="formatter">The media type formatter</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
-		public static IResponseResult RespondObject<T>(this IResponds responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(() => new HttpResponseMessage(statusCode)
 			{
@@ -485,7 +515,8 @@ namespace MockHttp
 		/// Specifies to throw a <see cref="TaskCanceledException"/> simulating a HTTP request timeout.
 		/// </summary>
 		/// <param name="responds"></param>
-		public static IResponseResult TimesOut(this IResponds responds)
+		public static TResult TimesOut<TResult>(this IResponds<TResult> responds)
+			where TResult : IResponseResult
 		{
 			return responds.TimesOutAfter(0);
 		}
@@ -495,7 +526,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="timeoutAfterMilliseconds">The number of milliseconds after which the timeout occurs.</param>
-		public static IResponseResult TimesOutAfter(this IResponds responds, int timeoutAfterMilliseconds)
+		public static TResult TimesOutAfter<TResult>(this IResponds<TResult> responds, int timeoutAfterMilliseconds)
+			where TResult : IResponseResult
 		{
 			return responds.TimesOutAfter(TimeSpan.FromMilliseconds(timeoutAfterMilliseconds));
 		}
@@ -505,7 +537,8 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="timeoutAfter">The time after which the timeout occurs.</param>
-		public static IResponseResult TimesOutAfter(this IResponds responds, TimeSpan timeoutAfter)
+		public static TResult TimesOutAfter<TResult>(this IResponds<TResult> responds, TimeSpan timeoutAfter)
+			where TResult : IResponseResult
 		{
 			return responds.Respond(() =>
 			{

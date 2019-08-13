@@ -13,10 +13,9 @@ namespace MockHttp
 	/// <summary>
 	/// Contains the setup that controls the behavior of a mocked HTTP request.
 	/// </summary>
-	internal sealed class HttpCall
+	internal class HttpCall
 	{
 		private Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
-		private Action<HttpRequestMessage> _callback;
 		private string _verifiableBecause;
 		private IReadOnlyCollection<HttpRequestMatcher> _matchers;
 
@@ -33,13 +32,15 @@ namespace MockHttp
 			}
 		}
 
-		public bool IsVerifiable { get; private set; }
+		public virtual bool IsVerifiable { get; private set; }
 
-		public bool IsVerified { get; private set; }
+		public virtual bool IsVerified { get; protected set; }
 
-		public bool IsInvoked { get; private set; }
+		public virtual bool IsInvoked { get; protected set; }
 
-		public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public Action<HttpRequestMessage> Callback { get; private set; }
+
+		public virtual async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			IsInvoked = true;
 
@@ -51,18 +52,18 @@ namespace MockHttp
 
 			cancellationToken.ThrowIfCancellationRequested();
 
-			_callback?.Invoke(request);
+			Callback?.Invoke(request);
 			HttpResponseMessage responseMessage = await _response(request).ConfigureAwait(false);
 			responseMessage.RequestMessage = request;
 			return responseMessage;
 		}
 
-		public void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public virtual void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
 			_response = response ?? throw new ArgumentNullException(nameof(response));
 		}
 
-		public void SetMatchers(IEnumerable<HttpRequestMatcher> matchers)
+		public virtual void SetMatchers(IEnumerable<HttpRequestMatcher> matchers)
 		{
 			if (matchers == null)
 			{
@@ -72,12 +73,12 @@ namespace MockHttp
 			_matchers = new ReadOnlyCollection<HttpRequestMatcher>(matchers.ToList());
 		}
 
-		public void SetCallback(Action<HttpRequestMessage> callback)
+		public virtual void SetCallback(Action<HttpRequestMessage> callback)
 		{
-			_callback = callback ?? throw new ArgumentNullException(nameof(callback));
+			Callback = callback ?? throw new ArgumentNullException(nameof(callback));
 		}
 
-		public void SetVerifiable(string because)
+		public virtual void SetVerifiable(string because)
 		{
 			IsVerifiable = true;
 			_verifiableBecause = because;
@@ -102,7 +103,7 @@ namespace MockHttp
 			return sb.ToString();
 		}
 
-		public bool VerifyIfInvoked()
+		public virtual bool VerifyIfInvoked()
 		{
 			if (IsInvoked)
 			{
@@ -112,14 +113,14 @@ namespace MockHttp
 			return IsVerified;
 		}
 
-		public void Reset()
+		public virtual void Reset()
 		{
 			IsInvoked = false;
 			IsVerified = false;
 			IsVerifiable = false;
 			_verifiableBecause = null;
 			_response = null;
-			_callback = null;
+			Callback = null;
 			_matchers = null;
 		}
 	}

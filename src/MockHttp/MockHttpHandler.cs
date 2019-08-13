@@ -29,7 +29,7 @@ namespace MockHttp
 			InvokedRequests = new InvokedHttpRequestCollection();
 
 			_fallbackSetup = new HttpCall();
-			Fallback = new HttpRequestSetupPhrase(_fallbackSetup);
+			Fallback = new FallbackRequestSetupPhrase(_fallbackSetup);
 			Reset();
 		}
 
@@ -80,7 +80,7 @@ namespace MockHttp
 			var b = new RequestMatching();
 			matching(b);
 
-			var newSetup = new HttpCall();
+			var newSetup = new HttpCallSequence();
 			newSetup.SetMatchers(b.Build());
 			_setups.Add(newSetup);
 			return new HttpRequestSetupPhrase(newSetup);

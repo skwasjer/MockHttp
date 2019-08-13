@@ -6,7 +6,7 @@ namespace MockHttp.Language.Flow
 	/// Implements the fluent API.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	public interface IResponseResult : IFluentInterface
+	public interface ISequenceResponseResult : IResponds<ISequenceResponseResult>, IThrows<ISequenceThrowsResult>, IResponseResult, IVerifies, IFluentInterface
 	{
 	}
 }

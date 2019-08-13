@@ -15,12 +15,12 @@ namespace MockHttp.Language.Flow
 			_setup = setup ?? throw new ArgumentNullException(nameof(setup));
 		}
 
-		public IResponseResult Respond(Func<Task<HttpResponseMessage>> response)
+		public ISequenceResponseResult Respond(Func<Task<HttpResponseMessage>> response)
 		{
 			return Respond(_ => response());
 		}
 
-		public IResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public ISequenceResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
 		{
 			_setup.SetResponse(response);
 			return this;
@@ -41,26 +41,26 @@ namespace MockHttp.Language.Flow
 			_setup.SetVerifiable(because);
 		}
 
-		public IThrowsResult Throws(Exception exception)
+		public ISequenceThrowsResult Throws(Exception exception)
 		{
 			Respond(() => throw exception);
 			return this;
 		}
 
-		public IThrowsResult Throws<TException>()
+		public ISequenceThrowsResult Throws<TException>()
 			where TException : Exception, new()
 		{
 			Respond(_ => throw new TException());
 			return this;
 		}
 
-		public ICallbackResult Callback(Action<HttpRequestMessage> callback)
+		public ICallbackResult<ISequenceResponseResult, ISequenceThrowsResult> Callback(Action<HttpRequestMessage> callback)
 		{
 			_setup.SetCallback(callback);
 			return this;
 		}
 
-		public ICallbackResult Callback(Action callback)
+		public ICallbackResult<ISequenceResponseResult, ISequenceThrowsResult> Callback(Action callback)
 		{
 			return Callback(_ => callback());
 		}

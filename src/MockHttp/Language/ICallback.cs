@@ -9,18 +9,20 @@ namespace MockHttp.Language
 	/// Defines the <c>Callback</c> verb and overloads for callbacks.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	public interface ICallback : IFluentInterface
+	public interface ICallback<out TResponseResult, out TThrowsResult> : IFluentInterface
+		where TResponseResult : IResponseResult
+		where TThrowsResult : IThrowsResult
 	{
 		/// <summary>
 		/// Specifies a callback to invoke when the request is sent.
 		/// </summary>
 		/// <param name="callback">The callback to invoke.</param>
-		ICallbackResult Callback(Action callback);
+		ICallbackResult<TResponseResult, TThrowsResult> Callback(Action callback);
 
 		/// <summary>
 		/// Specifies a callback to invoke when the request is sent.
 		/// </summary>
 		/// <param name="callback">The callback to invoke.</param>
-		ICallbackResult Callback(Action<HttpRequestMessage> callback);
+		ICallbackResult<TResponseResult, TThrowsResult> Callback(Action<HttpRequestMessage> callback);
 	}
 }

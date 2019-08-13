@@ -8,19 +8,20 @@ namespace MockHttp.Language
 	/// Defines the <c>Throws</c> verb and overloads for throwing exceptions.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	public interface IThrows : IFluentInterface
+	public interface IThrows<out TResult> : IFluentInterface
+		where TResult : IThrowsResult
 	{
 		/// <summary>
 		/// Specifies the <paramref name="exception"/> to throw when a request is sent.
 		/// </summary>
 		/// <param name="exception">The exception to throw.</param>
-		IThrowsResult Throws(Exception exception);
+		TResult Throws(Exception exception);
 
 		/// <summary>
 		/// Specifies the type of exception to throw when a request is sent.
 		/// </summary>
 		/// <typeparam name="TException">The type of the exception to throw.</typeparam>
-		IThrowsResult Throws<TException>()
+		TResult Throws<TException>()
 			where TException : Exception, new();
 	}
 }

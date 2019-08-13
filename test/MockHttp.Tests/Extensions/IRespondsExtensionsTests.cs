@@ -17,7 +17,7 @@ namespace MockHttp.Extensions
 {
 	public class IRespondsExtensionsTests
 	{
-		private readonly IResponds _sut;
+		private readonly IResponds<ISequenceResponseResult> _sut;
 		private readonly HttpCall _httpCall;
 
 		public IRespondsExtensionsTests()

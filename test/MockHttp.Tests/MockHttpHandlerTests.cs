@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
-using MockHttp.Language;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -44,7 +43,8 @@ namespace MockHttp
 		public void Given_request_is_configured_to_throw_when_sending_request_should_throw_exception()
 		{
 			_sut.When(matching => { })
-				.Throws<TestableException>();
+				.Throws<TestableException>()
+				.Verifiable();
 
 			// Act
 			Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
@@ -52,6 +52,7 @@ namespace MockHttp
 			// Assert
 			act.Should().ThrowExactly<TestableException>();
 			_sut.Verify(m => { }, IsSent.Once);
+			_sut.Verify();
 		}
 
 		[Fact]
@@ -59,7 +60,8 @@ namespace MockHttp
 		{
 			var exception = new TestableException();
 			_sut.When(matching => { })
-				.Throws(exception);
+				.Throws(exception)
+				.Verifiable();
 
 			// Act
 			Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
@@ -70,6 +72,7 @@ namespace MockHttp
 				.Which.Should()
 				.Be(exception);
 			_sut.Verify(m => { }, IsSent.Once);
+			_sut.Verify();
 		}
 
 		[Fact]
@@ -90,15 +93,28 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public async Task Given_no_request_is_configured_when_sending_request_should_return_default_response()
+		public async Task Given_no_request_is_configured_when_sending_request_should_return_fallback_response()
 		{
 			// Act
 			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
 
 			// Assert
-			actualResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+			actualResponse.Should().HaveStatusCode(HttpStatusCode.NotFound);
 			actualResponse.ReasonPhrase.Should().Be("No request is configured, returning default response.");
 			_sut.Verify(m => { }, IsSent.Once);
+		}
+
+
+		[Fact]
+		public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_when_sending_request_should_return_fallback_response()
+		{
+			_sut.Fallback.Respond(HttpStatusCode.BadRequest);
+
+			// Act
+			HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
+
+			// Assert
+			actualResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest);
 		}
 
 		[Fact]
@@ -349,8 +365,9 @@ namespace MockHttp
 			_sut.Verify();
 			_sut.VerifyAll();
 
-			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
-			response.Should().HaveContent(JsonConvert.SerializeObject(
+			response.Should()
+				.HaveStatusCode(HttpStatusCode.Accepted)
+				.And.HaveContent(JsonConvert.SerializeObject(
 				new
 				{
 					firstName = "John",
@@ -465,6 +482,57 @@ namespace MockHttp
 			act.Should()
 				.Throw<HttpMockException>("the POST request was not verified")
 				.WithMessage("There are 1 unverified requests*Method: POST,*");
+		}
+
+		[Fact]
+		public async Task Given_request_is_configured_to_have_different_responses_should_return_response_in_sequence()
+		{
+			_sut.When(_ => { })
+				.Respond(HttpStatusCode.BadRequest)
+				.Respond(HttpStatusCode.BadGateway)
+				.Respond(HttpStatusCode.OK)
+				.Verifiable();
+
+			// Act
+			HttpResponseMessage response1 = await _httpClient.GetAsync("");
+			HttpResponseMessage response2 = await _httpClient.GetAsync("");
+			HttpResponseMessage response3 = await _httpClient.GetAsync("");
+			HttpResponseMessage response4 = await _httpClient.GetAsync("");
+
+			// Assert
+			response1.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+			response2.Should().HaveStatusCode(HttpStatusCode.BadGateway);
+			response3.Should().HaveStatusCode(HttpStatusCode.OK);
+			response4.Should().HaveStatusCode(HttpStatusCode.OK);
+			_sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(4));
+			_sut.Verify();
+		}
+
+		[Fact]
+		public void Given_request_is_configured_to_fail_and_then_succeed_should_return_response_in_sequence()
+		{
+			var ex = new Exception("My exception");
+
+			_sut.When(_ => { })
+				.Throws(ex)
+				.TimesOutAfter(500)
+				.Respond(HttpStatusCode.OK)
+				.Verifiable();
+
+			// Act & assert
+			Func<Task<HttpResponseMessage>> act1 = () => _httpClient.GetAsync("");
+			Func<Task<HttpResponseMessage>> act2 = () => _httpClient.GetAsync("");
+			HttpResponseMessage response3 = null;
+			Func<Task<HttpResponseMessage>> act3 = async () => response3 = await _httpClient.GetAsync("");
+
+			// Assert
+			act1.Should().Throw<Exception>().Which.Should().Be(ex);
+			act2.Should().Throw<TaskCanceledException>();
+			act3.Should().NotThrow();
+			response3.Should().HaveStatusCode(HttpStatusCode.OK);
+
+			_sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(3));
+			_sut.Verify();
 		}
 	}
 }
