@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
@@ -508,10 +509,17 @@ namespace MockHttp
 		{
 			return responds.Respond(() =>
 			{
-				// It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm.
+				// It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm,
+				// so we simulate same behavior.
 				// https://github.com/dotnet/corefx/issues/20296
 				return Task.Delay(timeoutAfter)
-					.ContinueWith<HttpResponseMessage>(t => throw new TaskCanceledException("The request timed out."), TaskScheduler.Current);
+					.ContinueWith(_ =>
+					{
+						var tcs = new TaskCompletionSource<HttpResponseMessage>();
+						tcs.TrySetCanceled();
+						return tcs.Task;
+					}, TaskScheduler.Current)
+					.Unwrap();
 			});
 		}
 	}

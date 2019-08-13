@@ -437,8 +437,7 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TaskCanceledException>()
-				.WithMessage("The request timed out.");
+			act.Should().Throw<TaskCanceledException>();
 			_sut.Verify();
 		}
 	}
