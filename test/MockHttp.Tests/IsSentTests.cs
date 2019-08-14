@@ -120,6 +120,29 @@ namespace MockHttp
 		public class Exactly
 		{
 			[Theory]
+			[InlineData(-1)]
+			[InlineData(-2)]
+			public void Given_call_count_below_0_when_creating_should_throw(int callCount)
+			{
+				Action act = () => IsSent.Exactly(callCount);
+
+				// Assert
+				act.Should().Throw<ArgumentOutOfRangeException>().WithParamName(nameof(callCount));
+			}
+
+			[Theory]
+			[InlineData(0)]
+			[InlineData(1)]
+			[InlineData(int.MaxValue)]
+			public void Given_call_count_above_or_equal_to_0_when_creating_should_not_throw(int callCount)
+			{
+				Action act = () => IsSent.Exactly(callCount);
+
+				// Assert
+				act.Should().NotThrow<ArgumentOutOfRangeException>();
+			}
+
+			[Theory]
 			[InlineData(0, 1, false)]
 			[InlineData(0, 0, true)]
 			[InlineData(1, 0, false)]

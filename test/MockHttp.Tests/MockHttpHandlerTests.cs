@@ -120,6 +120,31 @@ namespace MockHttp
 		}
 
 		[Fact]
+		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_when_sending_request_should_throw()
+		{
+			_sut.Fallback.Throws<TestableException>();
+
+			// Act
+			Func<Task> act = () => _httpClient.GetAsync("");
+
+			// Assert
+			act.Should().Throw<TestableException>();
+		}
+
+		[Fact]
+		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_specific_exception_when_sending_request_should_throw()
+		{
+			var ex = new TestableException();
+			_sut.Fallback.Throws(ex);
+
+			// Act
+			Func<Task> act = () => _httpClient.GetAsync("");
+
+			// Assert
+			act.Should().Throw<TestableException>().Which.Should().Be(ex);
+		}
+
+		[Fact]
 		public async Task Given_a_callback_is_configured_when_sending_request_should_invoke_callback_before_sending_request()
 		{
 			bool callbackCalled = false;
