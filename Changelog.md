@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.x
+
+- Added `TimesOut()` and `TimesOutAfter(millisecs)` response extensions.
+- Renamed `VerifyNoOtherCalls()` to `VerifyNoOtherRequests()`, and fixed the verification not taking into account requests to `Verify(m => ....)`
+
 ## v1.3
 
 - `.Url()` is replaced with `.RequestUri()`, but left in for compatibility (will be removed).
