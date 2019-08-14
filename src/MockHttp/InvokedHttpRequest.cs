@@ -7,16 +7,25 @@ namespace MockHttp
 {
 	internal class InvokedHttpRequest : IInvokedHttpRequest
 	{
+		private bool _markedAsVerified;
+
 		public InvokedHttpRequest(HttpCall setup, HttpRequestMessage request)
 		{
 			Setup = setup ?? throw new ArgumentNullException(nameof(setup));
 			Request = request ?? throw new ArgumentNullException(nameof(request));
 		}
 
-		public HttpCall Setup { get; }
+		internal HttpCall Setup { get; }
 
 		public HttpRequestMessage Request { get; }
 
 		public IReadOnlyCollection<HttpRequestMatcher> Matchers => Setup.Matchers;
+
+		internal bool IsVerified => Setup.IsVerified || _markedAsVerified;
+
+		internal void MarkAsVerified()
+		{
+			_markedAsVerified = true;
+		}
 	}
 }

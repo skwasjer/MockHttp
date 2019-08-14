@@ -131,13 +131,18 @@ namespace MockHttp
 			matching(rm);
 			IReadOnlyCollection<HttpRequestMatcher> shouldMatch = rm.Build();
 
-			int callCount = shouldMatch.Count == 0
-				? InvokedRequests.Count
-				: InvokedRequests.Count(r => shouldMatch.All(r.Request, out _));
+			IReadOnlyList<IInvokedHttpRequest> matchedRequests = shouldMatch.Count == 0
+				? (IReadOnlyList<IInvokedHttpRequest>)InvokedRequests
+				: InvokedRequests.Where(r => shouldMatch.All(r.Request, out _)).ToList();
 
-			if (!times.Verify(callCount))
+			if (!times.Verify(matchedRequests.Count))
 			{
-				throw new HttpMockException(times.GetErrorMessage(callCount, BecauseMessage(because)));
+				throw new HttpMockException(times.GetErrorMessage(matchedRequests.Count, BecauseMessage(because)));
+			}
+
+			foreach (InvokedHttpRequest r in matchedRequests.Cast<InvokedHttpRequest>())
+			{
+				r.MarkAsVerified();
 			}
 		}
 
@@ -164,22 +169,37 @@ namespace MockHttp
 		/// </summary>
 		public void VerifyNoOtherCalls()
 		{
-			IEnumerable<HttpCall> unverifiedSetups = _setups.Where(r => !r.IsVerified);
-			Verify(unverifiedSetups);
+			List<InvokedHttpRequest> unverifiedRequests = InvokedRequests
+				.Cast<InvokedHttpRequest>()
+				.Where(r => !r.IsVerified)
+				.ToList();
+			if (!unverifiedRequests.Any())
+			{
+				return;
+			}
+
+			string unverifiedRequestsStr = string.Join(Environment.NewLine, unverifiedRequests.Select(ir => ir.Request.ToString()));
+
+			throw new HttpMockException($"There are {unverifiedRequests.Count} unverified requests:{Environment.NewLine}{unverifiedRequestsStr}");
 		}
 
 		private void Verify(IEnumerable<HttpCall> verifiableSetups)
 		{
-			List<HttpCall> expectedInvocations = verifiableSetups.Where(setup => !setup.VerifyIfInvoked()).ToList();
-			if (expectedInvocations.Any())
+			List<HttpCall> expectedInvocations = verifiableSetups
+				.Where(setup => !setup.VerifyIfInvoked())
+				.ToList();
+			if (!expectedInvocations.Any())
 			{
-				var requestsSeen = string.Join(Environment.NewLine, InvokedRequests.Select(ir => ir.Request.ToString()));
-				if (requestsSeen.Length > 0)
-				{
-					requestsSeen = Environment.NewLine + "Seen requests: " + requestsSeen;
-				}
-				throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}{requestsSeen}");
+				return;
 			}
+
+			string invokedRequestsStr = string.Join(Environment.NewLine, InvokedRequests.Select(ir => ir.Request.ToString()));
+			if (invokedRequestsStr.Length > 0)
+			{
+				invokedRequestsStr = Environment.NewLine + "Seen requests: " + invokedRequestsStr;
+			}
+
+			throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}{invokedRequestsStr}");
 		}
 
 		private static HttpResponseMessage CreateDefaultResponse()

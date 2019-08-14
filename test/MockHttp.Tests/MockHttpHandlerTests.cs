@@ -440,5 +440,29 @@ namespace MockHttp
 			act.Should().Throw<TaskCanceledException>();
 			_sut.Verify();
 		}
+
+		[Fact]
+		public async Task Given_request_is_not_verified_when_verifying_no_other_calls_should_throw()
+		{
+			_sut.When(matching => matching.Method("GET"))
+				.Respond(HttpStatusCode.OK)
+				.Verifiable();
+
+			await _httpClient.GetAsync("");
+			await _httpClient.PutAsync("", new StringContent("data"));
+			await _httpClient.PostAsync("", new StringContent("data"));
+
+			// Verify GET and PUT via different means, but not POST
+			_sut.Verify(matching => matching.Method("PUT"), IsSent.Once);
+			_sut.Verify();
+
+			// Act
+			Action act = () => _sut.VerifyNoOtherCalls();
+
+			// Assert
+			act.Should()
+				.Throw<HttpMockException>("the POST request was not verified")
+				.WithMessage("There are 1 unverified requests*Method: POST,*");
+		}
 	}
 }
