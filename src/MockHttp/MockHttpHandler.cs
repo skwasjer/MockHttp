@@ -48,7 +48,7 @@ namespace MockHttp
 		{
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
-			foreach (HttpCall setup in _setups)
+			foreach (HttpCall setup in _setups.Reverse())
 			{
 				if (setup.Matchers.All(request, out IEnumerable<HttpRequestMatcher> notMatchedOn))
 				{
