@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;
+using MockHttp.Threading;
 
 namespace MockHttp
 {
@@ -16,7 +17,7 @@ namespace MockHttp
 	/// </summary>
 	public sealed class MockHttpHandler : HttpMessageHandler
 	{
-		private readonly List<HttpCall> _setups;
+		private readonly ConcurrentCollection<HttpCall> _setups;
 		private readonly HttpCall _fallbackSetup;
 
 		/// <summary>
@@ -24,7 +25,7 @@ namespace MockHttp
 		/// </summary>
 		public MockHttpHandler()
 		{
-			_setups = new List<HttpCall>();
+			_setups = new ConcurrentCollection<HttpCall>();
 			InvokedRequests = new InvokedHttpRequestCollection();
 
 			_fallbackSetup = new HttpCall();
@@ -47,7 +48,6 @@ namespace MockHttp
 		{
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
-			// Not thread safe...
 			foreach (HttpCall setup in _setups)
 			{
 				if (setup.Matchers.All(request, out IEnumerable<HttpRequestMatcher> notMatchedOn))
