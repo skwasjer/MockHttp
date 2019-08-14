@@ -394,7 +394,7 @@ namespace MockHttp
 					firstResponse.Content.Should().BeOfType<ByteArrayContent>("the content stream is not seekable, thus a buffered byte array is returned");
 				}
 
-				_sut.VerifyNoOtherCalls();
+				_sut.VerifyNoOtherRequests();
 			}
 		}
 
@@ -422,7 +422,7 @@ namespace MockHttp
 					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
 					.And.HaveContent(data);
 
-				_sut.VerifyNoOtherCalls();
+				_sut.VerifyNoOtherRequests();
 			}
 		}
 
@@ -457,7 +457,7 @@ namespace MockHttp
 			_sut.Verify();
 
 			// Act
-			Action act = () => _sut.VerifyNoOtherCalls();
+			Action act = () => _sut.VerifyNoOtherRequests();
 
 			// Assert
 			act.Should()
