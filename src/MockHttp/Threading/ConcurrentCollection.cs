@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace MockHttp.Threading
 {
-	internal class ConcurrentCollection<T> : IConcurrentReadOnlyList<T>
+	internal class ConcurrentCollection<T> : IConcurrentReadOnlyCollection<T>
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly object _syncLock = new object();
@@ -13,7 +13,7 @@ namespace MockHttp.Threading
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private List<T> _items;
 
-		public void Add(T request)
+		public void Add(T item)
 		{
 			lock (_syncLock)
 			{
@@ -22,7 +22,7 @@ namespace MockHttp.Threading
 					_items = new List<T>();
 				}
 
-				_items.Add(request);
+				_items.Add(item);
 			}
 		}
 

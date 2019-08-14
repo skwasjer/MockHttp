@@ -5,7 +5,7 @@ namespace MockHttp
 	/// <summary>
 	/// Represents a collection of invoked HTTP requests.
 	/// </summary>
-	public interface IInvokedHttpRequestCollection : IConcurrentReadOnlyList<IInvokedHttpRequest>
+	public interface IInvokedHttpRequestCollection : IConcurrentReadOnlyCollection<IInvokedHttpRequest>
 	{
 		/// <summary>
 		/// Clears the invoked requests collection.

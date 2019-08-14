@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Net.Http;
 using FluentAssertions;
 using Xunit;
 
-namespace MockHttp
+namespace MockHttp.Threading
 {
-	public class InvokedHttpRequestCollectionTests
+	public class ConcurrentCollectionTests
 	{
 		[Fact]
 		public void Given_collection_is_not_initialized_when_getting_by_invalid_index_should_throw()
 		{
-			var sut = new InvokedHttpRequestCollection();
+			var sut = new ConcurrentCollection<object>();
 
 			// Act
-			Func<IInvokedHttpRequest> act = () => sut[0];
+			Func<object> act = () => sut[0];
 
 			// Assert
 			act.Should().Throw<IndexOutOfRangeException>();
@@ -22,7 +21,7 @@ namespace MockHttp
 		[Fact]
 		public void Given_collection_is_not_initialized_when_iterating_should_return_nothing()
 		{
-			var sut = new InvokedHttpRequestCollection();
+			var sut = new ConcurrentCollection<object>();
 
 			// Act & assert
 			sut.Should().BeEmpty();
@@ -31,7 +30,7 @@ namespace MockHttp
 		[Fact]
 		public void Given_collection_is_not_initialized_when_getting_count_should_return_0()
 		{
-			var sut = new InvokedHttpRequestCollection();
+			var sut = new ConcurrentCollection<object>();
 
 			// Act & assert
 			sut.Count.Should().Be(0);
@@ -40,14 +39,14 @@ namespace MockHttp
 		[Fact]
 		public void Given_collection_is_cleared_when_getting_by_invalid_index_should_throw()
 		{
-			var sut = new InvokedHttpRequestCollection
+			var sut = new ConcurrentCollection<object>
 			{
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage())
+				new object()
 			};
 
 			// Act
 			sut.Clear();
-			Func<IInvokedHttpRequest> act = () => sut[0];
+			Func<object> act = () => sut[0];
 
 			// Assert
 			act.Should().Throw<IndexOutOfRangeException>();
@@ -58,34 +57,35 @@ namespace MockHttp
 		[InlineData(1)]
 		public void Given_collection_with_items_when_getting_by_valid_index_should_return_item(int index)
 		{
-			var sut = new InvokedHttpRequestCollection
+			int expectedValue = index + 1;
+			var sut = new ConcurrentCollection<object>
 			{
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage(HttpMethod.Get, "http://uri0")),
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage(HttpMethod.Post, "http://uri1"))
+				1,
+				2
 			};
 
 			// Act
-			IInvokedHttpRequest item = sut[index];
+			object item = sut[index];
 
 
 			// Assert
-			item.Request.RequestUri.Should().Be($"http://uri{index}");
+			item.Should().Be(expectedValue);
 		}
 
 		[Fact]
 		public void Given_iteration_is_in_process_when_modifying_collection_should_not_throw()
 		{
-			var sut = new InvokedHttpRequestCollection
+			var sut = new ConcurrentCollection<object>
 			{
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage())
+				new object()
 			};
 
 			Action act = () =>
 			{
 				// Modify collection while iterating.
-				foreach (IInvokedHttpRequest _ in sut)
+				foreach (object _ in sut)
 				{
-					sut.Add(new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage()));
+					sut.Add(new object());
 				}
 			};
 
@@ -96,10 +96,10 @@ namespace MockHttp
 		[Fact]
 		public void Given_collection_with_items_when_getting_count_should_return_correct_count()
 		{
-			var sut = new InvokedHttpRequestCollection
+			var sut = new ConcurrentCollection<object>
 			{
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage(HttpMethod.Get, "http://uri0")),
-				new InvokedHttpRequest(new HttpCall(), new HttpRequestMessage(HttpMethod.Post, "http://uri1"))
+				new object(),
+				new object()
 			};
 
 			// Act & assert
