@@ -11,7 +11,7 @@ dotnet_csproj:
   file_version: $(file_version)
   informational_version: $(informational_version)
 install:
-  - ps: '& .\ci\set_version_from_git.ps1'
+- ps: '& .\ci\set_version_from_git.ps1'
 nuget:
   project_feed: true
   disable_publish_on_pr: true
@@ -19,23 +19,20 @@ cache:
   - C:\ProgramData\chocolatey\bin -> appveyor.yml, codecov.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml, codecov.yml
 before_build:
-  - dotnet tool install -g InheritDocTool
-  - choco install opencover.portable
-  - choco install codecov
-  - dotnet restore
+- ps: dotnet restore
+- ps: choco install opencover.portable
+- ps: choco install codecov
 build:
   project: MockHttp.sln
   publish_nuget: true
   publish_nuget_symbols: true
   verbosity: minimal
-after_build:
-  - InheritDocTool --overwrite
 test_script:
   - OpenCover.Console.exe -target:"dotnet.exe" -targetargs:"test -c Debug" -output:coverage.xml -register:user -returntargetcode -filter:"+[*MockHttp*]* -[*Tests]*" -excludebyattribute:*.ExcludeFromCodeCoverageAttribute;*.GeneratedCodeAttribute;*.DebuggerNonUserCodeAttribute;*.CompilerGeneratedAttribute;*.DebuggerHiddenAttribute -oldStyle
   - codecov -f coverage.xml
 deploy:
-  - provider: NuGet
-    api_key:
-      secure: V2QFEs9EHhZ5Fxgocpd0/jKOMhiFx1wXkLqPvs7DxSKJT9vItwFMwNQgI8yP1io+
-    on:
-      branch: /release/.*/
+- provider: NuGet
+  api_key:
+    secure: V2QFEs9EHhZ5Fxgocpd0/jKOMhiFx1wXkLqPvs7DxSKJT9vItwFMwNQgI8yP1io+
+  on:
+    branch: /release/.*/
