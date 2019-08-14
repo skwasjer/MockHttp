@@ -375,12 +375,11 @@ namespace MockHttp
 				.Callback(() =>
 				{
 				})
-				//.Throws<Exception>();
-				.RespondJson(HttpStatusCode.Accepted, new
+				.Respond(HttpStatusCode.Accepted, JsonConvert.SerializeObject(new
 				{
 					firstName = "John",
 					lastName = "Doe"
-				})
+				}))
 				.Verifiable();
 
 			// Act

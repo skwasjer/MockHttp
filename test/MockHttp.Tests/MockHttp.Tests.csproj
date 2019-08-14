@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2;netcoreapp1.1;net452</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2;netcoreapp1.1;net462</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -9,14 +9,8 @@
     <RootNamespace>MockHttp</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" Condition="$(TargetFramework.StartsWith('netcoreapp'))" />
-    <PackageReference Include="FluentAssertions" Version="5.8.0" />
-    <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -24,10 +18,23 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp1'))">
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp2'))">
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
+  </ItemGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
     <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netcoreapp2.2'" />
     <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard1.1" Condition="'$(TargetFramework)'=='netcoreapp1.1'" />
-    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=net45" Condition="'$(TargetFramework)'=='net452'" />
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=net45" Condition="'$(TargetFramework)'=='net462'" />
   </ItemGroup>
 
 </Project>

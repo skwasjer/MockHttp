@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.1;net45</TargetFrameworks>
-    <PackageId>skwas.MockHttp</PackageId>
-    <AssemblyName>skwas.MockHttp</AssemblyName>
+    <PackageId>skwas.MockHttp.Json</PackageId>
+    <AssemblyName>skwas.MockHttp.Json</AssemblyName>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
@@ -11,17 +11,21 @@
   <Import Project="..\Package.props" />
 
   <PropertyGroup>
-    <Description>Mock HTTP responses for HttpClient and verify request expectations, with an experience inspired by Moq.</Description>
+    <Description>JSON and MediaTypeFormatter extensions for skwas.MockHttp.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
-    <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
+    <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
   </PropertyGroup>
-  
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <Reference Include="System.Net.Http" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard1'))">
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard2'))">
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,13 +33,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IFluentInterface" Version="2.1.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MockHttp\MockHttp.csproj" />
   </ItemGroup>
 
 </Project>

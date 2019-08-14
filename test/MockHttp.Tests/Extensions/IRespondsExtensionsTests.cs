@@ -358,48 +358,5 @@ namespace MockHttp.Extensions
 				act.Should().NotThrow();
 			}
 		}
-
-		public class WithJson : IRespondsExtensionsTests
-		{
-			[Fact]
-			public async Task When_responding_with_json_object_it_should_return_response()
-			{
-				var jsonContent = new
-				{
-					name = "John Doe"
-				};
-				var request = new HttpRequestMessage();
-
-				// Act
-				_sut.RespondJson(jsonContent);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
-
-				// Assert
-				actualResponse.Should()
-					.HaveStatusCode(HttpStatusCode.OK)
-					.And.HaveJsonContent(jsonContent);
-			}
-
-			[Theory]
-			[InlineData(HttpStatusCode.Accepted)]
-			[InlineData(HttpStatusCode.BadRequest)]
-			public async Task When_responding_with_statusCode_and_json_object_it_should_return_response(HttpStatusCode statusCode)
-			{
-				var jsonContent = new
-				{
-					name = "John Doe"
-				};
-				var request = new HttpRequestMessage();
-
-				// Act
-				_sut.RespondJson(statusCode, jsonContent);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
-
-				// Assert
-				actualResponse.Should()
-					.HaveStatusCode(statusCode)
-					.And.HaveJsonContent(jsonContent);
-			}
-		}
 	}
 }

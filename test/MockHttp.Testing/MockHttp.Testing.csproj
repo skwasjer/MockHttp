@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard1.3;net462</TargetFrameworks>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>false</IsTestProject>
+
+    <RootNamespace>MockHttp</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="FluentAssertions" Version="5.8.0" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard1.1" Condition="'$(TargetFramework)'=='netstandard1.3'" />
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=net45" Condition="'$(TargetFramework)'=='net462'" />
+  </ItemGroup>
+
+</Project>
