@@ -52,7 +52,7 @@ namespace MockHttp
 			// Assert
 			act.Should().ThrowExactly<TestableException>();
 			_sut.Verify(m => { }, IsSent.Once);
-			_sut.Verify();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -72,7 +72,7 @@ namespace MockHttp
 				.Which.Should()
 				.Be(exception);
 			_sut.Verify(m => { }, IsSent.Once);
-			_sut.Verify();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -90,6 +90,7 @@ namespace MockHttp
 			actualResponse.Content.Should().NotBeNull();
 			actualResponse.Should().HaveContent(data);
 			_sut.Verify(m => { }, IsSent.Once);
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -102,6 +103,7 @@ namespace MockHttp
 			actualResponse.Should().HaveStatusCode(HttpStatusCode.NotFound);
 			actualResponse.ReasonPhrase.Should().Be("No request is configured, returning default response.");
 			_sut.Verify(m => { }, IsSent.Once);
+			_sut.VerifyNoOtherRequests();
 		}
 
 
@@ -132,6 +134,7 @@ namespace MockHttp
 			// Assert
 			actualResponse.ReasonPhrase.Should().Be(expectedReason, "the callback should be called before we returned the response");
 			_sut.Verify(m => { }, IsSent.Once);
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -179,6 +182,7 @@ namespace MockHttp
 
 			// Assert
 			verifyGet.Should().NotThrow<HttpMockException>();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -213,6 +217,7 @@ namespace MockHttp
 
 			// Assert
 			verifyGet.Should().NotThrow<HttpMockException>();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Theory]
@@ -232,6 +237,7 @@ namespace MockHttp
 
 			// Assert
 			verifyGet.Should().NotThrow<HttpMockException>();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		// ReSharper disable once MemberCanBePrivate.Global
@@ -360,10 +366,9 @@ namespace MockHttp
 			};
 			HttpResponseMessage response = await _httpClient.SendAsync(req);
 
-
+			// Assert
 			_sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
-			_sut.Verify();
-			_sut.VerifyAll();
+			_sut.VerifyNoOtherRequests();
 
 			response.Should()
 				.HaveStatusCode(HttpStatusCode.Accepted)
@@ -394,6 +399,7 @@ namespace MockHttp
 				HttpResponseMessage secondResponse = null;
 				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
+				// Assert
 				act.Should().NotThrow();
 
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
@@ -430,6 +436,7 @@ namespace MockHttp
 				HttpResponseMessage secondResponse = null;
 				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
+				// Assert
 				act.Should().NotThrow();
 
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
@@ -505,7 +512,7 @@ namespace MockHttp
 			response3.Should().HaveStatusCode(HttpStatusCode.OK);
 			response4.Should().HaveStatusCode(HttpStatusCode.OK);
 			_sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(4));
-			_sut.Verify();
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
@@ -516,8 +523,7 @@ namespace MockHttp
 			_sut.When(_ => { })
 				.Throws(ex)
 				.TimesOutAfter(500)
-				.Respond(HttpStatusCode.OK)
-				.Verifiable();
+				.Respond(HttpStatusCode.OK);
 
 			// Act & assert
 			Func<Task<HttpResponseMessage>> act1 = () => _httpClient.GetAsync("");
@@ -532,7 +538,7 @@ namespace MockHttp
 			response3.Should().HaveStatusCode(HttpStatusCode.OK);
 
 			_sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(3));
-			_sut.Verify();
+			_sut.VerifyNoOtherRequests();
 		}
 	}
 }
