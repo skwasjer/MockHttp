@@ -39,9 +39,6 @@ mockHttp
     })
     .Verifiable();
 
-// Set default response.
-mockHttp.Fallback.Respond(HttpStatusCode.BadRequest);
-
 var client = new HttpClient(mockHttp)
 
 var response = await client.GetAsync("http://localhost/controller/action?test=1");
