@@ -451,9 +451,11 @@ namespace MockHttp
 			await _httpClient.GetAsync("");
 			await _httpClient.PutAsync("", new StringContent("data"));
 			await _httpClient.PostAsync("", new StringContent("data"));
+			await _httpClient.GetAsync("");
+			await _httpClient.PutAsync("", new StringContent("data"));
 
 			// Verify GET and PUT via different means, but not POST
-			_sut.Verify(matching => matching.Method("PUT"), IsSent.Once);
+			_sut.Verify(matching => matching.Method("PUT"), IsSent.Exactly(2));
 			_sut.Verify();
 
 			// Act
