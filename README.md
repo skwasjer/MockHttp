@@ -29,7 +29,7 @@ MockHttpHandler mockHttp = new MockHttpHandler();
 mockHttp
     .When(matching => matching
         .Method("GET")
-        .RequestUri("http://localhost/controller/**")
+        .RequestUri("http://localhost/controller/*")
     )
     .RespondJson(HttpStatusCode.OK, new
     {
@@ -120,14 +120,14 @@ When the expectation is not met a `MockException` is thrown when calling `Verify
 | -- | -- |
 | `Verify()` | Verifies that all verifiable expected requests have been sent. |
 | `VerifyAll()` | Verifies all expected requests regardless of whether they have been flagged as verifiable. |
-| `VerifyNoOtherCalls()` | Verifies that there were no requests sent other than those already verified. |
+| `VerifyNoOtherRequests()` | Verifies that there were no requests sent other than those already verified. |
 
 ### Verifying without verifiable expected requests
 
 You also have the option, similar to Moq, to verify without having configured a verifiable expected request. For example, to verify a specific url has been called twice:
 
 ```csharp
-mockHttp.Verify(matching => matching.RequestUri("http://localhost/controller/**"), IsSent.Exactly(2));
+mockHttp.Verify(matching => matching.RequestUri("http://localhost/controller/*"), IsSent.Exactly(2));
 ```
 
 ## Callback
