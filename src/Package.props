@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>skwas</Authors>
+    <Authors>Martijn Bodeman</Authors>
     <Company></Company>
     <Copyright>Copyright © 2019</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
