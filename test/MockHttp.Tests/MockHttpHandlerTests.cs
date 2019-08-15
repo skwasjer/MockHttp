@@ -411,7 +411,7 @@ namespace MockHttp
 		[Theory]
 		[InlineData(false)]
 		[InlineData(true)]
-		public async Task Given_stream_response_when_sending_requests_it_should_not_throw_for_second_stream_read(bool isSeekableStream)
+		public async Task Given_stream_response_when_sending_requests_it_should_buffer_response(bool isSeekableStream)
 		{
 			const string data = "data";
 			byte[] buffer = Encoding.UTF8.GetBytes(data);
@@ -434,15 +434,6 @@ namespace MockHttp
 				firstResponse.Should()
 					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
 					.And.HaveContent(data);
-
-				if (isSeekableStream)
-				{
-					firstResponse.Content.Should().BeOfType<StreamContent>("the content stream is seekable, thus is reset to its original position and read each time");
-				}
-				else
-				{
-					firstResponse.Content.Should().BeOfType<ByteArrayContent>("the content stream is not seekable, thus a buffered byte array is returned");
-				}
 
 				_sut.VerifyNoOtherRequests();
 			}

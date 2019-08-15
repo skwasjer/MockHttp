@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Responses;
 
 namespace MockHttp
 {
@@ -36,6 +37,29 @@ namespace MockHttp
 			where TResult : IResponseResult
 		{
 			return responds.Respond((request, _) => Task.FromResult(response(request)));
+		}
+
+		/// <summary>
+		/// Specifies a strategy that returns the response for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		internal static TResult RespondUsing<TStrategy, TResult>(this IResponds<TResult> responds)
+			where TStrategy : IResponseStrategy, new()
+			where TResult : IResponseResult
+		{
+			return responds.RespondUsing(new TStrategy());
+		}
+
+		/// <summary>
+		/// Specifies a strategy that returns the response for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="strategy">The strategy that produces a response.</param>
+		internal static TResult RespondUsing<TStrategy, TResult>(this IResponds<TResult> responds, TStrategy strategy)
+			where TStrategy : IResponseStrategy
+			where TResult : IResponseResult
+		{
+			return responds.Respond(strategy.SendAsync);
 		}
 
 		/// <summary>
@@ -236,65 +260,7 @@ namespace MockHttp
 		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
-			if (content == null)
-			{
-				throw new ArgumentNullException(nameof(content));
-			}
-
-			if (!content.CanRead)
-			{
-				throw new ArgumentException("Cannot read from stream.", nameof(content));
-			}
-
-			long originalStreamPos = content.Position;
-			var lockObject = new object();
-
-			byte[] buffer = null;
-			return responds.Respond(() =>
-			{
-				if (content.CanSeek)
-				{
-					content.Position = originalStreamPos;
-					return new HttpResponseMessage(statusCode)
-					{
-						Content = new StreamContent(content)
-						{
-							Headers =
-							{
-								ContentType = mediaType
-							}
-						}
-					};
-				}
-
-				// Stream not seekable, so we have to use internal buffer for repeated responses.
-				if (buffer == null)
-				{
-					lock (lockObject)
-					{
-						// Since acquired lock, check if buffer is not set by other thread.
-						if (buffer == null)
-						{
-							using (var ms = new MemoryStream())
-							{
-								content.CopyTo(ms);
-								buffer = ms.ToArray();
-							}
-						}
-					}
-				}
-
-				return new HttpResponseMessage(statusCode)
-				{
-					Content = new ByteArrayContent(buffer)
-					{
-						Headers =
-						{
-							ContentType = mediaType
-						}
-					}
-				};
-			});
+			return responds.RespondUsing(new FromStreamStrategy(statusCode, content, mediaType));
 		}
 
 		/// <summary>
@@ -357,20 +323,7 @@ namespace MockHttp
 		public static TResult TimesOutAfter<TResult>(this IResponds<TResult> responds, TimeSpan timeoutAfter)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(() =>
-			{
-				// It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm,
-				// so we simulate same behavior.
-				// https://github.com/dotnet/corefx/issues/20296
-				return Task.Delay(timeoutAfter)
-					.ContinueWith(_ =>
-					{
-						var tcs = new TaskCompletionSource<HttpResponseMessage>();
-						tcs.TrySetCanceled();
-						return tcs.Task;
-					}, TaskScheduler.Current)
-					.Unwrap();
-			});
+			return responds.RespondUsing(new TimeoutStrategy(timeoutAfter));
 		}
 	}
 }
