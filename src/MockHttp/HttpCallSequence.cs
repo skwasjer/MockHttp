@@ -9,11 +9,11 @@ namespace MockHttp
 	internal class HttpCallSequence : HttpCall
 	{
 		private int _requestIndex;
-		private readonly List<Func<HttpRequestMessage, Task<HttpResponseMessage>>> _responseSequence;
+		private readonly List<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>> _responseSequence;
 
 		public HttpCallSequence()
 		{
-			_responseSequence = new List<Func<HttpRequestMessage, Task<HttpResponseMessage>>>();
+			_responseSequence = new List<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>>();
 			_requestIndex = -1;
 		}
 
@@ -22,7 +22,7 @@ namespace MockHttp
 			int nextRequestIndex = IncrementIfLessThan(ref _requestIndex, _responseSequence.Count - 1);
 
 			// TODO: if Reset() has been called from other thread, this can result in IndexOutOfRangeException. Have to handle this is some way and make it thread safe.
-			Func<HttpRequestMessage, Task<HttpResponseMessage>> response = nextRequestIndex >= 0
+			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response = nextRequestIndex >= 0
 				? _responseSequence[nextRequestIndex]
 				: null;
 
@@ -37,7 +37,7 @@ namespace MockHttp
 				cancellationToken.ThrowIfCancellationRequested();
 
 				Callback?.Invoke(request);
-				HttpResponseMessage responseMessage = await response(request).ConfigureAwait(false);
+				HttpResponseMessage responseMessage = await response(request, cancellationToken).ConfigureAwait(false);
 				responseMessage.RequestMessage = request;
 				return responseMessage;
 			}
@@ -47,7 +47,7 @@ namespace MockHttp
 			}
 		}
 
-		public override void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public override void SetResponse(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
 		{
 			_responseSequence.Add(response);
 		}

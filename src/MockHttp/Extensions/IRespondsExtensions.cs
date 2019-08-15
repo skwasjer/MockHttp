@@ -24,7 +24,7 @@ namespace MockHttp
 		public static TResult Respond<TResult>(this IResponds<TResult> responds, Func<HttpResponseMessage> response)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(() => Task.FromResult(response()));
+			return responds.Respond((_, __) => Task.FromResult(response()));
 		}
 
 		/// <summary>
@@ -35,7 +35,7 @@ namespace MockHttp
 		public static TResult Respond<TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, HttpResponseMessage> response)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(request => Task.FromResult(response(request)));
+			return responds.Respond((request, _) => Task.FromResult(response(request)));
 		}
 
 		/// <summary>

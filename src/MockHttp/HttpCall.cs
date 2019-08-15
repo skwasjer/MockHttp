@@ -15,7 +15,7 @@ namespace MockHttp
 	/// </summary>
 	internal class HttpCall
 	{
-		private Func<HttpRequestMessage, Task<HttpResponseMessage>> _response;
+		private Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _response;
 		private string _verifiableBecause;
 		private IReadOnlyCollection<HttpRequestMatcher> _matchers;
 
@@ -53,12 +53,12 @@ namespace MockHttp
 			cancellationToken.ThrowIfCancellationRequested();
 
 			Callback?.Invoke(request);
-			HttpResponseMessage responseMessage = await _response(request).ConfigureAwait(false);
+			HttpResponseMessage responseMessage = await _response(request, cancellationToken).ConfigureAwait(false);
 			responseMessage.RequestMessage = request;
 			return responseMessage;
 		}
 
-		public virtual void SetResponse(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		public virtual void SetResponse(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
 		{
 			_response = response ?? throw new ArgumentNullException(nameof(response));
 		}

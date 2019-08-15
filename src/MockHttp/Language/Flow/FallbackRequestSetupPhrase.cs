@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MockHttp.Language.Flow
@@ -17,10 +18,15 @@ namespace MockHttp.Language.Flow
 
 		public IResponseResult Respond(Func<Task<HttpResponseMessage>> response)
 		{
-			return Respond(_ => response());
+			return Respond((_, __) => response());
 		}
 
 		public IResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
+		{
+			return Respond((r, __) => response(r));
+		}
+
+		public IResponseResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
 		{
 			_setup.SetResponse(response);
 			return this;
