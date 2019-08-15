@@ -112,7 +112,7 @@ mockHttp
     .Respond(HttpStatusCode.Ok)
     .TimesOutAfter(500)
     .Respond(HttpStatusCode.Ok)
-    .Throws<HttpRequestException>
+    .Throws<HttpRequestException>()
     .Respond(HttpStatusCode.Ok)
 ```
 
