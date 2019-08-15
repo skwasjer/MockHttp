@@ -573,11 +573,7 @@ namespace MockHttp
 				int requestIndex = i;
 				expectedIndices.Add(requestIndex);
 				// Each next response returns the counter value as content, so we can assert on this.
-				responseResult = responseResult.Respond(r =>
-					new HttpResponseMessage(HttpStatusCode.OK)
-					{
-						Content = new StringContent(requestIndex.ToString())
-					});
+				responseResult = responseResult.Respond(requestIndex.ToString());
 			}
 
 			Task<List<int>> GetParallelTask()
