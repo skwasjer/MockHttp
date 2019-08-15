@@ -23,7 +23,7 @@ namespace MockHttp.Responses
 
 			// Act
 			Stopwatch sw = Stopwatch.StartNew();
-			Func<Task> act = () => sut.SendAsync(new HttpRequestMessage(), CancellationToken.None);
+			Func<Task> act = () => sut.ProduceResponseAsync(new HttpRequestMessage(), CancellationToken.None);
 
 			// Assert
 			act.Should().Throw<TaskCanceledException>();
@@ -39,7 +39,7 @@ namespace MockHttp.Responses
 
 			// Act
 			Stopwatch sw = Stopwatch.StartNew();
-			Func<Task> act = () => sut.SendAsync(new HttpRequestMessage(), ct);
+			Func<Task> act = () => sut.ProduceResponseAsync(new HttpRequestMessage(), ct);
 
 			// Assert
 			act.Should().Throw<TaskCanceledException>();

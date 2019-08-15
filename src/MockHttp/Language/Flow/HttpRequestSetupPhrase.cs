@@ -1,41 +1,20 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MockHttp.Language.Flow
 {
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal sealed class HttpRequestSetupPhrase : IConfiguredRequest, IFluentInterface
+	internal sealed class HttpRequestSetupPhrase : SetupPhrase<ISequenceResponseResult, ISequenceThrowsResult>, IConfiguredRequest, IFluentInterface
 	{
-		private readonly HttpCall _setup;
-
 		public HttpRequestSetupPhrase(HttpCall setup)
+			: base(setup)
 		{
-			_setup = setup ?? throw new ArgumentNullException(nameof(setup));
-		}
-
-		public ISequenceResponseResult Respond(Func<Task<HttpResponseMessage>> response)
-		{
-			return Respond((_, __) => response());
-		}
-
-		public ISequenceResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response)
-		{
-			_setup.SetResponse((r, __) => response(r));
-			return this;
-		}
-
-		public ISequenceResponseResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
-		{
-			_setup.SetResponse(response);
-			return this;
 		}
 
 		public void Verifiable()
 		{
-			_setup.SetVerifiable(null);
+			Setup.SetVerifiable(null);
 		}
 
 		public void Verifiable(string because)
@@ -45,25 +24,12 @@ namespace MockHttp.Language.Flow
 				throw new ArgumentNullException(nameof(because));
 			}
 
-			_setup.SetVerifiable(because);
-		}
-
-		public ISequenceThrowsResult Throws(Exception exception)
-		{
-			Respond(() => throw exception);
-			return this;
-		}
-
-		public ISequenceThrowsResult Throws<TException>()
-			where TException : Exception, new()
-		{
-			Respond(_ => throw new TException());
-			return this;
+			Setup.SetVerifiable(because);
 		}
 
 		public ICallbackResult<ISequenceResponseResult, ISequenceThrowsResult> Callback(Action<HttpRequestMessage> callback)
 		{
-			_setup.SetCallback(callback);
+			Setup.SetCallback(callback);
 			return this;
 		}
 

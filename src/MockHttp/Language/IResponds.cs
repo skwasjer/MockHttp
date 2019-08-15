@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Language.Flow;
+using MockHttp.Responses;
 
 namespace MockHttp.Language
 {
@@ -17,19 +18,25 @@ namespace MockHttp.Language
 		/// <summary>
 		/// Specifies a function that returns the response for a request.
 		/// </summary>
-		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for a request.</param>
-		TResult Respond(Func<Task<HttpResponseMessage>> response);
+		/// <param name="responseFunc">The function returning an awaitable that when completed provides the response message to return for a request.</param>
+		TResult Respond(Func<Task<HttpResponseMessage>> responseFunc);
 
 		/// <summary>
 		/// Specifies a function that returns the response for a request.
 		/// </summary>
-		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for given request.</param>
-		TResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response);
+		/// <param name="responseFunc">The function returning an awaitable that when completed provides the response message to return for given request.</param>
+		TResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> responseFunc);
 
 		/// <summary>
 		/// Specifies a function that returns the response for a request.
 		/// </summary>
-		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for given request.</param>
-		TResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response);
+		/// <param name="responseFunc">The function returning an awaitable that when completed provides the response message to return for given request.</param>
+		TResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc);
+
+		/// <summary>
+		/// Specifies a strategy that returns the response for a request.
+		/// </summary>
+		/// <param name="responseStrategy">The response strategy that provides the response message to return for given request.</param>
+		TResult RespondUsing(IResponseStrategy responseStrategy);
 	}
 }
