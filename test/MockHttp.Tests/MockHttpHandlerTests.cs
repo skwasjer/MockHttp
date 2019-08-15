@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Language;
+using MockHttp.Language.Flow;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -33,7 +36,7 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Exception that we can test <see cref="IThrows"/> logic with.
+		/// Exception that we can test <see cref="IThrows{TResult}"/> logic with.
 		/// </summary>
 		private class TestableException : Exception
 		{
@@ -563,6 +566,52 @@ namespace MockHttp
 
 			_sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(3));
 			_sut.VerifyNoOtherRequests();
+		}
+
+		[Fact]
+		public async Task When_sending_requests_in_parallel_should_be_thread_safe()
+		{
+			const int parallelCount = 20;
+			const int nrOfIterations = 20;
+			var expectedIndices = new List<int>();
+
+			ISequenceResponseResult responseResult = _sut.When(_ => { });
+			// Configure unique response n times.
+			for (int i = 0; i < parallelCount * nrOfIterations; i++)
+			{
+				int requestIndex = i;
+				expectedIndices.Add(requestIndex);
+				// Each next response returns the counter value as content, so we can assert on this.
+				responseResult = responseResult.Respond(r =>
+					new HttpResponseMessage(HttpStatusCode.OK)
+					{
+						Content = new StringContent(requestIndex.ToString())
+					});
+			}
+
+			Task<List<int>> GetParallelTask()
+			{
+				return Task.Run(async () =>
+				{
+					await Task.Yield();
+
+					var result = new List<int>();
+					for (int i = 0; i < nrOfIterations; i++)
+					{
+						HttpResponseMessage response = await _httpClient.GetAsync("");
+						result.Add(int.Parse(await response.Content.ReadAsStringAsync()));
+					}
+
+					return result;
+				});
+			}
+
+			// Act
+			IEnumerable<Task<List<int>>> tasks = Enumerable.Range(0, parallelCount).Select(_ => GetParallelTask());
+			IEnumerable<int> allResults = (await Task.WhenAll(tasks)).SelectMany(l => l).ToList();
+
+			// Assert
+			expectedIndices.Except(allResults).Should().BeEmpty("for each request a corresponding response was configured");
 		}
 	}
 }
