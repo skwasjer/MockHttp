@@ -81,7 +81,7 @@ namespace MockHttp
 			do
 			{
 				initialValue = location;
-				newValue = location + 1;
+				newValue = initialValue + 1;
 				if (initialValue >= comparand)
 				{
 					return initialValue;
