@@ -2,10 +2,11 @@
 
 ## v2.0
 
-- Added support to chain responses, f.ex.: `.Throws(...).Respond(...).Respond(...)`
+- Added support to chain responses, f.ex.: `.Throws(...).Respond(...).Respond(...)`.
 - Added `TimesOut()` and `TimesOutAfter(millisecs)` response extensions.
-- Renamed `VerifyNoOtherCalls()` to `VerifyNoOtherRequests()`, and fixed the verification not taking into account requests to `Verify(m => ....)`
+- Renamed `VerifyNoOtherCalls()` to `VerifyNoOtherRequests()`, and fixed the verification not taking into account requests to `Verify(m => ....)`.
 - Fix race condition when resetting mock, while an asynchronous request or expectation verification is in progress.
+- Moved JSON extensions to `skwas.MockHttp.Json` package as to not require dependencies on [Json.NET](https://www.newtonsoft.com/) if one does not need JSON support.
 
 ## v1.3
 

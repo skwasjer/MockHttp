@@ -28,7 +28,7 @@ build:
   publish_nuget_symbols: true
   verbosity: minimal
 test_script:
-  - OpenCover.Console.exe -target:"dotnet.exe" -targetargs:"test -c Debug" -output:coverage.xml -register:user -returntargetcode -filter:"+[*MockHttp*]* -[*Tests]*" -excludebyattribute:*.ExcludeFromCodeCoverageAttribute;*.GeneratedCodeAttribute;*.DebuggerNonUserCodeAttribute;*.CompilerGeneratedAttribute;*.DebuggerHiddenAttribute -oldStyle
+  - OpenCover.Console.exe -target:"dotnet.exe" -targetargs:"test -c Debug" -output:coverage.xml -register:user -returntargetcode -filter:"+[*MockHttp*]* -[*Tests]* -[*Testing]*" -excludebyattribute:*.ExcludeFromCodeCoverageAttribute;*.GeneratedCodeAttribute;*.DebuggerNonUserCodeAttribute;*.CompilerGeneratedAttribute;*.DebuggerHiddenAttribute -oldStyle
   - codecov -f coverage.xml
 deploy:
 - provider: NuGet

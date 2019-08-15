@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Language.Flow;
 
@@ -24,5 +25,11 @@ namespace MockHttp.Language
 		/// </summary>
 		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for given request.</param>
 		TResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> response);
+
+		/// <summary>
+		/// Specifies a function that returns the response for a request.
+		/// </summary>
+		/// <param name="response">The function returning an awaitable that when completed provides the response message to return for given request.</param>
+		TResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response);
 	}
 }

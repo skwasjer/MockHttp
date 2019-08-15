@@ -10,6 +10,12 @@ Install MockHttp via the Nuget package manager or `dotnet` cli.
 dotnet add package skwas.MockHttp
 ```
 
+For JSON or `MediaTypeFormatter` integration
+
+```powershell
+dotnet add package skwas.MockHttp.Json
+```
+
 ---
 
 [![Build status](https://ci.appveyor.com/api/projects/status/n3t7ny3j7cryt92t/branch/master?svg=true)](https://ci.appveyor.com/project/skwasjer/mockhttp)
@@ -31,12 +37,7 @@ mockHttp
         .Method("GET")
         .RequestUri("http://localhost/controller/*")
     )
-    .RespondJson(HttpStatusCode.OK, new
-    {
-        id = 123,
-        firstName = "John",
-        lastName = "Doe"
-    })
+    .RespondJson(HttpStatusCode.OK, new { id = 123, firstName = "John", lastName = "Doe" })
     .Verifiable();
 
 var client = new HttpClient(mockHttp)
@@ -84,8 +85,8 @@ mockHttp
     .Respond(async request => await ...);
 
 mockHttp
-    .When(...)
-    .RespondJson(new Person { FullName = "John Doe" })
+    .When(...)    
+    .RespondJson(new Person { FullName = "John Doe" })  // Requires 'skwas.MockHttp.Json' package
 ```
 
 ## Throwing an exception
@@ -111,7 +112,7 @@ mockHttp
     .Respond(HttpStatusCode.Ok)
     .TimesOutAfter(500)
     .Respond(HttpStatusCode.Ok)
-    .Throws<HttpRequestException>
+    .Throws<HttpRequestException>()
     .Respond(HttpStatusCode.Ok)
 ```
 
@@ -177,7 +178,7 @@ By default, `HttpStatusCode.NotFound` is returned.
 ### Build requirements
 - Visual Studio 2017
 - .NET Core 2.2/2.1 SDK
-- .NET 4.52
+- .NET 4.62
 
 ### Contributions
 PR's are welcome. Please rebase before submitting, provide test coverage, and ensure the AppVeyor build passes. I will not consider PR's otherwise.

@@ -73,7 +73,7 @@ namespace MockHttp.FluentAssertions
 				.ForCondition(subject.Content != null)
 				.FailWith("Expected response with content {0}{reason}, but found none.")
 				.Then
-				.ForCondition(subject.Content.Headers.ContentType.Equals(expectedMediaType))
+				.ForCondition(subject.Content.Headers.ContentType.Equals(expectedMediaType) || expectedMediaType.CharSet == null && subject.Content.Headers.ContentType.MediaType.Equals(expectedMediaType.MediaType))
 				.FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content.Headers.ContentType)
 				;
 
@@ -82,35 +82,35 @@ namespace MockHttp.FluentAssertions
 
 		public AndConstraint<ResponseAssertions> HaveJsonContent<T>
 		(
-			T content,
+			T expectedContent,
 			string because = "",
 			params object[] becauseArgs)
 		{
-			return HaveContent(new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json"), because, becauseArgs);
+			return HaveContent(JsonConvert.SerializeObject(expectedContent), because, becauseArgs);
 		}
 
 		public AndConstraint<ResponseAssertions> HaveContent
 		(
-			string content,
+			string expectedContent,
 			string because = "",
 			params object[] becauseArgs)
 		{
-			return HaveContent(new ByteArrayContent(Encoding.UTF8.GetBytes(content)), because, becauseArgs);
+			return HaveContent(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
 		}
 
 		public AndConstraint<ResponseAssertions> HaveContent(
-			HttpContent content,
+			HttpContent expectedContent,
 			string because = "",
 			params object[] becauseArgs)
 		{
-			if (content == null)
+			if (expectedContent == null)
 			{
-				throw new ArgumentNullException(nameof(content));
+				throw new ArgumentNullException(nameof(expectedContent));
 			}
 
-			if (content.Headers.ContentType != null)
+			if (expectedContent.Headers.ContentType != null)
 			{
-				HaveContentType(content.Headers.ContentType);
+				HaveContentType(expectedContent.Headers.ContentType);
 			}
 
 			var subject = (HttpResponseMessage)Subject;
@@ -122,11 +122,15 @@ namespace MockHttp.FluentAssertions
 				.ForCondition(subject.Content != null)
 				.FailWith("Expected response with content {reason}, but has no content.")
 				.Then
-				.ForCondition(
-					(subject.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult())
-					.SequenceEqual(content.ReadAsByteArrayAsync().GetAwaiter().GetResult())
-				)
-				.FailWith("Expected response with content to match{reason}, but it did not.");
+				.Given(() => new
+				{
+					currentContent = subject.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult(),
+					expectedContent = expectedContent.ReadAsByteArrayAsync().GetAwaiter().GetResult()
+				})
+				.ForCondition(x => x.currentContent.SequenceEqual(x.expectedContent))
+				// Using UTF-8 for fail msg, but this will not produce correct result for other encodings or binary responses.
+				// Since this is a private test helper, we accept this for now.
+				.FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", x => Encoding.UTF8.GetString(x.expectedContent), x => Encoding.UTF8.GetString(x.currentContent));
 
 			return new AndConstraint<ResponseAssertions>(this);
 		}

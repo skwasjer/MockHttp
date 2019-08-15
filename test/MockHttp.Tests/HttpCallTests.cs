@@ -13,7 +13,7 @@ namespace MockHttp
 		public HttpCallTests()
 		{
 			_sut = new HttpCall();
-			_sut.SetResponse(request => Task.FromResult(new HttpResponseMessage()));
+			_sut.SetResponse((_, __) => Task.FromResult(new HttpResponseMessage()));
 		}
 
 		[Fact]
