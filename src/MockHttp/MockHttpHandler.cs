@@ -120,6 +120,9 @@ namespace MockHttp
 		/// <param name="matching">The conditions to match.</param>
 		/// <param name="times">The number of times a request is allowed to be sent.</param>
 		/// <param name="because">The reasoning for this expectation.</param>
+		/// <remarks>
+		/// When verifying <see cref="HttpContent"/> using a <see cref="ContentMatcher"/> use the <see cref="VerifyAsync"/> overload to prevent potential deadlocks.
+		/// </remarks>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
 			VerifyAsync(matching, times, because).GetAwaiter().GetResult();
@@ -142,11 +145,6 @@ namespace MockHttp
 			matching(rm);
 
 			IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = rm.Build();
-			await VerifyAsync(matchers, times, because).ConfigureAwait(false);
-		}
-
-		private async Task VerifyAsync(IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers, IsSent times, string because)
-		{
 			IReadOnlyList<IInvokedHttpRequest> matchedRequests = InvokedRequests;
 			if (matchers.Count > 0)
 			{
