@@ -51,7 +51,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should()
+			await actualResponse.Should()
 				.HaveStatusCode(HttpStatusCode.OK)
 				.And.HaveJsonContent(jsonContent);
 		}
@@ -72,7 +72,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should()
+			await actualResponse.Should()
 				.HaveStatusCode(statusCode)
 				.And.HaveJsonContent(jsonContent);
 		}
@@ -129,7 +129,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should().HaveContentAsync("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
+			await actualResponse.Should().HaveContentAsync("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
 		}
 
 		[Fact]
