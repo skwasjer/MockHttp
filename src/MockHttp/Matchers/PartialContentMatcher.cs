@@ -17,7 +17,7 @@ namespace MockHttp.Matchers
 		public PartialContentMatcher(string content, Encoding encoding)
 			: base(content, encoding)
 		{
-			if (Value.Length == 0)
+			if (ByteContent.Length == 0)
 			{
 				throw new ArgumentException("Content can not be empty.", nameof(content));
 			}
@@ -30,7 +30,7 @@ namespace MockHttp.Matchers
 		public PartialContentMatcher(byte[] content)
 			: base(content)
 		{
-			if (Value.Length == 0)
+			if (ByteContent.Length == 0)
 			{
 				throw new ArgumentException("Content can not be empty.", nameof(content));
 			}
@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		protected override bool IsMatch(byte[] requestContent)
 		{
-			return Contains(requestContent, Value);
+			return Contains(requestContent, ByteContent);
 		}
 
 		/// <inheritdoc />

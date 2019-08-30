@@ -50,7 +50,7 @@ namespace MockHttp
 
 			foreach (HttpCall setup in _setups.Reverse())
 			{
-				if (setup.Matchers.All(request, out IEnumerable<HttpRequestMatcher> notMatchedOn))
+				if (await setup.Matchers.AllAsync(request).ConfigureAwait(false))
 				{
 					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
 				}
@@ -122,6 +122,17 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
+			VerifyAsync(matching, times, because).GetAwaiter().GetResult();
+		}
+		
+		/// <summary>
+		/// Verifies that a request matching the specified match conditions has been sent.
+		/// </summary>
+		/// <param name="matching">The conditions to match.</param>
+		/// <param name="times">The number of times a request is allowed to be sent.</param>
+		/// <param name="because">The reasoning for this expectation.</param>
+		public async Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
+		{
 			if (matching == null)
 			{
 				throw new ArgumentNullException(nameof(matching));
@@ -129,11 +140,27 @@ namespace MockHttp
 
 			var rm = new RequestMatching();
 			matching(rm);
-			IReadOnlyCollection<HttpRequestMatcher> shouldMatch = rm.Build();
 
-			IReadOnlyList<IInvokedHttpRequest> matchedRequests = shouldMatch.Count == 0
-				? (IReadOnlyList<IInvokedHttpRequest>)InvokedRequests
-				: InvokedRequests.Where(r => shouldMatch.All(r.Request, out _)).ToList();
+			IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = rm.Build();
+			await VerifyAsync(matchers, times, because).ConfigureAwait(false);
+		}
+
+		private async Task VerifyAsync(IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers, IsSent times, string because)
+		{
+			IReadOnlyList<IInvokedHttpRequest> matchedRequests = InvokedRequests;
+			if (matchers.Count > 0)
+			{
+				var list = new List<IInvokedHttpRequest>();
+				foreach (IInvokedHttpRequest invokedHttpRequest in InvokedRequests)
+				{
+					if (await matchers.AllAsync(invokedHttpRequest.Request).ConfigureAwait(false))
+					{
+						list.Add(invokedHttpRequest);
+					}
+				}
+
+				matchedRequests = list;
+			}
 
 			if (!times.Verify(matchedRequests.Count))
 			{

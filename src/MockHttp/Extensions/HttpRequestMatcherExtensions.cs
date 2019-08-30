@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using MockHttp.Matchers;
 
 namespace MockHttp
@@ -12,15 +12,14 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="matchers">The matchers to check against the <paramref name="request"/>.</param>
 		/// <param name="request">The request to check.</param>
-		/// <param name="notMatchedOn">A list of matches that were not matched by the request.</param>
 		/// <returns><see langword="true" /> if all <paramref name="matchers"/> match the <paramref name="request"/>.</returns>
-		public static bool All(this IEnumerable<HttpRequestMatcher> matchers, HttpRequestMessage request, out IEnumerable<HttpRequestMatcher> notMatchedOn)
+		public static async Task<bool> AllAsync(this IEnumerable<IAsyncHttpRequestMatcher> matchers, HttpRequestMessage request)
 		{
-			var noMatchList = new List<HttpRequestMatcher>();
+			var noMatchList = new List<IAsyncHttpRequestMatcher>();
 			bool hasMatchedAll = true;
-			foreach (HttpRequestMatcher m in matchers)
+			foreach (IAsyncHttpRequestMatcher m in matchers)
 			{
-				if (m.IsMatch(request))
+				if (await m.IsMatchAsync(request).ConfigureAwait(false))
 				{
 					continue;
 				}
@@ -29,7 +28,7 @@ namespace MockHttp
 				hasMatchedAll = false;
 			}
 
-			notMatchedOn = noMatchList;
+//			notMatchedOn = noMatchList;
 			return hasMatchedAll;
 		}
 
@@ -39,9 +38,17 @@ namespace MockHttp
 		/// <param name="matchers">The matchers to check against the <paramref name="request"/>.</param>
 		/// <param name="request">The request to check.</param>
 		/// <returns><see langword="true" /> if any <paramref name="matchers"/> match the <paramref name="request"/>.</returns>
-		public static bool Any(this IEnumerable<HttpRequestMatcher> matchers, HttpRequestMessage request)
+		public static async Task<bool> AnyAsync(this IEnumerable<IAsyncHttpRequestMatcher> matchers, HttpRequestMessage request)
 		{
-			return matchers.Any(m => m.IsMatch(request));
+			foreach (IAsyncHttpRequestMatcher m in matchers)
+			{
+				if (await m.IsMatchAsync(request).ConfigureAwait(false))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

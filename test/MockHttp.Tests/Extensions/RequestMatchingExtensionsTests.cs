@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
@@ -24,68 +25,68 @@ namespace MockHttp.Extensions
 		public class RequestUri : RequestMatchingExtensionsTests
 		{
 			[Fact]
-			public void When_configuring_requestUri_as_string_should_match()
+			public async Task When_configuring_requestUri_as_string_should_match()
 			{
 				// Act
 				_sut.RequestUri("http://127.0.0.1/");
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1/")
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 
 			[Fact]
-			public void When_configuring_requestUri_as_uri_should_match()
+			public async Task When_configuring_requestUri_as_uri_should_match()
 			{
 				var uri = new Uri("http://127.0.0.1/");
 
 				// Act
 				_sut.RequestUri(uri);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1/")
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 		}
 
 		public class QueryString : RequestMatchingExtensionsTests
 		{
 			[Fact]
-			public void When_configuring_query_string_with_null_value_should_match()
+			public async Task When_configuring_query_string_with_null_value_should_match()
 			{
 				// Act
 				_sut.QueryString("key", (string)null);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1?key")
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 
 			[Fact]
-			public void When_configuring_query_string_with_empty_value_should_match()
+			public async Task When_configuring_query_string_with_empty_value_should_match()
 			{
 				// Act
 				_sut.QueryString("key", string.Empty);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1?key=")
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 
 			[Theory]
@@ -93,18 +94,18 @@ namespace MockHttp.Extensions
 			[InlineData("key2=value2&key1=value1", true)]
 			[InlineData("http://127.0.0.1?key1=value1&key2=value2", true)]
 			[InlineData("?other=value1", false)]
-			public void When_configuring_query_string_should_match(string queryString, bool expectedResult)
+			public async Task When_configuring_query_string_should_match(string queryString, bool expectedResult)
 			{
 				// Act
 				_sut.QueryString(queryString);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1?key1=value1&key2=value2")
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Fact]
@@ -161,18 +162,18 @@ namespace MockHttp.Extensions
 			[Theory]
 			[InlineData("?")]
 			[InlineData("")]
-			public void When_configuring_without_query_string_should_match(string queryString)
+			public async Task When_configuring_without_query_string_should_match(string queryString)
 			{
 				// Act
 				_sut.WithoutQueryString();
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<QueryStringMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					RequestUri = new Uri("http://127.0.0.1" + queryString)
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 
 			[Fact]
@@ -205,18 +206,18 @@ namespace MockHttp.Extensions
 			[Theory]
 			[InlineData("GET", false)]
 			[InlineData("POST", true)]
-			public void When_configuring_httpMethod_should_match(string httpMethod, bool expectedResult)
+			public async Task When_configuring_httpMethod_should_match(string httpMethod, bool expectedResult)
 			{
 				// Act
 				_sut.Method(httpMethod);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpMethodMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Method = new HttpMethod("POST")
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Fact]
@@ -238,18 +239,18 @@ namespace MockHttp.Extensions
 			[InlineData("text/plain; charset=us-ascii", true)]
 			[InlineData("text/html; charset=us-ascii", false)]
 			[InlineData("text/plain; charset=utf-8", false)]
-			public void When_configuring_contentType_should_match(string mediaType, bool expectedResult)
+			public async Task When_configuring_contentType_should_match(string mediaType, bool expectedResult)
 			{
 				// Act
 				_sut.ContentType(mediaType);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<MediaTypeHeaderMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent(string.Empty, Encoding.ASCII, "text/plain")
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Fact]
@@ -310,55 +311,55 @@ namespace MockHttp.Extensions
 			[Theory]
 			[InlineData("content", true)]
 			[InlineData("more content", false)]
-			public void When_configuring_content_should_match(string content, bool expectedResult)
+			public async Task When_configuring_content_should_match(string content, bool expectedResult)
 			{
 				// Act
 				_sut.Content(content);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<ContentMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("content")
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Theory]
 			[InlineData("utf-8", true)]
 			[InlineData("us-ascii", false)]
-			public void When_configuring_content_with_encoding_should_match(string encoding, bool expectedResult)
+			public async Task When_configuring_content_with_encoding_should_match(string encoding, bool expectedResult)
 			{
 				// Act
 				_sut.Content("straße", Encoding.GetEncoding(encoding));
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<ContentMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("straße", Encoding.UTF8)
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Theory]
 			[InlineData("content", true)]
 			[InlineData("more content", false)]
-			public void When_configuring_content_with_stream_should_match(string content, bool expectedResult)
+			public async Task When_configuring_content_with_stream_should_match(string content, bool expectedResult)
 			{
 				byte[] data = Encoding.UTF8.GetBytes(content);
 				using (var ms = new MemoryStream(data))
 				{
 					// Act
 					_sut.Content(ms);
-					IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+					IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 					// Assert
 					matchers.Should().HaveCount(1).And.AllBeOfType<ContentMatcher>();
-					matchers.Any(new HttpRequestMessage
+					(await matchers.AnyAsync(new HttpRequestMessage
 					{
 						Content = new StringContent("content")
-					}).Should().Be(expectedResult);
+					})).Should().Be(expectedResult);
 				}
 			}
 
@@ -381,56 +382,56 @@ namespace MockHttp.Extensions
 			[InlineData("one two three", true)]
 			[InlineData("four", false)]
 			[InlineData("two", true)]
-			public void When_configuring_partial_content_should_match(string content, bool expectedResult)
+			public async Task When_configuring_partial_content_should_match(string content, bool expectedResult)
 			{
 				// Act
 				_sut.PartialContent(content);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<PartialContentMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("one two three")
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Theory]
 			[InlineData("utf-8", true)]
 			[InlineData("us-ascii", false)]
-			public void When_configuring_partial_content_with_encoding_should_match(string encoding, bool expectedResult)
+			public async Task When_configuring_partial_content_with_encoding_should_match(string encoding, bool expectedResult)
 			{
 				// Act
 				_sut.PartialContent("ß", Encoding.GetEncoding(encoding));
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<PartialContentMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("straße", Encoding.UTF8)
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Theory]
 			[InlineData("one two three", true)]
 			[InlineData("four", false)]
 			[InlineData("two", true)]
-			public void When_configuring_partial_content_with_stream_should_match(string content, bool expectedResult)
+			public async Task When_configuring_partial_content_with_stream_should_match(string content, bool expectedResult)
 			{
 				byte[] data = Encoding.UTF8.GetBytes(content);
 				using (var ms = new MemoryStream(data))
 				{
 					// Act
 					_sut.PartialContent(ms);
-					IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+					IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 					// Assert
 					matchers.Should().HaveCount(1).And.AllBeOfType<PartialContentMatcher>();
-					matchers.Any(new HttpRequestMessage
+					(await matchers.AnyAsync(new HttpRequestMessage
 					{
 						Content = new StringContent("one two three")
-					}).Should().Be(expectedResult);
+					})).Should().Be(expectedResult);
 				}
 			}
 
@@ -447,18 +448,18 @@ namespace MockHttp.Extensions
 			}
 
 			[Fact]
-			public void Given_two_partial_content_matchers_when_request_matcher_should_be_true()
+			public async Task Given_two_partial_content_matchers_when_request_matcher_should_be_true()
 			{
 				// Act
 				_sut.PartialContent("one");
 				_sut.PartialContent("three");
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("one two three", Encoding.UTF8)
-				}).Should().BeTrue();
+				})).Should().BeTrue();
 			}
 		}
 
@@ -470,11 +471,11 @@ namespace MockHttp.Extensions
 			[InlineData("2019-07-26T12:34:06.012345+02:00", true)]
 			[InlineData("2019-07-26T10:34:06Z", true)]
 			[InlineData("2018-07-26T10:34:06Z", false)] // One year earlier
-			public void When_configuring_header_on_date_value_should_ignore_milliseconds_and_honor_timezone(string xmlDateTime, bool expectedResult)
+			public async Task When_configuring_header_on_date_value_should_ignore_milliseconds_and_honor_timezone(string xmlDateTime, bool expectedResult)
 			{
 				// Act
 				_sut.Header("Last-Modified", XmlConvert.ToDateTime(xmlDateTime, XmlDateTimeSerializationMode.Utc));
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 #if NETFRAMEWORK
@@ -482,7 +483,7 @@ namespace MockHttp.Extensions
 #else
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
 #endif
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Content = new StringContent("content")
 					{
@@ -491,7 +492,7 @@ namespace MockHttp.Extensions
 							LastModified = new DateTimeOffset(2019, 07, 26, 12, 34, 06, 012, TimeSpan.FromHours(2))
 						}
 					}
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 		}
 
@@ -501,21 +502,21 @@ namespace MockHttp.Extensions
 			[InlineData("GET", true)]
 			[InlineData("POST", true)]
 			[InlineData("PUT", false)]
-			public void When_configuring_any_should_match(string method, bool expectedResult)
+			public async Task When_configuring_any_should_match(string method, bool expectedResult)
 			{
 				// Act
 				_sut.Any(any => any
 					.Method("GET")
 					.Method("POST")
 				);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<AnyMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Method = new HttpMethod(method)
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Fact]
@@ -538,18 +539,18 @@ namespace MockHttp.Extensions
 			[InlineData("GET", true)]
 			[InlineData("POST", true)]
 			[InlineData("PUT", false)]
-			public void When_configuring_custom_expression_should_match(string method, bool expectedResult)
+			public async Task When_configuring_custom_expression_should_match(string method, bool expectedResult)
 			{
 				// Act
 				_sut.Where(r => r.Method.Method == "GET" || r.Method.Method == "POST");
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<ExpressionMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Method = new HttpMethod(method)
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 		}
 
@@ -558,18 +559,18 @@ namespace MockHttp.Extensions
 			[Theory]
 			[InlineData("2.0", true)]
 			[InlineData("1.1", false)]
-			public void When_configuring_version_should_match(string version, bool expectedResult)
+			public async Task When_configuring_version_should_match(string version, bool expectedResult)
 			{
 				// Act
 				_sut.Version(version);
-				IReadOnlyCollection<HttpRequestMatcher> matchers = _sut.Build();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<VersionMatcher>();
-				matchers.Any(new HttpRequestMessage
+				(await matchers.AnyAsync(new HttpRequestMessage
 				{
 					Version = new System.Version(2, 0)
-				}).Should().Be(expectedResult);
+				})).Should().Be(expectedResult);
 			}
 
 			[Fact]

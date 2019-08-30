@@ -17,6 +17,6 @@ namespace MockHttp
 		/// <summary>
 		/// Gets the matchers that matched the request.
 		/// </summary>
-		IReadOnlyCollection<HttpRequestMatcher> Matchers { get; }
+		IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
 	}
 }

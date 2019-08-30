@@ -4,13 +4,14 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MockHttp.Matchers
 {
 	/// <summary>
 	/// Matches a request by the request content.
 	/// </summary>
-	public class ContentMatcher : ValueMatcher<byte[]>
+	public class ContentMatcher : IAsyncHttpRequestMatcher
 	{
 		private const int MaxBytesDisplayed = 10;
 
@@ -26,12 +27,12 @@ namespace MockHttp.Matchers
 		/// Initializes a new instance of the <see cref="ContentMatcher"/> class.
 		/// </summary>
 		public ContentMatcher()
-#if NETSTANDARD2_0
-			: base(Array.Empty<byte>())
-#else
-			: base(new byte[0])
-#endif
 		{
+#if NETSTANDARD2_0
+			ByteContent = Array.Empty<byte>();
+#else
+			ByteContent = new byte[0];
+#endif
 		}
 
 		/// <summary>
@@ -50,26 +51,35 @@ namespace MockHttp.Matchers
 		/// </summary>
 		/// <param name="content">The request content to match.</param>
 		public ContentMatcher(byte[] content)
-			: base(content)
 		{
-			if (content == null)
-			{
-				throw new ArgumentNullException(nameof(content));
-			}
+			ByteContent = content ?? throw new ArgumentNullException(nameof(content));
 		}
 
+		/// <summary>
+		/// Gets the expected content in bytes.
+		/// </summary>
+#pragma warning disable CA1819 // Properties should not return arrays
+		// ReSharper disable once MemberCanBeProtected.Global
+		protected internal byte[] ByteContent { get; }
+#pragma warning restore CA1819 // Properties should not return arrays
+
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public async Task<bool> IsMatchAsync(HttpRequestMessage request)
 		{
-			// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
-			// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
-			byte[] requestContent = request.Content?.ReadAsByteArrayAsync().GetAwaiter().GetResult();
-			if (requestContent == null)
+			byte[] requestContent = null;
+			if (request.Content != null)
 			{
-				return Value.Length == 0;
+				// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
+				// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
+				requestContent = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 			}
 
-			if (requestContent.Length == 0 && Value.Length == 0)
+			if (requestContent == null)
+			{
+				return ByteContent.Length == 0;
+			}
+
+			if (requestContent.Length == 0 && ByteContent.Length == 0)
 			{
 				return true;
 			}
@@ -78,7 +88,7 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsExclusive => true;
+		public virtual bool IsExclusive => true;
 
 		/// <summary>
 		/// Checks that the request matches the specified <paramref name="requestContent"/>.
@@ -87,37 +97,37 @@ namespace MockHttp.Matchers
 		/// <returns><see langword="true"/> if the content matches, <see langword="false"/> otherwise.</returns>
 		protected virtual bool IsMatch(byte[] requestContent)
 		{
-			return requestContent.SequenceEqual(Value);
+			return requestContent.SequenceEqual(ByteContent);
 		}
 
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			if (Value.Length == 0)
+			if (ByteContent.Length == 0)
 			{
 				return $"Content: <empty>";
 			}
 
 			if (_encoding != null)
 			{
-				return $"Content: {_encoding.GetString(Value, 0, Value.Length)}";
+				return $"Content: {_encoding.GetString(ByteContent, 0, ByteContent.Length)}";
 			}
 
-			int charsToOutput = Math.Min(MaxBytesDisplayed, Value.Length);
+			int charsToOutput = Math.Min(MaxBytesDisplayed, ByteContent.Length);
 			var sb = new StringBuilder();
 			sb.Append("Content: [");
 			for (int i = 0; i < charsToOutput; i++)
 			{
-				sb.AppendFormat(CultureInfo.InvariantCulture, "0x{0:x2}", Value[i]);
+				sb.AppendFormat(CultureInfo.InvariantCulture, "0x{0:x2}", ByteContent[i]);
 				if (i < charsToOutput - 1)
 				{
 					sb.Append(",");
 				}
 			}
 
-			if (charsToOutput < Value.Length)
+			if (charsToOutput < ByteContent.Length)
 			{
-				sb.AppendFormat(CultureInfo.InvariantCulture, ",...](Size = {0})", Value.Length);
+				sb.AppendFormat(CultureInfo.InvariantCulture, ",...](Size = {0})", ByteContent.Length);
 			}
 			else
 			{
