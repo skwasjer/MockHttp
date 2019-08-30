@@ -395,6 +395,10 @@ namespace MockHttp
 
 			// Assert
 			_sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
+#if !NETCOREAPP1_1 // .NET Standard 1.1 disposes content, so can't verify after sending on HttpContent.
+			_sut.Verify(matching => matching.Content(jsonPostContent), IsSent.Exactly(1), "we sent it");
+#endif
+
 			_sut.VerifyNoOtherRequests();
 
 			response.Should()
