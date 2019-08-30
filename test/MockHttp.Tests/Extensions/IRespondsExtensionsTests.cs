@@ -77,14 +77,14 @@ namespace MockHttp.Extensions
 					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -110,14 +110,14 @@ namespace MockHttp.Extensions
 					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -136,14 +136,14 @@ namespace MockHttp.Extensions
 					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -162,14 +162,14 @@ namespace MockHttp.Extensions
 					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -226,9 +226,9 @@ namespace MockHttp.Extensions
 				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(HttpStatusCode.OK)
-					.And.HaveContent(expectedContent);
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Theory]
@@ -245,9 +245,9 @@ namespace MockHttp.Extensions
 				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(statusCode)
-					.And.HaveContent(expectedContent);
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Fact]
@@ -287,9 +287,9 @@ namespace MockHttp.Extensions
 				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(HttpStatusCode.OK)
-					.And.HaveContent("content");
+					.And.HaveContentAsync("content");
 			}
 
 			[Theory]
@@ -304,9 +304,9 @@ namespace MockHttp.Extensions
 				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(statusCode)
-					.And.HaveContent("content");
+					.And.HaveContentAsync("content");
 			}
 
 			[Fact]

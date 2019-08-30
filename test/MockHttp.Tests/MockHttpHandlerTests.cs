@@ -91,7 +91,7 @@ namespace MockHttp
 			// Assert
 			actualResponse.Should().NotBeNull();
 			actualResponse.Content.Should().NotBeNull();
-			actualResponse.Should().HaveContent(data);
+			await actualResponse.Should().HaveContentAsync(data);
 			_sut.Verify(m => { }, IsSent.Once);
 			_sut.VerifyNoOtherRequests();
 		}
@@ -401,9 +401,9 @@ namespace MockHttp
 
 			_sut.VerifyNoOtherRequests();
 
-			response.Should()
+			await response.Should()
 				.HaveStatusCode(HttpStatusCode.Accepted)
-				.And.HaveContent(JsonConvert.SerializeObject(
+				.And.HaveContentAsync(JsonConvert.SerializeObject(
 				new
 				{
 					firstName = "John",
@@ -435,9 +435,9 @@ namespace MockHttp
 
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
 				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				firstResponse.Should()
-					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
-					.And.HaveContent(data);
+				await (await firstResponse.Should()
+					.HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
+					.And.HaveContentAsync(data);
 
 				_sut.VerifyNoOtherRequests();
 			}
@@ -464,9 +464,9 @@ namespace MockHttp
 				_sut.Verify(matching => { }, IsSent.Exactly(2));
 				firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
 				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				firstResponse.Should()
-					.HaveContent(await secondResponse.Content.ReadAsStringAsync())
-					.And.HaveContent(data);
+				await (await firstResponse.Should()
+					.HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
+					.And.HaveContentAsync(data);
 
 				_sut.VerifyNoOtherRequests();
 			}

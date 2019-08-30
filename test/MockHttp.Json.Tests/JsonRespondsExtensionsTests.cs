@@ -129,7 +129,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should().HaveContent("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
+			actualResponse.Should().HaveContentAsync("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
 		}
 
 		[Fact]
