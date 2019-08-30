@@ -27,6 +27,7 @@ namespace MockHttp.Responses
 
 			// Assert
 			act.Should().Throw<TaskCanceledException>();
+			sw.Stop();
 			sw.Elapsed.Should().BeGreaterOrEqualTo(timeout);
 		}
 
