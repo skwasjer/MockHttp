@@ -19,7 +19,7 @@ namespace MockHttp.Responses
 			_timeoutAfter = timeoutAfter;
 		}
 
-		public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			// It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm,
 			// so we simulate same behavior.

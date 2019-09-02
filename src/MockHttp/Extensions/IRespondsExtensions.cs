@@ -51,18 +51,6 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Specifies a strategy that returns the response for a request.
-		/// </summary>
-		/// <param name="responds"></param>
-		/// <param name="strategy">The strategy that produces a response.</param>
-		internal static TResult RespondUsing<TStrategy, TResult>(this IResponds<TResult> responds, TStrategy strategy)
-			where TStrategy : IResponseStrategy
-			where TResult : IResponseResult
-		{
-			return responds.Respond(strategy.SendAsync);
-		}
-
-		/// <summary>
 		/// Specifies the <paramref name="statusCode"/> response for a request.
 		/// </summary>
 		/// <param name="responds"></param>

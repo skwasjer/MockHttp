@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp
@@ -13,7 +14,7 @@ namespace MockHttp
 		public HttpCallTests()
 		{
 			_sut = new HttpCall();
-			_sut.SetResponse((_, __) => Task.FromResult(new HttpResponseMessage()));
+			_sut.SetResponse(new ResponseFuncStrategy((_, __) => Task.FromResult(new HttpResponseMessage())));
 		}
 
 		[Fact]

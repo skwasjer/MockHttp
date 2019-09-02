@@ -99,20 +99,42 @@ mockHttp
     .Throws<InvalidOperationException>();
 ```
 
+## Configuring response with custom strategy
+
+For more complex response configurations and/or reusability implement `IResponseStrategy`.
+
+```csharp
+public class MyResponseStrategy : IResponseStrategy
+{
+    public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        // Custom response logic.        
+    }
+}
+
+mockHttp
+    .When(...)
+    .RespondUsing(new MyResponseStrategy());
+```
+
+An added benefit is it helps to keep the unit tests themselves clean.
+
+
 ## Setting up a response sequence
 
 Multiple responses can be configured to form a sequence. This is useful when a request is expected to happen multiple times, but with different responses.
 
-The `Respond`, `RespondJson`, `Throws`, `TimesOut`, `TimesOutAfter` response configuration extensions can be chained to form a sequence.
+The `Respond`, `RespondUsing`, `RespondJson`, `Throws`, `TimesOut`, `TimesOutAfter` response configuration extensions can be chained to form a sequence.
 
 ```csharp
 mockHttp
     .When(...)
     .Respond(HttpStatusCode.BadGateway)
-    .Respond(HttpStatusCode.Ok)
     .TimesOutAfter(500)
     .Respond(HttpStatusCode.Ok)
     .Throws<HttpRequestException>()
+    .Respond(HttpStatusCode.Ok)
+    .RespondUsing(new MyResponseStrategy())
     .Respond(HttpStatusCode.Ok)
 ```
 
@@ -138,6 +160,8 @@ When the expectation is not met a `MockException` is thrown when calling `Verify
 | `Verify()` | Verifies that all verifiable expected requests have been sent. |
 | `VerifyAll()` | Verifies all expected requests regardless of whether they have been flagged as verifiable. |
 | `VerifyNoOtherRequests()` | Verifies that there were no requests sent other than those already verified. |
+
+> When a response sequence is configured, the setup will only match if at least that amount of requests have been sent.
 
 ### Verifying without verifiable expected requests
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Matchers;
+using MockHttp.Responses;
 
 namespace MockHttp
 {
@@ -15,7 +16,7 @@ namespace MockHttp
 	/// </summary>
 	internal class HttpCall
 	{
-		private Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _response;
+		private IResponseStrategy _responseStrategy;
 		private string _verifiableBecause;
 		private IReadOnlyCollection<HttpRequestMatcher> _matchers;
 
@@ -44,7 +45,7 @@ namespace MockHttp
 		{
 			IsInvoked = true;
 
-			if (_response == null)
+			if (_responseStrategy == null)
 			{
 				// TODO: clarify which mock.
 				throw new HttpMockException("No response configured for mock.");
@@ -53,14 +54,14 @@ namespace MockHttp
 			cancellationToken.ThrowIfCancellationRequested();
 
 			Callback?.Invoke(request);
-			HttpResponseMessage responseMessage = await _response(request, cancellationToken).ConfigureAwait(false);
+			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
 			responseMessage.RequestMessage = request;
 			return responseMessage;
 		}
 
-		public virtual void SetResponse(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
+		public virtual void SetResponse(IResponseStrategy responseStrategy)
 		{
-			_response = response ?? throw new ArgumentNullException(nameof(response));
+			_responseStrategy = responseStrategy;
 		}
 
 		public virtual void SetMatchers(IEnumerable<HttpRequestMatcher> matchers)
@@ -119,7 +120,7 @@ namespace MockHttp
 			IsVerified = false;
 			IsVerifiable = false;
 			_verifiableBecause = null;
-			_response = null;
+			_responseStrategy = null;
 			Callback = null;
 			_matchers = null;
 		}

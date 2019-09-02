@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 #if !NETSTANDARD1_1
 using System.Net.Http.Formatting;
@@ -31,6 +32,17 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content)
 			where TResult : IResponseResult
 		{
+			return responds.RespondJson(_ => content);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="content">The response content.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content)
+			where TResult : IResponseResult
+		{
 			return responds.RespondJson(content, (MediaTypeHeaderValue)null);
 		}
 
@@ -43,6 +55,18 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content)
 			where TResult : IResponseResult
 		{
+			return responds.RespondJson(statusCode, _ => content);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content)
+			where TResult : IResponseResult
+		{
 			return responds.RespondJson(statusCode, content, (MediaTypeHeaderValue)null);
 		}
 
@@ -53,6 +77,18 @@ namespace MockHttp.Json
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
+		{
+			return responds.RespondJson(_ => content, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
 			return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
@@ -68,21 +104,33 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
+			return responds.RespondJson(statusCode, _ => content, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
+		{
 			MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
 
 #if !NETSTANDARD1_1
 			return responds.RespondObject(statusCode, content, JsonFormatter, mt);
 #else
-			var jsonContent = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(content))
+			return responds.Respond(r => new HttpResponseMessage(statusCode)
 			{
-				Headers =
+				Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(content(r)))
 				{
-					ContentType = mt
+					Headers =
+					{
+						ContentType = mt
+					}
 				}
-			};
-			return responds.Respond(() => new HttpResponseMessage(statusCode)
-			{
-				Content = jsonContent
 			});
 #endif
 		}
@@ -96,6 +144,18 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, string mediaType)
 			where TResult : IResponseResult
 		{
+			return responds.RespondJson(_ => content, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, string mediaType)
+			where TResult : IResponseResult
+		{
 			return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
 		}
 
@@ -107,6 +167,19 @@ namespace MockHttp.Json
 		/// <param name="content">The response content.</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, string mediaType)
+			where TResult : IResponseResult
+		{
+			return responds.RespondJson(statusCode, _ => content, mediaType);
+		}
+		
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="content">The response content.</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, string mediaType)
 			where TResult : IResponseResult
 		{
 #if !NETSTANDARD1_1
@@ -126,6 +199,18 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter)
 			where TResult : IResponseResult
 		{
+			return responds.RespondObject(_ => value, formatter);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter)
+			where TResult : IResponseResult
+		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter);
 		}
 
@@ -139,6 +224,19 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter)
 			where TResult : IResponseResult
 		{
+			return responds.RespondObject(statusCode, _ => value, formatter);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter)
+			where TResult : IResponseResult
+		{
 			return responds.RespondObject(statusCode, value, formatter, (MediaTypeHeaderValue)null);
 		}
 
@@ -150,6 +248,19 @@ namespace MockHttp.Json
 		/// <param name="formatter">The media type formatter</param>
 		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, string mediaType)
+			where TResult : IResponseResult
+		{
+			return responds.RespondObject(_ => value, formatter, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, string mediaType)
 			where TResult : IResponseResult
 		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter, mediaType);
@@ -166,6 +277,20 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, string mediaType)
 			where TResult : IResponseResult
 		{
+			return responds.RespondObject(statusCode, _ => value, formatter, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, string mediaType)
+			where TResult : IResponseResult
+		{
 			return responds.RespondObject(statusCode, value, formatter, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
 		}
 
@@ -179,8 +304,22 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
+			return responds.RespondObject(_ => value, formatter, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
+		{
 			return responds.RespondObject(HttpStatusCode.OK, value, formatter, mediaType);
 		}
+
 
 		/// <summary>
 		/// Specifies the <paramref name="statusCode"/> and <paramref name="value"/> to respond with for a request.
@@ -193,9 +332,23 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(() => new HttpResponseMessage(statusCode)
+			return responds.RespondObject(statusCode, _ => value, formatter, mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="value"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="value">The response value.</param>
+		/// <param name="formatter">The media type formatter</param>
+		/// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter"/> default content type will be used.</param>
+		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
+		{
+			return responds.Respond(r => new HttpResponseMessage(statusCode)
 			{
-				Content = new ObjectContent<T>(value, formatter, mediaType)
+				Content = new ObjectContent<T>(value(r), formatter, mediaType)
 			});
 		}
 #endif

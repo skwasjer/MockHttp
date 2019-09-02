@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using MockHttp.Responses;
 
 namespace MockHttp
 {
 	internal class HttpCallSequence : HttpCall
 	{
 		private int _requestIndex;
-		private readonly List<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>> _responseSequence;
+		private readonly List<IResponseStrategy> _responseSequence;
 
 		public HttpCallSequence()
 		{
-			_responseSequence = new List<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>>();
+			_responseSequence = new List<IResponseStrategy>();
 			_requestIndex = -1;
 		}
 
@@ -22,11 +22,11 @@ namespace MockHttp
 			int nextRequestIndex = IncrementIfLessThan(ref _requestIndex, _responseSequence.Count - 1);
 
 			// TODO: if Reset() has been called from other thread, this can result in IndexOutOfRangeException. Have to handle this is some way and make it thread safe.
-			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response = nextRequestIndex >= 0
+			IResponseStrategy responseStrategy = nextRequestIndex >= 0
 				? _responseSequence[nextRequestIndex]
 				: null;
 
-			if (response == null)
+			if (responseStrategy == null)
 			{
 				// TODO: clarify which mock.
 				throw new HttpMockException("No response configured for mock.");
@@ -37,7 +37,7 @@ namespace MockHttp
 				cancellationToken.ThrowIfCancellationRequested();
 
 				Callback?.Invoke(request);
-				HttpResponseMessage responseMessage = await response(request, cancellationToken).ConfigureAwait(false);
+				HttpResponseMessage responseMessage = await responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
 				responseMessage.RequestMessage = request;
 				return responseMessage;
 			}
@@ -47,9 +47,9 @@ namespace MockHttp
 			}
 		}
 
-		public override void SetResponse(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> response)
+		public override void SetResponse(IResponseStrategy responseStrategy)
 		{
-			_responseSequence.Add(response);
+			_responseSequence.Add(responseStrategy);
 		}
 
 		public override bool VerifyIfInvoked()
