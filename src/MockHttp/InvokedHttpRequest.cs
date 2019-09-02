@@ -19,7 +19,7 @@ namespace MockHttp
 
 		public HttpRequestMessage Request { get; }
 
-		public IReadOnlyCollection<HttpRequestMatcher> Matchers => Setup.Matchers;
+		public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers => Setup.Matchers;
 
 		internal bool IsVerified => Setup.IsVerified || _markedAsVerified;
 

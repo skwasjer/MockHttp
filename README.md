@@ -106,7 +106,7 @@ For more complex response configurations and/or reusability implement `IResponse
 ```csharp
 public class MyResponseStrategy : IResponseStrategy
 {
-    public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
     {
         // Custom response logic.        
     }
@@ -168,7 +168,7 @@ When the expectation is not met a `MockException` is thrown when calling `Verify
 You also have the option, similar to Moq, to verify without having configured a verifiable expected request. For example, to verify a specific url has been called twice:
 
 ```csharp
-mockHttp.Verify(matching => matching.RequestUri("http://localhost/controller/*"), IsSent.Exactly(2));
+await mockHttp.VerifyAsync(matching => matching.RequestUri("http://localhost/controller/*"), IsSent.Exactly(2));
 ```
 
 ## Callback

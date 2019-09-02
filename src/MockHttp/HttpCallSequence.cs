@@ -17,7 +17,7 @@ namespace MockHttp
 			_requestIndex = -1;
 		}
 
-		public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public override async Task<HttpResponseMessage> SendAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			int nextRequestIndex = IncrementIfLessThan(ref _requestIndex, _responseSequence.Count - 1);
 
@@ -36,9 +36,9 @@ namespace MockHttp
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 
-				Callback?.Invoke(request);
-				HttpResponseMessage responseMessage = await responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
-				responseMessage.RequestMessage = request;
+				Callback?.Invoke(requestContext.Request);
+				HttpResponseMessage responseMessage = await responseStrategy.ProduceResponseAsync(requestContext, cancellationToken).ConfigureAwait(false);
+				responseMessage.RequestMessage = requestContext.Request;
 				return responseMessage;
 			}
 			finally

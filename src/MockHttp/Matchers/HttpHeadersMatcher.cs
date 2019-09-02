@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using MockHttp.Http;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -74,9 +75,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
-			return Value.All(h => IsMatch(h, request.Headers) || IsMatch(h, request.Content?.Headers));
+			return Value.All(h => IsMatch(h, requestContext.Request.Headers) || IsMatch(h, requestContext.Request.Content?.Headers));
 		}
 
 		/// <inheritdoc />

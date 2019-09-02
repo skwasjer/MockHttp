@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -31,7 +32,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Theory]
@@ -53,7 +54,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
 		}
 
 		[Fact]
@@ -67,7 +68,7 @@ namespace MockHttp.Matchers
 			};
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse("no query string was expected");
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse("no query string was expected");
 		}
 
 		[Fact]

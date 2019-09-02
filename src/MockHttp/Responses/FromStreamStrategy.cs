@@ -31,7 +31,7 @@ namespace MockHttp.Responses
 			_mediaType = mediaType;
 		}
 
-		public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			InitBuffer();
 

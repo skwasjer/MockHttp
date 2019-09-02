@@ -7,6 +7,8 @@
 - Renamed `VerifyNoOtherCalls()` to `VerifyNoOtherRequests()`, and fixed the verification not taking into account requests to `Verify(m => ....)`.
 - Fix race condition when resetting mock, while an asynchronous request or expectation verification is in progress.
 - Moved JSON extensions to `skwas.MockHttp.Json` package as to not require dependencies on [Json.NET](https://www.newtonsoft.com/) if one does not need JSON support.
+- Added `VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)` to avoid deadlocking when verifying `HttpContent`.
+- Added `.FormData(...)` matcher.
 
 ## v1.3
 

@@ -18,15 +18,15 @@ namespace MockHttp
 	{
 		private IResponseStrategy _responseStrategy;
 		private string _verifiableBecause;
-		private IReadOnlyCollection<HttpRequestMatcher> _matchers;
+		private IReadOnlyCollection<IAsyncHttpRequestMatcher> _matchers;
 
-		public IReadOnlyCollection<HttpRequestMatcher> Matchers
+		public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers
 		{
 			get
 			{
 				if (_matchers == null)
 				{
-					SetMatchers(new List<HttpRequestMatcher>());
+					SetMatchers(new List<IAsyncHttpRequestMatcher>());
 				}
 
 				return _matchers;
@@ -41,7 +41,7 @@ namespace MockHttp
 
 		public Action<HttpRequestMessage> Callback { get; private set; }
 
-		public virtual async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public virtual async Task<HttpResponseMessage> SendAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			IsInvoked = true;
 
@@ -53,9 +53,9 @@ namespace MockHttp
 
 			cancellationToken.ThrowIfCancellationRequested();
 
-			Callback?.Invoke(request);
-			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
-			responseMessage.RequestMessage = request;
+			Callback?.Invoke(requestContext.Request);
+			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(requestContext, cancellationToken).ConfigureAwait(false);
+			responseMessage.RequestMessage = requestContext.Request;
 			return responseMessage;
 		}
 
@@ -64,14 +64,14 @@ namespace MockHttp
 			_responseStrategy = responseStrategy;
 		}
 
-		public virtual void SetMatchers(IEnumerable<HttpRequestMatcher> matchers)
+		public virtual void SetMatchers(IEnumerable<IAsyncHttpRequestMatcher> matchers)
 		{
 			if (matchers == null)
 			{
 				throw new ArgumentNullException(nameof(matchers));
 			}
 
-			_matchers = new ReadOnlyCollection<HttpRequestMatcher>(matchers.ToList());
+			_matchers = new ReadOnlyCollection<IAsyncHttpRequestMatcher>(matchers.ToList());
 		}
 
 		public virtual void SetCallback(Action<HttpRequestMessage> callback)
@@ -93,7 +93,7 @@ namespace MockHttp
 			}
 
 			var sb = new StringBuilder();
-			foreach (HttpRequestMatcher m in _matchers)
+			foreach (IAsyncHttpRequestMatcher m in _matchers)
 			{
 				sb.Append(m);
 				sb.Append(", ");

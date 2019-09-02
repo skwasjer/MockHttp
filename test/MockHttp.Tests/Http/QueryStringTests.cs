@@ -11,13 +11,17 @@ namespace MockHttp.Http
 		[Fact]
 		public void Given_null_queryString_when_creating_should_throw()
 		{
+			IEnumerable<KeyValuePair<string, string>> values = null;
+
 			// Act
-			Action act = () => new QueryString(null);
+			// ReSharper disable once ExpressionIsAlwaysNull
+			// ReSharper disable once ObjectCreationAsStatement
+			Action act = () => new QueryString(values);
 
 			// Assert
 			act.Should()
 				.Throw<ArgumentNullException>()
-				.WithParamName("values");
+				.WithParamName(nameof(values));
 		}
 
 		[Theory]
@@ -26,6 +30,7 @@ namespace MockHttp.Http
 		public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string key)
 		{
 			// Act
+			// ReSharper disable once ObjectCreationAsStatement
 			Action act = () => new QueryString(new []
 			{
 				new KeyValuePair<string, IEnumerable<string>>(key, new List<string>())
@@ -202,7 +207,7 @@ namespace MockHttp.Http
 			// Assert
 			act.Should()
 				.Throw<FormatException>()
-				.WithMessage("The query string format is invalid.");
+				.WithMessage("The escaped data string format is invalid.");
 		}
 	}
 }

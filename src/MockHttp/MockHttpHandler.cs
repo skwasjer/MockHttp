@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;
+using MockHttp.Responses;
 using MockHttp.Threading;
 
 namespace MockHttp
@@ -15,10 +17,12 @@ namespace MockHttp
 	/// <summary>
 	/// Represents a message handler that can be used to mock HTTP responses and verify HTTP requests sent via <see cref="HttpClient"/>.
 	/// </summary>
-	public sealed class MockHttpHandler : HttpMessageHandler
+	public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 	{
 		private readonly ConcurrentCollection<HttpCall> _setups;
 		private readonly HttpCall _fallbackSetup;
+		private readonly IDictionary<Type, object> _items;
+		private readonly ReadOnlyDictionary<Type, object> _readOnlyItems;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MockHttpHandler"/> class.
@@ -27,6 +31,8 @@ namespace MockHttp
 		{
 			_setups = new ConcurrentCollection<HttpCall>();
 			InvokedRequests = new InvokedHttpRequestCollection();
+			_items = new Dictionary<Type, object>();
+			_readOnlyItems = new ReadOnlyDictionary<Type, object>(_items);
 
 			_fallbackSetup = new HttpCall();
 			Fallback = new FallbackRequestSetupPhrase(_fallbackSetup);
@@ -48,21 +54,22 @@ namespace MockHttp
 		{
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
+			var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
 			foreach (HttpCall setup in _setups.Reverse())
 			{
-				if (setup.Matchers.All(request, out IEnumerable<HttpRequestMatcher> notMatchedOn))
+				if (await setup.Matchers.AllAsync(requestContext).ConfigureAwait(false))
 				{
-					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
+					return await SendAsync(setup, requestContext, cancellationToken).ConfigureAwait(false);
 				}
 			}
 
-			return await SendAsync(_fallbackSetup, request, cancellationToken).ConfigureAwait(false);
+			return await SendAsync(_fallbackSetup, requestContext, cancellationToken).ConfigureAwait(false);
 		}
 
-		private Task<HttpResponseMessage> SendAsync(HttpCall setup, HttpRequestMessage request, CancellationToken cancellationToken)
+		private Task<HttpResponseMessage> SendAsync(HttpCall setup, MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
-			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest(setup, request));
-			return setup.SendAsync(request, cancellationToken);
+			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest(setup, requestContext.Request));
+			return setup.SendAsync(requestContext, cancellationToken);
 		}
 
 		/// <summary>
@@ -120,7 +127,21 @@ namespace MockHttp
 		/// <param name="matching">The conditions to match.</param>
 		/// <param name="times">The number of times a request is allowed to be sent.</param>
 		/// <param name="because">The reasoning for this expectation.</param>
+		/// <remarks>
+		/// When verifying <see cref="HttpContent"/> using a <see cref="ContentMatcher"/> use the <see cref="VerifyAsync"/> overload to prevent potential deadlocks.
+		/// </remarks>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
+		{
+			VerifyAsync(matching, times, because).GetAwaiter().GetResult();
+		}
+		
+		/// <summary>
+		/// Verifies that a request matching the specified match conditions has been sent.
+		/// </summary>
+		/// <param name="matching">The conditions to match.</param>
+		/// <param name="times">The number of times a request is allowed to be sent.</param>
+		/// <param name="because">The reasoning for this expectation.</param>
+		public async Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
 			if (matching == null)
 			{
@@ -129,11 +150,23 @@ namespace MockHttp
 
 			var rm = new RequestMatching();
 			matching(rm);
-			IReadOnlyCollection<HttpRequestMatcher> shouldMatch = rm.Build();
 
-			IReadOnlyList<IInvokedHttpRequest> matchedRequests = shouldMatch.Count == 0
-				? (IReadOnlyList<IInvokedHttpRequest>)InvokedRequests
-				: InvokedRequests.Where(r => shouldMatch.All(r.Request, out _)).ToList();
+			IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = rm.Build();
+			IReadOnlyList<IInvokedHttpRequest> matchedRequests = InvokedRequests;
+			if (matchers.Count > 0)
+			{
+				var list = new List<IInvokedHttpRequest>();
+				foreach (IInvokedHttpRequest invokedHttpRequest in InvokedRequests)
+				{
+					var requestContext = new MockHttpRequestContext(invokedHttpRequest.Request);
+					if (await matchers.AllAsync(requestContext).ConfigureAwait(false))
+					{
+						list.Add(invokedHttpRequest);
+					}
+				}
+
+				matchedRequests = list;
+			}
 
 			if (!times.Verify(matchedRequests.Count))
 			{
@@ -190,6 +223,12 @@ namespace MockHttp
 			string unverifiedRequestsStr = string.Join(Environment.NewLine, unverifiedRequests.Select(ir => ir.Request.ToString()));
 
 			throw new HttpMockException($"There are {unverifiedRequests.Count} unverified requests:{Environment.NewLine}{unverifiedRequestsStr}");
+		}
+
+		IMockConfiguration IMockConfiguration.Use<TService>(TService service)
+		{
+			_items[typeof(TService)] = service;
+			return this;
 		}
 
 		private void Verify(IEnumerable<HttpCall> verifiableSetups)

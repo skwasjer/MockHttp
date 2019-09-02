@@ -13,7 +13,7 @@ namespace MockHttp
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public class RequestMatching : IFluentInterface
 	{
-		private readonly List<HttpRequestMatcher> _matchers = new List<HttpRequestMatcher>();
+		private readonly List<IAsyncHttpRequestMatcher> _matchers = new List<IAsyncHttpRequestMatcher>();
 
 		internal RequestMatching()
 		{
@@ -24,7 +24,7 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="matcher">The matcher instance.</param>
 		/// <returns>The request matching builder.</returns>
-		public RequestMatching With(HttpRequestMatcher matcher)
+		public RequestMatching With(IAsyncHttpRequestMatcher matcher)
 		{
 			if (matcher == null)
 			{
@@ -45,9 +45,9 @@ namespace MockHttp
 		/// <summary>
 		/// </summary>
 		// ReSharper disable once MemberCanBeProtected.Global
-		protected internal virtual void ValidateMatcher(HttpRequestMatcher matcher)
+		protected internal virtual void ValidateMatcher(IAsyncHttpRequestMatcher matcher)
 		{
-			List<HttpRequestMatcher> sameTypeMatchers = _matchers
+			List<IAsyncHttpRequestMatcher> sameTypeMatchers = _matchers
 				.Where(m => m.GetType() == matcher.GetType())
 				.ToList();
 
@@ -57,9 +57,9 @@ namespace MockHttp
 			}
 		}
 
-		internal IReadOnlyCollection<HttpRequestMatcher> Build()
+		internal IReadOnlyCollection<IAsyncHttpRequestMatcher> Build()
 		{
-			return new ReadOnlyCollection<HttpRequestMatcher>(_matchers.ToArray());
+			return new ReadOnlyCollection<IAsyncHttpRequestMatcher>(_matchers.ToArray());
 		}
 	}
 }

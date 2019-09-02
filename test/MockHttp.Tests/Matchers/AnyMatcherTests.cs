@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Moq;
 using Xunit;
 
@@ -22,7 +24,7 @@ namespace MockHttp.Matchers
 		[Theory]
 		[InlineData("url1")]
 		[InlineData("url2")]
-		public void Given_request_uri_equals_one_of_the_matchers_when_matching_should_match(string requestUrl)
+		public async Task Given_request_uri_equals_one_of_the_matchers_when_matching_should_match(string requestUrl)
 		{
 			_matchers.Add(new RequestUriMatcher("*url1"));
 			_matchers.Add(new RequestUriMatcher("*url2"));
@@ -30,11 +32,12 @@ namespace MockHttp.Matchers
 			var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue("the request url '{0}' should match one of the matchers", requestUrl);
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request)))
+				.Should().BeTrue("the request url '{0}' should match one of the matchers", requestUrl);
 		}
 
 		[Fact]
-		public void Given_request_uri_matches_none_of_the_matchers_when_matching_should_not_match()
+		public async Task Given_request_uri_matches_none_of_the_matchers_when_matching_should_not_match()
 		{
 			_matchers.Add(new RequestUriMatcher("http://127.0.0.1/"));
 			_matchers.Add(new RequestUriMatcher("http://127.0.0.2/"));
@@ -42,7 +45,8 @@ namespace MockHttp.Matchers
 			var request = new HttpRequestMessage(HttpMethod.Get, "http://127.0.0.3/");
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse("the request url should not match any of the matchers");
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request)))
+				.Should().BeFalse("the request url should not match any of the matchers");
 		}
 
 		[Fact]

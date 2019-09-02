@@ -35,7 +35,7 @@ namespace MockHttp.Responses
 
 			// Act
 			HttpResponseMessage responseMessage = null;
-			Func<Task> act = async () => responseMessage = await sut.ProduceResponseAsync(new HttpRequestMessage(), CancellationToken.None);
+			Func<Task> act = async () => responseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
 			act.Should().NotThrow();
@@ -64,7 +64,7 @@ namespace MockHttp.Responses
 				var sut = new ResponseFuncStrategy(responseFunc);
 
 				// Act
-				HttpResponseMessage actualResponseMessage = await sut.ProduceResponseAsync(requestMessage, cts.Token);
+				HttpResponseMessage actualResponseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(requestMessage), cts.Token);
 
 				// Assert
 				actualResponseMessage.Should().BeSameAs(responseMessage);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Net.Http;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -28,9 +29,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
-			return _func(request);
+			return _func(requestContext.Request);
 		}
 
 		/// <inheritdoc />

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace MockHttp.Json
@@ -51,7 +53,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should()
+			await actualResponse.Should()
 				.HaveStatusCode(HttpStatusCode.OK)
 				.And.HaveJsonContent(jsonContent);
 		}
@@ -72,7 +74,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should()
+			await actualResponse.Should()
 				.HaveStatusCode(statusCode)
 				.And.HaveJsonContent(jsonContent);
 		}
@@ -105,6 +107,64 @@ namespace MockHttp.Json
 			actualResponse.Should().HaveContentType(contentType);
 		}
 
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task When_responding_with_custom_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
+		{
+			var request = new HttpRequestMessage();
+			var serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
+			{
+				ContractResolver = new CamelCasePropertyNamesContractResolver
+				{
+					NamingStrategy = new SnakeCaseNamingStrategy()
+				}
+			};
+			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			var testClass = new TestClass
+			{
+				SomeProperty = "value"
+			};
+
+			// Act
+			_sut.RespondJson(testClass, null, serializerSettings);
+			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
+
+			// Assert
+			await actualResponse.Should().HaveContentAsync(expectedJson);
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task When_responding_with_global_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
+		{
+			var request = new HttpRequestMessage();
+			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			var testClass = new TestClass
+			{
+				SomeProperty = "value"
+			};
+
+			if (!useDefaultSerializer)
+			{
+				_httpMock.UseJsonSerializerSettings(new JsonSerializerSettings
+				{
+					ContractResolver = new CamelCasePropertyNamesContractResolver
+					{
+						NamingStrategy = new SnakeCaseNamingStrategy()
+					}
+				});
+			}
+
+			// Act
+			_sut.RespondJson(testClass);
+			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
+
+			// Assert
+			await actualResponse.Should().HaveContentAsync(expectedJson);
+		}
+
 #if !NETCOREAPP1_1
 
 		[DataContract(Name = "RootElem", Namespace = "")]
@@ -129,7 +189,7 @@ namespace MockHttp.Json
 			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
 			// Assert
-			actualResponse.Should().HaveContent("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
+			await actualResponse.Should().HaveContentAsync("<RootElem xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>John Doe</Name></RootElem>");
 		}
 
 		[Fact]

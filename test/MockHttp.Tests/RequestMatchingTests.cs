@@ -43,7 +43,7 @@ namespace MockHttp
 				.With(_matcher2);
 
 			// Act
-			IReadOnlyCollection<HttpRequestMatcher> actual = _sut.Build();
+			IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
 
 			// Assert
 			actual.Should().BeEquivalentTo(_matcher1, _matcher2);
@@ -98,7 +98,7 @@ namespace MockHttp
 				.With(_matcher1);
 
 			// Act
-			IReadOnlyCollection<HttpRequestMatcher> actual = _sut.Build();
+			IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
 
 			// Assert
 			actual.Should().BeEquivalentTo(_matcher1);

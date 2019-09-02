@@ -23,7 +23,7 @@ namespace MockHttp
 			var request = new HttpRequestMessage();
 
 			// Act
-			HttpResponseMessage response = await _sut.SendAsync(request, CancellationToken.None);
+			HttpResponseMessage response = await _sut.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 			// Assert
 			response.RequestMessage.Should().Be(request);

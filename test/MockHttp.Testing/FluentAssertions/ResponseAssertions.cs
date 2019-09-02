@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
@@ -80,25 +81,25 @@ namespace MockHttp.FluentAssertions
 			return new AndConstraint<ResponseAssertions>(this);
 		}
 
-		public AndConstraint<ResponseAssertions> HaveJsonContent<T>
+		public Task<AndConstraint<ResponseAssertions>> HaveJsonContent<T>
 		(
 			T expectedContent,
 			string because = "",
 			params object[] becauseArgs)
 		{
-			return HaveContent(JsonConvert.SerializeObject(expectedContent), because, becauseArgs);
+			return HaveContentAsync(JsonConvert.SerializeObject(expectedContent), because, becauseArgs);
 		}
 
-		public AndConstraint<ResponseAssertions> HaveContent
+		public Task<AndConstraint<ResponseAssertions>> HaveContentAsync
 		(
 			string expectedContent,
 			string because = "",
 			params object[] becauseArgs)
 		{
-			return HaveContent(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
+			return HaveContentAsync(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
 		}
 
-		public AndConstraint<ResponseAssertions> HaveContent(
+		public async Task<AndConstraint<ResponseAssertions>> HaveContentAsync(
 			HttpContent expectedContent,
 			string because = "",
 			params object[] becauseArgs)
@@ -120,17 +121,16 @@ namespace MockHttp.FluentAssertions
 				.FailWith("The subject is null.")
 				.Then
 				.ForCondition(subject.Content != null)
-				.FailWith("Expected response with content {reason}, but has no content.")
-				.Then
-				.Given(() => new
-				{
-					currentContent = subject.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult(),
-					expectedContent = expectedContent.ReadAsByteArrayAsync().GetAwaiter().GetResult()
-				})
-				.ForCondition(x => x.currentContent.SequenceEqual(x.expectedContent))
+				.FailWith("Expected response with content {reason}, but has no content.");
+
+			byte[] currentContentBytes = await subject.Content.ReadAsByteArrayAsync();
+			byte[] expectedContentBytes = await expectedContent.ReadAsByteArrayAsync();
+
+			((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks)
+				.ForCondition(currentContentBytes.SequenceEqual(expectedContentBytes))
 				// Using UTF-8 for fail msg, but this will not produce correct result for other encodings or binary responses.
 				// Since this is a private test helper, we accept this for now.
-				.FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", x => Encoding.UTF8.GetString(x.expectedContent), x => Encoding.UTF8.GetString(x.currentContent));
+				.FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", Encoding.UTF8.GetString(currentContentBytes), Encoding.UTF8.GetString(expectedContentBytes));
 
 			return new AndConstraint<ResponseAssertions>(this);
 		}

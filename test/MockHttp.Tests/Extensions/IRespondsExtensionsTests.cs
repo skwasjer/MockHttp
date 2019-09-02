@@ -10,6 +10,7 @@ using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Responses;
 using Moq;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(() => response);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new HttpRequestMessage(), CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 				// Assert
 				actualResponse.Should().BeSameAs(response);
@@ -48,7 +49,7 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(r => new HttpResponseMessage { Headers = { { "query", r.RequestUri.Query } } });
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
 				actualResponse.Should().HaveHeader("query", request.RequestUri.Query);
@@ -74,17 +75,17 @@ namespace MockHttp.Extensions
 
 					// Act
 					_sut.Respond(ms);
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -107,17 +108,17 @@ namespace MockHttp.Extensions
 
 					// Act
 					_sut.Respond(statusCode, ms);
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -133,17 +134,17 @@ namespace MockHttp.Extensions
 
 					// Act
 					_sut.Respond(ms, "text/html; charset=utf-8");
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -159,17 +160,17 @@ namespace MockHttp.Extensions
 
 					// Act
 					_sut.Respond(statusCode, ms, "text/html; charset=utf-8");
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 					// Assert
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 
 					// Second assert, to test we can read stream twice, even if not seekable.
-					actualResponse.Should()
+					await actualResponse.Should()
 						.HaveStatusCode(statusCode)
-						.And.HaveContent(expectedContent);
+						.And.HaveContentAsync(expectedContent);
 				}
 			}
 
@@ -223,12 +224,12 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(httpContent);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(HttpStatusCode.OK)
-					.And.HaveContent(expectedContent);
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Theory]
@@ -242,12 +243,12 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(statusCode, httpContent);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(statusCode)
-					.And.HaveContent(expectedContent);
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Fact]
@@ -271,7 +272,7 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(statusCode);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
 				actualResponse.Should().HaveStatusCode(statusCode);
@@ -284,12 +285,12 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond("content");
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(HttpStatusCode.OK)
-					.And.HaveContent("content");
+					.And.HaveContentAsync("content");
 			}
 
 			[Theory]
@@ -301,12 +302,12 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond(statusCode, "content");
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
-				actualResponse.Should()
+				await actualResponse.Should()
 					.HaveStatusCode(statusCode)
-					.And.HaveContent("content");
+					.And.HaveContentAsync("content");
 			}
 
 			[Fact]
@@ -330,7 +331,7 @@ namespace MockHttp.Extensions
 
 				// Act
 				_sut.Respond("content", mediaType);
-				HttpResponseMessage actualResponse = await _httpCall.SendAsync(request, CancellationToken.None);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
 				// Assert
 				actualResponse.Should()

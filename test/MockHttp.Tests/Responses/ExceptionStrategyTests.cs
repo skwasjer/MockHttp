@@ -31,7 +31,7 @@ namespace MockHttp.Responses
 			var sut = new ExceptionStrategy(() => null);
 
 			// Act
-			Func<Task> act = () => sut.ProduceResponseAsync(new HttpRequestMessage(), CancellationToken.None);
+			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
 			act.Should().Throw<HttpMockException>()
@@ -45,7 +45,7 @@ namespace MockHttp.Responses
 			var sut = new ExceptionStrategy(() => ex);
 
 			// Act
-			Func<Task> act = () => sut.ProduceResponseAsync(new HttpRequestMessage(), CancellationToken.None);
+			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
 			act.Should().Throw<Exception>()
