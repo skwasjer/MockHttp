@@ -19,15 +19,15 @@ namespace MockHttp.Json
 
 		protected JsonSerializerSettings SerializerSettings { get; }
 
-		public override Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			return Task.FromResult(new HttpResponseMessage(StatusCode)
 			{
-				Content = new StringContent(JsonConvert.SerializeObject(ValueFactory(request), SerializerSettings))
+				Content = new StringContent(JsonConvert.SerializeObject(ValueFactory(requestContext.Request), SerializerSettings))
 				{
 					Headers =
 					{
-						ContentType = MediaType
+						ContentType = MediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8")
 					}
 				}
 			});

@@ -37,7 +37,8 @@ namespace MockHttp
 				cancellationToken.ThrowIfCancellationRequested();
 
 				Callback?.Invoke(request);
-				HttpResponseMessage responseMessage = await responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
+				var requestContext = new MockHttpRequestContext(request);
+				HttpResponseMessage responseMessage = await responseStrategy.ProduceResponseAsync(requestContext, cancellationToken).ConfigureAwait(false);
 				responseMessage.RequestMessage = request;
 				return responseMessage;
 			}

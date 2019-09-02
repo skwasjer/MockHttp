@@ -48,6 +48,6 @@ namespace MockHttp.Responses
 		public MediaTypeHeaderValue MediaType { get; }
 
 		/// <inheritdoc />
-		public abstract Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken);
+		public abstract Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken);
 	}
 }

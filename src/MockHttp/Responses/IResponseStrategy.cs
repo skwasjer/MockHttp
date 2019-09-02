@@ -10,11 +10,11 @@ namespace MockHttp.Responses
 	public interface IResponseStrategy
 	{
 		/// <summary>
-		/// Produces a response message to return for the <paramref name="request"/>.
+		/// Produces a response message to return for the <paramref name="requestContext"/>.
 		/// </summary>
-		/// <param name="request">The request message.</param>
+		/// <param name="requestContext">The request message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <returns>An awaitable that when completed provides the response message.</returns>
-		Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken);
+		Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken);
 	}
 }

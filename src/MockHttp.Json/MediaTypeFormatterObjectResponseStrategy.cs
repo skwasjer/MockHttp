@@ -20,11 +20,11 @@ namespace MockHttp.Json
 
 		protected MediaTypeFormatter Formatter { get; }
 
-		public override Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			return Task.FromResult(new HttpResponseMessage(StatusCode)
 			{
-				Content = new ObjectContent(TypeOfValue, ValueFactory(request), Formatter, MediaType)
+				Content = new ObjectContent(TypeOfValue, ValueFactory(requestContext.Request), Formatter, MediaType)
 			});
 		}
 	}
@@ -36,12 +36,12 @@ namespace MockHttp.Json
 		{
 		}
 
-		public override Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
-			MediaTypeFormatter formatter = Formatter.GetPerRequestFormatterInstance(TypeOfValue, request, MediaType);
+			MediaTypeFormatter formatter = Formatter.GetPerRequestFormatterInstance(TypeOfValue, requestContext.Request, MediaType);
 			return Task.FromResult(new HttpResponseMessage(StatusCode)
 			{
-				Content = new ObjectContent<T>((T)ValueFactory(request), formatter, MediaType)
+				Content = new ObjectContent<T>((T)ValueFactory(requestContext.Request), formatter, MediaType)
 			});
 		}
 	}

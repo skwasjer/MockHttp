@@ -54,7 +54,8 @@ namespace MockHttp
 			cancellationToken.ThrowIfCancellationRequested();
 
 			Callback?.Invoke(request);
-			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(request, cancellationToken).ConfigureAwait(false);
+			var requestContext = new MockHttpRequestContext(request);
+			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(requestContext, cancellationToken).ConfigureAwait(false);
 			responseMessage.RequestMessage = request;
 			return responseMessage;
 		}
@@ -93,7 +94,7 @@ namespace MockHttp
 			}
 
 			var sb = new StringBuilder();
-			foreach (HttpRequestMatcher m in _matchers)
+			foreach (IAsyncHttpRequestMatcher m in _matchers)
 			{
 				sb.Append(m);
 				sb.Append(", ");

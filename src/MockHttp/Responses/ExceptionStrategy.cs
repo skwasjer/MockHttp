@@ -14,7 +14,7 @@ namespace MockHttp.Responses
 			_exceptionFactory = exceptionFactory ?? throw new ArgumentNullException(nameof(exceptionFactory));
 		}
 
-		public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			throw _exceptionFactory() ?? new HttpMockException("The configured exception cannot be null.");
 		}

@@ -14,9 +14,9 @@ namespace MockHttp.Responses
 			_responseFunc = responseFunc ?? throw new ArgumentNullException(nameof(responseFunc));
 		}
 
-		public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
-			return _responseFunc?.Invoke(request, cancellationToken) ?? Task.FromResult<HttpResponseMessage>(null);
+			return _responseFunc?.Invoke(requestContext.Request, cancellationToken) ?? Task.FromResult<HttpResponseMessage>(null);
 		}
 	}
 }
