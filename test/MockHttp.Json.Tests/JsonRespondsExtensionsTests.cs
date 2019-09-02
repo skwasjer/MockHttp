@@ -23,11 +23,6 @@ namespace MockHttp.Json
 
 		private readonly HttpClient _httpClient;
 
-		private class TestClass
-		{
-			public string SomeProperty { get; set; }
-		}
-
 		public JsonRespondsExtensionsTests()
 		{
 			_httpMock = new MockHttpHandler();
@@ -145,20 +140,22 @@ namespace MockHttp.Json
 		public async Task When_responding_with_global_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
 		{
 			var request = new HttpRequestMessage();
-			var serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
-			{
-				ContractResolver = new CamelCasePropertyNamesContractResolver
-				{
-					NamingStrategy = new SnakeCaseNamingStrategy()
-				}
-			};
 			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
 			var testClass = new TestClass
 			{
 				SomeProperty = "value"
 			};
 
-			_httpMock.UseJsonSerializerSettings(serializerSettings);
+			if (!useDefaultSerializer)
+			{
+				_httpMock.UseJsonSerializerSettings(new JsonSerializerSettings
+				{
+					ContractResolver = new CamelCasePropertyNamesContractResolver
+					{
+						NamingStrategy = new SnakeCaseNamingStrategy()
+					}
+				});
+			}
 
 			// Act
 			_sut.RespondJson(testClass);
