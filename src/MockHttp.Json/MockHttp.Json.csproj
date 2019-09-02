@@ -6,6 +6,8 @@
     <AssemblyName>skwas.MockHttp.Json</AssemblyName>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
+    <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.StartsWith('netstandard2'))">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\Package.props" />
