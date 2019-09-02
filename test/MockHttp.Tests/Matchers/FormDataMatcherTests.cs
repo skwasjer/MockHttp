@@ -85,23 +85,29 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void Given_null_formData_when_creating_matcher_should_throw()
 		{
+			string urlEncodedFormData = null;
+
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new FormDataMatcher((string)null);
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Action act = () => new FormDataMatcher(urlEncodedFormData);
 
 			// Assert
-			act.Should().Throw<ArgumentNullException>().WithParamName("formData");
+			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(urlEncodedFormData));
 		}
 
 		[Fact]
 		public void Given_null_parameters_when_creating_matcher_should_throw()
 		{
+			IEnumerable<KeyValuePair<string, string>> formData = null;
+
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new FormDataMatcher((IEnumerable<KeyValuePair<string, string>>)null);
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Action act = () => new FormDataMatcher(formData);
 
 			// Assert
-			act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
+			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
 		}
 
 		[Fact]

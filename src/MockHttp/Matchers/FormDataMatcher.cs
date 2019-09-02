@@ -23,23 +23,23 @@ namespace MockHttp.Matchers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FormDataMatcher"/> class using specified form data parameters.
 		/// </summary>
-		/// <param name="parameters">The form data parameters.</param>
-		public FormDataMatcher(IEnumerable<KeyValuePair<string, string>> parameters)
+		/// <param name="formData">The form data parameters.</param>
+		public FormDataMatcher(IEnumerable<KeyValuePair<string, string>> formData)
 		{
-			if (parameters == null)
+			if (formData == null)
 			{
-				throw new ArgumentNullException(nameof(parameters));
+				throw new ArgumentNullException(nameof(formData));
 			}
 
-			_matchQs = parameters.ToDictionary(v => v.Key, v => v.Value);
+			_matchQs = formData.ToDictionary(v => v.Key, v => v.Value);
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FormDataMatcher"/> class using specified form data.
 		/// </summary>
-		/// <param name="formData">The form data.</param>
-		public FormDataMatcher(string formData)
-			: this(DataEscapingHelper.Parse(formData ?? throw new ArgumentNullException(nameof(formData)))
+		/// <param name="urlEncodedFormData">The form data.</param>
+		public FormDataMatcher(string urlEncodedFormData)
+			: this(DataEscapingHelper.Parse(urlEncodedFormData ?? throw new ArgumentNullException(nameof(urlEncodedFormData)))
 				.Select(v => new KeyValuePair<string, string>(v.Key, v.Value?.LastOrDefault())))
 		{
 		}
@@ -62,8 +62,8 @@ namespace MockHttp.Matchers
 
 			return _matchQs.All(q =>
 				formData.ContainsKey(q.Key)
-				 && (!formData[q.Key].Any() && q.Value == null
-				|| formData[q.Key].Any(qv => q.Value.Contains(qv))));
+				 && (!formData[q.Key].Any() && string.IsNullOrEmpty(q.Value)
+				|| formData[q.Key].Any(qv => string.Equals(q.Value ?? string.Empty, qv ?? string.Empty, StringComparison.Ordinal))));
 		}
 
 		/// <inheritdoc />

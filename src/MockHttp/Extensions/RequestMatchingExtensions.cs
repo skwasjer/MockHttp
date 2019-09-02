@@ -363,27 +363,27 @@ namespace MockHttp
 		/// Matches a request by form data.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="parameters">The form data parameters.</param>
+		/// <param name="formData">The form data parameters.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> parameters)
+		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
 		{
-			return builder.With(new FormDataMatcher(parameters));
+			return builder.With(new FormDataMatcher(formData));
 		}
 
 		/// <summary>
 		/// Matches a request by form data.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="formData">The form data.</param>
+		/// <param name="urlEncodedFormData">The form data.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching FormData(this RequestMatching builder, string formData)
+		public static RequestMatching FormData(this RequestMatching builder, string urlEncodedFormData)
 		{
-			if (string.IsNullOrEmpty(formData))
+			if (string.IsNullOrEmpty(urlEncodedFormData))
 			{
-				throw new ArgumentException("Specify form data", nameof(formData));
+				throw new ArgumentException("Specify the url encoded form data.", nameof(urlEncodedFormData));
 			}
 
-			return builder.With(new FormDataMatcher(formData));
+			return builder.With(new FormDataMatcher(urlEncodedFormData));
 		}
 
 		/// <summary>

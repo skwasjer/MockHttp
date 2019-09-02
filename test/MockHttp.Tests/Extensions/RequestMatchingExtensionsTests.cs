@@ -306,6 +306,167 @@ namespace MockHttp.Extensions
 			}
 		}
 
+		public class FormData : RequestMatchingExtensionsTests
+		{
+			[Fact]
+			public async Task When_configuring_formData_with_null_value_should_match()
+			{
+				// Act
+				_sut.FormData("key", (string)null);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<FormDataMatcher>();
+				(await matchers.AnyAsync(new HttpRequestMessage
+				{
+					RequestUri = new Uri("http://127.0.0.1"),
+					Content = new FormUrlEncodedContent(new[]
+					{
+						new KeyValuePair<string, string>("key", null)
+					})
+				})).Should().BeTrue();
+			}
+
+			[Fact]
+			public async Task When_configuring_formData_with_empty_value_should_match()
+			{
+				// Act
+				_sut.FormData("key", string.Empty);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<FormDataMatcher>();
+				(await matchers.AnyAsync(new HttpRequestMessage
+				{
+					RequestUri = new Uri("http://127.0.0.1"),
+					Content = new FormUrlEncodedContent(new[]
+					{
+						new KeyValuePair<string, string>("key", string.Empty)
+					})
+				})).Should().BeTrue();
+			}
+
+			[Theory]
+			[InlineData("key1=value1", true)]
+			[InlineData("key2=value2&key1=value1", true)]
+			[InlineData("key1=value1&key2=value2", true)]
+			[InlineData("other=value1", false)]
+			public async Task When_configuring_formData_should_match(string urlEncodedFormData, bool expectedResult)
+			{
+				// Act
+				_sut.FormData(urlEncodedFormData);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<FormDataMatcher>();
+				(await matchers.AnyAsync(new HttpRequestMessage
+				{
+					RequestUri = new Uri("http://127.0.0.1"),
+					Content = new ByteArrayContent(Encoding.UTF8.GetBytes("key1=value1&key2=value2"))
+					{
+						Headers =
+						{
+							ContentType = new MediaTypeHeaderValue(FormDataMatcher.FormUrlEncodedMediaType)
+						}
+					}
+				})).Should().Be(expectedResult);
+			}
+
+			[Theory]
+			[InlineData("key1=value1", true)]
+			[InlineData("key2=éôxÄ&key1=value1", true)]
+			[InlineData("key1=value1&key2=éôxÄ", true)]
+			[InlineData("other=value1", false)]
+			public async Task When_configuring_formData_should_match_multipart(string urlEncodedFormData, bool expectedResult)
+			{
+				var content = new MultipartFormDataContent
+				{
+					{ new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
+					{ new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
+					{ new StringContent("file content 1", Encoding.UTF8, "text/plain"), "file1", "file1.txt" }
+				};
+
+				// Act
+				_sut.FormData(urlEncodedFormData);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<FormDataMatcher>();
+				(await matchers.AnyAsync(new HttpRequestMessage
+				{
+					RequestUri = new Uri("http://127.0.0.1"),
+					Content = content
+				})).Should().Be(expectedResult);
+			}
+
+			[Fact]
+			public void When_configuring_formData_with_null_key_should_throw()
+			{
+				string key = null;
+
+				// Act
+				// ReSharper disable once ExpressionIsAlwaysNull
+				Action act = () => _sut.FormData(key, string.Empty);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(key));
+			}
+
+			[Fact]
+			public void When_configuring_null_list_of_query_string_parameters_should_throw()
+			{
+				var formData = (IEnumerable<KeyValuePair<string, string>>)null;
+
+				// Act
+				// ReSharper disable once ExpressionIsAlwaysNull
+				Action act = () => _sut.FormData(formData);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
+			}
+
+			[Fact]
+			public void When_configuring_empty_formData_should_throw()
+			{
+				string urlEncodedFormData = string.Empty;
+
+				// Act
+				Action act = () => _sut.FormData(urlEncodedFormData);
+
+				// Assert
+				act.Should().Throw<ArgumentException>()
+					.WithParamName(nameof(urlEncodedFormData))
+					.WithMessage("Specify the url encoded form data*");
+			}
+
+			[Fact]
+			public void When_configuring_null_formData_should_throw()
+			{
+				string urlEncodedFormData = null;
+
+				// Act
+				// ReSharper disable once ExpressionIsAlwaysNull
+				Action act = () => _sut.FormData(urlEncodedFormData);
+
+				// Assert
+				act.Should().Throw<ArgumentException>()
+					.WithParamName(nameof(urlEncodedFormData))
+					.WithMessage("Specify the url encoded form data*");
+			}
+
+			[Fact]
+			public void Given_formData_matcher_is_already_added_when_configuring_another_should_not_throw()
+			{
+				_sut.FormData("key", "value");
+
+				// Act
+				Action act = () => _sut.FormData("key1", "value1");
+
+				// Assert
+				act.Should().NotThrow();
+			}
+		}
+
 		public class Content : RequestMatchingExtensionsTests
 		{
 			[Theory]
