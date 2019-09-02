@@ -348,6 +348,45 @@ namespace MockHttp
 		}
 
 		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="key">The form data parameter key.</param>
+		/// <param name="value">The form data value.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, string key, string value)
+		{
+			return builder.FormData(new [] { new KeyValuePair<string, string>(key, value) });
+		}
+
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="parameters">The form data parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			return builder.With(new FormDataMatcher(parameters));
+		}
+
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="formData">The form data.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, string formData)
+		{
+			if (string.IsNullOrEmpty(formData))
+			{
+				throw new ArgumentException("Specify form data", nameof(formData));
+			}
+
+			return builder.With(new FormDataMatcher(formData));
+		}
+
+		/// <summary>
 		/// Matches a request by request content.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>

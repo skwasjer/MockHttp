@@ -47,6 +47,11 @@ namespace MockHttp.Http
 				.ToList();
 		}
 
+		internal static string Format(IEnumerable<KeyValuePair<string, string>> items)
+		{
+			return Format(items.Select(kvp => new KeyValuePair<string, IEnumerable<string>>(kvp.Key, new[] { kvp.Value })));
+		}
+
 		internal static string Format(IEnumerable<KeyValuePair<string, IEnumerable<string>>> items)
 		{
 			var sb = new StringBuilder();

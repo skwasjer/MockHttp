@@ -436,7 +436,7 @@ namespace MockHttp.Extensions
 			}
 
 			[Fact]
-			public void Given_partial_content_matcher_is_already_added_when_configuring_should_throw()
+			public void Given_partial_content_matcher_is_already_added_when_configuring_should_not_throw()
 			{
 				_sut.PartialContent("content");
 
