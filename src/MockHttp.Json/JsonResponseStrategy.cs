@@ -21,13 +21,14 @@ namespace MockHttp.Json
 
 		public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
+			requestContext.TryGetService(out JsonSerializerSettings serializerSettings);
 			return Task.FromResult(new HttpResponseMessage(StatusCode)
 			{
-				Content = new StringContent(JsonConvert.SerializeObject(ValueFactory(requestContext.Request), SerializerSettings))
+				Content = new StringContent(JsonConvert.SerializeObject(ValueFactory(requestContext.Request), serializerSettings ?? SerializerSettings))
 				{
 					Headers =
 					{
-						ContentType = MediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8")
+						ContentType = MediaType ?? MediaTypeHeaderValue.Parse(MediaTypes.JsonMediaType)
 					}
 				}
 			});

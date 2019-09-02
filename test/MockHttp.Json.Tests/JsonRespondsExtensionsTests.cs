@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace MockHttp.Json
@@ -20,6 +22,11 @@ namespace MockHttp.Json
 		private readonly MockHttpHandler _httpMock;
 
 		private readonly HttpClient _httpClient;
+
+		private class TestClass
+		{
+			public string SomeProperty { get; set; }
+		}
 
 		public JsonRespondsExtensionsTests()
 		{
@@ -103,6 +110,62 @@ namespace MockHttp.Json
 
 			// Assert
 			actualResponse.Should().HaveContentType(contentType);
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task When_responding_with_custom_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
+		{
+			var request = new HttpRequestMessage();
+			var serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
+			{
+				ContractResolver = new CamelCasePropertyNamesContractResolver
+				{
+					NamingStrategy = new SnakeCaseNamingStrategy()
+				}
+			};
+			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			var testClass = new TestClass
+			{
+				SomeProperty = "value"
+			};
+
+			// Act
+			_sut.RespondJson(testClass, null, serializerSettings);
+			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
+
+			// Assert
+			await actualResponse.Should().HaveContentAsync(expectedJson);
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task When_responding_with_global_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
+		{
+			var request = new HttpRequestMessage();
+			var serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
+			{
+				ContractResolver = new CamelCasePropertyNamesContractResolver
+				{
+					NamingStrategy = new SnakeCaseNamingStrategy()
+				}
+			};
+			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			var testClass = new TestClass
+			{
+				SomeProperty = "value"
+			};
+
+			_httpMock.UseJsonSerializerSettings(serializerSettings);
+
+			// Act
+			_sut.RespondJson(testClass);
+			HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
+
+			// Assert
+			await actualResponse.Should().HaveContentAsync(expectedJson);
 		}
 
 #if !NETCOREAPP1_1

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,10 +17,12 @@ namespace MockHttp
 	/// <summary>
 	/// Represents a message handler that can be used to mock HTTP responses and verify HTTP requests sent via <see cref="HttpClient"/>.
 	/// </summary>
-	public sealed class MockHttpHandler : HttpMessageHandler
+	public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 	{
 		private readonly ConcurrentCollection<HttpCall> _setups;
 		private readonly HttpCall _fallbackSetup;
+		private readonly IDictionary<Type, object> _items;
+		private readonly ReadOnlyDictionary<Type, object> _readOnlyItems;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MockHttpHandler"/> class.
@@ -28,6 +31,8 @@ namespace MockHttp
 		{
 			_setups = new ConcurrentCollection<HttpCall>();
 			InvokedRequests = new InvokedHttpRequestCollection();
+			_items = new Dictionary<Type, object>();
+			_readOnlyItems = new ReadOnlyDictionary<Type, object>(_items);
 
 			_fallbackSetup = new HttpCall();
 			Fallback = new FallbackRequestSetupPhrase(_fallbackSetup);
@@ -49,7 +54,7 @@ namespace MockHttp
 		{
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
-			var requestContext = new MockHttpRequestContext(request);
+			var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
 			foreach (HttpCall setup in _setups.Reverse())
 			{
 				if (await setup.Matchers.AllAsync(requestContext).ConfigureAwait(false))
@@ -218,6 +223,12 @@ namespace MockHttp
 			string unverifiedRequestsStr = string.Join(Environment.NewLine, unverifiedRequests.Select(ir => ir.Request.ToString()));
 
 			throw new HttpMockException($"There are {unverifiedRequests.Count} unverified requests:{Environment.NewLine}{unverifiedRequestsStr}");
+		}
+
+		IMockConfiguration IMockConfiguration.Use<TService>(TService service)
+		{
+			_items[typeof(TService)] = service;
+			return this;
 		}
 
 		private void Verify(IEnumerable<HttpCall> verifiableSetups)
