@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Moq;
 using Xunit;
 
@@ -31,7 +32,8 @@ namespace MockHttp.Matchers
 			var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue("the request url '{0}' should match one of the matchers", requestUrl);
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request)))
+				.Should().BeTrue("the request url '{0}' should match one of the matchers", requestUrl);
 		}
 
 		[Fact]
@@ -43,7 +45,8 @@ namespace MockHttp.Matchers
 			var request = new HttpRequestMessage(HttpMethod.Get, "http://127.0.0.3/");
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse("the request url should not match any of the matchers");
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request)))
+				.Should().BeFalse("the request url should not match any of the matchers");
 		}
 
 		[Fact]

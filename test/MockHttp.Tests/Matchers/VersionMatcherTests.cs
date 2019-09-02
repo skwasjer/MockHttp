@@ -2,6 +2,7 @@
 using System.Net.Http;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -21,7 +22,7 @@ namespace MockHttp.Matchers
 			_sut = new VersionMatcher(new Version(2, 0));
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Fact]
@@ -35,7 +36,7 @@ namespace MockHttp.Matchers
 			_sut = new VersionMatcher(new Version(2, 1));
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
 		}
 
 		[Fact]

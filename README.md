@@ -106,7 +106,7 @@ For more complex response configurations and/or reusability implement `IResponse
 ```csharp
 public class MyResponseStrategy : IResponseStrategy
 {
-    public Task<HttpResponseMessage> ProduceResponseAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
     {
         // Custom response logic.        
     }

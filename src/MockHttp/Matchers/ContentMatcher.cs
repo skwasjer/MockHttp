@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -64,14 +65,14 @@ namespace MockHttp.Matchers
 #pragma warning restore CA1819 // Properties should not return arrays
 
 		/// <inheritdoc />
-		public async Task<bool> IsMatchAsync(HttpRequestMessage request)
+		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
 			byte[] requestContent = null;
-			if (request.Content != null)
+			if (requestContext.Request.Content != null)
 			{
 				// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
 				// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
-				requestContent = await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+				requestContent = await requestContext.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 			}
 
 			if (requestContent == null)

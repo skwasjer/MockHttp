@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -26,9 +27,9 @@ namespace MockHttp.Matchers
 		public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
 
 		/// <inheritdoc />
-		public Task<bool> IsMatchAsync(HttpRequestMessage request)
+		public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
-			return Matchers.AnyAsync(request);
+			return Matchers.AnyAsync(requestContext);
 		}
 
 		/// <inheritdoc />

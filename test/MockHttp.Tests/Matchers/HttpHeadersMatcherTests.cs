@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -29,7 +30,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Fact]
@@ -40,7 +41,7 @@ namespace MockHttp.Matchers
 			_sut = new HttpHeadersMatcher("Cache-Control", "must-revalidate");
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Theory]
@@ -53,7 +54,7 @@ namespace MockHttp.Matchers
 			_sut = new HttpHeadersMatcher("Cache-Control", values);
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Fact]

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Http;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -45,14 +46,14 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public virtual async Task<bool> IsMatchAsync(HttpRequestMessage request)
+		public virtual async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
-			if (!CanProcessContent(request.Content))
+			if (!CanProcessContent(requestContext.Request.Content))
 			{
 				return false;
 			}
 
-			IDictionary<string, IEnumerable<string>> formData = (await GetFormDataAsync(request.Content).ConfigureAwait(false));
+			IDictionary<string, IEnumerable<string>> formData = (await GetFormDataAsync(requestContext.Request.Content).ConfigureAwait(false));
 
 			// When match collection is empty, behavior is flipped, and we expect no form data parameters on request.
 			if (_matchQs.Count == 0 && formData.Count > 0)

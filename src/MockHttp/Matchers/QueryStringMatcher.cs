@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using MockHttp.Http;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -39,9 +40,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
-			QueryString query = QueryString.Parse(request.RequestUri.Query);
+			QueryString query = QueryString.Parse(requestContext.Request.RequestUri.Query);
 
 			// When match collection is empty, behavior is flipped, and we expect no query string parameters on request.
 			if (_matchQs.Count == 0 && query.Count > 0)

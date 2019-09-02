@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -28,7 +29,7 @@ namespace MockHttp.Matchers
 			_sut = new PartialContentMatcher(expectedContent, enc);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
 		}
 
 		[Fact]
@@ -45,7 +46,7 @@ namespace MockHttp.Matchers
 			_sut = new PartialContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
 		}
 
 		[Fact]
@@ -62,8 +63,9 @@ namespace MockHttp.Matchers
 			_sut = new PartialContentMatcher(expectedContent, Encoding.UTF8);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue();
-			(await _sut.IsMatchAsync(request)).Should().BeTrue("the content should be buffered and matchable more than once");
+			var ctx = new MockHttpRequestContext(request);
+			(await _sut.IsMatchAsync(ctx)).Should().BeTrue();
+			(await _sut.IsMatchAsync(ctx)).Should().BeTrue("the content should be buffered and matchable more than once");
 		}
 
 		[Fact]
@@ -74,7 +76,7 @@ namespace MockHttp.Matchers
 			_sut = new PartialContentMatcher("some data", Encoding.UTF8);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
 		}
 
 		[Theory]
@@ -93,7 +95,7 @@ namespace MockHttp.Matchers
 			_sut = new PartialContentMatcher(expectedContent, enc);
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
 		}
 
 		[Fact]

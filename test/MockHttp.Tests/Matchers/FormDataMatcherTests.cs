@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -42,7 +43,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
 		}
 
 		[Theory]
@@ -64,7 +65,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
 		}
 
 		[Fact]
@@ -79,7 +80,7 @@ namespace MockHttp.Matchers
 			};
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse("no form data was expected");
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse("no form data was expected");
 		}
 
 		[Fact]
@@ -146,7 +147,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeTrue();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
 		}
 
 		[Fact]
@@ -171,7 +172,7 @@ namespace MockHttp.Matchers
 			});
 
 			// Act & assert
-			(await _sut.IsMatchAsync(request)).Should().BeFalse();
+			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
 		}
 	}
 }

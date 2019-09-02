@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;
+using MockHttp.Responses;
 using MockHttp.Threading;
 
 namespace MockHttp
@@ -48,21 +49,22 @@ namespace MockHttp
 		{
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
+			var requestContext = new MockHttpRequestContext(request);
 			foreach (HttpCall setup in _setups.Reverse())
 			{
-				if (await setup.Matchers.AllAsync(request).ConfigureAwait(false))
+				if (await setup.Matchers.AllAsync(requestContext).ConfigureAwait(false))
 				{
-					return await SendAsync(setup, request, cancellationToken).ConfigureAwait(false);
+					return await SendAsync(setup, requestContext, cancellationToken).ConfigureAwait(false);
 				}
 			}
 
-			return await SendAsync(_fallbackSetup, request, cancellationToken).ConfigureAwait(false);
+			return await SendAsync(_fallbackSetup, requestContext, cancellationToken).ConfigureAwait(false);
 		}
 
-		private Task<HttpResponseMessage> SendAsync(HttpCall setup, HttpRequestMessage request, CancellationToken cancellationToken)
+		private Task<HttpResponseMessage> SendAsync(HttpCall setup, MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
-			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest(setup, request));
-			return setup.SendAsync(request, cancellationToken);
+			((InvokedHttpRequestCollection)InvokedRequests).Add(new InvokedHttpRequest(setup, requestContext.Request));
+			return setup.SendAsync(requestContext, cancellationToken);
 		}
 
 		/// <summary>
@@ -151,7 +153,8 @@ namespace MockHttp
 				var list = new List<IInvokedHttpRequest>();
 				foreach (IInvokedHttpRequest invokedHttpRequest in InvokedRequests)
 				{
-					if (await matchers.AllAsync(invokedHttpRequest.Request).ConfigureAwait(false))
+					var requestContext = new MockHttpRequestContext(invokedHttpRequest.Request);
+					if (await matchers.AllAsync(requestContext).ConfigureAwait(false))
 					{
 						list.Add(invokedHttpRequest);
 					}

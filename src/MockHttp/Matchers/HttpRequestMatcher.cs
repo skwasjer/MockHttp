@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -11,19 +12,19 @@ namespace MockHttp.Matchers
 		/// <summary>
 		/// Checks that the request matches a condition.
 		/// </summary>
-		/// <param name="request">The request to check.</param>
+		/// <param name="requestContext">The request context.</param>
 		/// <returns><see langword="true"/> if the request matches, <see langword="false"/> otherwise.</returns>
-		public Task<bool> IsMatchAsync(HttpRequestMessage request)
+		public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
-			return Task.FromResult(IsMatch(request));
+			return Task.FromResult(IsMatch(requestContext));
 		}
 
 		/// <summary>
 		/// Checks that the request matches a condition.
 		/// </summary>
-		/// <param name="request">The request to check.</param>
+		/// <param name="requestContext">The request context.</param>
 		/// <returns><see langword="true"/> if the request matches, <see langword="false"/> otherwise.</returns>
-		public abstract bool IsMatch(HttpRequestMessage request);
+		public abstract bool IsMatch(MockHttpRequestContext requestContext);
 
 		/// <summary>
 		/// Gets whether the matcher is mutually exclusive to other matchers of the same type.

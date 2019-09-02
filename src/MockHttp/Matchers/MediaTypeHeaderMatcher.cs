@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -22,9 +23,9 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
-			return request.Content?.Headers.ContentType?.Equals(Value) ?? false;
+			return requestContext.Request.Content?.Headers.ContentType?.Equals(Value) ?? false;
 		}
 
 		/// <inheritdoc />

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {
@@ -62,9 +63,10 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public override bool IsMatch(HttpRequestMessage request)
+		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
-			if (request.RequestUri == null)
+			Uri requestUri = requestContext.Request.RequestUri;
+			if (requestUri == null)
 			{
 				return false;
 			}
@@ -72,11 +74,11 @@ namespace MockHttp.Matchers
 			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (_uriPatternMatcher == null)
 			{
-				return _requestUri.IsAbsoluteUri && request.RequestUri.Equals(_requestUri)
-					|| request.RequestUri.IsBaseOf(_requestUri) && request.RequestUri.ToString().EndsWith(_requestUri.ToString(), StringComparison.Ordinal);
+				return _requestUri.IsAbsoluteUri && requestUri.Equals(_requestUri)
+					|| requestUri.IsBaseOf(_requestUri) && requestUri.ToString().EndsWith(_requestUri.ToString(), StringComparison.Ordinal);
 			}
 
-			return _uriPatternMatcher.IsMatch(request.RequestUri.ToString());
+			return _uriPatternMatcher.IsMatch(requestUri.ToString());
 
 		}
 

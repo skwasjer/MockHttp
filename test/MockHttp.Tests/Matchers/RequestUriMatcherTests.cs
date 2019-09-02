@@ -2,6 +2,7 @@
 using System.Net.Http;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -20,13 +21,14 @@ namespace MockHttp.Matchers
 		[InlineData("http://127.0.0.1/absolute.htm", UriKind.Absolute, "http://127.0.0.1/folder/absolute.htm", false)]
 		public void Given_uri_when_matching_should_match(string matchUri, UriKind uriKind, string requestUri, bool isMatch)
 		{
+			var request = new HttpRequestMessage
+			{
+				RequestUri = new Uri(requestUri, UriKind.Absolute)
+			};
 			_sut = new RequestUriMatcher(new Uri(matchUri, uriKind));
 
 			// Act & assert
-			_sut.IsMatch(new HttpRequestMessage
-			{
-				RequestUri = new Uri(requestUri, UriKind.Absolute)
-			}).Should().Be(isMatch);
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
 		}
 
 		[Theory]
@@ -51,13 +53,14 @@ namespace MockHttp.Matchers
 		[InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/folder/absolute.htm", true)]
 		public void Given_uriString_when_matching_should_match(string uriString, bool hasWildcard, string requestUri, bool isMatch)
 		{
+			var request = new HttpRequestMessage
+			{
+				RequestUri = new Uri(requestUri, UriKind.Absolute)
+			};
 			_sut = new RequestUriMatcher(uriString, hasWildcard);
 
 			// Act & assert
-			_sut.IsMatch(new HttpRequestMessage
-			{
-				RequestUri = new Uri(requestUri, UriKind.Absolute)
-			}).Should().Be(isMatch);
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
 		}
 
 		[Fact]

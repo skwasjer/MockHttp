@@ -41,7 +41,7 @@ namespace MockHttp
 
 		public Action<HttpRequestMessage> Callback { get; private set; }
 
-		public virtual async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		public virtual async Task<HttpResponseMessage> SendAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			IsInvoked = true;
 
@@ -53,10 +53,9 @@ namespace MockHttp
 
 			cancellationToken.ThrowIfCancellationRequested();
 
-			Callback?.Invoke(request);
-			var requestContext = new MockHttpRequestContext(request);
+			Callback?.Invoke(requestContext.Request);
 			HttpResponseMessage responseMessage = await _responseStrategy.ProduceResponseAsync(requestContext, cancellationToken).ConfigureAwait(false);
-			responseMessage.RequestMessage = request;
+			responseMessage.RequestMessage = requestContext.Request;
 			return responseMessage;
 		}
 

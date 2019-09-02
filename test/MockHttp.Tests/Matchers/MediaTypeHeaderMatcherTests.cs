@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Responses;
 using Xunit;
 
 namespace MockHttp.Matchers
@@ -31,7 +32,7 @@ namespace MockHttp.Matchers
 			_sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(headerValue));
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeTrue();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
 		[Fact]
@@ -54,7 +55,7 @@ namespace MockHttp.Matchers
 			_sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(expectedHeaderValue));
 
 			// Act & assert
-			_sut.IsMatch(request).Should().BeFalse();
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
 		}
 
 		[Fact]
@@ -64,7 +65,7 @@ namespace MockHttp.Matchers
 
 			// Act
 			bool? result = null;
-			Action act = () => result = _sut.IsMatch(new HttpRequestMessage());
+			Action act = () => result = _sut.IsMatch(new MockHttpRequestContext(new HttpRequestMessage()));
 
 			// Assert
 			act.Should().NotThrow();
@@ -74,14 +75,12 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void Given_contentType_header_is_null_when_matching_should_not_throw()
 		{
+			var request = new HttpRequestMessage { Content = new StringContent("") };
 			_sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/plain"));
 
 			// Act
 			bool? result = null;
-			Action act = () => result = _sut.IsMatch(new HttpRequestMessage
-			{
-				Content = new StringContent("")
-			});
+			Action act = () => result = _sut.IsMatch(new MockHttpRequestContext(request));
 
 			// Assert
 			act.Should().NotThrow();
