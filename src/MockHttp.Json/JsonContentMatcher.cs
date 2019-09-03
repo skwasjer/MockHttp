@@ -9,11 +9,6 @@ namespace MockHttp.Json
 {
 	internal class JsonContentMatcher : IAsyncHttpRequestMatcher
 	{
-		/// <summary>
-		/// The default content encoding.
-		/// </summary>
-		public static readonly Encoding DefaultEncoding = Encoding.UTF8;
-
 		private readonly object _jsonContentAsObject;
 		private readonly JsonSerializerSettings _serializerSettings;
 
