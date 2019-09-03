@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -126,6 +127,19 @@ namespace MockHttp
 		{
 			return builder.With(new QueryStringMatcher(parameters));
 		}
+
+#if !NETSTANDARD1_1
+		/// <summary>
+		/// Matches a request by query string.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="parameters">The query string parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching QueryString(this RequestMatching builder, NameValueCollection parameters)
+		{
+			return builder.With(new QueryStringMatcher(parameters?.AsEnumerable()));
+		}
+#endif
 
 		/// <summary>
 		/// Matches a request by query string.

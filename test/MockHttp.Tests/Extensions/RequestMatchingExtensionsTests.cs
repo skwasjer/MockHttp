@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -135,6 +136,18 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
 			}
+
+#if !NETCOREAPP1_1
+			[Fact]
+			public void When_configuring_null_nameValueCollection_of_query_string_parameters_should_throw()
+			{
+				// Act
+				Action act = () => _sut.QueryString((NameValueCollection)null);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
+			}
+#endif
 
 			[Fact]
 			public void When_configuring_empty_query_string_should_throw()
