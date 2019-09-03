@@ -132,9 +132,9 @@ namespace MockHttp
 		/// </remarks>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
-			VerifyAsync(matching, times, because).GetAwaiter().GetResult();
+			TaskHelpers.RunSync(() => VerifyAsync(matching, times, because), TimeSpan.FromSeconds(30));
 		}
-		
+
 		/// <summary>
 		/// Verifies that a request matching the specified match conditions has been sent.
 		/// </summary>
