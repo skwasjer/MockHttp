@@ -381,6 +381,34 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
 		{
+			return builder.FormData(formData?.Select(
+				d => new KeyValuePair<string, IEnumerable<string>>(
+					d.Key,
+					d.Value == null ? null : new[] { d.Value })
+				));
+		}
+
+#if !NETSTANDARD1_1
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="formData">The form data parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, NameValueCollection formData)
+		{
+			return builder.FormData(formData?.AsEnumerable());
+		}
+#endif
+
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="formData">The form data parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
+		{
 			return builder.With(new FormDataMatcher(formData));
 		}
 

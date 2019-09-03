@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using MockHttp.Http;
 using MockHttp.Responses;
 
@@ -50,8 +49,9 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			return _matchQs.All(q => 
-				query.ContainsKey(q.Key) 
+			// TODO: quite unreabable. Unpack/refactor.
+			return _matchQs.All(q =>
+				query.ContainsKey(q.Key)
 				&& (query[q.Key].Count() == q.Value.Count() && !q.Value.Any()
 					|| query[q.Key].Any(qv => q.Value.Contains(qv))));
 		}

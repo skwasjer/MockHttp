@@ -332,7 +332,7 @@ namespace MockHttp.Extensions
 				};
 
 				// Act
-				_sut.FormData("key", (string)null);
+				_sut.FormData("key", string.Empty);
 				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
@@ -471,6 +471,22 @@ namespace MockHttp.Extensions
 					.WithParamName(nameof(urlEncodedFormData))
 					.WithMessage("Specify the url encoded form data*");
 			}
+
+#if !NETCOREAPP1_1
+			[Fact]
+			public void When_configuring_null_nameValueCollection_should_throw()
+			{
+				NameValueCollection formData = null;
+
+				// Act
+				// ReSharper disable once ExpressionIsAlwaysNull
+				Action act = () => _sut.FormData(formData);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
+			}
+#endif
+
 
 			[Fact]
 			public void Given_formData_matcher_is_already_added_when_configuring_another_should_not_throw()

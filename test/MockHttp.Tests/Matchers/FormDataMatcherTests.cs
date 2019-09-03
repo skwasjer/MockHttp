@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, string>(expectedKey, expectedValue)
+				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue == null ? null : new [] { expectedValue })
 			});
 
 			// Act & assert
@@ -61,7 +61,7 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, string>("key_not_in_formdata", null)
+				new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null)
 			});
 
 			// Act & assert
@@ -100,7 +100,7 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void Given_null_parameters_when_creating_matcher_should_throw()
 		{
-			IEnumerable<KeyValuePair<string, string>> formData = null;
+			IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData = null;
 
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
@@ -142,8 +142,8 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, string>("key1", "value1"),
-				new KeyValuePair<string, string>("key2", "éôxÄ")
+				new KeyValuePair<string, IEnumerable<string>>("key1", new [] { "value1" }),
+				new KeyValuePair<string, IEnumerable<string>>("key2", new [] { "éôxÄ" })
 			});
 
 			// Act & assert
@@ -168,7 +168,7 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, string>("key_not_in_formdata", null)
+				new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null)
 			});
 
 			// Act & assert
