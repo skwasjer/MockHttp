@@ -65,9 +65,13 @@ namespace MockHttp
 		public override void Reset()
 		{
 			_responseSequence.Clear();
-			_requestIndex = -1;
-
 			base.Reset();
+		}
+
+		public override void Uninvoke()
+		{
+			Interlocked.Exchange(ref _requestIndex, -1);
+			base.Uninvoke();
 		}
 
 		/// <summary>

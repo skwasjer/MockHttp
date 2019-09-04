@@ -116,13 +116,18 @@ namespace MockHttp
 
 		public virtual void Reset()
 		{
-			IsInvoked = false;
+			Uninvoke();
 			IsVerified = false;
 			IsVerifiable = false;
 			_verifiableBecause = null;
 			_responseStrategy = null;
 			Callback = null;
 			_matchers = null;
+		}
+
+		public virtual void Uninvoke()
+		{
+			IsInvoked = false;
 		}
 	}
 }

@@ -30,7 +30,7 @@ namespace MockHttp
 		public MockHttpHandler()
 		{
 			_setups = new ConcurrentCollection<HttpCall>();
-			InvokedRequests = new InvokedHttpRequestCollection();
+			InvokedRequests = new InvokedHttpRequestCollection(this);
 			_items = new Dictionary<Type, object>();
 			_readOnlyItems = new ReadOnlyDictionary<Type, object>(_items);
 
@@ -292,6 +292,14 @@ namespace MockHttp
 			return because.StartsWith("because", StringComparison.OrdinalIgnoreCase)
 				? " " + because
 				: " because " + because;
+		}
+
+		internal void UninvokeAll()
+		{
+			foreach (HttpCall setup in _setups)
+			{
+				setup.Uninvoke();
+			}
 		}
 	}
 }

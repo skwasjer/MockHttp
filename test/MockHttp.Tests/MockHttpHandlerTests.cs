@@ -604,5 +604,36 @@ namespace MockHttp
 			// Assert
 			expectedIndices.Except(allResults).Should().BeEmpty("for each request a corresponding response was configured");
 		}
+
+		[Fact]
+		public async Task When_resetting_invoked_requests_it_should_reset_sequence()
+		{
+			var statusCodeSequence = new[] { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
+
+			IResponds<IResponseResult> result = _sut.When(m => { });
+			statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
+
+			// Act
+			foreach (HttpStatusCode expectedStatus in statusCodeSequence
+#if NETCOREAPP2_2
+				.SkipLast(1)
+#else
+				.Reverse().Skip(1).Reverse() // Ugly, does the job
+#endif
+			)
+			{
+				HttpResponseMessage response = await _httpClient.GetAsync("");
+				response.Should().HaveStatusCode(expectedStatus);
+			}
+
+			_sut.InvokedRequests.Clear();
+
+			// Assert
+			foreach (HttpStatusCode expectedStatus in statusCodeSequence)
+			{
+				HttpResponseMessage response = await _httpClient.GetAsync("");
+				response.Should().HaveStatusCode(expectedStatus);
+			}
+		}
 	}
 }
