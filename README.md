@@ -56,13 +56,14 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | -- | -- |
 | <pre>.Method("POST")<br/>.Method(HttpMethod.Put)</pre> | Matches the request method. | 
 | <pre>.RequestUri("http://localhost/exact/match?query=string")<br/>.RequestUri("*/match\*")</pre> | Matches an url. Accepts wildcard `*`. | 
-| <pre>.QueryString("key", "value")<br/>.QueryString("?key=value1&other=value&key=value2")<br/>.QueryString(new Dictionary<string, string><br/>{<br/>  { "key", "value" }<br/>}</pre> | Matches a query string by one or more key/value pairs. Note: the overload that accepts a full query string must be URI data escaped. |
+| <pre>.QueryString("key", "value")<br/>.QueryString("?key=value1&other=value&key=value2")<br/>.QueryString(new Dictionary<string, string><br/>{<br/>    { "key", "value" }<br/>}<br/>.QueryString(new NameValueCollection<br/>{<br/>    { "key", "value" }<br/>}</pre> | Matches a query string by one or more key/value pairs. Note: the overload that accepts a full query string must be URI data escaped. |
 | <pre>.WithoutQueryString()</pre> | Matches a request without query string. |
 | <pre>.Content("text content")<br/>.Content("text content", Encoding.UTF8)<br/>.Content(stream)<br/>.Content(byteArray)</pre> | Matches the request content body. |
 | <pre>.WithoutContent()</pre> | Matches a request without content. |
 | <pre>.PartialContent("text content")<br/>.PartialContent("text content", Encoding.UTF8)<br/>.PartialContent(byteArray)</pre> | Matches the content body partially. |
 | <pre>.ContentType("application/json; charset=utf-8")<br/>.ContentType("text/plain", Encoding.ASCII)</pre> | Matches the request content type. | 
-| <pre>.Header("Authorization", "Bearer 123")<br/>.Header("Content-Length", 123)<br/>.Header("Last-Modified", DateTime.UtcNow)<br/>.Headers("Accept: text/html")<br/>.Headers(new Dictionary<string, string><br/>{<br/>  { "Authorization", "Bearer 123" }<br/>})</pre> | Matches request headers by one or more key/value pairs. | 
+| <pre>.Header("Authorization", "Bearer 123")<br/>.Header("Content-Length", 123)<br/>.Header("Last-Modified", DateTime.UtcNow)<br/>.Headers("Accept: text/html")<br/>.Headers(new Dictionary<string, string><br/>{<br/>    { "Authorization", "Bearer 123" }<br/>})</pre> | Matches request headers by one or more key/value pairs. | 
+| <pre>.FormData("key", "value")<br/>.FormData("key=value1&other=value&key=value2")<br/>.FormData(new Dictionary<string, string><br/>{<br/>    { "key", "value" }<br/>}<br/>.FormData(new NameValueCollection<br/>{<br/>    { "key", "value" }<br/>}<br/></pre> | Matches form url encoded or multipart encoded form data by one or more key/value pairs. Note: the overload that accepts a string must be URI data escaped. |
 | <pre>.Any(any => any<br/>    .Method("GET")<br/>    .Method("POST")<br/>)</pre> | Matches when at least one of the inner configured conditions is true. | 
 | <pre>.Where(request => true\|false)</pre> | Matches the request using a custom predicate/expression. | 
 | <pre>.Version("2.0")<br/>.Version(new Version(1, 1))</pre> | Matches the request by HTTP message version. | 
@@ -153,7 +154,7 @@ mockHttp
 mockHttp.Verify();
 ```
 
-When the expectation is not met a `MockException` is thrown when calling `Verify()` which provides details on which expectations were not met.
+When the expectation is not met a `HttpMockException` is thrown when calling `Verify()` which provides details on which expectations were not met.
 
 | Verify methods | Description |
 | -- | -- |
