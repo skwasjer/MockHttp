@@ -128,11 +128,22 @@ namespace MockHttp
 		/// <param name="times">The number of times a request is allowed to be sent.</param>
 		/// <param name="because">The reasoning for this expectation.</param>
 		/// <remarks>
-		/// When verifying <see cref="HttpContent"/> using a <see cref="ContentMatcher"/> use the <see cref="VerifyAsync"/> overload to prevent potential deadlocks.
+		/// When verifying <see cref="HttpContent"/> using a <see cref="ContentMatcher"/> use the <see cref="VerifyAsync(System.Action{MockHttp.RequestMatching},System.Func{MockHttp.IsSent},string)"/> overload to prevent potential deadlocks.
 		/// </remarks>
 		public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
 			TaskHelpers.RunSync(() => VerifyAsync(matching, times, because), TimeSpan.FromSeconds(30));
+		}
+
+		/// <summary>
+		/// Verifies that a request matching the specified match conditions has been sent.
+		/// </summary>
+		/// <param name="matching">The conditions to match.</param>
+		/// <param name="times">The number of times a request is allowed to be sent.</param>
+		/// <param name="because">The reasoning for this expectation.</param>
+		public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
+		{
+			return VerifyAsync(matching, times(), because);
 		}
 
 		/// <summary>
