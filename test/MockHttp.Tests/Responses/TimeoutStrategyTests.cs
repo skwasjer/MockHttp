@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace MockHttp.Responses
@@ -28,7 +29,8 @@ namespace MockHttp.Responses
 			// Assert
 			act.Should().Throw<TaskCanceledException>();
 			sw.Stop();
-			sw.Elapsed.Should().BeGreaterOrEqualTo(timeout);
+			// Due to (high perf) timing, sometimes comes out to 0.9999xx secs, so round to nearest ms.
+			TimeSpan.FromMilliseconds((long)sw.Elapsed.TotalMilliseconds).Should().BeGreaterOrEqualTo(timeout);
 		}
 
 		[Fact]
