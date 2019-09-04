@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.Http;
 using MockHttp.Responses;
@@ -11,7 +10,7 @@ using MockHttp.Responses;
 namespace MockHttp.Matchers
 {
 	/// <summary>
-	/// 
+	/// Matches a request by the posted form data.
 	/// </summary>
 	public class FormDataMatcher : IAsyncHttpRequestMatcher
 	{
@@ -19,20 +18,20 @@ namespace MockHttp.Matchers
 		internal const string MultipartFormDataMediaType = "multipart/form-data";
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly Dictionary<string, string> _matchQs;
+		private readonly Dictionary<string, IEnumerable<string>> _matchQs;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FormDataMatcher"/> class using specified form data parameters.
 		/// </summary>
 		/// <param name="formData">The form data parameters.</param>
-		public FormDataMatcher(IEnumerable<KeyValuePair<string, string>> formData)
+		public FormDataMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
 		{
 			if (formData == null)
 			{
 				throw new ArgumentNullException(nameof(formData));
 			}
 
-			_matchQs = formData.ToDictionary(v => v.Key, v => v.Value);
+			_matchQs = formData.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Where(v => v != null) ?? new List<string>());
 		}
 
 		/// <summary>
@@ -40,8 +39,7 @@ namespace MockHttp.Matchers
 		/// </summary>
 		/// <param name="urlEncodedFormData">The form data.</param>
 		public FormDataMatcher(string urlEncodedFormData)
-			: this(DataEscapingHelper.Parse(urlEncodedFormData ?? throw new ArgumentNullException(nameof(urlEncodedFormData)))
-				.Select(v => new KeyValuePair<string, string>(v.Key, v.Value?.LastOrDefault())))
+			: this(DataEscapingHelper.Parse(urlEncodedFormData ?? throw new ArgumentNullException(nameof(urlEncodedFormData))))
 		{
 		}
 
@@ -61,10 +59,11 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
+			// TODO: quite unreabable. Unpack/refactor.
 			return _matchQs.All(q =>
 				formData.ContainsKey(q.Key)
-				 && (!formData[q.Key].Any() && string.IsNullOrEmpty(q.Value)
-				|| formData[q.Key].Any(qv => string.Equals(q.Value ?? string.Empty, qv ?? string.Empty, StringComparison.Ordinal))));
+				 && (formData[q.Key].Count() == q.Value.Count() && !q.Value.Any()
+				 || formData[q.Key].Any(qv => q.Value.Contains(qv))));
 		}
 
 		/// <inheritdoc />

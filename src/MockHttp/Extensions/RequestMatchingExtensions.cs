@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -126,6 +127,19 @@ namespace MockHttp
 		{
 			return builder.With(new QueryStringMatcher(parameters));
 		}
+
+#if !NETSTANDARD1_1
+		/// <summary>
+		/// Matches a request by query string.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="parameters">The query string parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching QueryString(this RequestMatching builder, NameValueCollection parameters)
+		{
+			return builder.With(new QueryStringMatcher(parameters?.AsEnumerable()));
+		}
+#endif
 
 		/// <summary>
 		/// Matches a request by query string.
@@ -366,6 +380,34 @@ namespace MockHttp
 		/// <param name="formData">The form data parameters.</param>
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
+		{
+			return builder.FormData(formData?.Select(
+				d => new KeyValuePair<string, IEnumerable<string>>(
+					d.Key,
+					d.Value == null ? null : new[] { d.Value })
+				));
+		}
+
+#if !NETSTANDARD1_1
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="formData">The form data parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, NameValueCollection formData)
+		{
+			return builder.FormData(formData?.AsEnumerable());
+		}
+#endif
+
+		/// <summary>
+		/// Matches a request by form data.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="formData">The form data parameters.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
 		{
 			return builder.With(new FormDataMatcher(formData));
 		}

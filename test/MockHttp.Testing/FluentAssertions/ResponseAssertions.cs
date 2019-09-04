@@ -74,7 +74,7 @@ namespace MockHttp.FluentAssertions
 				.ForCondition(subject.Content != null)
 				.FailWith("Expected response with content {0}{reason}, but found none.")
 				.Then
-				.ForCondition(subject.Content.Headers.ContentType.Equals(expectedMediaType) || expectedMediaType.CharSet == null && subject.Content.Headers.ContentType.MediaType.Equals(expectedMediaType.MediaType))
+				.ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || expectedMediaType.CharSet == null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType))
 				.FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content.Headers.ContentType)
 				;
 

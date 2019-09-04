@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -135,6 +136,18 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
 			}
+
+#if !NETCOREAPP1_1
+			[Fact]
+			public void When_configuring_null_nameValueCollection_of_query_string_parameters_should_throw()
+			{
+				// Act
+				Action act = () => _sut.QueryString((NameValueCollection)null);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
+			}
+#endif
 
 			[Fact]
 			public void When_configuring_empty_query_string_should_throw()
@@ -319,7 +332,7 @@ namespace MockHttp.Extensions
 				};
 
 				// Act
-				_sut.FormData("key", (string)null);
+				_sut.FormData("key", string.Empty);
 				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
@@ -458,6 +471,22 @@ namespace MockHttp.Extensions
 					.WithParamName(nameof(urlEncodedFormData))
 					.WithMessage("Specify the url encoded form data*");
 			}
+
+#if !NETCOREAPP1_1
+			[Fact]
+			public void When_configuring_null_nameValueCollection_should_throw()
+			{
+				NameValueCollection formData = null;
+
+				// Act
+				// ReSharper disable once ExpressionIsAlwaysNull
+				Action act = () => _sut.FormData(formData);
+
+				// Assert
+				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
+			}
+#endif
+
 
 			[Fact]
 			public void Given_formData_matcher_is_already_added_when_configuring_another_should_not_throw()

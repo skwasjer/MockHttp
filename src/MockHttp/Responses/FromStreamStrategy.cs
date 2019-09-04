@@ -13,31 +13,28 @@ namespace MockHttp.Responses
 	/// </summary>
 	internal class FromStreamStrategy : IResponseStrategy
 	{
-		private readonly Stream _content;
+		private readonly Func<Stream> _content;
 		private readonly HttpStatusCode _statusCode;
 		private readonly MediaTypeHeaderValue _mediaType;
-		private readonly object _lockObject = new object();
-		private byte[] _buffer;
 
-		public FromStreamStrategy(HttpStatusCode statusCode, Stream content, MediaTypeHeaderValue mediaType)
+		public FromStreamStrategy(HttpStatusCode statusCode, Func<Stream> content, MediaTypeHeaderValue mediaType)
 		{
 			_content = content ?? throw new ArgumentNullException(nameof(content));
-			if (!content.CanRead)
-			{
-				throw new ArgumentException("Cannot read from stream.", nameof(content));
-			}
-
 			_statusCode = statusCode;
 			_mediaType = mediaType;
 		}
 
 		public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
-			InitBuffer();
+			Stream stream = _content();
+			if (!stream.CanRead)
+			{
+				throw new IOException("Cannot read from stream.");
+			}
 
 			return Task.FromResult(new HttpResponseMessage(_statusCode)
 			{
-				Content = new ByteArrayContent(_buffer)
+				Content = new StreamContent(stream)
 				{
 					Headers =
 					{
@@ -45,28 +42,6 @@ namespace MockHttp.Responses
 					}
 				}
 			});
-		}
-
-		private void InitBuffer()
-		{
-			if (_buffer != null)
-			{
-				return;
-			}
-
-			lock (_lockObject)
-			{
-				if (_buffer != null)
-				{
-					return;
-				}
-
-				using (var ms = new MemoryStream())
-				{
-					_content.CopyTo(ms);
-					_buffer = ms.ToArray();
-				}
-			}
 		}
 	}
 }

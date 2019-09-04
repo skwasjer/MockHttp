@@ -65,13 +65,7 @@ namespace MockHttp.Extensions
 				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
 				{
 					var request = new HttpRequestMessage();
-					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"))
-					{
-						Headers =
-						{
-							ContentType = MediaTypeHeaderValue.Parse("application/octet-stream")
-						}
-					};
+					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
 
 					// Act
 					_sut.Respond(ms);
@@ -98,13 +92,7 @@ namespace MockHttp.Extensions
 				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
 				{
 					var request = new HttpRequestMessage();
-					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"))
-					{
-						Headers =
-						{
-							ContentType = MediaTypeHeaderValue.Parse("application/octet-stream")
-						}
-					};
+					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
 
 					// Act
 					_sut.Respond(statusCode, ms);
@@ -183,7 +171,7 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should()
 					.Throw<ArgumentNullException>()
-					.WithParamName("content");
+					.WithParamName("streamContent");
 			}
 
 			[Fact]
@@ -208,7 +196,7 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should()
 					.Throw<ArgumentException>()
-					.WithParamName("content")
+					.WithParamName("streamContent")
 					.WithMessage("Cannot read from stream.*");
 			}
 		}

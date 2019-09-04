@@ -9,11 +9,6 @@ namespace MockHttp.Json
 {
 	internal class JsonContentMatcher : IAsyncHttpRequestMatcher
 	{
-		/// <summary>
-		/// The default content encoding.
-		/// </summary>
-		public static readonly Encoding DefaultEncoding = Encoding.UTF8;
-
 		private readonly object _jsonContentAsObject;
 		private readonly JsonSerializerSettings _serializerSettings;
 
@@ -31,14 +26,14 @@ namespace MockHttp.Json
 		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
 			string requestContent = null;
-			if (requestContext.Request.Content != null)
+			if (requestContext.Request.Content != null && requestContext.Request.Content.Headers.ContentLength > 0)
 			{
 				// Use of ReadAsStringAsync() will use internal buffer, so we can re-enter this method multiple times.
 				// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
 				requestContent = await requestContext.Request.Content.ReadAsStringAsync().ConfigureAwait(false);
 			}
 
-			if (string.IsNullOrEmpty(requestContent) && string.IsNullOrEmpty(_jsonContentAsObject as string))
+			if (string.IsNullOrEmpty(requestContent) && _jsonContentAsObject == null)
 			{
 				return true;
 			}

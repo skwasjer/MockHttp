@@ -202,35 +202,35 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="streamContent"/> to respond with for a request.
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
-		/// <param name="content">The response content.</param>
-		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content)
+		/// <param name="streamContent">The response content.</param>
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(statusCode, content, "application/octet-stream");
+			return responds.Respond(statusCode, streamContent, (MediaTypeHeaderValue)null);
 		}
 
 		/// <summary>
-		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="streamContent"/> to respond with for a request.
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
-		/// <param name="content">The response content.</param>
+		/// <param name="streamContent">The response content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content, string mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent, string mediaType)
 			where TResult : IResponseResult
 		{
-			return responds.Respond(statusCode, content, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
+			return responds.Respond(statusCode, streamContent, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
 		}
 
 		/// <summary>
 		/// Specifies the <see cref="HttpStatusCode.OK"/> and <paramref name="content"/> to respond with for a request.
 		/// </summary>
 		/// <param name="responds"></param>
-		/// <param name="content">The response content.</param>
+		/// <param name="content">The stream content.</param>
 		/// <param name="mediaType">The media type.</param>
 		public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream content, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
@@ -239,16 +239,46 @@ namespace MockHttp
 		}
 
 		/// <summary>
-		/// Specifies the <paramref name="statusCode"/> and <paramref name="content"/> to respond with for a request.
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="streamContent"/> to respond with for a request.
 		/// </summary>
 		/// <param name="responds"></param>
 		/// <param name="statusCode">The status code response for given request.</param>
-		/// <param name="content">The response content.</param>
+		/// <param name="streamContent">The stream content.</param>
 		/// <param name="mediaType">The media type.</param>
-		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream content, MediaTypeHeaderValue mediaType)
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
-			return responds.RespondUsing(new FromStreamStrategy(statusCode, content, mediaType));
+			if (streamContent == null)
+			{
+				throw new ArgumentNullException(nameof(streamContent));
+			}
+
+			if (!streamContent.CanRead)
+			{
+				throw new ArgumentException("Cannot read from stream.", nameof(streamContent));
+			}
+
+			byte[] buffer;
+			using (var ms = new MemoryStream())
+			{
+				streamContent.CopyTo(ms);
+				buffer = ms.ToArray();
+			}
+
+			return responds.Respond(statusCode, () => new MemoryStream(buffer), mediaType);
+		}
+
+		/// <summary>
+		/// Specifies the <paramref name="statusCode"/> and <paramref name="streamContent"/> to respond with for a request.
+		/// </summary>
+		/// <param name="responds"></param>
+		/// <param name="statusCode">The status code response for given request.</param>
+		/// <param name="streamContent">The stream content.</param>
+		/// <param name="mediaType">The media type.</param>
+		public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<Stream> streamContent, MediaTypeHeaderValue mediaType)
+			where TResult : IResponseResult
+		{
+			return responds.RespondUsing(new FromStreamStrategy(statusCode, streamContent, mediaType));
 		}
 
 		/// <summary>

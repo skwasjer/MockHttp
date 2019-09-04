@@ -46,16 +46,20 @@ namespace MockHttp.Json
 		}
 
 		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		public async Task Given_no_json_content_when_request_content_is_empty_should_be_true(string json)
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task Given_no_json_content_when_request_content_is_empty_should_be_true(bool hasContent)
 		{
 			_httpMock
-				.When(m => m.JsonContent(json))
+				.When(m => m.JsonContent((object)null))
 				.Respond(HttpStatusCode.OK);
 
+			var content = hasContent
+				? new StringContent("", Encoding.UTF8, "application/json")
+				: null;
+
 			// Act
-			HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent("", Encoding.UTF8, "application/json"));
+			HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", content);
 
 			// Assert
 			response.Should().HaveStatusCode(HttpStatusCode.OK);
