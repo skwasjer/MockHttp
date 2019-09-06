@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.4
+## v2.0.4
 
 - fix: Clearing invoked requests did not reset response sequence setups.
 
