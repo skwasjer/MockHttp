@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4
+
+- fix: Clearing invoked requests did not reset response sequence setups.
+
 ## v2.0
 
 - Added support to chain responses, f.ex.: `.Throws(...).Respond(...).Respond(...)`.
