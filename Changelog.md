@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.8
+
+- fix: matching on JSON arrays and simple values was throwing exception (ie.: `matching.JsonContent("match this")`).
+
 ## v2.0.4
 
 - fix: Clearing invoked requests did not reset response sequence setups.
