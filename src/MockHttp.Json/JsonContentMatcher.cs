@@ -44,8 +44,9 @@ namespace MockHttp.Json
 				requestContext.TryGetService(out serializerSettings);
 			}
 
-			var requestJsonObject = JsonConvert.DeserializeObject<JObject>(requestContent, serializerSettings);
-			var matchingJsonObject = JsonConvert.DeserializeObject<JObject>(JsonConvert.SerializeObject(_jsonContentAsObject, serializerSettings), serializerSettings);
+			var requestJsonObject = JsonConvert.DeserializeObject<JToken>(requestContent, serializerSettings);
+			var matchingJsonObject = JsonConvert.DeserializeObject<JToken>(JsonConvert.SerializeObject(_jsonContentAsObject, serializerSettings), serializerSettings);
+
 
 			return JToken.DeepEquals(requestJsonObject, matchingJsonObject);
 		}
