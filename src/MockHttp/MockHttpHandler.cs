@@ -282,7 +282,9 @@ namespace MockHttp
 				await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);
 				// Force read content length, in case it will be checked via header matcher.
 				// ReSharper disable once UnusedVariable
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
 				long? cl = httpContent.Headers.ContentLength;
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
 			}
 		}
 
