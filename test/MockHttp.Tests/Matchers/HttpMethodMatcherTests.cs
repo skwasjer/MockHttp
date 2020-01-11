@@ -68,5 +68,21 @@ namespace MockHttp.Matchers
 			// Assert
 			displayText.Should().Be(expectedText);
 		}
+
+		[Fact]
+		public void Given_null_context_when_matching_it_should_throw()
+		{
+			_sut = new HttpMethodMatcher(HttpMethod.Get);
+			MockHttpRequestContext requestContext = null;
+
+			// Act
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Action act = () => _sut.IsMatch(requestContext);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName(nameof(requestContext));
+		}
 	}
 }

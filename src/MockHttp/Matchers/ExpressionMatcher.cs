@@ -31,6 +31,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return _func(requestContext.Request);
 		}
 

@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using MockHttp.Responses;
 
@@ -16,6 +17,11 @@ namespace MockHttp.Matchers
 		/// <returns><see langword="true"/> if the request matches, <see langword="false"/> otherwise.</returns>
 		public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return Task.FromResult(IsMatch(requestContext));
 		}
 

@@ -41,6 +41,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			QueryString query = QueryString.Parse(requestContext.Request.RequestUri.Query);
 
 			// When match collection is empty, behavior is flipped, and we expect no query string parameters on request.

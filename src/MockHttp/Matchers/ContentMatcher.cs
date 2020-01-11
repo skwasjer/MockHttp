@@ -66,6 +66,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			byte[] requestContent = null;
 			if (requestContext.Request.Content is { })
 			{

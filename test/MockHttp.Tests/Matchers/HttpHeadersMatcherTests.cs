@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
@@ -155,6 +156,22 @@ namespace MockHttp.Matchers
 				}
 			};
 			return request;
+		}
+
+		[Fact]
+		public void Given_null_context_when_matching_it_should_throw()
+		{
+			_sut = new HttpHeadersMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
+			MockHttpRequestContext requestContext = null;
+
+			// Act
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName(nameof(requestContext));
 		}
 	}
 }

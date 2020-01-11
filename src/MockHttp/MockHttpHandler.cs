@@ -52,6 +52,11 @@ namespace MockHttp
 		/// <inheritdoc />
 		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			if (request is null)
+			{
+				throw new ArgumentNullException(nameof(request));
+			}
+
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
 			var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
@@ -113,12 +118,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
-			if (times is null)
-			{
-				throw new ArgumentNullException(nameof(times));
-			}
-
-			Verify(matching, times(), because);
+			Verify(matching, times?.Invoke(), because);
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
-			return VerifyAsync(matching, times(), because);
+			return VerifyAsync(matching, times?.Invoke(), because);
 		}
 
 		/// <summary>
@@ -157,6 +157,11 @@ namespace MockHttp
 			if (matching is null)
 			{
 				throw new ArgumentNullException(nameof(matching));
+			}
+
+			if (times is null)
+			{
+				times = IsSent.AtLeastOnce();
 			}
 
 			var rm = new RequestMatching();

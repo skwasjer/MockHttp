@@ -47,6 +47,11 @@ namespace MockHttp
 		// ReSharper disable once MemberCanBeProtected.Global
 		protected internal virtual void ValidateMatcher(IAsyncHttpRequestMatcher matcher)
 		{
+			if (matcher is null)
+			{
+				throw new ArgumentNullException(nameof(matcher));
+			}
+
 			List<IAsyncHttpRequestMatcher> sameTypeMatchers = _matchers
 				.Where(m => m.GetType() == matcher.GetType())
 				.ToList();

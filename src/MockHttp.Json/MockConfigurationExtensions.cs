@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace MockHttp.Json
 {
@@ -15,6 +16,11 @@ namespace MockHttp.Json
 		/// <returns></returns>
 		public static IMockConfiguration UseJsonSerializerSettings(this IMockConfiguration config, JsonSerializerSettings serializerSettings)
 		{
+			if (config is null)
+			{
+				throw new ArgumentNullException(nameof(config));
+			}
+
 			return config.Use(serializerSettings);
 		}
 	}

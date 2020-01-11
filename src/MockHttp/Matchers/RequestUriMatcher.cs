@@ -64,21 +64,36 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			Uri requestUri = requestContext.Request.RequestUri;
 			if (requestUri is null)
 			{
 				return false;
 			}
 
-			// ReSharper disable once ConvertIfStatementToReturnStatement
 			if (_uriPatternMatcher is null)
 			{
-				return _requestUri.IsAbsoluteUri && requestUri.Equals(_requestUri)
-					|| requestUri.IsBaseOf(_requestUri) && requestUri.ToString().EndsWith(_requestUri.ToString(), StringComparison.Ordinal);
+				return IsAbsoluteUriMatch(requestUri) || IsRelativeUriMatch(requestUri);
 			}
 
 			return _uriPatternMatcher.IsMatch(requestUri.ToString());
 
+		}
+
+		private bool IsAbsoluteUriMatch(Uri uri)
+		{
+			return _requestUri.IsAbsoluteUri && uri.Equals(_requestUri);
+		}
+
+		private bool IsRelativeUriMatch(Uri uri)
+		{
+			return !_requestUri.IsAbsoluteUri
+			 && uri.IsBaseOf(_requestUri)
+			 && uri.ToString().EndsWith(_requestUri.ToString(), StringComparison.Ordinal);
 		}
 
 		/// <inheritdoc />
