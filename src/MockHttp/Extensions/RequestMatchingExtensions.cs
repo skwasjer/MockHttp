@@ -470,11 +470,9 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, Stream content)
 		{
-			using (var ms = new MemoryStream())
-			{
-				content.CopyTo(ms);
-				return builder.Content(ms.ToArray());
-			}
+			using var ms = new MemoryStream();
+			content.CopyTo(ms);
+			return builder.Content(ms.ToArray());
 		}
 
 		/// <summary>
@@ -529,11 +527,9 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, Stream content)
 		{
-			using (var ms = new MemoryStream())
-			{
-				content.CopyTo(ms);
-				return builder.PartialContent(ms.ToArray());
-			}
+			using var ms = new MemoryStream();
+			content.CopyTo(ms);
+			return builder.PartialContent(ms.ToArray());
 		}
 
 		/// <summary>

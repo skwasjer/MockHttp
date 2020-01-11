@@ -45,32 +45,30 @@ namespace MockHttp.Responses
 		[Fact]
 		public async Task When_getting_response_should_call_func_with_args_and_return_response()
 		{
-			using (var cts = new CancellationTokenSource())
-			using (var responseMessage = new HttpResponseMessage())
-			using (var requestMessage = new HttpRequestMessage())
+			using var cts = new CancellationTokenSource();
+			using var responseMessage = new HttpResponseMessage();
+			using var requestMessage = new HttpRequestMessage();
+			HttpRequestMessage arg1 = null;
+			CancellationToken arg2 = CancellationToken.None;
+
+			// ReSharper disable once ConvertToLocalFunction
+			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = (r, t) =>
 			{
-				HttpRequestMessage arg1 = null;
-				CancellationToken arg2 = CancellationToken.None;
+				arg1 = r;
+				arg2 = t;
+				// ReSharper disable once AccessToDisposedClosure
+				return Task.FromResult(responseMessage);
+			};
 
-				// ReSharper disable once ConvertToLocalFunction
-				Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = (r, t) =>
-				{
-					arg1 = r;
-					arg2 = t;
-					// ReSharper disable once AccessToDisposedClosure
-					return Task.FromResult(responseMessage);
-				};
+			var sut = new ResponseFuncStrategy(responseFunc);
 
-				var sut = new ResponseFuncStrategy(responseFunc);
+			// Act
+			HttpResponseMessage actualResponseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(requestMessage), cts.Token);
 
-				// Act
-				HttpResponseMessage actualResponseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(requestMessage), cts.Token);
-
-				// Assert
-				actualResponseMessage.Should().BeSameAs(responseMessage);
-				arg1.Should().BeSameAs(requestMessage);
-				arg2.Should().Be(cts.Token).And.NotBe(CancellationToken.None);
-			}
+			// Assert
+			actualResponseMessage.Should().BeSameAs(responseMessage);
+			arg1.Should().BeSameAs(requestMessage);
+			arg2.Should().Be(cts.Token).And.NotBe(CancellationToken.None);
 		}
 	}
 }

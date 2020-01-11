@@ -64,25 +64,23 @@ namespace MockHttp.Extensions
 			[InlineData(false)]
 			public async Task When_responding_with_stream_it_should_return_response(bool isSeekable)
 			{
-				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
-				{
-					var request = new HttpRequestMessage();
-					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
+				using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
+				var request = new HttpRequestMessage();
+				var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
 
-					// Act
-					_sut.Respond(ms);
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
+				// Act
+				_sut.Respond(ms);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
-					// Assert
-					await actualResponse.Should()
-						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContentAsync(expectedContent);
+				// Assert
+				await actualResponse.Should()
+					.HaveStatusCode(HttpStatusCode.OK)
+					.And.HaveContentAsync(expectedContent);
 
-					// Second assert, to test we can read stream twice, even if not seekable.
-					await actualResponse.Should()
-						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContentAsync(expectedContent);
-				}
+				// Second assert, to test we can read stream twice, even if not seekable.
+				await actualResponse.Should()
+					.HaveStatusCode(HttpStatusCode.OK)
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Theory]
@@ -91,25 +89,23 @@ namespace MockHttp.Extensions
 			public async Task When_responding_with_status_code_stream_it_should_return_response(HttpStatusCode statusCode,
 				bool isSeekable)
 			{
-				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
-				{
-					var request = new HttpRequestMessage();
-					var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
+				using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
+				var request = new HttpRequestMessage();
+				var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
 
-					// Act
-					_sut.Respond(statusCode, ms);
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
+				// Act
+				_sut.Respond(statusCode, ms);
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
-					// Assert
-					await actualResponse.Should()
-						.HaveStatusCode(statusCode)
-						.And.HaveContentAsync(expectedContent);
+				// Assert
+				await actualResponse.Should()
+					.HaveStatusCode(statusCode)
+					.And.HaveContentAsync(expectedContent);
 
-					// Second assert, to test we can read stream twice, even if not seekable.
-					await actualResponse.Should()
-						.HaveStatusCode(statusCode)
-						.And.HaveContentAsync(expectedContent);
-				}
+				// Second assert, to test we can read stream twice, even if not seekable.
+				await actualResponse.Should()
+					.HaveStatusCode(statusCode)
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Theory]
@@ -117,25 +113,23 @@ namespace MockHttp.Extensions
 			[InlineData(false)]
 			public async Task When_responding_with_stream_and_media_type_it_should_return_response(bool isSeekable)
 			{
-				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
-				{
-					var request = new HttpRequestMessage();
-					var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
+				using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
+				var request = new HttpRequestMessage();
+				var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
 
-					// Act
-					_sut.Respond(ms, "text/html; charset=utf-8");
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
+				// Act
+				_sut.Respond(ms, "text/html; charset=utf-8");
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
-					// Assert
-					await actualResponse.Should()
-						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContentAsync(expectedContent);
+				// Assert
+				await actualResponse.Should()
+					.HaveStatusCode(HttpStatusCode.OK)
+					.And.HaveContentAsync(expectedContent);
 
-					// Second assert, to test we can read stream twice, even if not seekable.
-					await actualResponse.Should()
-						.HaveStatusCode(HttpStatusCode.OK)
-						.And.HaveContentAsync(expectedContent);
-				}
+				// Second assert, to test we can read stream twice, even if not seekable.
+				await actualResponse.Should()
+					.HaveStatusCode(HttpStatusCode.OK)
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Theory]
@@ -143,25 +137,23 @@ namespace MockHttp.Extensions
 			[InlineData(HttpStatusCode.BadGateway, false)]
 			public async Task When_responding_with_statusCode_and_stream_and_media_type_it_should_return_response(HttpStatusCode statusCode, bool isSeekable)
 			{
-				using (var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable))
-				{
-					var request = new HttpRequestMessage();
-					var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
+				using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
+				var request = new HttpRequestMessage();
+				var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
 
-					// Act
-					_sut.Respond(statusCode, ms, "text/html; charset=utf-8");
-					HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
+				// Act
+				_sut.Respond(statusCode, ms, "text/html; charset=utf-8");
+				HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
-					// Assert
-					await actualResponse.Should()
-						.HaveStatusCode(statusCode)
-						.And.HaveContentAsync(expectedContent);
+				// Assert
+				await actualResponse.Should()
+					.HaveStatusCode(statusCode)
+					.And.HaveContentAsync(expectedContent);
 
-					// Second assert, to test we can read stream twice, even if not seekable.
-					await actualResponse.Should()
-						.HaveStatusCode(statusCode)
-						.And.HaveContentAsync(expectedContent);
-				}
+				// Second assert, to test we can read stream twice, even if not seekable.
+				await actualResponse.Should()
+					.HaveStatusCode(statusCode)
+					.And.HaveContentAsync(expectedContent);
 			}
 
 			[Fact]

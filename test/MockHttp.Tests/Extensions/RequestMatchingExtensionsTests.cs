@@ -542,16 +542,14 @@ namespace MockHttp.Extensions
 			{
 				byte[] data = Encoding.UTF8.GetBytes(content);
 				var request = new HttpRequestMessage { Content = new StringContent("content") };
-				using (var ms = new MemoryStream(data))
-				{
-					// Act
-					_sut.Content(ms);
-					IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+				using var ms = new MemoryStream(data);
+				// Act
+				_sut.Content(ms);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
-					// Assert
-					matchers.Should().HaveCount(1).And.AllBeOfType<ContentMatcher>();
-					(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
-				}
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<ContentMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
 			}
 
 			[Fact]
@@ -610,16 +608,14 @@ namespace MockHttp.Extensions
 			{
 				byte[] data = Encoding.UTF8.GetBytes(content);
 				var request = new HttpRequestMessage { Content = new StringContent("one two three") };
-				using (var ms = new MemoryStream(data))
-				{
-					// Act
-					_sut.PartialContent(ms);
-					IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+				using var ms = new MemoryStream(data);
+				// Act
+				_sut.PartialContent(ms);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
-					// Assert
-					matchers.Should().HaveCount(1).And.AllBeOfType<PartialContentMatcher>();
-					(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
-				}
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<PartialContentMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
 			}
 
 			[Fact]
