@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 #if NETFRAMEWORK
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Security;
 #endif

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace MockHttp.Responses
