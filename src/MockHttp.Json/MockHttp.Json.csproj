@@ -4,13 +4,10 @@
     <TargetFrameworks>netstandard2.0;netstandard1.1;net45</TargetFrameworks>
     <PackageId>skwas.MockHttp.Json</PackageId>
     <AssemblyName>skwas.MockHttp.Json</AssemblyName>
-    <LangVersion>latest</LangVersion>
-    <DebugType>full</DebugType>
+
     <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
     <DefineConstants Condition="$(TargetFramework.StartsWith('netstandard2'))">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
   </PropertyGroup>
-
-  <Import Project="..\Package.props" />
 
   <PropertyGroup>
     <Description>JSON and MediaTypeFormatter extensions for skwas.MockHttp.</Description>
