@@ -30,7 +30,7 @@ build:
   use_snupkg_format: true
   verbosity: minimal
 test_script:
-  - OpenCover.Console.exe -target:"dotnet.exe" -targetargs:"test -c Release /p:DebugType=full -l:trx;LogFilePrefix=testresults" -output:coverage.xml -register:user -returntargetcode -filter:"+[MockHttp*]* -[*Tests]* -[*Testing]*" -excludebyattribute:*.ExcludeFromCodeCoverageAttribute;*.GeneratedCodeAttribute;*.DebuggerNonUserCodeAttribute;*.CompilerGeneratedAttribute;*.DebuggerHiddenAttribute -oldStyle
+  - OpenCover.Console.exe -target:"dotnet.exe" -targetargs:"test -c Release /p:DebugType=full -l:trx;LogFilePrefix=testresults" -output:coverage.xml -register:user -returntargetcode -filter:"+[*MockHttp*]* -[*Tests]* -[*Testing]*" -excludebyattribute:*.ExcludeFromCodeCoverageAttribute;*.GeneratedCodeAttribute;*.DebuggerNonUserCodeAttribute;*.CompilerGeneratedAttribute;*.DebuggerHiddenAttribute -oldStyle
   - codecov -f coverage.xml
 deploy:
 - provider: NuGet
