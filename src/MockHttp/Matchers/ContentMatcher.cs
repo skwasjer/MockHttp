@@ -105,7 +105,7 @@ namespace MockHttp.Matchers
 		{
 			if (ByteContent.Length == 0)
 			{
-				return $"Content: <empty>";
+				return "Content: <empty>";
 			}
 
 			if (_encoding is { })
