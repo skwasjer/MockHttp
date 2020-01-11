@@ -30,7 +30,7 @@ namespace MockHttp.Responses
 			act.Should().Throw<TaskCanceledException>();
 			sw.Stop();
 			// Due to (high perf) timing, sometimes comes out to 0.9999xx secs, so round to nearest ms.
-			((long)sw.Elapsed.TotalMilliseconds / 10 * 10).Should().BeGreaterOrEqualTo(timeoutInMilliseconds);
+			Math.Round((decimal)sw.Elapsed.TotalMilliseconds, 0).Should().BeGreaterOrEqualTo(timeoutInMilliseconds);
 		}
 
 		[Fact]
