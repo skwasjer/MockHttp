@@ -68,14 +68,14 @@ namespace MockHttp.Matchers
 		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
 			byte[] requestContent = null;
-			if (requestContext.Request.Content != null)
+			if (requestContext.Request.Content is { })
 			{
 				// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
 				// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
 				requestContent = await requestContext.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 			}
 
-			if (requestContent == null)
+			if (requestContent is null)
 			{
 				return ByteContent.Length == 0;
 			}
@@ -109,7 +109,7 @@ namespace MockHttp.Matchers
 				return $"Content: <empty>";
 			}
 
-			if (_encoding != null)
+			if (_encoding is { })
 			{
 				return $"Content: {_encoding.GetString(ByteContent, 0, ByteContent.Length)}";
 			}

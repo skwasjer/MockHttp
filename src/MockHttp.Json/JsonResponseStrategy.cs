@@ -22,7 +22,7 @@ namespace MockHttp.Json
 		public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
 		{
 			var serializerSettings = SerializerSettings;
-			if (serializerSettings == null)
+			if (serializerSettings is null)
 			{
 				requestContext.TryGetService(out serializerSettings);
 			}

@@ -29,7 +29,7 @@ namespace MockHttp
 			await content.CopyToAsync(ms).ConfigureAwait(false);
 			var clone = new ByteArrayContent(ms.ToArray());
 
-			if (content.Headers == null)
+			if (content.Headers is null)
 			{
 				return clone;
 			}

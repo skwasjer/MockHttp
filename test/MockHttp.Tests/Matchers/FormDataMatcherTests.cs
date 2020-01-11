@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue == null ? null : new [] { expectedValue })
+				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue is null ? null : new [] { expectedValue })
 			});
 
 			// Act & assert

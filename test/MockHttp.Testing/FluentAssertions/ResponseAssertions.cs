@@ -40,7 +40,7 @@ namespace MockHttp.FluentAssertions
 
 			var assertionScope = ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks);
 			assertionScope
-				.ForCondition(subject != null)
+				.ForCondition(subject is { })
 				.FailWith("The subject is null.")
 				.Then
 				.ForCondition(subject.StatusCode == expectedStatusCode)
@@ -68,13 +68,13 @@ namespace MockHttp.FluentAssertions
 
 			var assertionScope = ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks);
 			assertionScope
-				.ForCondition(subject != null)
+				.ForCondition(subject is { })
 				.FailWith("The subject is null.")
 				.Then
-				.ForCondition(subject.Content != null)
+				.ForCondition(subject.Content is { })
 				.FailWith("Expected response with content {0}{reason}, but found none.")
 				.Then
-				.ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || expectedMediaType.CharSet == null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType))
+				.ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || expectedMediaType.CharSet is null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType))
 				.FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content.Headers.ContentType)
 				;
 
@@ -104,12 +104,12 @@ namespace MockHttp.FluentAssertions
 			string because = "",
 			params object[] becauseArgs)
 		{
-			if (expectedContent == null)
+			if (expectedContent is null)
 			{
 				throw new ArgumentNullException(nameof(expectedContent));
 			}
 
-			if (expectedContent.Headers.ContentType != null)
+			if (expectedContent.Headers.ContentType is { })
 			{
 				HaveContentType(expectedContent.Headers.ContentType);
 			}
@@ -117,10 +117,10 @@ namespace MockHttp.FluentAssertions
 			var subject = (HttpResponseMessage)Subject;
 
 			((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks)
-				.ForCondition(subject != null)
+				.ForCondition(subject is { })
 				.FailWith("The subject is null.")
 				.Then
-				.ForCondition(subject.Content != null)
+				.ForCondition(subject.Content is { })
 				.FailWith("Expected response with content {reason}, but has no content.");
 
 			byte[] currentContentBytes = await subject.Content.ReadAsByteArrayAsync();
@@ -141,7 +141,7 @@ namespace MockHttp.FluentAssertions
 			string because = "",
 			params object[] becauseArgs)
 		{
-			return HaveHeader(key, value == null ? null : new[] { value }, because, becauseArgs);
+			return HaveHeader(key, value is null ? null : new[] { value }, because, becauseArgs);
 		}
 
 		public AndConstraint<ResponseAssertions> HaveHeader(
@@ -150,7 +150,7 @@ namespace MockHttp.FluentAssertions
 			string because = "",
 			params object[] becauseArgs)
 		{
-			if (key == null)
+			if (key is null)
 			{
 				throw new ArgumentNullException(nameof(key));
 			}
@@ -161,7 +161,7 @@ namespace MockHttp.FluentAssertions
 
 			var assertionScope = ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks);
 			assertionScope
-				.ForCondition(subject != null)
+				.ForCondition(subject is { })
 				.FailWith("The subject is null.")
 				.Then
 				.ForCondition(subject.Headers.Contains(key) || (subject.Content?.Headers.Contains(key) ?? false))

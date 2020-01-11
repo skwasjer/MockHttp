@@ -213,7 +213,7 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, string mediaType)
 			where TResult : IResponseResult
 		{
-			return responds.RespondJson(statusCode, content, mediaType == null ? null : new MediaTypeHeaderValue(mediaType));
+			return responds.RespondJson(statusCode, content, mediaType is null ? null : new MediaTypeHeaderValue(mediaType));
 		}
 	}
 }

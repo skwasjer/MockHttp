@@ -66,13 +66,13 @@ namespace MockHttp.Matchers
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
 			Uri requestUri = requestContext.Request.RequestUri;
-			if (requestUri == null)
+			if (requestUri is null)
 			{
 				return false;
 			}
 
 			// ReSharper disable once ConvertIfStatementToReturnStatement
-			if (_uriPatternMatcher == null)
+			if (_uriPatternMatcher is null)
 			{
 				return _requestUri.IsAbsoluteUri && requestUri.Equals(_requestUri)
 					|| requestUri.IsBaseOf(_requestUri) && requestUri.ToString().EndsWith(_requestUri.ToString(), StringComparison.Ordinal);

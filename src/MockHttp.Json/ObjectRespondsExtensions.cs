@@ -115,7 +115,7 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, string mediaType)
 			where TResult : IResponseResult
 		{
-			return responds.RespondObject(statusCode, value, formatter, mediaType == null ? null : MediaTypeHeaderValue.Parse(mediaType));
+			return responds.RespondObject(statusCode, value, formatter, mediaType is null ? null : MediaTypeHeaderValue.Parse(mediaType));
 		}
 
 		/// <summary>

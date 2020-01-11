@@ -39,7 +39,7 @@ namespace MockHttp.Language.Flow
 
 		public TResponseResult RespondUsing(IResponseStrategy responseStrategy)
 		{
-			if (responseStrategy == null)
+			if (responseStrategy is null)
 			{
 				throw new ArgumentNullException(nameof(responseStrategy));
 			}
@@ -50,7 +50,7 @@ namespace MockHttp.Language.Flow
 
 		public TThrowsResult Throws(Exception exception)
 		{
-			if (exception == null)
+			if (exception is null)
 			{
 				throw new ArgumentNullException(nameof(exception));
 			}

@@ -16,7 +16,7 @@ namespace MockHttp.Matchers
 		public MediaTypeHeaderMatcher(MediaTypeHeaderValue headerValue)
 			: base(headerValue)
 		{
-			if (headerValue == null)
+			if (headerValue is null)
 			{
 				throw new ArgumentNullException(nameof(headerValue));
 			}

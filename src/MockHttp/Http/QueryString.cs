@@ -19,14 +19,14 @@ namespace MockHttp.Http
 		}
 
 		public QueryString(IEnumerable<KeyValuePair<string, string>> values)
-			: this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, new [] { v.Value })))
+			: this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, new[] { v.Value })))
 		{
 		}
 
 		public QueryString(IEnumerable<KeyValuePair<string, IEnumerable<string>>> values)
 			: this()
 		{
-			if (values == null)
+			if (values is null)
 			{
 				throw new ArgumentNullException(nameof(values));
 			}
@@ -41,7 +41,7 @@ namespace MockHttp.Http
 				// TODO: implement/override Add, because empty string for key is possible but not allowed. Even though we checked here, still possible to call Add externally.
 				// Accept null values enumerable, but then use empty list.
 				// Null values in values enumerable are filtered.
-				Add(kvp.Key, kvp.Value?.Where(v => v != null).ToList() ?? new List<string>());
+				Add(kvp.Key, kvp.Value?.Where(v => v is { }).ToList() ?? new List<string>());
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace MockHttp.Http
 
 		public static QueryString Parse(string queryString)
 		{
-			if (queryString == null)
+			if (queryString is null)
 			{
 				throw new ArgumentNullException(nameof(queryString));
 			}

@@ -9,17 +9,17 @@ namespace MockHttp.Threading
 	{
 		public static void RunSync(Func<Task> action, TimeSpan timeout)
 		{
-			if (SynchronizationContext.Current != null)
+			if (SynchronizationContext.Current is null)
+			{
+				RunSyncAndWait(action, timeout);
+			}
+			else
 			{
 				RunSyncAndWait(() => Task.Factory.StartNew(action,
 					CancellationToken.None,
 					TaskCreationOptions.None,
 					TaskScheduler.Default
 				).Unwrap(), timeout);
-			}
-			else
-			{
-				RunSyncAndWait(action, timeout);
 			}
 		}
 

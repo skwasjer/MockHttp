@@ -21,7 +21,7 @@ namespace MockHttp.Matchers
 		/// <param name="parameters">The query string parameters.</param>
 		public QueryStringMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters)
 		{
-			if (parameters == null)
+			if (parameters is null)
 			{
 				throw new ArgumentNullException(nameof(parameters));
 			}

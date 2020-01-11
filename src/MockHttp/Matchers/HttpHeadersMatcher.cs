@@ -23,7 +23,7 @@ namespace MockHttp.Matchers
 		public HttpHeadersMatcher(string name, string value)
 			: base(new HttpHeadersCollection())
 		{
-			if (name == null)
+			if (name is null)
 			{
 				throw new ArgumentNullException(nameof(name));
 			}
@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 		public HttpHeadersMatcher(string name, IEnumerable<string> values)
 			: base(new HttpHeadersCollection())
 		{
-			if (name == null)
+			if (name is null)
 			{
 				throw new ArgumentNullException(nameof(name));
 			}
@@ -54,7 +54,7 @@ namespace MockHttp.Matchers
 		public HttpHeadersMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
 			: base(new HttpHeadersCollection())
 		{
-			if (headers == null)
+			if (headers is null)
 			{
 				throw new ArgumentNullException(nameof(headers));
 			}
@@ -91,10 +91,10 @@ namespace MockHttp.Matchers
 
 		private static bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
-			return headers != null
-				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls) 
+			return headers is { }
+				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
 				&& EqualityComparer.Equals(
-					expectedHeader, 
+					expectedHeader,
 					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)
 				);
 		}

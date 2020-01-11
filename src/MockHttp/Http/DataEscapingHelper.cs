@@ -12,7 +12,7 @@ namespace MockHttp.Http
 
 		internal static IEnumerable<KeyValuePair<string, IEnumerable<string>>> Parse(string dataEscapedString)
 		{
-			if (dataEscapedString == null)
+			if (dataEscapedString is null)
 			{
 				throw new ArgumentNullException(nameof(dataEscapedString));
 			}
@@ -43,7 +43,7 @@ namespace MockHttp.Http
 				})
 				// Group values for same key.
 				.GroupBy(kvp => kvp.Key)
-				.Select(g => new KeyValuePair<string, IEnumerable<string>>(g.Key, g.Select(v => v.Value).Where(v => v != null)))
+				.Select(g => new KeyValuePair<string, IEnumerable<string>>(g.Key, g.Select(v => v.Value).Where(v => v is { })))
 				.ToList();
 		}
 
@@ -57,7 +57,7 @@ namespace MockHttp.Http
 			var sb = new StringBuilder();
 			foreach (KeyValuePair<string, IEnumerable<string>> item in items)
 			{
-				bool hasValues = item.Value != null && item.Value.Any();
+				bool hasValues = item.Value is { } && item.Value.Any();
 				if (hasValues)
 				{
 					foreach (string v in item.Value)
@@ -90,7 +90,7 @@ namespace MockHttp.Http
 		{
 			return Uri.EscapeDataString(key)
 			  + TokenEquals
-			  + (value != null ? Uri.EscapeDataString(value) : string.Empty)
+			  + (value is null ? string.Empty : Uri.EscapeDataString(value))
 			  + TokenAmpersand;
 		}
 	}

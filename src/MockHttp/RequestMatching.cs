@@ -26,7 +26,7 @@ namespace MockHttp
 		/// <returns>The request matching builder.</returns>
 		public RequestMatching With(IAsyncHttpRequestMatcher matcher)
 		{
-			if (matcher == null)
+			if (matcher is null)
 			{
 				throw new ArgumentNullException(nameof(matcher));
 			}

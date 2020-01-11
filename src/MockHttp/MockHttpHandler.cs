@@ -79,7 +79,7 @@ namespace MockHttp
 		/// <returns>The configured request.</returns>
 		public IConfiguredRequest When(Action<RequestMatching> matching)
 		{
-			if (matching == null)
+			if (matching is null)
 			{
 				throw new ArgumentNullException(nameof(matching));
 			}
@@ -113,7 +113,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
-			if (times == null)
+			if (times is null)
 			{
 				throw new ArgumentNullException(nameof(times));
 			}
@@ -154,7 +154,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public async Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
-			if (matching == null)
+			if (matching is null)
 			{
 				throw new ArgumentNullException(nameof(matching));
 			}
@@ -271,7 +271,7 @@ namespace MockHttp
 
 		private static async Task LoadIntoBufferAsync(HttpContent httpContent)
 		{
-			if (httpContent != null)
+			if (httpContent is { })
 			{
 				// Force read content, so content can be checked more than once.
 				await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);
