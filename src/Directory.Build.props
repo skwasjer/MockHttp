@@ -15,8 +15,12 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/skwasjer/MockHttp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageIcon>PackageIcon64.png</PackageIcon>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\assets\PackageIcon64.png" Pack="true" Visible="false" PackagePath="\"/>
+  </ItemGroup>
   <!--https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019#use-case-multi-level-merging -->
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
