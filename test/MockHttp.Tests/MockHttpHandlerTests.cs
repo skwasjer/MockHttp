@@ -419,57 +419,53 @@ namespace MockHttp
 		{
 			const string data = "data";
 			byte[] buffer = Encoding.UTF8.GetBytes(data);
-			using (Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream))
-			{
-				_sut.When(matching => { })
-					.Respond(HttpStatusCode.OK, stream, "text/plain")
-					.Verifiable();
+			using Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream);
+			_sut.When(matching => { })
+				.Respond(HttpStatusCode.OK, stream, "text/plain")
+				.Verifiable();
 
-				// Act
-				HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
-				HttpResponseMessage secondResponse = null;
-				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
+			// Act
+			HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
+			HttpResponseMessage secondResponse = null;
+			Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
-				// Assert
-				act.Should().NotThrow();
+			// Assert
+			act.Should().NotThrow();
 
-				_sut.Verify(matching => { }, IsSent.Exactly(2));
-				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				await (await firstResponse.Should()
+			_sut.Verify(matching => { }, IsSent.Exactly(2));
+			firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+			await (await firstResponse.Should()
 					.HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
-					.And.HaveContentAsync(data);
+				.And.HaveContentAsync(data);
 
-				_sut.VerifyNoOtherRequests();
-			}
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]
 		public async Task Given_httpContent_response_when_sending_requests_it_should_not_throw_for_second_request_and_return_same_content()
 		{
 			const string data = "data";
-			using (HttpContent httpContent = new StringContent(data))
-			{
-				_sut.When(matching => { })
-					.Respond(HttpStatusCode.OK, httpContent)
-					.Verifiable();
+			using HttpContent httpContent = new StringContent(data);
+			_sut.When(matching => { })
+				.Respond(HttpStatusCode.OK, httpContent)
+				.Verifiable();
 
-				// Act
-				HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
-				HttpResponseMessage secondResponse = null;
-				Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
+			// Act
+			HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
+			HttpResponseMessage secondResponse = null;
+			Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
-				// Assert
-				act.Should().NotThrow();
+			// Assert
+			act.Should().NotThrow();
 
-				_sut.Verify(matching => { }, IsSent.Exactly(2));
-				firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
-				firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
-				await (await firstResponse.Should()
+			_sut.Verify(matching => { }, IsSent.Exactly(2));
+			firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
+			firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+			await (await firstResponse.Should()
 					.HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
-					.And.HaveContentAsync(data);
+				.And.HaveContentAsync(data);
 
-				_sut.VerifyNoOtherRequests();
-			}
+			_sut.VerifyNoOtherRequests();
 		}
 
 		[Fact]

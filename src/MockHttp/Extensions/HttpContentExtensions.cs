@@ -25,21 +25,21 @@ namespace MockHttp
 
 			await content.LoadIntoBufferAsync().ConfigureAwait(false);
 
-			using (var ms = new MemoryStream())
+			using var ms = new MemoryStream();
+			await content.CopyToAsync(ms).ConfigureAwait(false);
+			var clone = new ByteArrayContent(ms.ToArray());
+
+			if (content.Headers == null)
 			{
-				await content.CopyToAsync(ms).ConfigureAwait(false);
-				var clone = new ByteArrayContent(ms.ToArray());
-
-				if (content.Headers != null)
-				{
-					foreach (KeyValuePair<string, IEnumerable<string>> h in content.Headers)
-					{
-						clone.Headers.Add(h.Key, h.Value);
-					}
-				}
-
 				return clone;
 			}
+
+			foreach (KeyValuePair<string, IEnumerable<string>> h in content.Headers)
+			{
+				clone.Headers.Add(h.Key, h.Value);
+			}
+
+			return clone;
 		}
 	}
 }

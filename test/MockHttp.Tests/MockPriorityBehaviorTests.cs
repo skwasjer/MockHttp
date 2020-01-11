@@ -14,26 +14,24 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_request_is_setup_twice_when_sending_request_last_setup_wins()
 		{
-			using (var httpMock = new MockHttpHandler())
-			using (var httpClient = new HttpClient(httpMock)
+			using var httpMock = new MockHttpHandler();
+			using var httpClient = new HttpClient(httpMock)
 			{
 				BaseAddress = new Uri("http://0.0.0.0")
-			})
-			{
-				httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.OK);
-				httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.Accepted);
-				httpMock.When(matching => matching.Method("PUT")).Respond(HttpStatusCode.BadRequest);
+			};
+			httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.OK);
+			httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.Accepted);
+			httpMock.When(matching => matching.Method("PUT")).Respond(HttpStatusCode.BadRequest);
 
-				// Act
-				var response1 = await httpClient.PostAsync("", new StringContent("data 1"));
-				var response2 = await httpClient.PostAsync("", new StringContent("data 2"));
-				var response3 = await httpClient.PutAsync("", new StringContent("data 3"));
+			// Act
+			var response1 = await httpClient.PostAsync("", new StringContent("data 1"));
+			var response2 = await httpClient.PostAsync("", new StringContent("data 2"));
+			var response3 = await httpClient.PutAsync("", new StringContent("data 3"));
 
-				// Assert
-				response1.Should().HaveStatusCode(HttpStatusCode.Accepted, "the second setup wins on first request");
-				response2.Should().HaveStatusCode(HttpStatusCode.Accepted, "the second setup wins on second request");
-				response3.Should().HaveStatusCode(HttpStatusCode.BadRequest, "the request was sent with different HTTP method matching third setup");
-			}
+			// Assert
+			response1.Should().HaveStatusCode(HttpStatusCode.Accepted, "the second setup wins on first request");
+			response2.Should().HaveStatusCode(HttpStatusCode.Accepted, "the second setup wins on second request");
+			response3.Should().HaveStatusCode(HttpStatusCode.BadRequest, "the request was sent with different HTTP method matching third setup");
 		}
 
 		/// <summary>

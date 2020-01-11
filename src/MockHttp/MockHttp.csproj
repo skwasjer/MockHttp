@@ -4,18 +4,14 @@
     <TargetFrameworks>netstandard2.0;netstandard1.1;net45</TargetFrameworks>
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
-    <LangVersion>latest</LangVersion>
-    <DebugType>full</DebugType>
   </PropertyGroup>
-
-  <Import Project="..\Package.props" />
 
   <PropertyGroup>
     <Description>Mock HTTP responses for HttpClient and verify request expectations, with an experience inspired by Moq.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
   </PropertyGroup>
-  
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System.Net.Http" />
   </ItemGroup>

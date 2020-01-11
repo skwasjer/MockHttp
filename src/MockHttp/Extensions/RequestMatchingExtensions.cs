@@ -39,6 +39,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (requestUri is null)
+			{
+				throw new ArgumentNullException(nameof(requestUri));
+			}
+
 			return builder.With(new RequestUriMatcher(requestUri, true));
 		}
 
@@ -62,6 +72,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching RequestUri(this RequestMatching builder, Uri requestUri)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (requestUri is null)
+			{
+				throw new ArgumentNullException(nameof(requestUri));
+			}
+
 			return builder.With(new RequestUriMatcher(requestUri));
 		}
 
@@ -76,7 +96,7 @@ namespace MockHttp
 		{
 			return builder.QueryString(
 				key,
-				value == null
+				value is null
 #if NETSTANDARD2_0
 					? Array.Empty<string>()
 #else
@@ -94,7 +114,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string key, IEnumerable<string> values)
 		{
-			if (key == null)
+			if (key is null)
 			{
 				throw new ArgumentNullException(nameof(key));
 			}
@@ -125,6 +145,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new QueryStringMatcher(parameters));
 		}
 
@@ -137,6 +162,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, NameValueCollection parameters)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new QueryStringMatcher(parameters?.AsEnumerable()));
 		}
 #endif
@@ -149,6 +179,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching QueryString(this RequestMatching builder, string queryString)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			if (string.IsNullOrEmpty(queryString))
 			{
 				throw new ArgumentException("Specify a query string, or use 'WithoutQueryString'.", nameof(queryString));
@@ -164,6 +199,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching WithoutQueryString(this RequestMatching builder)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new QueryStringMatcher(""));
 		}
 
@@ -175,6 +215,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Method(this RequestMatching builder, string httpMethod)
 		{
+			if (httpMethod is null)
+			{
+				throw new ArgumentNullException(nameof(httpMethod));
+			}
+
 			return builder.Method(new HttpMethod(httpMethod));
 		}
 
@@ -182,11 +227,16 @@ namespace MockHttp
 		/// Matches a request by HTTP method.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="httpMethod">The HTTP method.</param>
+		/// <param name="method">The HTTP method.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Method(this RequestMatching builder, HttpMethod httpMethod)
+		public static RequestMatching Method(this RequestMatching builder, HttpMethod method)
 		{
-			return builder.With(new HttpMethodMatcher(httpMethod));
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			return builder.With(new HttpMethodMatcher(method));
 		}
 
 		/// <summary>
@@ -198,6 +248,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Header(this RequestMatching builder, string name, string value)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new HttpHeadersMatcher(name, value));
 		}
 
@@ -260,7 +315,24 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Header(this RequestMatching builder, string name, IEnumerable<string> values)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new HttpHeadersMatcher(name, values));
+		}
+
+		/// <summary>
+		/// Matches a request by HTTP header.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="name">The header name.</param>
+		/// <param name="values">The header values.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Header(this RequestMatching builder, string name, params string[] values)
+		{
+			return builder.Header(name, values.AsEnumerable());
 		}
 
 		/// <summary>
@@ -281,9 +353,10 @@ namespace MockHttp
 		/// <param name="name">The header name.</param>
 		/// <param name="values">The header values.</param>
 		/// <returns>The request matching builder instance.</returns>
+		[Obsolete("Renamed to Header(). Will be removed in future version.")]
 		public static RequestMatching Headers(this RequestMatching builder, string name, params string[] values)
 		{
-			return builder.Header(name, values.AsEnumerable());
+			return builder.Header(name, values);
 		}
 
 		/// <summary>
@@ -294,6 +367,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> headers)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new HttpHeadersMatcher(headers));
 		}
 
@@ -305,6 +383,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new HttpHeadersMatcher(headers));
 		}
 
@@ -316,7 +399,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching ContentType(this RequestMatching builder, string mediaType)
 		{
-			if (mediaType == null)
+			if (mediaType is null)
 			{
 				throw new ArgumentNullException(nameof(mediaType));
 			}
@@ -333,9 +416,14 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching ContentType(this RequestMatching builder, string contentType, Encoding encoding)
 		{
-			if (contentType == null)
+			if (contentType is null)
 			{
 				throw new ArgumentNullException(nameof(contentType));
+			}
+
+			if (encoding is null)
+			{
+				throw new ArgumentNullException(nameof(encoding));
 			}
 
 			var mediaType = new MediaTypeHeaderValue(contentType)
@@ -353,7 +441,12 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching ContentType(this RequestMatching builder, MediaTypeHeaderValue mediaType)
 		{
-			if (mediaType == null)
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (mediaType is null)
 			{
 				throw new ArgumentNullException(nameof(mediaType));
 			}
@@ -384,7 +477,7 @@ namespace MockHttp
 			return builder.FormData(formData?.Select(
 				d => new KeyValuePair<string, IEnumerable<string>>(
 					d.Key,
-					d.Value == null ? null : new[] { d.Value })
+					d.Value is null ? null : new[] { d.Value })
 				));
 		}
 
@@ -409,6 +502,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new FormDataMatcher(formData));
 		}
 
@@ -420,6 +518,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching FormData(this RequestMatching builder, string urlEncodedFormData)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			if (string.IsNullOrEmpty(urlEncodedFormData))
 			{
 				throw new ArgumentException("Specify the url encoded form data.", nameof(urlEncodedFormData));
@@ -448,6 +551,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new ContentMatcher(content, encoding));
 		}
 
@@ -459,6 +567,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, byte[] content)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new ContentMatcher(content));
 		}
 
@@ -470,11 +583,14 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Content(this RequestMatching builder, Stream content)
 		{
-			using (var ms = new MemoryStream())
+			if (content is null)
 			{
-				content.CopyTo(ms);
-				return builder.Content(ms.ToArray());
+				throw new ArgumentNullException(nameof(content));
 			}
+
+			using var ms = new MemoryStream();
+			content.CopyTo(ms);
+			return builder.Content(ms.ToArray());
 		}
 
 		/// <summary>
@@ -484,6 +600,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching WithoutContent(this RequestMatching builder)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new ContentMatcher());
 		}
 
@@ -507,6 +628,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, string partialContent, Encoding encoding)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (partialContent is null)
+			{
+				throw new ArgumentNullException(nameof(partialContent));
+			}
+
 			return builder.With(new PartialContentMatcher(partialContent, encoding));
 		}
 
@@ -518,6 +649,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching PartialContent(this RequestMatching builder, byte[] partialContent)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (partialContent is null)
+			{
+				throw new ArgumentNullException(nameof(partialContent));
+			}
+
 			return builder.With(new PartialContentMatcher(partialContent));
 		}
 
@@ -525,15 +666,18 @@ namespace MockHttp
 		/// Matches a request by partially matching the request content.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
-		/// <param name="content">The request content.</param>
+		/// <param name="partialContent">The request content.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching PartialContent(this RequestMatching builder, Stream content)
+		public static RequestMatching PartialContent(this RequestMatching builder, Stream partialContent)
 		{
-			using (var ms = new MemoryStream())
+			if (partialContent is null)
 			{
-				content.CopyTo(ms);
-				return builder.PartialContent(ms.ToArray());
+				throw new ArgumentNullException(nameof(partialContent));
 			}
+
+			using var ms = new MemoryStream();
+			partialContent.CopyTo(ms);
+			return builder.PartialContent(ms.ToArray());
 		}
 
 		/// <summary>
@@ -544,6 +688,16 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Any(this RequestMatching builder, Action<RequestMatching> anyBuilder)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			if (anyBuilder is null)
+			{
+				throw new ArgumentNullException(nameof(anyBuilder));
+			}
+
 			var anyRequestMatching = new AnyRequestMatching();
 			anyBuilder(anyRequestMatching);
 			return builder.With(new AnyMatcher(anyRequestMatching.Build()));
@@ -569,6 +723,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Where(this RequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new ExpressionMatcher(expression));
 		}
 
@@ -580,7 +739,7 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Version(this RequestMatching builder, string version)
 		{
-			return builder.Version(version == null ? null : System.Version.Parse(version));
+			return builder.Version(version is null ? null : System.Version.Parse(version));
 		}
 
 		/// <summary>
@@ -591,6 +750,11 @@ namespace MockHttp
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching Version(this RequestMatching builder, Version version)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new VersionMatcher(version));
 		}
 	}

@@ -25,6 +25,7 @@ dotnet add package skwas.MockHttp.Json
 | | | |
 |---|---|---|
 | `skwas.MockHttp` | [![NuGet](https://img.shields.io/nuget/v/skwas.MockHttp.svg)](https://www.nuget.org/packages/skwas.MockHttp/) [![NuGet](https://img.shields.io/nuget/dt/skwas.MockHttp.svg)](https://www.nuget.org/packages/skwas.MockHttp/) | |
+| `skwas.MockHttp.Json` | [![NuGet](https://img.shields.io/nuget/v/skwas.MockHttp.Json.svg)](https://www.nuget.org/packages/skwas.MockHttp.Json/) [![NuGet](https://img.shields.io/nuget/dt/skwas.MockHttp.Json.svg)](https://www.nuget.org/packages/skwas.MockHttp.Json/) | |
 
 ## Usage ###
 
@@ -59,6 +60,7 @@ MockHttp provides a fluent API to make setting up request expectations and verif
 | <pre>.QueryString("key", "value")<br/>.QueryString("?key=value1&other=value&key=value2")<br/>.QueryString(new Dictionary<string, string><br/>{<br/>    { "key", "value" }<br/>}<br/>.QueryString(new NameValueCollection<br/>{<br/>    { "key", "value" }<br/>}</pre> | Matches a query string by one or more key/value pairs. Note: the overload that accepts a full query string must be URI data escaped. |
 | <pre>.WithoutQueryString()</pre> | Matches a request without query string. |
 | <pre>.Content("text content")<br/>.Content("text content", Encoding.UTF8)<br/>.Content(stream)<br/>.Content(byteArray)</pre> | Matches the request content body. |
+| <pre>.JsonContent(new { name = "John" })<br/>.JsonContent(<br/>  new { name = "John" },<br/>  new JsonSerializerSettings()<br/>)<br/></pre> | Matches the request content body as JSON.<br/>*Requires 'skwas.MockHttp.Json' package* |
 | <pre>.WithoutContent()</pre> | Matches a request without content. |
 | <pre>.PartialContent("text content")<br/>.PartialContent("text content", Encoding.UTF8)<br/>.PartialContent(byteArray)</pre> | Matches the content body partially. |
 | <pre>.ContentType("application/json; charset=utf-8")<br/>.ContentType("text/plain", Encoding.ASCII)</pre> | Matches the request content type. | 
