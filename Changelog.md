@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0
+
+- Renamed a `Headers()` overload into `Header()` since it only matches 1 header.
+- fix: throw ANE's from extensions to avoid potential NRE's.
+- fix: SourceLink not working to due invalid (non-portable) symbols
+
 ## v2.0.8
 
 - fix: matching on JSON arrays and simple values was throwing exception (ie.: `matching.JsonContent("match this")`).
