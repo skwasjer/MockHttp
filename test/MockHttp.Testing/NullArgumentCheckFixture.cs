@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 
@@ -17,6 +18,7 @@ namespace MockHttp
 			string testCase = (string)testArgs[0];
 			var func = (Delegate)testArgs[1];
 			string expectedParamName = (string)testArgs[2];
+			ParameterInfo param = func.GetMethodInfo().GetParameters().Single(p => p.Name == expectedParamName);
 			object[] args = testArgs.Skip(3).ToArray();
 			if (args.Length == 0)
 			{
@@ -24,10 +26,11 @@ namespace MockHttp
 				args = new object[1];
 			}
 
-			func.Should()
-				.Throw<ArgumentNullException>(args)
-				.Which.ParamName.Should()
-				.Be(expectedParamName, "no {0} was provided for {1}", expectedParamName, testCase);
+			ArgumentException ex = param.ParameterType == typeof(string)
+				? func.Should().Throw<ArgumentException>(args).Which
+				: func.Should().Throw<ArgumentNullException>(args).Which;
+			string paramName = ex.ParamName;
+			paramName.Should().Be(expectedParamName, "no null was provided for {1}", expectedParamName, testCase);
 		}
 	}
 }
