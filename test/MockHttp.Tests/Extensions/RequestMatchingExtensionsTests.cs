@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,6 +13,7 @@ using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Matchers;
 using MockHttp.Responses;
+using Moq;
 using Xunit;
 
 namespace MockHttp.Extensions
@@ -108,16 +111,6 @@ namespace MockHttp.Extensions
 			}
 
 			[Fact]
-			public void When_configuring_query_string_with_null_key_should_throw()
-			{
-				// Act
-				Action act = () => _sut.QueryString(null, string.Empty);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("key");
-			}
-
-			[Fact]
 			public void When_configuring_query_string_with_null_values_should_not_throw()
 			{
 				// Act
@@ -126,28 +119,6 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should().NotThrow();
 			}
-
-			[Fact]
-			public void When_configuring_null_list_of_query_string_parameters_should_throw()
-			{
-				// Act
-				Action act = () => _sut.QueryString((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
-			}
-
-#if !NETCOREAPP1_1
-			[Fact]
-			public void When_configuring_null_nameValueCollection_of_query_string_parameters_should_throw()
-			{
-				// Act
-				Action act = () => _sut.QueryString((NameValueCollection)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
-			}
-#endif
 
 			[Fact]
 			public void When_configuring_empty_query_string_should_throw()
@@ -275,46 +246,6 @@ namespace MockHttp.Extensions
 				// Assert
 				act.Should().Throw<InvalidOperationException>();
 			}
-
-			[Fact]
-			public void When_configuring_media_type_with_null_header_value_should_throw()
-			{
-				// Act
-				Action act = () => _sut.ContentType((MediaTypeHeaderValue)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("mediaType");
-			}
-
-			[Fact]
-			public void When_configuring_media_type_with_null_string_should_throw()
-			{
-				// Act
-				Action act = () => _sut.ContentType((string)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("mediaType");
-			}
-
-			[Fact]
-			public void When_configuring_media_type_with_null_string_and_encoding_should_throw()
-			{
-				// Act
-				Action act = () => _sut.ContentType(null, Encoding.UTF8);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("contentType");
-			}
-
-			[Fact]
-			public void When_configuring_media_type_with_string_and_null_encoding_should_not_throw()
-			{
-				// Act
-				Action act = () => _sut.ContentType("text/plain", null);
-
-				// Assert
-				act.Should().NotThrow<ArgumentNullException>();
-			}
 		}
 
 		public class FormData : RequestMatchingExtensionsTests
@@ -418,32 +349,6 @@ namespace MockHttp.Extensions
 			}
 
 			[Fact]
-			public void When_configuring_formData_with_null_key_should_throw()
-			{
-				string key = null;
-
-				// Act
-				// ReSharper disable once ExpressionIsAlwaysNull
-				Action act = () => _sut.FormData(key, string.Empty);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(key));
-			}
-
-			[Fact]
-			public void When_configuring_null_list_of_query_string_parameters_should_throw()
-			{
-				var formData = (IEnumerable<KeyValuePair<string, string>>)null;
-
-				// Act
-				// ReSharper disable once ExpressionIsAlwaysNull
-				Action act = () => _sut.FormData(formData);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
-			}
-
-			[Fact]
 			public void When_configuring_empty_formData_should_throw()
 			{
 				string urlEncodedFormData = string.Empty;
@@ -452,7 +357,8 @@ namespace MockHttp.Extensions
 				Action act = () => _sut.FormData(urlEncodedFormData);
 
 				// Assert
-				act.Should().Throw<ArgumentException>()
+				act.Should()
+					.Throw<ArgumentException>()
 					.WithParamName(nameof(urlEncodedFormData))
 					.WithMessage("Specify the url encoded form data*");
 			}
@@ -467,26 +373,11 @@ namespace MockHttp.Extensions
 				Action act = () => _sut.FormData(urlEncodedFormData);
 
 				// Assert
-				act.Should().Throw<ArgumentException>()
+				act.Should()
+					.Throw<ArgumentException>()
 					.WithParamName(nameof(urlEncodedFormData))
 					.WithMessage("Specify the url encoded form data*");
 			}
-
-#if !NETCOREAPP1_1
-			[Fact]
-			public void When_configuring_null_nameValueCollection_should_throw()
-			{
-				NameValueCollection formData = null;
-
-				// Act
-				// ReSharper disable once ExpressionIsAlwaysNull
-				Action act = () => _sut.FormData(formData);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
-			}
-#endif
-
 
 			[Fact]
 			public void Given_formData_matcher_is_already_added_when_configuring_another_should_not_throw()
@@ -755,27 +646,8 @@ namespace MockHttp.Extensions
 				// Assert
 				matchers.Should().HaveCount(1).And.AllBeOfType<VersionMatcher>();
 				(await matchers.AnyAsync(new MockHttpRequestContext(request)))
-					.Should().Be(expectedResult);
-			}
-
-			[Fact]
-			public void When_configuring_media_type_with_null_string_should_throw()
-			{
-				// Act
-				Action act = () => _sut.Version((string)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("version");
-			}
-
-			[Fact]
-			public void When_configuring_media_type_with_null_version_should_throw()
-			{
-				// Act
-				Action act = () => _sut.Version((System.Version)null);
-
-				// Assert
-				act.Should().Throw<ArgumentNullException>().WithParamName("version");
+					.Should()
+					.Be(expectedResult);
 			}
 
 			[Fact]
@@ -788,6 +660,214 @@ namespace MockHttp.Extensions
 
 				// Assert
 				act.Should().Throw<InvalidOperationException>();
+			}
+		}
+
+		public class NullArgumentTests : RequestMatchingExtensionsTests
+		{
+			[Theory]
+			[MemberData(nameof(TestCases))]
+			public void Given_null_argument_when_executing_method_it_should_throw(params object[] args)
+			{
+				NullArgumentTest.Execute(args);
+			}
+
+			public static IEnumerable<object[]> TestCases()
+			{
+				var streamMock = new Mock<Stream> { CallBase = true };
+				streamMock.SetReturnsDefault(true);
+				Uri uri = new Uri("http://0.0.0.0");
+				var instance = new RequestMatching();
+
+				DelegateTestCase[] testCases =
+				{
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.RequestUri,
+						instance,
+						uri.ToString()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.RequestUri,
+						instance,
+						uri),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						"key",
+						(string)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						"key",
+						(IEnumerable<string>)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						"key",
+						(string[])null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						new Dictionary<string, IEnumerable<string>>()),
+#if !NETCOREAPP1_1
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						new NameValueCollection()),
+#endif
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.QueryString,
+						instance,
+						"?test"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.WithoutQueryString,
+						instance),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Method,
+						instance,
+						"GET"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Method,
+						instance,
+						HttpMethod.Get),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						(string)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						1),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						true),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						DateTime.Now),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						DateTimeOffset.Now),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						Enumerable.Empty<string>()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header",
+						new string[0]),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Headers,
+						instance,
+						"header: value"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Headers,
+						instance,
+						new Dictionary<string, string>()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Headers,
+						instance,
+						new Dictionary<string, IEnumerable<string>>()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.ContentType,
+						instance,
+						"text/plain"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.ContentType,
+						instance,
+						"text/plain",
+						Encoding.UTF8),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.ContentType,
+						instance,
+						new MediaTypeHeaderValue("text/plain")),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.FormData,
+						instance,
+						"key",
+						(string)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.FormData,
+						instance,
+						new Dictionary<string, string>()),
+#if !NETCOREAPP1_1
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.FormData,
+						instance,
+						new NameValueCollection()),
+#endif
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.FormData,
+						instance,
+						new Dictionary<string, IEnumerable<string>>()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.FormData,
+						instance,
+						"key=value"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Content,
+						instance,
+						"content"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Content,
+						instance,
+						"content",
+						(Encoding)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Content,
+						instance,
+						Encoding.UTF8.GetBytes("content")),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Content,
+						instance,
+						streamMock.Object),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.WithoutContent,
+						instance),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.PartialContent,
+						instance,
+						"partial content"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.PartialContent,
+						instance,
+						"partial content",
+						(Encoding)null),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.PartialContent,
+						instance,
+						Encoding.UTF8.GetBytes("partial content")),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.PartialContent,
+						instance,
+						streamMock.Object),
+					DelegateTestCase.Create<RequestMatching, Action<RequestMatching>, RequestMatching>(
+						RequestMatchingExtensions.Any,
+						instance,
+						_ => { }),
+					DelegateTestCase.Create<RequestMatching, Expression<Func<HttpRequestMessage, bool>>, RequestMatching>(
+						RequestMatchingExtensions.Where,
+						instance,
+						_ => true),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Version,
+						instance,
+						"1.0"),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Version,
+						instance,
+						System.Version.Parse("1.0"))
+				};
+
+				return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
 			}
 		}
 	}
