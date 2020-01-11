@@ -62,11 +62,23 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			// TODO: quite unreabable. Unpack/refactor.
-			return _matchQs.All(q =>
-				formData.ContainsKey(q.Key)
-				 && (formData[q.Key].Count() == q.Value.Count() && !q.Value.Any()
-				 || formData[q.Key].Any(qv => q.Value.Contains(qv))));
+			return _matchQs.All(q => formData.ContainsKey(q.Key)
+			 && (
+				BothAreEmpty(formData[q.Key], q.Value)
+			 || HasOneOf(formData[q.Key], q.Value))
+			);
+		}
+
+		private static bool BothAreEmpty(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			int leftCount = left.Count();
+			int rightCount = right.Count();
+			return leftCount == 0 && leftCount == rightCount;
+		}
+
+		private static bool HasOneOf(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			return left.Any(right.Contains);
 		}
 
 		/// <inheritdoc />

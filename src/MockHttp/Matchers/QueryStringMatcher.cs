@@ -49,11 +49,22 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			// TODO: quite unreabable. Unpack/refactor.
-			return _matchQs.All(q =>
-				query.ContainsKey(q.Key)
-				&& (query[q.Key].Count() == q.Value.Count() && !q.Value.Any()
-					|| query[q.Key].Any(qv => q.Value.Contains(qv))));
+			return _matchQs.All(q => query.ContainsKey(q.Key)
+			 && (BothAreEmpty(query[q.Key], q.Value)
+			 || HasOneOf(query[q.Key], q.Value))
+			);
+		}
+
+		private static bool BothAreEmpty(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			int leftCount = left.Count();
+			int rightCount = right.Count();
+			return leftCount == 0 && leftCount == rightCount;
+		}
+
+		private static bool HasOneOf(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			return left.Any(right.Contains);
 		}
 
 		/// <inheritdoc />
