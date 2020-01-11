@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -345,6 +347,153 @@ namespace MockHttp.Extensions
 
 				// Assert
 				act.Should().NotThrow();
+			}
+		}
+
+		public class NullArgumentTests : IRespondsExtensionsTests
+		{
+			[Theory]
+			[MemberData(nameof(TestCases))]
+			public void Given_null_argument_when_executing_method_it_should_throw(params object[] args)
+			{
+				NullArgumentTest.Execute(args);
+			}
+
+			public static IEnumerable<object[]> TestCases()
+			{
+				var streamMock = new Mock<Stream> { CallBase = true };
+				streamMock.SetReturnsDefault(true);
+				using var content = new StringContent("");
+				IResponds<IResponseResult> responds = Mock.Of<IResponds<IResponseResult>>();
+
+				DelegateTestCase[] testCases = {
+					DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpResponseMessage>, IResponseResult>(
+						IRespondsExtensions.Respond,
+						responds,
+						() => new HttpResponseMessage()),
+					DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpRequestMessage, HttpResponseMessage>, IResponseResult>(
+						IRespondsExtensions.Respond,
+						responds,
+						_ => new HttpResponseMessage()),
+					DelegateTestCase.Create(
+						IRespondsExtensions.RespondUsing<FakeResponseStrategy, IResponseResult>,
+						responds),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						"test content"),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						"test content"),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						"test content",
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						"test content",
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						"test content",
+						(MediaTypeHeaderValue)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						"test content",
+						(MediaTypeHeaderValue)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						"test content",
+						(Encoding)null,
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						"test content",
+						(Encoding)null,
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						streamMock.Object),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						streamMock.Object,
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						streamMock.Object),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						streamMock.Object,
+						(string)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						streamMock.Object,
+						(MediaTypeHeaderValue)null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						streamMock.Object,
+						(MediaTypeHeaderValue)null),
+					DelegateTestCase.Create<IResponds<IResponseResult>, HttpStatusCode, Func<Stream>, MediaTypeHeaderValue, IResponseResult>(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						() => streamMock.Object,
+						null),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						content),
+					DelegateTestCase.Create(
+						IRespondsExtensions.Respond,
+						responds,
+						HttpStatusCode.OK,
+						content),
+					DelegateTestCase.Create(
+						IRespondsExtensions.TimesOut,
+						responds),
+					DelegateTestCase.Create(
+						IRespondsExtensions.TimesOutAfter,
+						responds,
+						1),
+					DelegateTestCase.Create(
+						IRespondsExtensions.TimesOutAfter,
+						responds,
+						TimeSpan.FromMilliseconds(1)),
+				};
+
+				return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
+			}
+
+			private class FakeResponseStrategy : IResponseStrategy
+			{
+				public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+				{
+					throw new NotImplementedException();
+				}
 			}
 		}
 	}
