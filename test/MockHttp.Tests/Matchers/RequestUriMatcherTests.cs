@@ -12,6 +12,7 @@ namespace MockHttp.Matchers
 		private RequestUriMatcher _sut;
 
 		[Theory]
+		[InlineData("", UriKind.Relative, "http://127.0.0.1/", true)]
 		[InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", true)]
 		[InlineData("/folder/relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", false)]
 		[InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/folder/relative.htm", false)]

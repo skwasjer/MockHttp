@@ -55,9 +55,13 @@ namespace MockHttp.Matchers
 		{
 			_requestUri = uri ?? throw new ArgumentNullException(nameof(uri));
 
-			if (!_requestUri.IsAbsoluteUri && _requestUri.ToString()[0] != '/')
+			if (!_requestUri.IsAbsoluteUri)
 			{
-				_requestUri = new Uri("/" + _requestUri, UriKind.Relative);
+				string relUri = _requestUri.ToString();
+				if (relUri.Length > 0 && _requestUri.ToString()[0] != '/')
+				{
+					_requestUri = new Uri("/" + _requestUri, UriKind.Relative);
+				}
 			}
 
 			_formattedUri = _requestUri.ToString();
