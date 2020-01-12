@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers
@@ -18,7 +14,7 @@ namespace MockHttp.Matchers
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _formattedUri;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly Regex _uriPatternMatcher;
+		private readonly PatternMatcher _uriPatternMatcher;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RequestUriMatcher"/> class using specified <paramref name="uri"/>.
@@ -38,9 +34,9 @@ namespace MockHttp.Matchers
 		{
 			_formattedUri = uriString ?? throw new ArgumentNullException(nameof(uriString));
 
-			if (allowWildcards && uriString.Length > 0 && uriString.Contains("*"))
+			if (allowWildcards && uriString.Contains("*"))
 			{
-				_uriPatternMatcher = new Regex(GetMatchPattern(uriString));
+				_uriPatternMatcher = new RegexPatternMatcher(uriString);
 			}
 			else
 			{
@@ -100,38 +96,6 @@ namespace MockHttp.Matchers
 		public override string ToString()
 		{
 			return $"RequestUri: '{_formattedUri}'";
-		}
-
-		private static string GetMatchPattern(string value)
-		{
-			var pattern = new StringBuilder();
-			bool startsWithWildcard = value[0] == '*';
-			if (startsWithWildcard)
-			{
-				value = value.TrimStart('*');
-				pattern.Append(".*");
-			}
-			else
-			{
-				pattern.Append("^");
-			}
-
-			bool endsWithWildcard = value.Length > 0 && value[value.Length - 1] == '*';
-			if (endsWithWildcard)
-			{
-				value = value.TrimEnd('*');
-			}
-
-			IEnumerable<string> matchGroups = value
-				.Split('*')
-				.Where(s => !string.IsNullOrEmpty(s))
-				.Select(s => $"({s})");
-
-			pattern.Append(string.Join(".+", matchGroups));
-
-			pattern.Append(endsWithWildcard ? ".*" : "$");
-
-			return pattern.ToString();
 		}
 	}
 }
