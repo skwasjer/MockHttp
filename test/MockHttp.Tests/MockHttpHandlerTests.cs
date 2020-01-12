@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -362,6 +363,7 @@ namespace MockHttp
 					.Content(jsonPostContent)
 					.PartialContent(jsonPostContent.Substring(10))
 					.ContentType("application/json; charset=utf-8")
+					.BearerToken()
 					.Header("Content-Length", jsonPostContent.Length)
 					.Header("Last-Modified", lastModified)
 #if NETCOREAPP2_2
@@ -389,6 +391,10 @@ namespace MockHttp
 			await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
 			var req = new HttpRequestMessage(HttpMethod.Post, "http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value")
 			{
+				Headers =
+				{
+					Authorization = new AuthenticationHeaderValue("Bearer", "some-token")
+				},
 				Content = postContent
 			};
 			HttpResponseMessage response = await _httpClient.SendAsync(req);

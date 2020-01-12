@@ -245,15 +245,16 @@ namespace MockHttp
 		/// <param name="builder">The request matching builder instance.</param>
 		/// <param name="name">The header name.</param>
 		/// <param name="value">The header value.</param>
+		/// <param name="allowWildcards"><see langword="true"/> to allow wildcards, or <see langword="false"/> if exact matching.</param>
 		/// <returns>The request matching builder instance.</returns>
-		public static RequestMatching Header(this RequestMatching builder, string name, string value)
+		public static RequestMatching Header(this RequestMatching builder, string name, string value, bool allowWildcards)
 		{
 			if (builder is null)
 			{
 				throw new ArgumentNullException(nameof(builder));
 			}
 
-			return builder.With(new HttpHeadersMatcher(name, value));
+			return builder.With(new HttpHeadersMatcher(name, value, allowWildcards));
 		}
 
 		/// <summary>

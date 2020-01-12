@@ -13,19 +13,23 @@ namespace MockHttp.Matchers
 	public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 	{
 		private static readonly HttpHeaderEqualityComparer EqualityComparer = new HttpHeaderEqualityComparer();
+		private readonly RegexPatternMatcher _patternMatcher;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
 		/// </summary>
 		/// <param name="name">The header name to match.</param>
 		/// <param name="value">The header value to match.</param>
-		public HttpHeadersMatcher(string name, string value)
+		/// <param name="allowWildcards"><see langword="true"/> to allow wildcards, or <see langword="false"/> if exact matching.</param>
+		public HttpHeadersMatcher(string name, string value, bool allowWildcards = false)
 			: base(new HttpHeadersCollection())
 		{
 			if (name is null)
 			{
 				throw new ArgumentNullException(nameof(name));
 			}
+
+			_patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
 
 			Value.Add(name, value);
 		}
@@ -88,13 +92,16 @@ namespace MockHttp.Matchers
 			return $"Headers: {Value.ToString().TrimEnd('\r', '\n')}";
 		}
 
-		private static bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
+		private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
 			return headers is { }
-				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
-				&& EqualityComparer.Equals(
+			 && headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
+			  &&
+				(_patternMatcher != null && vls.Any(_patternMatcher.IsMatch)
+			  ||
+				_patternMatcher == null && EqualityComparer.Equals(
 					expectedHeader,
-					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)
+					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls))
 				);
 		}
 	}
