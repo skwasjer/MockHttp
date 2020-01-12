@@ -161,6 +161,11 @@ namespace MockHttp.Json
 		public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
 			where TResult : IResponseResult
 		{
+			if (responds is null)
+			{
+				throw new ArgumentNullException(nameof(responds));
+			}
+
 			MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
 
 			return responds.RespondUsing(new JsonResponseStrategy<T>(statusCode, content, mt, serializerSettings));

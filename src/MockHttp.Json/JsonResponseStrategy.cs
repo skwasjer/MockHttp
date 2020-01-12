@@ -43,8 +43,14 @@ namespace MockHttp.Json
 
 	internal class JsonResponseStrategy<T> : JsonResponseStrategy
 	{
-		public JsonResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
-			: base(statusCode, typeof(T), r => value(r), mediaType, serializerSettings)
+		public JsonResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> valueFactory, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
+			: base(
+				statusCode,
+				typeof(T),
+				r => valueFactory != null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
+				mediaType,
+				serializerSettings
+			)
 		{
 		}
 	}

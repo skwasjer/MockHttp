@@ -170,6 +170,11 @@ namespace MockHttp.Json
 		public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
 			where TResult : IResponseResult
 		{
+			if (responds is null)
+			{
+				throw new ArgumentNullException(nameof(responds));
+			}
+
 			return responds.RespondUsing(new MediaTypeFormatterObjectResponseStrategy<T>(statusCode, value, mediaType, formatter));
 		}
 	}

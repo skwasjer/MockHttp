@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace MockHttp.Json
 {
@@ -27,6 +28,11 @@ namespace MockHttp.Json
 		/// <returns>The request matching builder instance.</returns>
 		public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, JsonSerializerSettings serializerSettings)
 		{
+			if (builder is null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
 			return builder.With(new JsonContentMatcher(content, serializerSettings));
 		}
 	}
