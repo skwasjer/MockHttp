@@ -12,8 +12,7 @@ namespace MockHttp.Matchers
 	/// </summary>
 	public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 	{
-		private static readonly HttpHeaderEqualityComparer EqualityComparer = new HttpHeaderEqualityComparer();
-		private readonly RegexPatternMatcher _patternMatcher;
+		private readonly HttpHeaderEqualityComparer _equalityComparer;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
@@ -29,7 +28,10 @@ namespace MockHttp.Matchers
 				throw new ArgumentNullException(nameof(name));
 			}
 
-			_patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
+			RegexPatternMatcher patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
+			_equalityComparer = patternMatcher == null
+				? new HttpHeaderEqualityComparer()
+				: new HttpHeaderEqualityComparer(patternMatcher);
 
 			Value.Add(name, value);
 		}
@@ -47,6 +49,8 @@ namespace MockHttp.Matchers
 				throw new ArgumentNullException(nameof(name));
 			}
 
+			_equalityComparer = new HttpHeaderEqualityComparer();
+
 			Value.Add(name, values);
 		}
 
@@ -61,6 +65,8 @@ namespace MockHttp.Matchers
 			{
 				throw new ArgumentNullException(nameof(headers));
 			}
+
+			_equalityComparer = new HttpHeaderEqualityComparer();
 
 			foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
 			{
@@ -95,13 +101,10 @@ namespace MockHttp.Matchers
 		private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
 			return headers is { }
-			 && headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
-			  &&
-				(_patternMatcher != null && vls.Any(_patternMatcher.IsMatch)
-			  ||
-				_patternMatcher == null && EqualityComparer.Equals(
+				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
+				&& _equalityComparer.Equals(
 					expectedHeader,
-					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls))
+					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)
 				);
 		}
 	}

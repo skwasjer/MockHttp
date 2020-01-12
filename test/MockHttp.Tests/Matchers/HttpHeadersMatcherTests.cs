@@ -58,6 +58,21 @@ namespace MockHttp.Matchers
 			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
 		}
 
+		[Theory]
+		[InlineData("*")]
+		[InlineData("*revalidate")]
+		[InlineData("must*")]
+		[InlineData("*reval*")]
+		public void Given_request_contains_expected_header_with_multiple_values_when_matching_with_wildcard_should_match(string value)
+		{
+			HttpRequestMessage request = GetRequestWithHeaders();
+
+			_sut = new HttpHeadersMatcher("Cache-Control", value, true);
+
+			// Act & assert
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+		}
+
 		[Fact]
 		public void Given_null_header_name_when_creating_matcher_should_throw()
 		{
