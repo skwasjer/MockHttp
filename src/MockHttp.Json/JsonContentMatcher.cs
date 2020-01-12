@@ -42,10 +42,9 @@ namespace MockHttp.Json
 			{
 				requestContext.TryGetService(out serializerSettings);
 			}
-
+			var jsonSerializer = JsonSerializer.Create(serializerSettings);
 			var requestJsonObject = JsonConvert.DeserializeObject<JToken>(requestContent, serializerSettings);
-			var matchingJsonObject = JsonConvert.DeserializeObject<JToken>(JsonConvert.SerializeObject(_jsonContentAsObject, serializerSettings), serializerSettings);
-
+			var matchingJsonObject = JToken.FromObject(_jsonContentAsObject, jsonSerializer);
 
 			return JToken.DeepEquals(requestJsonObject, matchingJsonObject);
 		}
