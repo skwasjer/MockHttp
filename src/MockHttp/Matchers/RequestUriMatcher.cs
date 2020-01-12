@@ -34,7 +34,13 @@ namespace MockHttp.Matchers
 		{
 			_formattedUri = uriString ?? throw new ArgumentNullException(nameof(uriString));
 
-			if (allowWildcards && uriString.Contains("*"))
+			if (allowWildcards
+#if NETSTANDARD2_1
+			 && uriString.Contains("*", StringComparison.InvariantCultureIgnoreCase)
+#else
+			 && uriString.Contains("*")
+#endif
+			)
 			{
 				_uriPatternMatcher = new RegexPatternMatcher(uriString);
 			}

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.3;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;net462</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard2.1" Condition="'$(TargetFramework)'=='netstandard2.1'" />
     <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
     <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=netstandard1.1" Condition="'$(TargetFramework)'=='netstandard1.3'" />
     <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" AdditionalProperties="TargetFramework=net45" Condition="'$(TargetFramework)'=='net462'" />

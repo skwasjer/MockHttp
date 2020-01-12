@@ -97,7 +97,7 @@ namespace MockHttp
 			return builder.QueryString(
 				key,
 				value is null
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETSTANDARD2_1
 					? Array.Empty<string>()
 #else
 					? new string[0]

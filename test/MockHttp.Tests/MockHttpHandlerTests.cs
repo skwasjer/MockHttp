@@ -366,10 +366,14 @@ namespace MockHttp
 					.BearerToken()
 					.Header("Content-Length", jsonPostContent.Length)
 					.Header("Last-Modified", lastModified)
+#if NETCOREAPP3_1
+					.Version(_httpClient.DefaultRequestVersion)
+#else
 #if NETCOREAPP2_2
 					.Version("2.0")
 #else
 					.Version("1.1")
+#endif
 #endif
 					.Any(any => any
 						.RequestUri("not-matching")
@@ -617,7 +621,7 @@ namespace MockHttp
 
 			// Act
 			foreach (HttpStatusCode expectedStatus in statusCodeSequence
-#if NETCOREAPP2_2
+#if NETCOREAPP2_2 || NETCOREAPP3_1
 				.SkipLast(1)
 #else
 				.Reverse().Skip(1).Reverse() // Ugly, does the job

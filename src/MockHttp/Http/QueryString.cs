@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace MockHttp.Http
@@ -76,7 +75,11 @@ namespace MockHttp.Http
 #if NETSTANDARD1_1
 			if (uri.Contains(TokenQuestionMark.ToString())
 #else
-			if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))
+#if NETSTANDARD2_1
+			if (uri.Contains(TokenQuestionMark.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.InvariantCultureIgnoreCase)
+#else
+			if (uri.Contains(TokenQuestionMark.ToString(System.Globalization.CultureInfo.InvariantCulture))
+#endif
 #endif
 				&& Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri u))
 			{
