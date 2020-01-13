@@ -31,8 +31,13 @@ namespace MockHttp.Json
 
 	internal class MediaTypeFormatterObjectResponseStrategy<T> : MediaTypeFormatterObjectResponseStrategy
 	{
-		public MediaTypeFormatterObjectResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeHeaderValue mediaType, MediaTypeFormatter formatter)
-			: base(statusCode, typeof(T), r => value(r), mediaType, formatter)
+		public MediaTypeFormatterObjectResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> valueFactory, MediaTypeHeaderValue mediaType, MediaTypeFormatter formatter)
+			: base(
+				statusCode,
+				typeof(T),
+				r => valueFactory != null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
+				mediaType,
+				formatter)
 		{
 		}
 

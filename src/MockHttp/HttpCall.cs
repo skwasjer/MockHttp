@@ -24,7 +24,7 @@ namespace MockHttp
 		{
 			get
 			{
-				if (_matchers == null)
+				if (_matchers is null)
 				{
 					SetMatchers(new List<IAsyncHttpRequestMatcher>());
 				}
@@ -45,7 +45,7 @@ namespace MockHttp
 		{
 			IsInvoked = true;
 
-			if (_responseStrategy == null)
+			if (_responseStrategy is null)
 			{
 				// TODO: clarify which mock.
 				throw new HttpMockException("No response configured for mock.");
@@ -66,7 +66,7 @@ namespace MockHttp
 
 		public virtual void SetMatchers(IEnumerable<IAsyncHttpRequestMatcher> matchers)
 		{
-			if (matchers == null)
+			if (matchers is null)
 			{
 				throw new ArgumentNullException(nameof(matchers));
 			}
@@ -87,7 +87,7 @@ namespace MockHttp
 
 		public override string ToString()
 		{
-			if (_matchers == null || _matchers.Count == 0)
+			if (_matchers is null || _matchers.Count == 0)
 			{
 				return string.Empty;
 			}

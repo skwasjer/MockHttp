@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using MockHttp.Http;
 using MockHttp.Responses;
@@ -13,20 +12,26 @@ namespace MockHttp.Matchers
 	/// </summary>
 	public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 	{
-		private static readonly HttpHeaderEqualityComparer EqualityComparer = new HttpHeaderEqualityComparer();
+		private readonly HttpHeaderEqualityComparer _equalityComparer;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
 		/// </summary>
 		/// <param name="name">The header name to match.</param>
 		/// <param name="value">The header value to match.</param>
-		public HttpHeadersMatcher(string name, string value)
+		/// <param name="allowWildcards"><see langword="true"/> to allow wildcards, or <see langword="false"/> if exact matching.</param>
+		public HttpHeadersMatcher(string name, string value, bool allowWildcards = false)
 			: base(new HttpHeadersCollection())
 		{
-			if (name == null)
+			if (name is null)
 			{
 				throw new ArgumentNullException(nameof(name));
 			}
+
+			RegexPatternMatcher patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
+			_equalityComparer = patternMatcher == null
+				? new HttpHeaderEqualityComparer()
+				: new HttpHeaderEqualityComparer(patternMatcher);
 
 			Value.Add(name, value);
 		}
@@ -39,10 +44,12 @@ namespace MockHttp.Matchers
 		public HttpHeadersMatcher(string name, IEnumerable<string> values)
 			: base(new HttpHeadersCollection())
 		{
-			if (name == null)
+			if (name is null)
 			{
 				throw new ArgumentNullException(nameof(name));
 			}
+
+			_equalityComparer = new HttpHeaderEqualityComparer();
 
 			Value.Add(name, values);
 		}
@@ -54,10 +61,12 @@ namespace MockHttp.Matchers
 		public HttpHeadersMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
 			: base(new HttpHeadersCollection())
 		{
-			if (headers == null)
+			if (headers is null)
 			{
 				throw new ArgumentNullException(nameof(headers));
 			}
+
+			_equalityComparer = new HttpHeaderEqualityComparer();
 
 			foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
 			{
@@ -89,12 +98,12 @@ namespace MockHttp.Matchers
 			return $"Headers: {Value.ToString().TrimEnd('\r', '\n')}";
 		}
 
-		private static bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
+		private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
 		{
-			return headers != null
-				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls) 
-				&& EqualityComparer.Equals(
-					expectedHeader, 
+			return headers is { }
+				&& headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
+				&& _equalityComparer.Equals(
+					expectedHeader,
 					new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)
 				);
 		}

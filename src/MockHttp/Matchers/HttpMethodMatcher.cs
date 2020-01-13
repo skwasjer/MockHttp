@@ -16,7 +16,7 @@ namespace MockHttp.Matchers
 		public HttpMethodMatcher(HttpMethod method)
 			: base(method)
 		{
-			if (method == null)
+			if (method is null)
 			{
 				throw new ArgumentNullException(nameof(method));
 			}
@@ -25,6 +25,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return requestContext.Request.Method == Value;
 		}
 

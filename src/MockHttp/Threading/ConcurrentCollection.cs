@@ -17,7 +17,7 @@ namespace MockHttp.Threading
 		{
 			lock (_syncLock)
 			{
-				if (_items == null)
+				if (_items is null)
 				{
 					_items = new List<T>();
 				}
@@ -34,7 +34,7 @@ namespace MockHttp.Threading
 
 			lock (_syncLock)
 			{
-				if (_items == null)
+				if (_items is null)
 				{
 					yield break;
 				}
@@ -79,7 +79,7 @@ namespace MockHttp.Threading
 			{
 				lock (_syncLock)
 				{
-					if (_items == null)
+					if (_items is null)
 					{
 						throw new IndexOutOfRangeException();
 					}

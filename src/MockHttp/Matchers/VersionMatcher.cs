@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers
@@ -20,6 +19,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return requestContext.Request.Version.Equals(Value);
 		}
 

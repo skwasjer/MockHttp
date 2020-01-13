@@ -26,7 +26,7 @@ namespace MockHttp
 				? _responseSequence[nextRequestIndex]
 				: null;
 
-			if (responseStrategy == null)
+			if (responseStrategy is null)
 			{
 				// TODO: clarify which mock.
 				throw new HttpMockException("No response configured for mock.");

@@ -19,7 +19,7 @@ namespace MockHttp.Language.Flow
 
 		public void Verifiable(string because)
 		{
-			if (because == null)
+			if (because is null)
 			{
 				throw new ArgumentNullException(nameof(because));
 			}

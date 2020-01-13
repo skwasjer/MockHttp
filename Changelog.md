@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.2.0
+
+- Added .NET Standard 2.1
+
+## v2.1.1
+
+- fix: `IndexOutOfRangeException` when matching by relative empty request uri
+
 ## v2.1.0
 
 - Renamed a `Headers()` overload into `Header()` since it only matches 1 header.

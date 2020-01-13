@@ -52,6 +52,11 @@ namespace MockHttp
 		/// <inheritdoc />
 		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			if (request is null)
+			{
+				throw new ArgumentNullException(nameof(request));
+			}
+
 			await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
 
 			var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
@@ -79,7 +84,7 @@ namespace MockHttp
 		/// <returns>The configured request.</returns>
 		public IConfiguredRequest When(Action<RequestMatching> matching)
 		{
-			if (matching == null)
+			if (matching is null)
 			{
 				throw new ArgumentNullException(nameof(matching));
 			}
@@ -113,12 +118,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
-			if (times == null)
-			{
-				throw new ArgumentNullException(nameof(times));
-			}
-
-			Verify(matching, times(), because);
+			Verify(matching, times?.Invoke(), because);
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
 		{
-			return VerifyAsync(matching, times(), because);
+			return VerifyAsync(matching, times?.Invoke(), because);
 		}
 
 		/// <summary>
@@ -154,9 +154,14 @@ namespace MockHttp
 		/// <param name="because">The reasoning for this expectation.</param>
 		public async Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
 		{
-			if (matching == null)
+			if (matching is null)
 			{
 				throw new ArgumentNullException(nameof(matching));
+			}
+
+			if (times is null)
+			{
+				times = IsSent.AtLeastOnce();
 			}
 
 			var rm = new RequestMatching();
@@ -271,13 +276,15 @@ namespace MockHttp
 
 		private static async Task LoadIntoBufferAsync(HttpContent httpContent)
 		{
-			if (httpContent != null)
+			if (httpContent is { })
 			{
 				// Force read content, so content can be checked more than once.
 				await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);
 				// Force read content length, in case it will be checked via header matcher.
 				// ReSharper disable once UnusedVariable
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
 				long? cl = httpContent.Headers.ContentLength;
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
 			}
 		}
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using MockHttp.Responses;
 
@@ -16,7 +15,7 @@ namespace MockHttp.Matchers
 		public MediaTypeHeaderMatcher(MediaTypeHeaderValue headerValue)
 			: base(headerValue)
 		{
-			if (headerValue == null)
+			if (headerValue is null)
 			{
 				throw new ArgumentNullException(nameof(headerValue));
 			}
@@ -25,6 +24,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return requestContext.Request.Content?.Headers.ContentType?.Equals(Value) ?? false;
 		}
 

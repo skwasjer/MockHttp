@@ -37,7 +37,7 @@ namespace MockHttp.FluentAssertions
 			where TException : Exception
 		{
 			Execute.Assertion
-				.ForCondition((object)Subject != null)
+				.ForCondition((object)Subject is { })
 				.BecauseOf(because, becauseArgs)
 				.FailWith("Expected {context} to throw {0}{reason}, but found <null>.", (object)typeof(TException));
 
@@ -59,7 +59,7 @@ namespace MockHttp.FluentAssertions
 			params object[] becauseArgs)
 		{
 			Execute.Assertion
-				.ForCondition(Subject != null)
+				.ForCondition(Subject is { })
 				.BecauseOf(because, becauseArgs)
 				.FailWith("Expected {context} not to throw{reason}, but found <null>.");
 			try
@@ -67,7 +67,7 @@ namespace MockHttp.FluentAssertions
 				// ReSharper disable once PossibleNullReferenceException
 				return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke());
 			}
-			catch (TargetInvocationException ex) when (ex.InnerException != null)
+			catch (TargetInvocationException ex) when (ex.InnerException is { })
 			{
 				NotThrow(ex.InnerException, because, becauseArgs);
 				return new AndWhichConstraint<DelegateAssertions, object>(this, default);
@@ -96,7 +96,7 @@ namespace MockHttp.FluentAssertions
 			params object[] becauseArgs)
 		{
 			Execute.Assertion
-				.ForCondition(Subject != null)
+				.ForCondition(Subject is { })
 				.BecauseOf(because, becauseArgs)
 				.FailWith("Expected {context} not to throw{reason}, but found <null>.");
 			try
@@ -104,7 +104,7 @@ namespace MockHttp.FluentAssertions
 				// ReSharper disable once PossibleNullReferenceException
 				return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke(args));
 			}
-			catch (TargetInvocationException ex) when (ex.InnerException != null)
+			catch (TargetInvocationException ex) when (ex.InnerException is { })
 			{
 				NotThrow(ex.InnerException, because, becauseArgs);
 				return new AndWhichConstraint<DelegateAssertions, object>(this, default);
@@ -123,7 +123,7 @@ namespace MockHttp.FluentAssertions
 			{
 				Subject.DynamicInvoke(args);
 			}
-			catch (TargetInvocationException ex) when (ex.InnerException != null)
+			catch (TargetInvocationException ex) when (ex.InnerException is { })
 			{
 				exception = ex.InnerException;
 			}

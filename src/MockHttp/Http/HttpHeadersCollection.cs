@@ -10,12 +10,11 @@ namespace MockHttp.Http
 	{
 		internal HttpHeadersCollection()
 		{
-			
 		}
 
 		public static HttpHeaders Parse(string headers)
 		{
-			if (headers == null)
+			if (headers is null)
 			{
 				throw new ArgumentNullException(nameof(headers));
 			}
@@ -31,7 +30,7 @@ namespace MockHttp.Http
 				while (true)
 				{
 					string header = sr.ReadLine();
-					if (header == null)
+					if (header is null)
 					{
 						break;
 					}
@@ -54,7 +53,7 @@ namespace MockHttp.Http
 
 		internal static IEnumerable<string> ParseHttpHeaderValue(string headerValue)
 		{
-			if (headerValue == null)
+			if (headerValue is null)
 			{
 				throw new ArgumentNullException(nameof(headerValue), "The value cannot be null or empty.");
 			}

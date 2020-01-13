@@ -39,7 +39,7 @@ namespace MockHttp.Matchers
 
 			_sut = new FormDataMatcher(new[]
 			{
-				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue == null ? null : new [] { expectedValue })
+				new KeyValuePair<string, IEnumerable<string>>(expectedKey, expectedValue is null ? null : new [] { expectedValue })
 			});
 
 			// Act & assert
@@ -173,6 +173,22 @@ namespace MockHttp.Matchers
 
 			// Act & assert
 			(await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
+		}
+
+		[Fact]
+		public void Given_null_context_when_matching_it_should_throw()
+		{
+			_sut = new FormDataMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
+			MockHttpRequestContext requestContext = null;
+
+			// Act
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName(nameof(requestContext));
 		}
 	}
 }

@@ -26,12 +26,15 @@ namespace MockHttp.Matchers
 		/// <param name="formData">The form data parameters.</param>
 		public FormDataMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
 		{
-			if (formData == null)
+			if (formData is null)
 			{
 				throw new ArgumentNullException(nameof(formData));
 			}
 
-			_matchQs = formData.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Where(v => v != null) ?? new List<string>());
+			_matchQs = formData.ToDictionary(
+				kvp => kvp.Key,
+				kvp => kvp.Value?.Where(v => v is { }) ?? new List<string>()
+			);
 		}
 
 		/// <summary>
@@ -46,6 +49,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public virtual async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			if (!CanProcessContent(requestContext.Request.Content))
 			{
 				return false;
@@ -59,11 +67,23 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			// TODO: quite unreabable. Unpack/refactor.
-			return _matchQs.All(q =>
-				formData.ContainsKey(q.Key)
-				 && (formData[q.Key].Count() == q.Value.Count() && !q.Value.Any()
-				 || formData[q.Key].Any(qv => q.Value.Contains(qv))));
+			return _matchQs.All(q => formData.ContainsKey(q.Key)
+			 && (
+				BothAreEmpty(formData[q.Key], q.Value)
+			 || HasOneOf(formData[q.Key], q.Value))
+			);
+		}
+
+		private static bool BothAreEmpty(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			int leftCount = left.Count();
+			int rightCount = right.Count();
+			return leftCount == 0 && leftCount == rightCount;
+		}
+
+		private static bool HasOneOf(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			return left.Any(right.Contains);
 		}
 
 		/// <inheritdoc />
@@ -81,11 +101,11 @@ namespace MockHttp.Matchers
 			{
 				var formData = new List<KeyValuePair<string, string>>();
 				foreach (HttpContent httpContent in multipartFormDataContent
-					.Where(c => c.Headers.ContentDisposition != null && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
+					.Where(c => c.Headers.ContentDisposition is { } && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
 				)
 				{
 					string key = httpContent.Headers.ContentDisposition.Name;
-					bool isFileUpload = httpContent.Headers.ContentType != null && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
+					bool isFileUpload = httpContent.Headers.ContentType is { } && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
 					if (isFileUpload)
 					{
 						// TODO: Support file uploads? Maybe using different matcher, to support (large) streams.
@@ -113,7 +133,7 @@ namespace MockHttp.Matchers
 
 		private static bool CanProcessContent(HttpContent httpContent)
 		{
-			return httpContent?.Headers.ContentType != null && IsFormData(httpContent.Headers.ContentType.MediaType);
+			return httpContent?.Headers.ContentType is { } && IsFormData(httpContent.Headers.ContentType.MediaType);
 		}
 
 		private static bool IsFormData(string mediaType)

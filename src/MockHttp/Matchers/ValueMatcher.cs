@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace MockHttp.Matchers
+﻿namespace MockHttp.Matchers
 {
 	/// <summary>
 	/// Base class that matches a request by a value.

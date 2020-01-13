@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace MockHttp.Matchers
@@ -39,7 +38,7 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		protected override bool IsMatch(byte[] requestContent)
 		{
-			return Contains(requestContent, ByteContent);
+			return requestContent.Contains(ByteContent);
 		}
 
 		/// <inheritdoc />
@@ -49,53 +48,6 @@ namespace MockHttp.Matchers
 		public override string ToString()
 		{
 			return "Partial" + base.ToString();
-		}
-
-		// TODO: move to util/extension?
-		private static bool Contains<T>(IReadOnlyList<T> source, IReadOnlyList<T> value)
-		{
-			return Contains(source, value, EqualityComparer<T>.Default);
-		}
-
-		private static bool Contains<T>(IReadOnlyList<T> source, IReadOnlyList<T> value, IEqualityComparer<T> comparer)
-		{
-			return IndexOf(source, value, 0, comparer) != -1;
-		}
-
-		private static int IndexOf<T>(IReadOnlyList<T> data, IReadOnlyList<T> pattern, int offset, IEqualityComparer<T> comparer)
-		{
-			if (pattern.Count > data.Count)
-			{
-				return -1;
-			}
-
-			for (int i = offset; i < data.Count;)
-			{
-				int j = 0;
-				for (; j < pattern.Count; j++)
-				{
-					if (!comparer.Equals(pattern[j], data[i]))
-					{
-						break;
-					}
-
-					i++;
-				}
-
-				if (j == pattern.Count)
-				{
-					return i - pattern.Count;
-				}
-
-				if (j != 0)
-				{
-					continue;
-				}
-
-				i++;
-			}
-
-			return -1;
 		}
 	}
 }

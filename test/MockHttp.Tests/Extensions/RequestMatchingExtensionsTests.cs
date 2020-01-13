@@ -733,7 +733,8 @@ namespace MockHttp.Extensions
 						RequestMatchingExtensions.Header,
 						instance,
 						"header",
-						(string)null),
+						(string)null,
+						false),
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.Header,
 						instance,
@@ -868,6 +869,82 @@ namespace MockHttp.Extensions
 				};
 
 				return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
+			}
+		}
+
+		public class Authentication : RequestMatchingExtensionsTests
+		{
+			[Theory]
+			[InlineData("token")]
+			[InlineData("some-other-long-token")]
+			public async Task When_configuring_any_bearer_token_should_match(string token)
+			{
+				var request = new HttpRequestMessage { Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) } };
+
+				// Act
+				_sut.BearerToken();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+			}
+
+			[Fact]
+			public async Task Given_request_does_not_have_authorization_header_when_configuring_any_bearer_token_should_not_match()
+			{
+				var request = new HttpRequestMessage();
+
+				// Act
+				_sut.BearerToken();
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeFalse();
+			}
+
+			[Fact]
+			public async Task When_configuring_bearer_token_should_match()
+			{
+				const string token = "token";
+				var request = new HttpRequestMessage { Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) } };
+
+				// Act
+				_sut.BearerToken(token);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+			}
+
+			[Fact]
+			public async Task Given_request_does_not_have_authorization_header_when_configuring_bearer_token_should_not_match()
+			{
+				var request = new HttpRequestMessage();
+
+				// Act
+				_sut.BearerToken("token");
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeFalse();
+			}
+
+			[Fact]
+			public async Task Given_request_has_different_authorization_header_when_configuring_bearer_token_should_not_match()
+			{
+				var request = new HttpRequestMessage { Headers = { Authorization = new AuthenticationHeaderValue("Bearer", "other-token") } };
+
+				// Act
+				_sut.BearerToken("token");
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeFalse();
 			}
 		}
 	}

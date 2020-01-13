@@ -23,7 +23,7 @@ namespace MockHttp.Responses
 		{
 			StatusCode = statusCode;
 			TypeOfValue = typeOfValue ?? throw new ArgumentNullException(nameof(typeOfValue));
-			ValueFactory = valueFactory;
+			ValueFactory = valueFactory ?? throw new ArgumentNullException(nameof(valueFactory));
 			MediaType = mediaType;
 		}
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using MockHttp.Responses;
@@ -29,6 +28,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return Matchers.AnyAsync(requestContext);
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
@@ -52,6 +53,21 @@ namespace MockHttp.Matchers
 			HttpRequestMessage request = GetRequestWithHeaders();
 
 			_sut = new HttpHeadersMatcher("Cache-Control", values);
+
+			// Act & assert
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+		}
+
+		[Theory]
+		[InlineData("*")]
+		[InlineData("*revalidate")]
+		[InlineData("must*")]
+		[InlineData("*reval*")]
+		public void Given_request_contains_expected_header_with_multiple_values_when_matching_with_wildcard_should_match(string value)
+		{
+			HttpRequestMessage request = GetRequestWithHeaders();
+
+			_sut = new HttpHeadersMatcher("Cache-Control", value, true);
 
 			// Act & assert
 			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
@@ -155,6 +171,22 @@ namespace MockHttp.Matchers
 				}
 			};
 			return request;
+		}
+
+		[Fact]
+		public void Given_null_context_when_matching_it_should_throw()
+		{
+			_sut = new HttpHeadersMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
+			MockHttpRequestContext requestContext = null;
+
+			// Act
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName(nameof(requestContext));
 		}
 	}
 }

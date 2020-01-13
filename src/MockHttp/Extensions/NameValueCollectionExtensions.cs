@@ -9,7 +9,7 @@ namespace MockHttp
 	{
 		public static IEnumerable<KeyValuePair<string, IEnumerable<string>>> AsEnumerable(this NameValueCollection nameValueCollection)
 		{
-			if (nameValueCollection == null)
+			if (nameValueCollection is null)
 			{
 				throw new ArgumentNullException(nameof(nameValueCollection));
 			}

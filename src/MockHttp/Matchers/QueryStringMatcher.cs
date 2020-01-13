@@ -21,7 +21,7 @@ namespace MockHttp.Matchers
 		/// <param name="parameters">The query string parameters.</param>
 		public QueryStringMatcher(IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters)
 		{
-			if (parameters == null)
+			if (parameters is null)
 			{
 				throw new ArgumentNullException(nameof(parameters));
 			}
@@ -41,6 +41,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			QueryString query = QueryString.Parse(requestContext.Request.RequestUri.Query);
 
 			// When match collection is empty, behavior is flipped, and we expect no query string parameters on request.
@@ -49,11 +54,22 @@ namespace MockHttp.Matchers
 				return false;
 			}
 
-			// TODO: quite unreabable. Unpack/refactor.
-			return _matchQs.All(q =>
-				query.ContainsKey(q.Key)
-				&& (query[q.Key].Count() == q.Value.Count() && !q.Value.Any()
-					|| query[q.Key].Any(qv => q.Value.Contains(qv))));
+			return _matchQs.All(q => query.ContainsKey(q.Key)
+			 && (BothAreEmpty(query[q.Key], q.Value)
+			 || HasOneOf(query[q.Key], q.Value))
+			);
+		}
+
+		private static bool BothAreEmpty(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			int leftCount = left.Count();
+			int rightCount = right.Count();
+			return leftCount == 0 && leftCount == rightCount;
+		}
+
+		private static bool HasOneOf(IEnumerable<string> left, IEnumerable<string> right)
+		{
+			return left.Any(right.Contains);
 		}
 
 		/// <inheritdoc />

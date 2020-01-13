@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace MockHttp.Responses
@@ -23,14 +22,16 @@ namespace MockHttp.Responses
 			var sut = new TimeoutStrategy(timeout);
 
 			// Act
-			Stopwatch sw = Stopwatch.StartNew();
 			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
-			act.Should().Throw<TaskCanceledException>();
-			sw.Stop();
-			// Due to (high perf) timing, sometimes comes out to 0.9999xx secs, so round to nearest ms.
-			Math.Round((decimal)sw.Elapsed.TotalMilliseconds, 0).Should().BeGreaterOrEqualTo(timeoutInMilliseconds);
+			act.ExecutionTimeOf(func => func
+					.Should()
+					.Throw<TaskCanceledException>("the timeout expired")
+				)
+				.Should()
+				// Allow 5% diff.
+				.BeGreaterThan(timeout - TimeSpan.FromMilliseconds(timeoutInMilliseconds * 0.95));
 		}
 
 		[Fact]

@@ -43,7 +43,7 @@ namespace MockHttp.Responses
 			{
 				service = (TService)s;
 				return true;
-			};
+			}
 
 			service = default;
 			return false;

@@ -12,6 +12,7 @@ namespace MockHttp.Matchers
 		private RequestUriMatcher _sut;
 
 		[Theory]
+		[InlineData("", UriKind.Relative, "http://127.0.0.1/", true)]
 		[InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", true)]
 		[InlineData("/folder/relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", false)]
 		[InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/folder/relative.htm", false)]
@@ -96,6 +97,22 @@ namespace MockHttp.Matchers
 
 			// Assert
 			displayText.Should().Be(expectedText);
+		}
+
+		[Fact]
+		public void Given_null_context_when_matching_it_should_throw()
+		{
+			_sut = new RequestUriMatcher("*/controller/*");
+			MockHttpRequestContext requestContext = null;
+
+			// Act
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Action act = () => _sut.IsMatch(requestContext);
+
+			// Assert
+			act.Should()
+				.Throw<ArgumentNullException>()
+				.WithParamName(nameof(requestContext));
 		}
 	}
 }

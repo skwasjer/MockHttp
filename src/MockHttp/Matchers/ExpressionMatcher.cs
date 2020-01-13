@@ -19,7 +19,7 @@ namespace MockHttp.Matchers
 		/// <param name="expression">The expression func to call to check if the request matches.</param>
 		public ExpressionMatcher(Expression<Func<HttpRequestMessage, bool>> expression)
 		{
-			if (expression == null)
+			if (expression is null)
 			{
 				throw new ArgumentNullException(nameof(expression));
 			}
@@ -31,6 +31,11 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override bool IsMatch(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			return _func(requestContext.Request);
 		}
 

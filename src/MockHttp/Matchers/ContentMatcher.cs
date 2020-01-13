@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using MockHttp.Responses;
@@ -29,7 +28,7 @@ namespace MockHttp.Matchers
 		/// </summary>
 		public ContentMatcher()
 		{
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETSTANDARD2_1
 			ByteContent = Array.Empty<byte>();
 #else
 			ByteContent = new byte[0];
@@ -67,15 +66,20 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
 		{
+			if (requestContext is null)
+			{
+				throw new ArgumentNullException(nameof(requestContext));
+			}
+
 			byte[] requestContent = null;
-			if (requestContext.Request.Content != null)
+			if (requestContext.Request.Content is { })
 			{
 				// Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
 				// In comparison, ReadAsStream() will return the underlying stream which can only be read once.
 				requestContent = await requestContext.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 			}
 
-			if (requestContent == null)
+			if (requestContent is null)
 			{
 				return ByteContent.Length == 0;
 			}
@@ -106,10 +110,10 @@ namespace MockHttp.Matchers
 		{
 			if (ByteContent.Length == 0)
 			{
-				return $"Content: <empty>";
+				return "Content: <empty>";
 			}
 
-			if (_encoding != null)
+			if (_encoding is { })
 			{
 				return $"Content: {_encoding.GetString(ByteContent, 0, ByteContent.Length)}";
 			}

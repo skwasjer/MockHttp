@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MockHttp.Matchers;
 
 namespace MockHttp.Http
 {
 	internal class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 	{
+		private readonly PatternMatcher _valuePatternMatcher;
+
+		public HttpHeaderEqualityComparer()
+		{
+		}
+
+		public HttpHeaderEqualityComparer(PatternMatcher valuePatternMatcher)
+		{
+			_valuePatternMatcher = valuePatternMatcher ?? throw new ArgumentNullException(nameof(valuePatternMatcher));
+		}
+
 		public bool Equals(KeyValuePair<string, IEnumerable<string>> x, KeyValuePair<string, IEnumerable<string>> y)
 		{
 			if (x.Key != y.Key)
@@ -16,7 +28,11 @@ namespace MockHttp.Http
 			if (y.Value.Any(
 				yValue => x.Value
 					.SelectMany(HttpHeadersCollection.ParseHttpHeaderValue)
-					.All(xValue => HttpHeadersCollection.ParseHttpHeaderValue(yValue).Contains(xValue))
+					.All(xValue =>
+					{
+						string[] headerValues = HttpHeadersCollection.ParseHttpHeaderValue(yValue).ToArray();
+						return headerValues.Contains(xValue) || _valuePatternMatcher != null && headerValues.Any(_valuePatternMatcher.IsMatch);
+					})
 				))
 			{
 				return true;
