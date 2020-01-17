@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MockHttp.Server
 {
@@ -32,10 +33,23 @@ namespace MockHttp.Server
 #pragma warning disable CA1054 // Uri parameters should not be strings
 		public MockHttpServer(MockHttpHandler mockHttpHandler, string hostUrl)
 #pragma warning restore CA1054 // Uri parameters should not be strings
+			: this(mockHttpHandler, null, hostUrl)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MockHttpServer"/> using specified <paramref name="mockHttpHandler"/> and configures it to listen on specified <paramref name="hostUrl"/>.
+		/// </summary>
+		/// <param name="mockHttpHandler">The mock http handler.</param>
+		/// <param name="loggerFactory">The logger factory to use to log pipeline requests to.</param>
+		/// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
+#pragma warning disable CA1054 // Uri parameters should not be strings
+		public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory loggerFactory, string hostUrl)
+#pragma warning restore CA1054 // Uri parameters should not be strings
 		{
 			Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
 			_requestHandler = new ServerRequestHandler(mockHttpHandler);
-			_webHostBuilder = CreateWebHostBuilder();
+			_webHostBuilder = CreateWebHostBuilder(loggerFactory);
 			SetHostUrl(hostUrl);
 		}
 
@@ -126,9 +140,16 @@ namespace MockHttp.Server
 			}
 		}
 
-		private IWebHostBuilder CreateWebHostBuilder()
+		private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory loggerFactory)
 		{
 			return new WebHostBuilder()
+				.ConfigureServices(services =>
+				{
+					if (loggerFactory != null)
+					{
+						services.AddSingleton(loggerFactory);
+					}
+				})
 				.UseKestrel(options => options.AddServerHeader = false)
 				.CaptureStartupErrors(false)
 				.SuppressStatusMessages(true)

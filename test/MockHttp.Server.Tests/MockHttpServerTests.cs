@@ -4,7 +4,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using MockHttp.FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace MockHttp.Server
@@ -31,6 +33,22 @@ namespace MockHttp.Server
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(mockHttpHandler));
+		}
+
+		[Fact]
+		public void When_creating_and_starting_server_with_null_logger_it_should_not_throw()
+		{
+			ILoggerFactory loggerFactory = null;
+
+			// Act
+			// ReSharper disable once ObjectCreationAsStatement
+			// ReSharper disable once ExpressionIsAlwaysNull
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1");
+
+			// Assert
+			using MockHttpServer server = act.Should().NotThrow().Which;
+			Func<Task> act2 = () => server.StartAsync();
+			act2.Should().NotThrow();
 		}
 
 		[Fact]
@@ -79,7 +97,7 @@ namespace MockHttp.Server
 		[Fact]
 		public async Task Given_server_is_started_when_starting_again_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
 			await server.StartAsync();
 			server.IsStarted.Should().BeTrue();
 
@@ -93,7 +111,7 @@ namespace MockHttp.Server
 		[Fact]
 		public void Given_server_is_not_started_when_stopped_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
 			server.IsStarted.Should().BeFalse();
 
 			// Act
