@@ -1,17 +1,24 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Logging;
 
 namespace MockHttp.Server
 {
 	internal class ServerRequestHandler : DelegatingHandler
 	{
-		public ServerRequestHandler(HttpMessageHandler handler)
+		private readonly ILogger<ServerRequestHandler> _logger;
+
+		// ReSharper disable once SuggestBaseTypeForParameter
+		public ServerRequestHandler(MockHttpHandler mockHttpHandler, ILogger<ServerRequestHandler> logger)
 		{
-			InnerHandler = handler;
+			_logger = logger;
+			InnerHandler = mockHttpHandler;
 		}
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -23,26 +30,50 @@ namespace MockHttp.Server
 				throw new ArgumentNullException(nameof(httpContext));
 			}
 
+			LogRequestMessage(httpContext, Resources.Debug_HandlingRequest);
+
 			CancellationToken cancellationToken = httpContext.RequestAborted;
 			HttpResponse response = httpContext.Response;
 
+			using HttpRequestMessage httpRequestMessage = new WrappedHttpRequest(httpContext.Request);
+			cancellationToken.ThrowIfCancellationRequested();
+
+			HttpResponseMessage httpResponseMessage;
+			IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
 			try
 			{
-				using HttpRequestMessage httpRequestMessage = new WrappedHttpRequest(httpContext.Request);
-				cancellationToken.ThrowIfCancellationRequested();
-
-				HttpResponseMessage httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
-				// Dispose message when response is done.
-				response.RegisterForDispose(httpResponseMessage);
-				cancellationToken.ThrowIfCancellationRequested();
-
-				IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
-				await httpResponseMessage.MapToFeatureAsync(responseFeature, cancellationToken).ConfigureAwait(false);
+				httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
 			}
+#pragma warning disable CA1031 // Do not catch general exception types
 			catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
 			{
-				throw;
+				LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
+				httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+				{
+					ReasonPhrase = Resources.Error_VerifyMockSetup,
+					Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, Encoding.UTF8, "text/plain")
+				};
+#pragma warning restore CA2000 // Dispose objects before losing scope
 			}
+			finally
+			{
+				LogRequestMessage(httpContext, Resources.Debug_RequestHandled);
+			}
+
+			// Dispose message when response is done.
+			response.RegisterForDispose(httpResponseMessage);
+			cancellationToken.ThrowIfCancellationRequested();
+
+			await httpResponseMessage.MapToFeatureAsync(responseFeature, cancellationToken).ConfigureAwait(false);
+		}
+
+		private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception ex = null)
+		{
+			string formattedMessage = Resources.RequestLogMessage + message;
+			_logger.Log(logLevel, ex, formattedMessage, httpContext.Connection.Id, httpContext.TraceIdentifier);
 		}
 	}
 }

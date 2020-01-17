@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+    <PackageReference Include="Serilog.Sinks.TestCorrelator" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
     <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" />
   </ItemGroup>

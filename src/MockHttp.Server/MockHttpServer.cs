@@ -17,13 +17,15 @@ namespace MockHttp.Server
 	public sealed class MockHttpServer : IDisposable
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly ServerRequestHandler _requestHandler;
+		private readonly object _syncLock = new object();
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly IWebHostBuilder _webHostBuilder;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private IWebHost _host;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _hostUrl;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private Action<IApplicationBuilder> _configureAppBuilder;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MockHttpServer"/> using specified <paramref name="mockHttpHandler"/> and configures it to listen on specified <paramref name="hostUrl"/>.
@@ -48,7 +50,6 @@ namespace MockHttp.Server
 #pragma warning restore CA1054 // Uri parameters should not be strings
 		{
 			Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
-			_requestHandler = new ServerRequestHandler(mockHttpHandler);
 			_webHostBuilder = CreateWebHostBuilder(loggerFactory);
 			SetHostUrl(hostUrl);
 		}
@@ -56,7 +57,6 @@ namespace MockHttp.Server
 		/// <inheritdoc />
 		public void Dispose()
 		{
-			_requestHandler?.Dispose();
 			_host?.Dispose();
 			_host = null;
 		}
@@ -75,7 +75,7 @@ namespace MockHttp.Server
 		{
 			get
 			{
-				lock (_requestHandler)
+				lock (_syncLock)
 				{
 					return _host?.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First() ?? _hostUrl;
 				}
@@ -97,7 +97,7 @@ namespace MockHttp.Server
 				throw new InvalidOperationException($"{nameof(MockHttpServer)} already running.");
 			}
 
-			lock (_requestHandler)
+			lock (_syncLock)
 			{
 				if (_host != null)
 				{
@@ -119,14 +119,14 @@ namespace MockHttp.Server
 				throw new InvalidOperationException($"{nameof(MockHttpServer)} not running.");
 			}
 
-			lock (_requestHandler)
+			lock (_syncLock)
 			{
 				if (_host == null)
 				{
 					return Task.CompletedTask;
 				}
 
-				// Local copy, so we can null it before disposing.
+				// Make local copy, so we can null it before disposing.
 				IWebHost host = _host;
 				_host = null;
 				try
@@ -149,11 +149,25 @@ namespace MockHttp.Server
 					{
 						services.AddSingleton(loggerFactory);
 					}
+
+					services.AddSingleton(Handler);
+					services.AddTransient<ServerRequestHandler>();
 				})
 				.UseKestrel(options => options.AddServerHeader = false)
 				.CaptureStartupErrors(false)
 				.SuppressStatusMessages(true)
-				.Configure(builder => builder.Use(_requestHandler.HandleAsync));
+				.Configure(applicationBuilder =>
+				{
+					_configureAppBuilder?.Invoke(applicationBuilder);
+
+					ServerRequestHandler serverRequestHandler = applicationBuilder.ApplicationServices.GetRequiredService<ServerRequestHandler>();
+					applicationBuilder.Use(serverRequestHandler.HandleAsync);
+				});
+		}
+
+		internal void Configure(Action<IApplicationBuilder> configureAppBuilder)
+		{
+			_configureAppBuilder = configureAppBuilder;
 		}
 
 		private void SetHostUrl(string hostUrl)
@@ -165,7 +179,7 @@ namespace MockHttp.Server
 
 			if (!Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri uri))
 			{
-				throw new ArgumentException("Specify a host URL.", nameof(hostUrl));
+				throw new ArgumentException(Resources.Error_HostUrlIsNotValid, nameof(hostUrl));
 			}
 
 			// Ensure we have a proper host URL without path/query.

@@ -6,19 +6,69 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MockHttp.FluentAssertions;
-using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace MockHttp.Server
 {
-	public class MockHttpServerTests : IClassFixture<MockHttpServerFixture>
+	public class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 	{
 		private readonly MockHttpServerFixture _fixture;
+		private readonly ITestOutputHelper _testOutputHelper;
 
-		public MockHttpServerTests(MockHttpServerFixture fixture)
+		public MockHttpServerTests(MockHttpServerFixture fixture, ITestOutputHelper testOutputHelper)
 		{
 			_fixture = fixture;
-			_fixture.Handler.Reset();
+			_fixture.Reset();
+			_testOutputHelper = testOutputHelper;
+		}
+
+		public void Dispose()
+		{
+			_fixture.LogServerTrace(_testOutputHelper);
+		}
+
+		[Fact]
+		public async Task Given_mocked_server_when_sending_client_request_it_should_respond()
+		{
+			using HttpClient client = _fixture.Server.CreateClient();
+
+			_fixture.Handler
+				.When(matching => matching
+					.RequestUri("test/wtf/")
+					.Header("test", "value")
+					.Method(HttpMethod.Post)
+					.Content("request-content")
+					.ContentType("text/plain", Encoding.ASCII)
+				)
+				.Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
+				{
+					Content = new StringContent("Some content", Encoding.UTF8, "text/html"),
+					Headers =
+					{
+						{ "return-test", "return-value" }
+					}
+				})
+				.Verifiable();
+
+			// Act
+			using var request = new HttpRequestMessage(HttpMethod.Post, "test/wtf/")
+			{
+				Content = new StringContent("request-content", Encoding.ASCII, "text/plain"),
+				Headers =
+				{
+					{ "test", "value"}
+				}
+			};
+
+			HttpResponseMessage response = await client.SendAsync(request);
+
+			// Assert
+			response.Should().HaveStatusCode(HttpStatusCode.Accepted);
+			response.Should().HaveContentType("text/html");
+			response.Should().HaveHeader("return-test", "return-value");
+			await response.Should().HaveContentAsync("Some content");
+			_fixture.Handler.Verify();
 		}
 
 		[Fact]
@@ -122,45 +172,15 @@ namespace MockHttp.Server
 		}
 
 		[Fact]
-		public async Task Given_mocked_server_when_sending_client_request_it_should_respond()
+		public void When_creating_server_handler_it_should_set_property()
 		{
-			using HttpClient client = _fixture.Server.CreateClient();
-
-			_fixture.Handler
-				.When(matching => matching
-					.RequestUri("test/wtf/")
-					.Header("test", "value")
-					.Method(HttpMethod.Post)
-					.Content("request-content")
-				)
-				.Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
-				{
-					Content = new StringContent("Some content", Encoding.UTF8, "text/html"),
-					Headers =
-					{
-						{ "return-test", "return-value" }
-					}
-				})
-				.Verifiable();
+			var handler = new MockHttpHandler();
 
 			// Act
-			using var request = new HttpRequestMessage(HttpMethod.Post, "test/wtf/")
-			{
-				Content = new StringContent("request-content"),
-				Headers =
-				{
-					{ "test", "value"}
-				}
-			};
-
-			HttpResponseMessage response = await client.SendAsync(request);
+			var server = new MockHttpServer(handler, "http://127.0.0.1");
 
 			// Assert
-			response.Should().HaveStatusCode(HttpStatusCode.Accepted);
-			response.Should().HaveContentType("text/html");
-			response.Should().HaveHeader("return-test", "return-value");
-			await response.Should().HaveContentAsync("Some content");
-			_fixture.Handler.Verify();
+			server.Handler.Should().Be(handler);
 		}
 	}
 }
