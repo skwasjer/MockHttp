@@ -14,11 +14,6 @@ namespace MockHttp.Server
 
 		public WrappedHttpRequest(HttpRequest request)
 		{
-			if (request is null)
-			{
-				throw new ArgumentNullException(nameof(request));
-			}
-
 			Method = new HttpMethod(request.Method);
 
 			var uriBuilder = new UriBuilder(
