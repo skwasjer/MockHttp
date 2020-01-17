@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
 
-    <RootNamespace>MockHttp.Server</RootNamespace>
+    <RootNamespace>MockHttp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

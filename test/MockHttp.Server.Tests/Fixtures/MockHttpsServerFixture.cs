@@ -1,4 +1,4 @@
-﻿namespace MockHttp.Server
+﻿namespace MockHttp.Fixtures
 {
 	public class MockHttpsServerFixture : MockHttpServerFixture
 	{

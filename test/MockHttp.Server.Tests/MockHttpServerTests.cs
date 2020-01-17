@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using MockHttp.Fixtures;
 using MockHttp.FluentAssertions;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MockHttp.Server
+namespace MockHttp
 {
 	public class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 	{

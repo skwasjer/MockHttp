@@ -11,8 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using MockHttp.Server;
 
-namespace MockHttp.Server
+namespace MockHttp
 {
 	/// <summary>
 	/// A mock HTTP server that listens on a specific URL and responds according to a configured <see cref="MockHttpHandler"/>.

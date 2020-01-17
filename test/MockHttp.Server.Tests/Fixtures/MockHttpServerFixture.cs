@@ -12,7 +12,7 @@ using Serilog.Sinks.TestCorrelator;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MockHttp.Server
+namespace MockHttp.Fixtures
 {
 	public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 	{
