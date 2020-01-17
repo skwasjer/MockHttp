@@ -1,6 +1,6 @@
 # MockHttp
 
-.NET library to mock HTTP responses for any HTTP client (`HttpClient`, `WebRequest`, `RestClient`, etc.)  and verify request expectations with an experience inspired by Moq.
+Collection of .NET libraries to mock HTTP responses for any HTTP client (`HttpClient`, `WebRequest`, `RestClient`, etc.)  and verify request expectations with an experience inspired by Moq.
 
 ---
 
