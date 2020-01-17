@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -156,6 +157,47 @@ namespace MockHttp.Server
 					return Task.CompletedTask;
 				})
 			};
+		}
+
+		[Fact]
+		public async Task When_using_other_API_like_webRequest_it_should_respond_correctly()
+		{
+			_fixture.Handler
+				.When(matching => matching
+					.RequestUri("web-request")
+					.Method(HttpMethod.Post)
+					.Content("request-content", Encoding.ASCII)
+				)
+				.Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
+				{
+					Content = new StringContent("Response content", Encoding.UTF8, "text/html"),
+					Headers =
+					{
+						{ "return-test", "return-value" }
+					}
+				})
+				.Verifiable();
+
+			// Act
+			var request = WebRequest.Create($"{_fixture.Server.HostUrl}/web-request");
+			request.Method = "POST";
+			request.Headers.Add("test", "value");
+			request.ContentType = "text/plain";
+			using (Stream requestStream = await request.GetRequestStreamAsync())
+			{
+				requestStream.Write(Encoding.ASCII.GetBytes("request-content"));
+			}
+
+			// Assert
+			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+			response.ContentType.Should().Be("text/html; charset=utf-8");
+			using (var sr = new StreamReader(response.GetResponseStream()))
+			{
+				(await sr.ReadToEndAsync()).Should().Be("Response content");
+			}
+
+			_fixture.Handler.Verify();
 		}
 
 		[Fact]
