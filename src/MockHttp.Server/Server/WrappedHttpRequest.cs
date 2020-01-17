@@ -36,6 +36,7 @@ namespace MockHttp.Server
 				};
 			}
 
+			// ReSharper disable once UseDeconstruction
 			foreach (KeyValuePair<string, StringValues> header in request.Headers)
 			{
 				Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());

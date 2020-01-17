@@ -22,13 +22,15 @@ namespace MockHttp.Server
 			if (response.Content != null)
 			{
 				CopyHeaders(response.Content.Headers, responseFeature.Headers);
-				Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+				// ReSharper disable once UseAwaitUsing
+				using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 				await contentStream.CopyToAsync(responseFeature.Body, 4096, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
 		private static void CopyHeaders(HttpHeaders httpClientHeaders, IHeaderDictionary headers)
 		{
+			// ReSharper disable once UseDeconstruction
 			foreach (KeyValuePair<string, IEnumerable<string>> header in httpClientHeaders)
 			{
 				headers[header.Key] = new StringValues(header.Value?.ToArray());
