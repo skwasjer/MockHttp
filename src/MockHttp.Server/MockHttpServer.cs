@@ -160,6 +160,8 @@ namespace MockHttp.Server
 				{
 					_configureAppBuilder?.Invoke(applicationBuilder);
 
+					AddMockHttpServerHeader(applicationBuilder);
+
 					ServerRequestHandler serverRequestHandler = applicationBuilder.ApplicationServices.GetRequiredService<ServerRequestHandler>();
 					applicationBuilder.Use(serverRequestHandler.HandleAsync);
 				});
@@ -185,6 +187,23 @@ namespace MockHttp.Server
 			// Ensure we have a proper host URL without path/query.
 			_hostUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}";
 			_webHostBuilder.UseUrls(_hostUrl);
+		}
+
+		private void AddMockHttpServerHeader(IApplicationBuilder applicationBuilder)
+		{
+			applicationBuilder.Use(async (context, next) =>
+			{
+				context.Response.OnStarting(() =>
+				{
+					if (!context.Response.Headers.TryGetValue("Server", out _))
+					{
+						context.Response.Headers["Server"] = GetType().ToString();
+					}
+
+					return Task.CompletedTask;
+				});
+				await next().ConfigureAwait(false);
+			});
 		}
 	}
 }
