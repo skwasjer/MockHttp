@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -140,6 +141,17 @@ namespace MockHttp.Server
 					host.Dispose();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Creates a <see cref="HttpClient"/> with base address set to URL the server is hosting on.
+		/// </summary>
+		public HttpClient CreateClient()
+		{
+			return new HttpClient
+			{
+				BaseAddress = new Uri(HostUrl)
+			};
 		}
 
 		private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory loggerFactory)
