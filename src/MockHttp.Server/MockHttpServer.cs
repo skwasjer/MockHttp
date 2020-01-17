@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MockHttp.Server
 {
@@ -145,11 +147,7 @@ namespace MockHttp.Server
 			return new WebHostBuilder()
 				.ConfigureServices(services =>
 				{
-					if (loggerFactory != null)
-					{
-						services.AddSingleton(loggerFactory);
-					}
-
+					services.Replace(ServiceDescriptor.Singleton(loggerFactory ?? new NullLoggerFactory()));
 					services.AddSingleton(Handler);
 					services.AddTransient<ServerRequestHandler>();
 				})
