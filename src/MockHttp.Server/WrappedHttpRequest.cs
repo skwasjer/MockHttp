@@ -19,8 +19,15 @@ namespace MockHttp.Server
 				throw new ArgumentNullException(nameof(request));
 			}
 
-			var uriBuilder = new UriBuilder(request.Scheme, request.Host.Host, request.Host.Port ?? DefaultPort, request.GetEncodedPathAndQuery());
 			Method = new HttpMethod(request.Method);
+
+			var uriBuilder = new UriBuilder(
+				request.Scheme,
+				request.Host.Host,
+				request.Host.Port ?? DefaultPort,
+				request.PathBase + request.Path,
+				request.QueryString.Value);
+
 			RequestUri = uriBuilder.Uri;
 
 			if (request.Body != null)

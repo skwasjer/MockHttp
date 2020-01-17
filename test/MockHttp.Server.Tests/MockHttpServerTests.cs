@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MockHttp.FluentAssertions;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -29,7 +31,7 @@ namespace MockHttp.Server
 		}
 
 		[Fact]
-		public async Task Given_mocked_server_when_sending_client_request_it_should_respond()
+		public async Task Given_mocked_server_when_sending_complete_request_it_should_respond()
 		{
 			using HttpClient client = _fixture.Server.CreateClient();
 
@@ -68,6 +70,133 @@ namespace MockHttp.Server
 			response.Should().HaveContentType("text/html");
 			response.Should().HaveHeader("return-test", "return-value");
 			await response.Should().HaveContentAsync("Some content");
+			_fixture.Handler.Verify();
+		}
+
+		[Theory]
+		[MemberData(nameof(RequestResponseTestCases))]
+		public async Task Given_configured_request_when_sending_it_should_respond_with_expected_response(Action<MockHttpHandler> configureHandler, HttpRequestMessage request, Func<HttpResponseMessage, Task> assertResponse)
+		{
+			using HttpClient client = _fixture.Server.CreateClient();
+
+			configureHandler(_fixture.Handler);
+
+			// Act
+			using (request)
+			{
+				HttpResponseMessage response = await client.SendAsync(request);
+
+				// Assert
+				await assertResponse(response);
+				_fixture.Handler.Verify();
+			}
+		}
+
+		public static IEnumerable<object[]> RequestResponseTestCases()
+		{
+			// By method, returning status code.
+			yield return new object[]
+			{
+				(Action<MockHttpHandler>)(m => m
+					.When(matching => matching.Method(HttpMethod.Post))
+					.Respond(HttpStatusCode.BadGateway)
+				),
+				new HttpRequestMessage(HttpMethod.Post, ""),
+				(Func<HttpResponseMessage, Task>)(response =>
+				{
+					response.Should().HaveStatusCode(HttpStatusCode.BadGateway);
+					return Task.CompletedTask;
+				})
+			};
+
+			// By wildcard path & query string, returning content
+			yield return new object[]
+			{
+				(Action<MockHttpHandler>)(m => m
+					.When(matching => matching
+						.RequestUri("*path/child*")
+						.QueryString("?key=value")
+					)
+					.Respond("has content")
+				),
+				new HttpRequestMessage(HttpMethod.Get, "/path/child/?key=value"),
+				(Func<HttpResponseMessage, Task>)(async response =>
+				{
+					await response.Should().HaveContentAsync("has content");
+				})
+			};
+
+			// By header.
+			const string headerKey = "X-Correlation-ID";
+			const string headerValue = "my-id";
+			yield return new object[]
+			{
+				(Action<MockHttpHandler>)(m => m
+					.When(matching => matching
+						.Header(headerKey, headerValue)
+					)
+					.Respond((r) => new HttpResponseMessage
+					{
+						Headers =
+						{
+							{ headerKey, r.Headers.GetValues(headerKey) }
+						}
+					})
+				),
+				new HttpRequestMessage
+				{
+					Headers =
+					{
+						{ headerKey, headerValue }
+					}
+				},
+				(Func<HttpResponseMessage, Task>)(response =>
+				{
+					response.Should().HaveHeader(headerKey, headerValue);
+					return Task.CompletedTask;
+				})
+			};
+		}
+
+		[Fact]
+		public async Task Given_unmocked_request_when_sending_it_should_respond_with_fallback_response()
+		{
+			_fixture.Handler.Reset();
+			_fixture.Handler.Fallback.Respond(HttpStatusCode.BadRequest, "Should return fallback.");
+
+			using HttpClient client = _fixture.Server.CreateClient();
+
+			// Act
+			HttpResponseMessage response = await client.GetAsync("");
+
+			// Assert
+			response.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+			await response.Should().HaveContentAsync("Should return fallback.");
+			response.ReasonPhrase.Should().Be("Bad Request");
+			_fixture.Handler.Verify(matching => {}, IsSent.Once);
+		}
+
+		[Fact]
+		public async Task Given_request_is_configured_to_throw_when_sending_it_should_respond_with_internal_server_error()
+		{
+			const string expectedErrorMessage = "MockHttpServer failed to handle request. Please verify your mock setup is correct.";
+			var ex = new InvalidOperationException("Mock throws.");
+			_fixture.Handler
+				.When(matching => matching
+					.Method(HttpMethod.Get)
+				)
+				.Throws(ex)
+				.Verifiable();
+
+			using HttpClient client = _fixture.Server.CreateClient();
+
+			// Act
+			HttpResponseMessage response = await client.GetAsync("");
+
+			// Assert
+			response.Should().HaveStatusCode(HttpStatusCode.InternalServerError);
+			await response.Should().HaveContentAsync(expectedErrorMessage + Environment.NewLine + ex);
+			response.ReasonPhrase.Should().Be(expectedErrorMessage);
 			_fixture.Handler.Verify();
 		}
 
