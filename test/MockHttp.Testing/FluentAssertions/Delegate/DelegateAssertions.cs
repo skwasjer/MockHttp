@@ -4,11 +4,11 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Specialized;
 
-namespace MockHttp.FluentAssertions
+namespace MockHttp.FluentAssertions.Delegate
 {
-	public class DelegateAssertions : DelegateAssertions<Delegate>
+	public class DelegateAssertions : DelegateAssertions<System.Delegate>
 	{
-		public DelegateAssertions(Delegate @delegate, IExtractExceptions extractor) : base(@delegate, extractor)
+		public DelegateAssertions(System.Delegate @delegate, IExtractExceptions extractor) : base(@delegate, extractor)
 		{
 		}
 

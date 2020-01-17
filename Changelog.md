@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.1
+
+- Added [MockHttpServer](https://github.com/skwasjer/MockHttp/wiki/Stubbing-an-API).
+
 ## v2.2.0
 
 - Added .NET Standard 2.1
