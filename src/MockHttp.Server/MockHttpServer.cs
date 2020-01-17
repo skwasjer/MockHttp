@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace MockHttp.Server
 {
@@ -16,28 +15,14 @@ namespace MockHttp.Server
 	/// </summary>
 	public sealed class MockHttpServer : IDisposable
 	{
-		private readonly RequestHandler _requestHandler;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private readonly ServerRequestHandler _requestHandler;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly IWebHostBuilder _webHostBuilder;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private IWebHost _host;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _hostUrl;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MockHttpServer"/> using specified <paramref name="mockHttpHandler"/>.
-		/// </summary>
-		/// <param name="mockHttpHandler">The mock http handler.</param>
-		public MockHttpServer(MockHttpHandler mockHttpHandler)
-		{
-			if (mockHttpHandler is null)
-			{
-				throw new ArgumentNullException(nameof(mockHttpHandler));
-			}
-
-			_requestHandler = new RequestHandler(mockHttpHandler);
-			_webHostBuilder = new WebHostBuilder()
-				.UseKestrel(options => options.AddServerHeader = false)
-				.UseEnvironment("Development")
-				.Configure(builder => builder.Use(HandleRequest));
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MockHttpServer"/> using specified <paramref name="mockHttpHandler"/> and configures it to listen on specified <paramref name="hostUrl"/>.
@@ -47,9 +32,11 @@ namespace MockHttp.Server
 #pragma warning disable CA1054 // Uri parameters should not be strings
 		public MockHttpServer(MockHttpHandler mockHttpHandler, string hostUrl)
 #pragma warning restore CA1054 // Uri parameters should not be strings
-			: this(mockHttpHandler)
 		{
-			HostUrl = hostUrl ?? throw new ArgumentNullException(nameof(hostUrl));
+			Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
+			_requestHandler = new ServerRequestHandler(mockHttpHandler);
+			_webHostBuilder = CreateWebHostBuilder();
+			SetHostUrl(hostUrl);
 		}
 
 		/// <inheritdoc />
@@ -61,7 +48,12 @@ namespace MockHttp.Server
 		}
 
 		/// <summary>
-		/// Gets or sets the host URL the mock HTTP server will listen on.
+		/// Gets the <see cref="MockHttpHandler"/> that is simulating middleware.
+		/// </summary>
+		public MockHttpHandler Handler { get; }
+
+		/// <summary>
+		/// Gets the host URL the mock HTTP server will listen on.
 		/// </summary>
 #pragma warning disable CA1056 // Uri properties should not be strings
 		public string HostUrl
@@ -73,21 +65,6 @@ namespace MockHttp.Server
 				{
 					return _host?.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First() ?? _hostUrl;
 				}
-			}
-			set
-			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
-
-				if (!Uri.TryCreate(value, UriKind.Absolute, out Uri uri))
-				{
-					throw new ArgumentException("", nameof(value));
-				}
-
-				_hostUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}";
-				_webHostBuilder.UseUrls(_hostUrl);
 			}
 		}
 
@@ -149,25 +126,30 @@ namespace MockHttp.Server
 			}
 		}
 
-		private async Task HandleRequest(HttpContext httpContext, Func<Task> next)
+		private IWebHostBuilder CreateWebHostBuilder()
 		{
-			if (httpContext is null)
+			return new WebHostBuilder()
+				.UseKestrel(options => options.AddServerHeader = false)
+				.CaptureStartupErrors(false)
+				.SuppressStatusMessages(true)
+				.Configure(builder => builder.Use(_requestHandler.HandleAsync));
+		}
+
+		private void SetHostUrl(string hostUrl)
+		{
+			if (hostUrl == null)
 			{
-				await next().ConfigureAwait(false);
-				return;
+				throw new ArgumentNullException(nameof(hostUrl));
 			}
 
-			CancellationToken cancellationToken = httpContext.RequestAborted;
-			using HttpRequestMessage request = httpContext.Request.AsHttpRequestMessage();
+			if (!Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri uri))
+			{
+				throw new ArgumentException("Specify a host URL.", nameof(hostUrl));
+			}
 
-			cancellationToken.ThrowIfCancellationRequested();
-			HttpResponseMessage response = await _requestHandler.HandleAsync(request, cancellationToken).ConfigureAwait(false);
-			httpContext.Response.RegisterForDispose(response);
-
-			cancellationToken.ThrowIfCancellationRequested();
-			IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
-			//IHttpResponseBodyFeature responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
-			await response.MapToResponseFeatureAsync(responseFeature, cancellationToken).ConfigureAwait(false);
+			// Ensure we have a proper host URL without path/query.
+			_hostUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}";
+			_webHostBuilder.UseUrls(_hostUrl);
 		}
 	}
 }

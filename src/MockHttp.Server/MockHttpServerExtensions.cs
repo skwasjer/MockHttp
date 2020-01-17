@@ -20,11 +20,6 @@ namespace MockHttp.Server
 				throw new ArgumentNullException(nameof(server));
 			}
 
-			if (!server.IsStarted)
-			{
-				throw new InvalidOperationException("The server must be started first.");
-			}
-
 			return new HttpClient
 			{
 				BaseAddress = new Uri(server.HostUrl)

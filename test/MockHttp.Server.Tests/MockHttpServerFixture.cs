@@ -15,18 +15,18 @@ namespace MockHttp.Server
 
 		protected MockHttpServerFixture(string scheme)
 		{
-			MockHttp = new MockHttpHandler();
-			Server = new MockHttpServer(MockHttp, SupportsIpv6() ? $"{scheme}://[::1]:0" : $"{scheme}://127.0.0.1:0");
+			Handler = new MockHttpHandler();
+			Server = new MockHttpServer(Handler, SupportsIpv6() ? $"{scheme}://[::1]:0" : $"{scheme}://127.0.0.1:0");
 		}
 
-		public MockHttpHandler MockHttp { get; }
+		public MockHttpHandler Handler { get; }
 
 		public MockHttpServer Server { get; }
 
 		public void Dispose()
 		{
 			Server?.Dispose();
-			MockHttp?.Dispose();
+			Handler?.Dispose();
 		}
 
 		public Task InitializeAsync()
