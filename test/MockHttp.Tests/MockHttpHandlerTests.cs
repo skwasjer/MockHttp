@@ -354,6 +354,18 @@ namespace MockHttp
 				}
 			};
 
+			// ReSharper disable once JoinDeclarationAndInitializer
+			Version version;
+#if NETCOREAPP3_1
+			version = _httpClient.DefaultRequestVersion;
+#else
+#if NETCOREAPP2_2
+			version = new Version(2, 0);
+#else
+			version = new Version(1, 1);
+#endif
+#endif
+
 			_sut
 				.When(matching => matching
 					.RequestUri("http://0.0.0.1/*/action*")
@@ -366,15 +378,7 @@ namespace MockHttp
 					.BearerToken()
 					.Header("Content-Length", jsonPostContent.Length)
 					.Header("Last-Modified", lastModified)
-#if NETCOREAPP3_1
-					.Version(_httpClient.DefaultRequestVersion)
-#else
-#if NETCOREAPP2_2
-					.Version("2.0")
-#else
-					.Version("1.1")
-#endif
-#endif
+					.Version(version)
 					.Any(any => any
 						.RequestUri("not-matching")
 						.RequestUri("**controller**")
@@ -399,7 +403,8 @@ namespace MockHttp
 				{
 					Authorization = new AuthenticationHeaderValue("Bearer", "some-token")
 				},
-				Content = postContent
+				Content = postContent,
+				Version = version
 			};
 			HttpResponseMessage response = await _httpClient.SendAsync(req);
 
@@ -408,7 +413,7 @@ namespace MockHttp
 #if !NETCOREAPP1_1 // .NET Standard 1.1 disposes content, so can't verify after sending on HttpContent.
 			await _sut.VerifyAsync(matching => matching.Content(jsonPostContent), IsSent.Once, "we sent it");
 #endif
-
+			_sut.Verify();
 			_sut.VerifyNoOtherRequests();
 
 			await response.Should()
