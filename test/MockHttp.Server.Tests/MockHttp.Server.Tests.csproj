@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -19,7 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
     <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=netstandard2.1" Condition="'$(TargetFramework)'=='netcoreapp3.1'" />
-    <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netcoreapp2.2'" />
+    <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netcoreapp2.1'" />
   </ItemGroup>
 
 </Project>

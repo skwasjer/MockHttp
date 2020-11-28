@@ -359,7 +359,7 @@ namespace MockHttp
 #if NETCOREAPP3_1
 			version = _httpClient.DefaultRequestVersion;
 #else
-#if NETCOREAPP2_2
+#if NETCOREAPP2_1
 			version = new Version(2, 0);
 #else
 			version = new Version(1, 1);
@@ -626,7 +626,7 @@ namespace MockHttp
 
 			// Act
 			foreach (HttpStatusCode expectedStatus in statusCodeSequence
-#if NETCOREAPP2_2 || NETCOREAPP3_1
+#if NETCOREAPP2_1 || NETCOREAPP3_1
 				.SkipLast(1)
 #else
 				.Reverse().Skip(1).Reverse() // Ugly, does the job
