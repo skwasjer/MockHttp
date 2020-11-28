@@ -35,8 +35,8 @@ namespace MockHttp.Matchers
 			_formattedUri = uriString ?? throw new ArgumentNullException(nameof(uriString));
 
 			if (allowWildcards
-#if NETSTANDARD2_1
-			 && uriString.Contains("*", StringComparison.InvariantCultureIgnoreCase)
+#if NETSTANDARD2_1 || NET5_0
+			 && uriString.Contains('*', StringComparison.InvariantCultureIgnoreCase)
 #else
 			 && uriString.Contains("*")
 #endif
