@@ -28,10 +28,10 @@ namespace MockHttp.Matchers
 		/// </summary>
 		public ContentMatcher()
 		{
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-			ByteContent = Array.Empty<byte>();
-#else
+#if NETSTANDARD1_1 || NETFRAMEWORK
 			ByteContent = new byte[0];
+#else
+			ByteContent = Array.Empty<byte>();
 #endif
 		}
 
@@ -126,7 +126,7 @@ namespace MockHttp.Matchers
 				sb.AppendFormat(CultureInfo.InvariantCulture, "0x{0:x2}", ByteContent[i]);
 				if (i < charsToOutput - 1)
 				{
-					sb.Append(",");
+					sb.Append(',');
 				}
 			}
 
@@ -136,7 +136,7 @@ namespace MockHttp.Matchers
 			}
 			else
 			{
-				sb.Append("]");
+				sb.Append(']');
 			}
 
 			return sb.ToString();

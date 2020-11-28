@@ -11,6 +11,14 @@ namespace MockHttp.Matchers
 	public abstract class HttpRequestMatcher : IAsyncHttpRequestMatcher
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="HttpRequestMatcher"/> class.
+		/// </summary>
+		protected HttpRequestMatcher()
+		{
+			IsExclusive = false;
+		}
+
+		/// <summary>
 		/// Checks that the request matches a condition.
 		/// </summary>
 		/// <param name="requestContext">The request context.</param>
@@ -35,7 +43,7 @@ namespace MockHttp.Matchers
 		/// <summary>
 		/// Gets whether the matcher is mutually exclusive to other matchers of the same type.
 		/// </summary>
-		public virtual bool IsExclusive { get; } = false;
+		public virtual bool IsExclusive { get; }
 
 		/// <inheritdoc />
 		public abstract override string ToString();

@@ -34,6 +34,7 @@ namespace MockHttp
 		{
 			_sut?.Dispose();
 			_httpClient?.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>
@@ -619,7 +620,7 @@ namespace MockHttp
 		[Fact]
 		public async Task When_resetting_invoked_requests_it_should_reset_sequence()
 		{
-			var statusCodeSequence = new[] { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
+			HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
 
 			IResponds<IResponseResult> result = _sut.When(m => { });
 			statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));

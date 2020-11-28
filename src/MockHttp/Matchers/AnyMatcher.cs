@@ -18,6 +18,7 @@ namespace MockHttp.Matchers
 		public AnyMatcher(IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers)
 		{
 			Matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
+			IsExclusive = false;
 		}
 
 		/// <summary>
@@ -37,7 +38,7 @@ namespace MockHttp.Matchers
 		}
 
 		/// <inheritdoc />
-		public bool IsExclusive { get; } = false;
+		public bool IsExclusive { get; }
 
 		/// <inheritdoc />
 		public override string ToString()
@@ -49,14 +50,15 @@ namespace MockHttp.Matchers
 
 			var sb = new StringBuilder();
 			sb.AppendLine("Any:");
-			sb.AppendLine("{");
+			sb.Append('{');
+			sb.AppendLine();
 			foreach (IAsyncHttpRequestMatcher m in Matchers)
 			{
 				sb.Append('\t');
 				sb.AppendLine(m.ToString());
 			}
 
-			sb.Append("}");
+			sb.Append('}');
 			return sb.ToString();
 		}
 	}

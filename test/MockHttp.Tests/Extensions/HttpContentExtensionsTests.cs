@@ -65,7 +65,7 @@ namespace MockHttp.Extensions
 
 		public static IEnumerable<object[]> ContentTestCases()
 		{
-			object[] CreateTestCase(HttpContent content, string expectedData)
+			static object[] CreateTestCase(HttpContent content, string expectedData)
 			{
 				content.Headers.Add("Custom", "Header");
 				content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
@@ -79,8 +79,10 @@ namespace MockHttp.Extensions
 			yield return CreateTestCase(new StreamContent(new MemoryStream(buffer)), data);
 			yield return CreateTestCase(new FormUrlEncodedContent(new Dictionary<string, string> { { "key", data } }), "key=" + Uri.EscapeDataString(data));
 
-			var mpc = new MultipartContent("subtype", "boundary");
-			mpc.Add(new StringContent(data));
+			var mpc = new MultipartContent("subtype", "boundary")
+			{
+				new StringContent(data)
+			};
 			yield return CreateTestCase(mpc, $"--boundary{Environment.NewLine}Content-Type: text/plain; charset=utf-8{Environment.NewLine}{Environment.NewLine}<b>data</b>{Environment.NewLine}--boundary--{Environment.NewLine}");
 #if !NETCOREAPP1_1
 			yield return CreateTestCase(new ObjectContent(typeof(string), data, new JsonMediaTypeFormatter()), $"\"{data}\"");
