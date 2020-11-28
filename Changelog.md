@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.3.0
+
+- Added .NET 5.0 target framework support.
+- Addressed static code analysis suggestions.
+
 ## v2.2.1
 
 - Added [MockHttpServer](https://github.com/skwasjer/MockHttp/wiki/Stubbing-an-API).
