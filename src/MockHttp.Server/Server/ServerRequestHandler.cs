@@ -21,9 +21,7 @@ namespace MockHttp.Server
 			InnerHandler = mockHttpHandler;
 		}
 
-#pragma warning disable IDE0060 // Remove unused parameter
-		public async Task HandleAsync(HttpContext httpContext, Func<Task> next)
-#pragma warning restore IDE0060 // Remove unused parameter
+		public async Task HandleAsync(HttpContext httpContext, Func<Task> _)
 		{
 			if (httpContext is null)
 			{

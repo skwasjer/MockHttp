@@ -34,6 +34,7 @@ namespace MockHttp
 		{
 			_sut?.Dispose();
 			_httpClient?.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>
@@ -124,7 +125,7 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_when_sending_request_should_throw()
+		public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_when_sending_request_should_throw()
 		{
 			_sut.Fallback.Throws<TestableException>();
 
@@ -132,11 +133,11 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TestableException>();
+			await act.Should().ThrowAsync<TestableException>();
 		}
 
 		[Fact]
-		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_specific_exception_when_sending_request_should_throw()
+		public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_specific_exception_when_sending_request_should_throw()
 		{
 			var ex = new TestableException();
 			_sut.Fallback.Throws(ex);
@@ -145,7 +146,7 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TestableException>().Which.Should().Be(ex);
+			(await act.Should().ThrowAsync<TestableException>()).Which.Should().Be(ex);
 		}
 
 		[Fact]
@@ -354,6 +355,18 @@ namespace MockHttp
 				}
 			};
 
+			// ReSharper disable once JoinDeclarationAndInitializer
+			Version version;
+#if NETCOREAPP3_1 || NET5_0
+			version = _httpClient.DefaultRequestVersion;
+#else
+#if NETCOREAPP2_1
+			version = new Version(2, 0);
+#else
+			version = new Version(1, 1);
+#endif
+#endif
+
 			_sut
 				.When(matching => matching
 					.RequestUri("http://0.0.0.1/*/action*")
@@ -366,15 +379,7 @@ namespace MockHttp
 					.BearerToken()
 					.Header("Content-Length", jsonPostContent.Length)
 					.Header("Last-Modified", lastModified)
-#if NETCOREAPP3_1
-					.Version(_httpClient.DefaultRequestVersion)
-#else
-#if NETCOREAPP2_2
-					.Version("2.0")
-#else
-					.Version("1.1")
-#endif
-#endif
+					.Version(version)
 					.Any(any => any
 						.RequestUri("not-matching")
 						.RequestUri("**controller**")
@@ -399,7 +404,8 @@ namespace MockHttp
 				{
 					Authorization = new AuthenticationHeaderValue("Bearer", "some-token")
 				},
-				Content = postContent
+				Content = postContent,
+				Version = version
 			};
 			HttpResponseMessage response = await _httpClient.SendAsync(req);
 
@@ -408,7 +414,7 @@ namespace MockHttp
 #if !NETCOREAPP1_1 // .NET Standard 1.1 disposes content, so can't verify after sending on HttpContent.
 			await _sut.VerifyAsync(matching => matching.Content(jsonPostContent), IsSent.Once, "we sent it");
 #endif
-
+			_sut.Verify();
 			_sut.VerifyNoOtherRequests();
 
 			await response.Should()
@@ -479,7 +485,7 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public void Given_request_is_configured_to_time_out_when_sending_request_should_throw()
+		public async Task Given_request_is_configured_to_time_out_when_sending_request_should_throw()
 		{
 			_sut.When(_ => { })
 				.TimesOut()
@@ -489,7 +495,7 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TaskCanceledException>();
+			await act.Should().ThrowAsync<TaskCanceledException>();
 			_sut.Verify();
 		}
 
@@ -614,14 +620,14 @@ namespace MockHttp
 		[Fact]
 		public async Task When_resetting_invoked_requests_it_should_reset_sequence()
 		{
-			var statusCodeSequence = new[] { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
+			HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
 
 			IResponds<IResponseResult> result = _sut.When(m => { });
 			statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
 
 			// Act
 			foreach (HttpStatusCode expectedStatus in statusCodeSequence
-#if NETCOREAPP2_2 || NETCOREAPP3_1
+#if NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0
 				.SkipLast(1)
 #else
 				.Reverse().Skip(1).Reverse() // Ugly, does the job

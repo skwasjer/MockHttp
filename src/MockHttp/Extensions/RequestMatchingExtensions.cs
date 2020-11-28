@@ -97,10 +97,10 @@ namespace MockHttp
 			return builder.QueryString(
 				key,
 				value is null
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-					? Array.Empty<string>()
-#else
+#if NETSTANDARD1_1 || NETFRAMEWORK
 					? new string[0]
+#else
+					? Array.Empty<string>()
 #endif
 					: new[] { value });
 		}

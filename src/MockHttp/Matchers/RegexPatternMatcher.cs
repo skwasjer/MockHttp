@@ -30,9 +30,10 @@ namespace MockHttp.Matchers
 			}
 			else
 			{
-				pattern.Append("^");
+				pattern.Append('^');
 			}
 
+			// ReSharper disable once UseIndexFromEndExpression
 			bool endsWithWildcard = value.Length > 0 && value[value.Length - 1] == '*';
 			if (endsWithWildcard)
 			{

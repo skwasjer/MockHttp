@@ -16,7 +16,7 @@ namespace MockHttp
 
 		public AnyRequestMatchingTests()
 		{
-			HttpRequestMatcher CreateMatcherMock(Func<bool> returns)
+			static HttpRequestMatcher CreateMatcherMock(Func<bool> returns)
 			{
 				var matcherMock = new Mock<HttpRequestMatcher>();
 				matcherMock

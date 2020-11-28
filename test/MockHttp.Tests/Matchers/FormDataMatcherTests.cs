@@ -176,7 +176,7 @@ namespace MockHttp.Matchers
 		}
 
 		[Fact]
-		public void Given_null_context_when_matching_it_should_throw()
+		public async Task Given_null_context_when_matching_it_should_throw()
 		{
 			_sut = new FormDataMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
 			MockHttpRequestContext requestContext = null;
@@ -186,8 +186,8 @@ namespace MockHttp.Matchers
 			Func<Task> act = () => _sut.IsMatchAsync(requestContext);
 
 			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
+			await act.Should()
+				.ThrowAsync<ArgumentNullException>()
 				.WithParamName(nameof(requestContext));
 		}
 	}

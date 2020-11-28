@@ -22,8 +22,11 @@ namespace MockHttp.Server
 			if (response.Content != null)
 			{
 				CopyHeaders(response.Content.Headers, responseFeature.Headers);
-				// ReSharper disable once UseAwaitUsing
+#if NET5_0
+				using Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
 				using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
 				await contentStream.CopyToAsync(responseFeature.Body, 4096, cancellationToken).ConfigureAwait(false);
 			}
 		}

@@ -35,7 +35,7 @@ namespace MockHttp.Responses
 		}
 
 		[Fact]
-		public void Given_cancellation_token_is_cancelled_when_sending_should_throw()
+		public async Task Given_cancellation_token_is_cancelled_when_sending_should_throw()
 		{
 			TimeSpan timeout = TimeSpan.FromSeconds(60);
 			var sut = new TimeoutStrategy(timeout);
@@ -46,7 +46,7 @@ namespace MockHttp.Responses
 			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), ct);
 
 			// Assert
-			act.Should().Throw<TaskCanceledException>();
+			await act.Should().ThrowAsync<TaskCanceledException>();
 			sw.Elapsed.Should().BeLessThan(timeout);
 		}
 

@@ -75,8 +75,8 @@ namespace MockHttp.Http
 #if NETSTANDARD1_1
 			if (uri.Contains(TokenQuestionMark.ToString())
 #else
-#if NETSTANDARD2_1
-			if (uri.Contains(TokenQuestionMark.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.InvariantCultureIgnoreCase)
+#if NETSTANDARD2_1 || NET5_0
+			if (uri.Contains(TokenQuestionMark, StringComparison.InvariantCultureIgnoreCase)
 #else
 			if (uri.Contains(TokenQuestionMark.ToString(System.Globalization.CultureInfo.InvariantCulture))
 #endif

@@ -14,9 +14,8 @@ namespace MockHttp.Responses
 		{
 			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = null;
 
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new ResponseFuncStrategy(responseFunc);
+			Func<ResponseFuncStrategy> act = () => new ResponseFuncStrategy(responseFunc);
 
 			// Assert
 			act.Should()
@@ -26,19 +25,16 @@ namespace MockHttp.Responses
 		}
 
 		[Fact]
-		public void Given_response_factory_returns_null_should_not_throw()
+		public async Task Given_response_factory_returns_null_should_not_throw()
 		{
-			// ReSharper disable once ConvertToLocalFunction
-			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = (_, __) => null;
-
-			var sut = new ResponseFuncStrategy(responseFunc);
+			var sut = new ResponseFuncStrategy((_, __) => null);
 
 			// Act
 			HttpResponseMessage responseMessage = null;
 			Func<Task> act = async () => responseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
-			act.Should().NotThrow();
+			await act.Should().NotThrowAsync();
 			responseMessage.Should().BeNull();
 		}
 
@@ -51,16 +47,15 @@ namespace MockHttp.Responses
 			HttpRequestMessage arg1 = null;
 			CancellationToken arg2 = CancellationToken.None;
 
-			// ReSharper disable once ConvertToLocalFunction
-			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = (r, t) =>
+			Task<HttpResponseMessage> ResponseFunc(HttpRequestMessage r, CancellationToken t)
 			{
 				arg1 = r;
 				arg2 = t;
 				// ReSharper disable once AccessToDisposedClosure
 				return Task.FromResult(responseMessage);
-			};
+			}
 
-			var sut = new ResponseFuncStrategy(responseFunc);
+			var sut = new ResponseFuncStrategy(ResponseFunc);
 
 			// Act
 			HttpResponseMessage actualResponseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(requestMessage), cts.Token);
