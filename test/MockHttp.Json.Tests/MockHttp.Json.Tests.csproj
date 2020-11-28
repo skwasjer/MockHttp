@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;netcoreapp1.1;net462</TargetFrameworks>
+    <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1;netcoreapp1.1;net462</TargetFrameworks>
 
-    <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
 
     <RootNamespace>MockHttp.Json</RootNamespace>
@@ -15,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
+    <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" AdditionalProperties="TargetFramework=net5.0" Condition="'$(TargetFramework)'=='net5.0'" />
     <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" AdditionalProperties="TargetFramework=netstandard2.1" Condition="'$(TargetFramework)'=='netcoreapp3.1'" />
     <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netcoreapp2.1'" />
     <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" AdditionalProperties="TargetFramework=netstandard1.1" Condition="'$(TargetFramework)'=='netcoreapp1.1'" />

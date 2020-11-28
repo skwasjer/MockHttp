@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;netcoreapp1.1;net462</TargetFrameworks>
+    <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1;netcoreapp1.1;net462</TargetFrameworks>
 
-    <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
 
     <RootNamespace>MockHttp</RootNamespace>
@@ -17,7 +16,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp2')) Or $(TargetFramework.StartsWith('netcoreapp3'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp2')) Or $(TargetFramework.StartsWith('netcoreapp3')) Or '$(TargetFramework)'=='net5.0'">
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
   </ItemGroup>
 
