@@ -26,7 +26,7 @@ namespace MockHttp.Responses
 		}
 
 		[Fact]
-		public void Given_response_factory_returns_null_should_not_throw()
+		public async Task Given_response_factory_returns_null_should_not_throw()
 		{
 			// ReSharper disable once ConvertToLocalFunction
 			Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = (_, __) => null;
@@ -38,7 +38,7 @@ namespace MockHttp.Responses
 			Func<Task> act = async () => responseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
-			act.Should().NotThrow();
+			await act.Should().NotThrowAsync();
 			responseMessage.Should().BeNull();
 		}
 

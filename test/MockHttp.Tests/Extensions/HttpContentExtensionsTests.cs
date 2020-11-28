@@ -54,7 +54,7 @@ namespace MockHttp.Extensions
 				Func<Task> act = async () => clone = await content.CloneAsByteArrayContentAsync();
 
 				// Assert
-				act.Should().NotThrow();
+				await act.Should().NotThrowAsync();
 				clone.Should().NotBeNull();
 				clone.Headers.Should().BeEquivalentTo(content.Headers, "iteration {0} should have same headers", i);
 

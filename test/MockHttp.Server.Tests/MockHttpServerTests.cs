@@ -257,7 +257,7 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public void When_creating_and_starting_server_with_null_logger_it_should_not_throw()
+		public async Task When_creating_and_starting_server_with_null_logger_it_should_not_throw()
 		{
 			ILoggerFactory loggerFactory = null;
 
@@ -269,7 +269,7 @@ namespace MockHttp
 			// Assert
 			using MockHttpServer server = act.Should().NotThrow().Which;
 			Func<Task> act2 = () => server.StartAsync();
-			act2.Should().NotThrow();
+			await act2.Should().NotThrowAsync();
 		}
 
 		[Fact]
@@ -326,11 +326,11 @@ namespace MockHttp
 			Func<Task> act = () => server.StartAsync();
 
 			// Assert
-			act.Should().Throw<InvalidOperationException>();
+			await act.Should().ThrowAsync<InvalidOperationException>();
 		}
 
 		[Fact]
-		public void Given_server_is_not_started_when_stopped_it_should_throw()
+		public async Task Given_server_is_not_started_when_stopped_it_should_throw()
 		{
 			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
 			server.IsStarted.Should().BeFalse();
@@ -339,7 +339,7 @@ namespace MockHttp
 			Func<Task> act = () => server.StopAsync();
 
 			// Assert
-			act.Should().Throw<InvalidOperationException>();
+			await act.Should().ThrowAsync<InvalidOperationException>();
 		}
 
 		[Fact]

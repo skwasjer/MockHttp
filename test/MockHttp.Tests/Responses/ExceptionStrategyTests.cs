@@ -26,7 +26,7 @@ namespace MockHttp.Responses
 		}
 
 		[Fact]
-		public void Given_factory_returns_null_exception_when_getting_response_should_throw()
+		public async Task Given_factory_returns_null_exception_when_getting_response_should_throw()
 		{
 			var sut = new ExceptionStrategy(() => null);
 
@@ -34,12 +34,13 @@ namespace MockHttp.Responses
 			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
-			act.Should().Throw<HttpMockException>()
+			await act.Should()
+				.ThrowAsync<HttpMockException>()
 				.WithMessage("The configured exception cannot be null.");
 		}
 
 		[Fact]
-		public void Given_factory_returns_exception_when_getting_response_should_throw()
+		public async Task Given_factory_returns_exception_when_getting_response_should_throw()
 		{
 			var ex = new InvalidOperationException();
 			var sut = new ExceptionStrategy(() => ex);
@@ -48,8 +49,9 @@ namespace MockHttp.Responses
 			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
 			// Assert
-			act.Should().Throw<Exception>()
-				.Which.Should().Be(ex);
+			(await act.Should().ThrowExactlyAsync<InvalidOperationException>())
+				.Which.Should()
+				.Be(ex);
 		}
 	}
 }

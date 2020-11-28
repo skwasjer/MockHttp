@@ -124,7 +124,7 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_when_sending_request_should_throw()
+		public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_when_sending_request_should_throw()
 		{
 			_sut.Fallback.Throws<TestableException>();
 
@@ -132,11 +132,11 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TestableException>();
+			await act.Should().ThrowAsync<TestableException>();
 		}
 
 		[Fact]
-		public void Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_specific_exception_when_sending_request_should_throw()
+		public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_to_throw_specific_exception_when_sending_request_should_throw()
 		{
 			var ex = new TestableException();
 			_sut.Fallback.Throws(ex);
@@ -145,7 +145,7 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TestableException>().Which.Should().Be(ex);
+			(await act.Should().ThrowAsync<TestableException>()).Which.Should().Be(ex);
 		}
 
 		[Fact]
@@ -484,7 +484,7 @@ namespace MockHttp
 		}
 
 		[Fact]
-		public void Given_request_is_configured_to_time_out_when_sending_request_should_throw()
+		public async Task Given_request_is_configured_to_time_out_when_sending_request_should_throw()
 		{
 			_sut.When(_ => { })
 				.TimesOut()
@@ -494,7 +494,7 @@ namespace MockHttp
 			Func<Task> act = () => _httpClient.GetAsync("");
 
 			// Assert
-			act.Should().Throw<TaskCanceledException>();
+			await act.Should().ThrowAsync<TaskCanceledException>();
 			_sut.Verify();
 		}
 
