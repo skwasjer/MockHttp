@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
+		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -33,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockHttp.Json.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockHttp.Testing", "test\MockHttp.Testing\MockHttp.Testing.csproj", "{7A5629FF-1BB0-443D-BBD3-ACA863A0DF01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockHttp.Server", "src\MockHttp.Server\MockHttp.Server.csproj", "{0E87CCC4-6CEE-4B3B-AF69-8B1001DB8FFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockHttp.Server", "src\MockHttp.Server\MockHttp.Server.csproj", "{0E87CCC4-6CEE-4B3B-AF69-8B1001DB8FFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockHttp.Server.Tests", "test\MockHttp.Server.Tests\MockHttp.Server.Tests.csproj", "{B6342810-A47D-4864-A0E2-9AEF1F5C3F22}"
 EndProject

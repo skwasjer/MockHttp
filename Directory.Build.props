@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 </Project>
