@@ -357,7 +357,7 @@ namespace MockHttp
 
 			// ReSharper disable once JoinDeclarationAndInitializer
 			Version version;
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 || NET5_0
 			version = _httpClient.DefaultRequestVersion;
 #else
 #if NETCOREAPP2_1
@@ -627,7 +627,7 @@ namespace MockHttp
 
 			// Act
 			foreach (HttpStatusCode expectedStatus in statusCodeSequence
-#if NETCOREAPP2_1 || NETCOREAPP3_1
+#if NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0
 				.SkipLast(1)
 #else
 				.Reverse().Skip(1).Reverse() // Ugly, does the job

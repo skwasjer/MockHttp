@@ -87,7 +87,7 @@ namespace MockHttp.Extensions
 #if !NETCOREAPP1_1
 			yield return CreateTestCase(new ObjectContent(typeof(string), data, new JsonMediaTypeFormatter()), $"\"{data}\"");
 #endif
-#if NETCOREAPP2_1 || NETCOREAPP3_1
+#if NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0
 			yield return CreateTestCase(new ReadOnlyMemoryContent(buffer.AsMemory()), data);
 #endif
 		}
