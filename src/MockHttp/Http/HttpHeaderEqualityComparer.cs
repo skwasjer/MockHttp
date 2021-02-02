@@ -8,6 +8,7 @@ namespace MockHttp.Http
 	internal class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 	{
 		private readonly PatternMatcher _valuePatternMatcher;
+		private readonly bool _isOnlyMatchingHeaderName;
 
 		public HttpHeaderEqualityComparer()
 		{
@@ -18,11 +19,21 @@ namespace MockHttp.Http
 			_valuePatternMatcher = valuePatternMatcher ?? throw new ArgumentNullException(nameof(valuePatternMatcher));
 		}
 
+		public HttpHeaderEqualityComparer(bool isOnlyMatchingHeaderName)
+		{
+			_isOnlyMatchingHeaderName = isOnlyMatchingHeaderName;
+		}
+
 		public bool Equals(KeyValuePair<string, IEnumerable<string>> x, KeyValuePair<string, IEnumerable<string>> y)
 		{
 			if (x.Key != y.Key)
 			{
 				return false;
+			}
+
+			if (_isOnlyMatchingHeaderName)
+			{
+				return true;
 			}
 
 			if (y.Value.Any(

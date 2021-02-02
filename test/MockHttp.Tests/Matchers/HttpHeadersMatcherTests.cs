@@ -74,6 +74,17 @@ namespace MockHttp.Matchers
 		}
 
 		[Fact]
+		public void Given_request_contains_expected_header_when_matching_with_header_name_only_should_match()
+		{
+			HttpRequestMessage request = GetRequestWithHeaders();
+
+			_sut = new HttpHeadersMatcher("Cache-Control");
+
+			// Act & assert
+			_sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+		}
+
+		[Fact]
 		public void Given_null_header_name_when_creating_matcher_should_throw()
 		{
 			// Act
