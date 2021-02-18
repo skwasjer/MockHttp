@@ -589,11 +589,7 @@ namespace MockHttp.Extensions
 				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
-#if NETFRAMEWORK
-				matchers.Should().HaveCount(1);
-#else
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
-#endif
 				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
 			}
 		}
