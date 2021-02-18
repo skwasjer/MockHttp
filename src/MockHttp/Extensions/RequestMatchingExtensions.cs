@@ -337,6 +337,22 @@ namespace MockHttp
 		}
 
 		/// <summary>
+		/// Matches a request by HTTP header.
+		/// </summary>
+		/// <param name="builder">The request matching builder instance.</param>
+		/// <param name="name">The header name.</param>
+		/// <returns>The request matching builder instance.</returns>
+		public static RequestMatching Header(this RequestMatching builder, string name)
+		{
+			if (builder == null)
+			{
+				throw new ArgumentNullException(nameof(builder));
+			}
+
+			return builder.With(new HttpHeadersMatcher(name));
+		}
+
+		/// <summary>
 		/// Matches a request by HTTP headers.
 		/// </summary>
 		/// <param name="builder">The request matching builder instance.</param>
