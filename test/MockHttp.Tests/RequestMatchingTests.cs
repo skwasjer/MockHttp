@@ -112,5 +112,11 @@ namespace MockHttp
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("matcher");
 		}
+
+		[Fact]
+		public void When_negating_match_it_should_return_inverted_matcher()
+		{
+			_sut.Not.Should().BeOfType<InvertRequestMatching>();
+		}
 	}
 }

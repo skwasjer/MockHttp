@@ -14,10 +14,16 @@ namespace MockHttp
 	public class RequestMatching : IFluentInterface
 	{
 		private readonly List<IAsyncHttpRequestMatcher> _matchers = new List<IAsyncHttpRequestMatcher>();
+		private RequestMatching _not;
 
 		internal RequestMatching()
 		{
 		}
+
+		/// <summary>
+		/// Gets a request matcher that will not match any constraint configured on it.
+		/// </summary>
+		public RequestMatching Not => _not ??= new InvertRequestMatching(this);
 
 		/// <summary>
 		/// Adds a matcher.
@@ -25,6 +31,17 @@ namespace MockHttp
 		/// <param name="matcher">The matcher instance.</param>
 		/// <returns>The request matching builder.</returns>
 		public RequestMatching With(IAsyncHttpRequestMatcher matcher)
+		{
+			return RegisterMatcher(matcher);
+		}
+
+		/// <summary>
+		/// Adds a matcher.
+		/// </summary>
+		/// <param name="matcher">The matcher instance.</param>
+		/// <returns>The request matching builder.</returns>
+		// ReSharper disable once MemberCanBeProtected.Global
+		protected internal virtual RequestMatching RegisterMatcher(IAsyncHttpRequestMatcher matcher)
 		{
 			if (matcher is null)
 			{
@@ -52,7 +69,7 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(matcher));
 			}
 
-			List<IAsyncHttpRequestMatcher> sameTypeMatchers = _matchers
+			var sameTypeMatchers = _matchers
 				.Where(m => m.GetType() == matcher.GetType())
 				.ToList();
 
