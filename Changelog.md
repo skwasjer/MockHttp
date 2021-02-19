@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.4.0
+
+- Added `.Not` matcher (negating any matcher)
+- Added request header name only matcher (see [#3](https://github.com/skwasjer/MockHttp/pull/3)).
+
 ## v2.3.0
 
 - Added .NET 5.0 target framework support.

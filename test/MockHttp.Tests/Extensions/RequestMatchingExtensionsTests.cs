@@ -569,6 +569,29 @@ namespace MockHttp.Extensions
 #endif
 				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
 			}
+
+			[Theory]
+			[InlineData("Cache-Control", true)]
+			[InlineData("Content-Type", false)]
+			public async Task When_configuring_name_should_match(string name, bool expectedResult)
+			{
+				var request = new HttpRequestMessage
+				{
+					Headers =
+					{
+						CacheControl =
+							new CacheControlHeaderValue { Public = true, MaxAge = TimeSpan.FromHours(2) }
+					}
+				};
+
+				// Act
+				_sut.Header(name);
+				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+
+				// Assert
+				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
+				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
+			}
 		}
 
 		public class Any : RequestMatchingExtensionsTests
@@ -760,6 +783,10 @@ namespace MockHttp.Extensions
 						instance,
 						"header",
 						Enumerable.Empty<string>()),
+					DelegateTestCase.Create(
+						RequestMatchingExtensions.Header,
+						instance,
+						"header"),
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.Header,
 						instance,

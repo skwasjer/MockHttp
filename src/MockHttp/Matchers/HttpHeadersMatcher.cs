@@ -15,6 +15,21 @@ namespace MockHttp.Matchers
 		private readonly HttpHeaderEqualityComparer _equalityComparer;
 
 		/// <summary>
+		///  Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/>.
+		/// </summary>
+		/// <param name="name">The header name to match.</param>
+		public HttpHeadersMatcher(string name) : base(new HttpHeadersCollection())
+		{
+			if (name is null)
+			{
+				throw new ArgumentNullException(nameof(name));
+			}
+
+			_equalityComparer = new HttpHeaderEqualityComparer(true);
+			Value.TryAddWithoutValidation(name, (string)null);
+		}
+		
+		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
 		/// </summary>
 		/// <param name="name">The header name to match.</param>
