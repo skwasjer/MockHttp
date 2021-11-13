@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0;netstandard1.1;net45</TargetFrameworks>
+    <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
   </PropertyGroup>
@@ -16,14 +16,6 @@
       - Added request header name only matcher
     </PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard1'))">
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.1.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="*.DotSettings" />

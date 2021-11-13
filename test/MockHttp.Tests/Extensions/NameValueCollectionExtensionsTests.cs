@@ -1,6 +1,4 @@
-﻿
-using System.Linq;
-#if !NETCOREAPP1_1
+﻿using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -50,4 +48,3 @@ namespace MockHttp.Extensions
 		}
 	}
 }
-#endif

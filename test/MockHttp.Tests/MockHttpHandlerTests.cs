@@ -411,9 +411,7 @@ namespace MockHttp
 
 			// Assert
 			_sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
-#if !NETCOREAPP1_1 // .NET Standard 1.1 disposes content, so can't verify after sending on HttpContent.
 			await _sut.VerifyAsync(matching => matching.Content(jsonPostContent), IsSent.Once, "we sent it");
-#endif
 			_sut.Verify();
 			_sut.VerifyNoOtherRequests();
 
@@ -626,13 +624,7 @@ namespace MockHttp
 			statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
 
 			// Act
-			foreach (HttpStatusCode expectedStatus in statusCodeSequence
-#if NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0
-				.SkipLast(1)
-#else
-				.Reverse().Skip(1).Reverse() // Ugly, does the job
-#endif
-			)
+			foreach (HttpStatusCode expectedStatus in statusCodeSequence.SkipLast(1))
 			{
 				HttpResponseMessage response = await _httpClient.GetAsync("");
 				response.Should().HaveStatusCode(expectedStatus);

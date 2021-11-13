@@ -2,9 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization;
-#if !NETCOREAPP1_1
 using System.Net.Http.Formatting;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using MockHttp.FluentAssertions;
@@ -165,8 +163,6 @@ namespace MockHttp.Json
 			await actualResponse.Should().HaveContentAsync(expectedJson);
 		}
 
-#if !NETCOREAPP1_1
-
 		[DataContract(Name = "RootElem", Namespace = "")]
 		public class MyXmlSerializableType
 		{
@@ -206,7 +202,6 @@ namespace MockHttp.Json
 			// Assert
 			actualResponse.Should().HaveContentType(contentType);
 		}
-#endif
 	}
 }
 

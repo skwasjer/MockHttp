@@ -562,11 +562,7 @@ namespace MockHttp.Extensions
 				IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
 				// Assert
-#if NETFRAMEWORK
-				matchers.Should().HaveCount(1);
-#else
 				matchers.Should().HaveCount(1).And.AllBeOfType<HttpHeadersMatcher>();
-#endif
 				(await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(expectedResult);
 			}
 
@@ -731,12 +727,10 @@ namespace MockHttp.Extensions
 						RequestMatchingExtensions.QueryString,
 						instance,
 						new Dictionary<string, IEnumerable<string>>()),
-#if !NETCOREAPP1_1
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.QueryString,
 						instance,
 						new NameValueCollection()),
-#endif
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.QueryString,
 						instance,
@@ -826,12 +820,10 @@ namespace MockHttp.Extensions
 						RequestMatchingExtensions.FormData,
 						instance,
 						new Dictionary<string, string>()),
-#if !NETCOREAPP1_1
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.FormData,
 						instance,
 						new NameValueCollection()),
-#endif
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.FormData,
 						instance,

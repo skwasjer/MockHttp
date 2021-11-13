@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0;netstandard1.1;net45</TargetFrameworks>
+    <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <PackageId>skwas.MockHttp.Json</PackageId>
     <AssemblyName>skwas.MockHttp.Json</AssemblyName>
-
-    <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
-    <DefineConstants Condition="$(TargetFramework.StartsWith('netstandard2')) Or '$(TargetFramework)'=='net5.0'">$(DefineConstants);MEDIA_TYPE_FORMATTER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,15 +12,7 @@
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard1'))">
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard2')) Or '$(TargetFramework)'=='net5.0'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />
   </ItemGroup>
 

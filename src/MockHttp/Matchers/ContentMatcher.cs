@@ -28,11 +28,7 @@ namespace MockHttp.Matchers
 		/// </summary>
 		public ContentMatcher()
 		{
-#if NETSTANDARD1_1 || NETFRAMEWORK
-			ByteContent = new byte[0];
-#else
 			ByteContent = Array.Empty<byte>();
-#endif
 		}
 
 		/// <summary>
