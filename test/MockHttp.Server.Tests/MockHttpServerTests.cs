@@ -14,6 +14,7 @@ using Xunit.Abstractions;
 
 namespace MockHttp
 {
+	[Collection(nameof(DisableParallelization))]
 	public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 	{
 		private readonly MockHttpServerFixture _fixture;
@@ -262,7 +263,7 @@ namespace MockHttp
 
 			// Act
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1");
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1:0");
 
 			// Assert
 			using MockHttpServer server = act.Should().NotThrow().Which;
@@ -313,7 +314,7 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_server_is_started_when_starting_again_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
 			await server.StartAsync();
 			server.IsStarted.Should().BeTrue();
 
@@ -327,7 +328,7 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_server_is_not_started_when_stopped_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
 			server.IsStarted.Should().BeFalse();
 
 			// Act
@@ -343,7 +344,7 @@ namespace MockHttp
 			var handler = new MockHttpHandler();
 
 			// Act
-			var server = new MockHttpServer(handler, "http://127.0.0.1");
+			var server = new MockHttpServer(handler, "http://127.0.0.1:0");
 
 			// Assert
 			server.Handler.Should().Be(handler);
