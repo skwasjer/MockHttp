@@ -695,7 +695,7 @@ namespace MockHttp.Extensions
 			{
 				var streamMock = new Mock<Stream> { CallBase = true };
 				streamMock.SetReturnsDefault(true);
-				Uri uri = new Uri("http://0.0.0.0");
+				var uri = new Uri("http://0.0.0.0");
 				var instance = new RequestMatching();
 
 				DelegateTestCase[] testCases =

@@ -14,7 +14,7 @@ using Xunit;
 
 namespace MockHttp.Json
 {
-	public class JsonRespondsExtensionsTests : IDisposable
+	public sealed class JsonRespondsExtensionsTests : IDisposable
 	{
 		private readonly IResponds<ISequenceResponseResult> _sut;
 		private readonly MockHttpHandler _httpMock;
@@ -111,14 +111,14 @@ namespace MockHttp.Json
 		public async Task When_responding_with_custom_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
 		{
 			var request = new HttpRequestMessage();
-			var serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
+			JsonSerializerSettings serializerSettings = useDefaultSerializer ? null : new JsonSerializerSettings
 			{
 				ContractResolver = new CamelCasePropertyNamesContractResolver
 				{
 					NamingStrategy = new SnakeCaseNamingStrategy()
 				}
 			};
-			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			string expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
 			var testClass = new TestClass
 			{
 				SomeProperty = "value"
@@ -138,7 +138,7 @@ namespace MockHttp.Json
 		public async Task When_responding_with_global_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
 		{
 			var request = new HttpRequestMessage();
-			var expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
+			string expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
 			var testClass = new TestClass
 			{
 				SomeProperty = "value"

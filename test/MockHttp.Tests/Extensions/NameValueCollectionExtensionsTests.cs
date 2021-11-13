@@ -16,8 +16,7 @@ namespace MockHttp.Extensions
 			NameValueCollection nameValueCollection = null;
 
 			// ReSharper disable once ExpressionIsAlwaysNull
-			// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-			Action act = () => nameValueCollection.AsEnumerable().Count();
+			Func<int> act = () => nameValueCollection.AsEnumerable().Count();
 
 			// Assert
 			act.Should()

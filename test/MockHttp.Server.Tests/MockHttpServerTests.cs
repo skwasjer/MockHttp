@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace MockHttp
 {
-	public class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
+	public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 	{
 		private readonly MockHttpServerFixture _fixture;
 		private readonly ITestOutputHelper _testOutputHelper;
@@ -189,7 +189,7 @@ namespace MockHttp
 			}
 
 			// Assert
-			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+			var response = (HttpWebResponse)await request.GetResponseAsync();
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
 			response.ContentType.Should().Be("text/html; charset=utf-8");
 			using (var sr = new StreamReader(response.GetResponseStream()))

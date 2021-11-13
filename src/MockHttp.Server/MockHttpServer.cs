@@ -36,9 +36,7 @@ namespace MockHttp
 		/// </summary>
 		/// <param name="mockHttpHandler">The mock http handler.</param>
 		/// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
-#pragma warning disable CA1054 // Uri parameters should not be strings
 		public MockHttpServer(MockHttpHandler mockHttpHandler, string hostUrl)
-#pragma warning restore CA1054 // Uri parameters should not be strings
 			: this(mockHttpHandler, null, hostUrl)
 		{
 		}
@@ -49,9 +47,7 @@ namespace MockHttp
 		/// <param name="mockHttpHandler">The mock http handler.</param>
 		/// <param name="loggerFactory">The logger factory to use to log pipeline requests to.</param>
 		/// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
-#pragma warning disable CA1054 // Uri parameters should not be strings
 		public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory loggerFactory, string hostUrl)
-#pragma warning restore CA1054 // Uri parameters should not be strings
 		{
 			Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
 			_webHostBuilder = CreateWebHostBuilder(loggerFactory);
@@ -73,9 +69,7 @@ namespace MockHttp
 		/// <summary>
 		/// Gets the host URL the mock HTTP server will listen on.
 		/// </summary>
-#pragma warning disable CA1056 // Uri properties should not be strings
 		public string HostUrl
-#pragma warning restore CA1056 // Uri properties should not be strings
 		{
 			get
 			{
