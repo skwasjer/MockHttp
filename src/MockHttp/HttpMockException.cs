@@ -10,6 +10,13 @@ namespace MockHttp
 	public class HttpMockException : Exception
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="HttpMockException"/>.
+		/// </summary>
+		internal HttpMockException()
+		{
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpMockException"/> class using specified <paramref name="message"/>.
 		/// </summary>
 		/// <param name="message">The exception message.</param>
