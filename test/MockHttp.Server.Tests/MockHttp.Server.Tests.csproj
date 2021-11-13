@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
 
     <IsTestProject>true</IsTestProject>
 
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
+    <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=net6.0" Condition="'$(TargetFramework)'=='net6.0'" />
     <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=net5.0" Condition="'$(TargetFramework)'=='net5.0'" />
     <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=netstandard2.1" Condition="'$(TargetFramework)'=='netcoreapp3.1'" />
     <ProjectReference Include="..\..\src\MockHttp.Server\MockHttp.Server.csproj" AdditionalProperties="TargetFramework=netstandard2.0" Condition="'$(TargetFramework)'=='netcoreapp2.1'" />
