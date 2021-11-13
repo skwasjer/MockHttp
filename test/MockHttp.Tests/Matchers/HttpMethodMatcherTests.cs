@@ -49,8 +49,7 @@ namespace MockHttp.Matchers
 		public void Given_null_method_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpMethodMatcher(null);
+			Func<HttpMethodMatcher> act = () => new HttpMethodMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("method");

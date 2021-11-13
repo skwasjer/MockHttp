@@ -88,8 +88,7 @@ namespace MockHttp.Matchers
 		public void Given_null_header_name_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpHeadersMatcher(null, (string)null);
+			Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, (string)null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("name");
@@ -99,8 +98,7 @@ namespace MockHttp.Matchers
 		public void Given_null_header_name_for_multiple_values_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpHeadersMatcher(null, (string[])null);
+			Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("name");
@@ -110,8 +108,7 @@ namespace MockHttp.Matchers
 		public void Given_null_headers_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, string>>)null);
+			Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, string>>)null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("headers");
@@ -121,8 +118,7 @@ namespace MockHttp.Matchers
 		public void Given_null_headers_for_multiple_values_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
+			Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("headers");

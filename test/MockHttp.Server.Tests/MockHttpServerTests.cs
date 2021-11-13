@@ -248,9 +248,8 @@ namespace MockHttp
 			MockHttpHandler mockHttpHandler = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(mockHttpHandler, "");
+			Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, "");
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(mockHttpHandler));
@@ -262,7 +261,6 @@ namespace MockHttp
 			ILoggerFactory loggerFactory = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
 			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1");
 
@@ -278,9 +276,8 @@ namespace MockHttp
 			string hostUrl = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(hostUrl));
@@ -292,9 +289,8 @@ namespace MockHttp
 			const string hostUrl = "relative/uri/is/invalid";
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
 			// Assert
 			act.Should().Throw<ArgumentException>().WithParamName(nameof(hostUrl));
@@ -307,7 +303,6 @@ namespace MockHttp
 			const string expectedHostUrl = "https://relative:789";
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
 			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 

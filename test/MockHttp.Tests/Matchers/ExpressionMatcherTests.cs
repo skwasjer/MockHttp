@@ -33,8 +33,7 @@ namespace MockHttp.Matchers
 		public void Given_null_expression_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new ExpressionMatcher(null);
+			Func<ExpressionMatcher> act = () => new ExpressionMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("expression");

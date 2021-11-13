@@ -89,9 +89,8 @@ namespace MockHttp.Matchers
 			string urlEncodedFormData = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new FormDataMatcher(urlEncodedFormData);
+			Func<FormDataMatcher> act = () => new FormDataMatcher(urlEncodedFormData);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(urlEncodedFormData));
@@ -103,9 +102,8 @@ namespace MockHttp.Matchers
 			IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new FormDataMatcher(formData);
+			Func<FormDataMatcher> act = () => new FormDataMatcher(formData);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));

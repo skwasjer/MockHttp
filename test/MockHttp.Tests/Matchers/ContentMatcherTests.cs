@@ -19,8 +19,9 @@ namespace MockHttp.Matchers
 		[InlineData("pasākumi", "utf-16")]
 		public async Task Given_request_content_equals_expected_content_when_matching_should_match(string content, string encoding)
 		{
+			// ReSharper disable once InlineTemporaryVariable
 			string expectedContent = content;
-			Encoding enc = Encoding.GetEncoding(encoding);
+			var enc = Encoding.GetEncoding(encoding);
 
 			var request = new HttpRequestMessage
 			{
@@ -95,8 +96,7 @@ namespace MockHttp.Matchers
 		public void Given_null_content_string_with_encoding_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new ContentMatcher(null, Encoding.UTF8);
+			Func<ContentMatcher> act = () => new ContentMatcher(null, Encoding.UTF8);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("content");
@@ -106,8 +106,7 @@ namespace MockHttp.Matchers
 		public void Given_content_string_with_null_encoding_when_creating_matcher_should_not_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new ContentMatcher("data", null);
+			Func<ContentMatcher> act = () => new ContentMatcher("data", null);
 
 			// Assert
 			act.Should().NotThrow("default encoding should be used instead");
@@ -117,8 +116,7 @@ namespace MockHttp.Matchers
 		public void Given_null_content_bytes_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new ContentMatcher(null);
+			Func<ContentMatcher> act = () => new ContentMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("content");

@@ -43,8 +43,7 @@ namespace MockHttp.Matchers
 		public void Given_version_is_null_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new VersionMatcher(null);
+			Func<VersionMatcher> act = () => new VersionMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("version");

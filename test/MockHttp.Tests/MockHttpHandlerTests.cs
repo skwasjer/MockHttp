@@ -621,7 +621,7 @@ namespace MockHttp
 			HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
 
 			IResponds<IResponseResult> result = _sut.When(m => { });
-			statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
+			_ = statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
 
 			// Act
 			foreach (HttpStatusCode expectedStatus in statusCodeSequence.SkipLast(1))

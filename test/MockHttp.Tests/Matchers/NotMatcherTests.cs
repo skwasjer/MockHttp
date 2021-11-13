@@ -41,8 +41,7 @@ namespace MockHttp.Matchers
 		public void Given_null_inner_matcher_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new NotMatcher(null);
+			Func<NotMatcher> act = () => new NotMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("matcher");

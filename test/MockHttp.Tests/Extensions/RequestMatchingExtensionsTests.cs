@@ -785,7 +785,7 @@ namespace MockHttp.Extensions
 						RequestMatchingExtensions.Header,
 						instance,
 						"header",
-						new string[0]),
+						Array.Empty<string>()),
 					DelegateTestCase.Create(
 						RequestMatchingExtensions.Headers,
 						instance,
