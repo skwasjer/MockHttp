@@ -2,6 +2,7 @@ assembly-versioning-scheme: MajorMinorPatch
 mode: ContinuousDelivery
 continuous-delivery-fallback-tag: 'ci'
 branches:
-  develop: {}
+  main:
+    regex: ^main$
 ignore:
   sha: []

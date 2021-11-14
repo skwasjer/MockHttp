@@ -4,9 +4,9 @@ Collection of .NET libraries to mock HTTP responses for any HTTP client (`HttpCl
 
 ---
 
-[![Build status](https://ci.appveyor.com/api/projects/status/n3t7ny3j7cryt92t/branch/master?svg=true)](https://ci.appveyor.com/project/skwasjer/mockhttp)
-[![Tests](https://img.shields.io/appveyor/tests/skwasjer/mockhttp/master.svg)](https://ci.appveyor.com/project/skwasjer/mockhttp/build/tests)
-[![codecov](https://codecov.io/gh/skwasjer/MockHttp/branch/master/graph/badge.svg)](https://codecov.io/gh/skwasjer/MockHttp)
+[![Build status](https://ci.appveyor.com/api/projects/status/n3t7ny3j7cryt92t/branch/main?svg=true)](https://ci.appveyor.com/project/skwasjer/mockhttp)
+[![Tests](https://img.shields.io/appveyor/tests/skwasjer/mockhttp/main.svg)](https://ci.appveyor.com/project/skwasjer/mockhttp/build/tests)
+[![codecov](https://codecov.io/gh/skwasjer/MockHttp/branch/main/graph/badge.svg)](https://codecov.io/gh/skwasjer/MockHttp)
 
 | | | |
 |---|---|---|
