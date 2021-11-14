@@ -97,11 +97,7 @@ namespace MockHttp
 			return builder.QueryString(
 				key,
 				value is null
-#if NETSTANDARD1_1 || NETFRAMEWORK
-					? new string[0]
-#else
 					? Array.Empty<string>()
-#endif
 					: new[] { value });
 		}
 
@@ -153,7 +149,6 @@ namespace MockHttp
 			return builder.With(new QueryStringMatcher(parameters));
 		}
 
-#if !NETSTANDARD1_1
 		/// <summary>
 		/// Matches a request by query string.
 		/// </summary>
@@ -169,7 +164,6 @@ namespace MockHttp
 
 			return builder.With(new QueryStringMatcher(parameters?.AsEnumerable()));
 		}
-#endif
 
 		/// <summary>
 		/// Matches a request by query string.
@@ -498,7 +492,6 @@ namespace MockHttp
 				));
 		}
 
-#if !NETSTANDARD1_1
 		/// <summary>
 		/// Matches a request by form data.
 		/// </summary>
@@ -509,7 +502,6 @@ namespace MockHttp
 		{
 			return builder.FormData(formData?.AsEnumerable());
 		}
-#endif
 
 		/// <summary>
 		/// Matches a request by form data.

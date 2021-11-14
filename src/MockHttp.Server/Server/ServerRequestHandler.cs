@@ -42,19 +42,15 @@ namespace MockHttp.Server
 			{
 				httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
 			}
-#pragma warning disable CA1031 // Do not catch general exception types
 			catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
 			{
 				LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
 
-#pragma warning disable CA2000 // Dispose objects before losing scope
 				httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
 				{
 					ReasonPhrase = Resources.Error_VerifyMockSetup,
 					Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, Encoding.UTF8, "text/plain")
 				};
-#pragma warning restore CA2000 // Dispose objects before losing scope
 			}
 			finally
 			{

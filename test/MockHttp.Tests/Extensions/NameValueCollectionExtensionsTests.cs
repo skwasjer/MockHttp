@@ -1,6 +1,4 @@
-﻿
-using System.Linq;
-#if !NETCOREAPP1_1
+﻿using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -18,8 +16,7 @@ namespace MockHttp.Extensions
 			NameValueCollection nameValueCollection = null;
 
 			// ReSharper disable once ExpressionIsAlwaysNull
-			// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-			Action act = () => nameValueCollection.AsEnumerable().Count();
+			Func<int> act = () => nameValueCollection.AsEnumerable().Count();
 
 			// Assert
 			act.Should()
@@ -50,4 +47,3 @@ namespace MockHttp.Extensions
 		}
 	}
 }
-#endif

@@ -72,14 +72,10 @@ namespace MockHttp.Http
 
 		private static bool TryGetQueryFromUri(string uri, out string queryString)
 		{
-#if NETSTANDARD1_1
-			if (uri.Contains(TokenQuestionMark.ToString())
-#else
 #if NETSTANDARD2_1 || NET5_0
 			if (uri.Contains(TokenQuestionMark, StringComparison.InvariantCultureIgnoreCase)
 #else
 			if (uri.Contains(TokenQuestionMark.ToString(System.Globalization.CultureInfo.InvariantCulture))
-#endif
 #endif
 				&& Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri u))
 			{

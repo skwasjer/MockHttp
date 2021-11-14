@@ -91,8 +91,7 @@ namespace MockHttp.Matchers
 		public void Given_null_headerValue_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new MediaTypeHeaderMatcher(null);
+			Func<MediaTypeHeaderMatcher> act = () => new MediaTypeHeaderMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("headerValue");

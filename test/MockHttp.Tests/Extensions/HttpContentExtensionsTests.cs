@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-#if !NETCOREAPP1_1
 using System.Net.Http.Formatting;
-#endif
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,12 +82,8 @@ namespace MockHttp.Extensions
 				new StringContent(data)
 			};
 			yield return CreateTestCase(mpc, $"--boundary{Environment.NewLine}Content-Type: text/plain; charset=utf-8{Environment.NewLine}{Environment.NewLine}<b>data</b>{Environment.NewLine}--boundary--{Environment.NewLine}");
-#if !NETCOREAPP1_1
 			yield return CreateTestCase(new ObjectContent(typeof(string), data, new JsonMediaTypeFormatter()), $"\"{data}\"");
-#endif
-#if NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0
 			yield return CreateTestCase(new ReadOnlyMemoryContent(buffer.AsMemory()), data);
-#endif
 		}
 	}
 }

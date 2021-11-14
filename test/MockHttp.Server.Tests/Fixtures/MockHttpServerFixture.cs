@@ -54,6 +54,7 @@ namespace MockHttp.Fixtures
 		{
 			Server?.Dispose();
 			Handler?.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		public Task InitializeAsync()

@@ -14,7 +14,8 @@ using Xunit.Abstractions;
 
 namespace MockHttp
 {
-	public class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
+	[Collection(nameof(DisableParallelization))]
+	public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 	{
 		private readonly MockHttpServerFixture _fixture;
 		private readonly ITestOutputHelper _testOutputHelper;
@@ -189,7 +190,7 @@ namespace MockHttp
 			}
 
 			// Assert
-			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+			var response = (HttpWebResponse)await request.GetResponseAsync();
 			response.StatusCode.Should().Be(HttpStatusCode.Accepted);
 			response.ContentType.Should().Be("text/html; charset=utf-8");
 			using (var sr = new StreamReader(response.GetResponseStream()))
@@ -248,9 +249,8 @@ namespace MockHttp
 			MockHttpHandler mockHttpHandler = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(mockHttpHandler, "");
+			Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, "");
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(mockHttpHandler));
@@ -262,9 +262,8 @@ namespace MockHttp
 			ILoggerFactory loggerFactory = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1");
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1:0");
 
 			// Assert
 			using MockHttpServer server = act.Should().NotThrow().Which;
@@ -278,9 +277,8 @@ namespace MockHttp
 			string hostUrl = null;
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName(nameof(hostUrl));
@@ -292,9 +290,8 @@ namespace MockHttp
 			const string hostUrl = "relative/uri/is/invalid";
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
 			// Assert
 			act.Should().Throw<ArgumentException>().WithParamName(nameof(hostUrl));
@@ -307,7 +304,6 @@ namespace MockHttp
 			const string expectedHostUrl = "https://relative:789";
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
 			Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
@@ -318,7 +314,7 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_server_is_started_when_starting_again_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
 			await server.StartAsync();
 			server.IsStarted.Should().BeTrue();
 
@@ -332,7 +328,7 @@ namespace MockHttp
 		[Fact]
 		public async Task Given_server_is_not_started_when_stopped_it_should_throw()
 		{
-			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1");
+			using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
 			server.IsStarted.Should().BeFalse();
 
 			// Act
@@ -348,7 +344,7 @@ namespace MockHttp
 			var handler = new MockHttpHandler();
 
 			// Act
-			var server = new MockHttpServer(handler, "http://127.0.0.1");
+			var server = new MockHttpServer(handler, "http://127.0.0.1:0");
 
 			// Assert
 			server.Handler.Should().Be(handler);

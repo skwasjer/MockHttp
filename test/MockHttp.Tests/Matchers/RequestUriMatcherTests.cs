@@ -68,8 +68,7 @@ namespace MockHttp.Matchers
 		public void Given_null_uri_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new RequestUriMatcher(null);
+			Func<RequestUriMatcher> act = () => new RequestUriMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("uri");
@@ -79,8 +78,7 @@ namespace MockHttp.Matchers
 		public void Given_null_uriString_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new RequestUriMatcher(null, false);
+			Func<RequestUriMatcher> act = () => new RequestUriMatcher(null, false);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("uriString");

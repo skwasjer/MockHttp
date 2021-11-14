@@ -86,7 +86,7 @@ namespace MockHttp.Http
 			const string dataEscapedString = "key1&key2=value&key3=&key4=value1&key4=value2";
 			var expected = new Dictionary<string, IEnumerable<string>>
 			{
-				{ "key1", new string[0] },
+				{ "key1", Array.Empty<string>() },
 				{ "key2", new [] { "value" } },
 				{ "key3", new [] { "" } },
 				{ "key4", new [] { "value1", "value2" } },

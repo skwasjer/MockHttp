@@ -1,5 +1,4 @@
-﻿#if MEDIA_TYPE_FORMATTER
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -179,4 +178,3 @@ namespace MockHttp.Json
 		}
 	}
 }
-#endif

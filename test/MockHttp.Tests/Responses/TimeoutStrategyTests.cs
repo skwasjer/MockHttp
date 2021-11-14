@@ -18,7 +18,7 @@ namespace MockHttp.Responses
 		[InlineData(1000)]
 		public void Given_timeout_when_sending_should_timeout_after_time_passed(int timeoutInMilliseconds)
 		{
-			TimeSpan timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
+			var timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
 			var sut = new TimeoutStrategy(timeout);
 
 			// Act
@@ -37,12 +37,12 @@ namespace MockHttp.Responses
 		[Fact]
 		public async Task Given_cancellation_token_is_cancelled_when_sending_should_throw()
 		{
-			TimeSpan timeout = TimeSpan.FromSeconds(60);
+			var timeout = TimeSpan.FromSeconds(60);
 			var sut = new TimeoutStrategy(timeout);
 			var ct = new CancellationToken(true);
 
 			// Act
-			Stopwatch sw = Stopwatch.StartNew();
+			var sw = Stopwatch.StartNew();
 			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), ct);
 
 			// Assert
@@ -57,11 +57,10 @@ namespace MockHttp.Responses
 		[InlineData((double)int.MaxValue + 1)]
 		public void Given_invalid_timespan_when_sending_should_throw(double milliseconds)
 		{
-			TimeSpan invalidTimeout = TimeSpan.FromMilliseconds(milliseconds);
+			var invalidTimeout = TimeSpan.FromMilliseconds(milliseconds);
 
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new TimeoutStrategy(invalidTimeout);
+			Func<TimeoutStrategy> act = () => new TimeoutStrategy(invalidTimeout);
 
 			// Assert
 			act.Should().Throw<ArgumentOutOfRangeException>()

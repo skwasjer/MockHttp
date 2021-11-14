@@ -75,8 +75,7 @@ namespace MockHttp.Matchers
 		public void Given_null_queryString_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new QueryStringMatcher((string)null);
+			Func<QueryStringMatcher> act = () => new QueryStringMatcher((string)null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("queryString");
@@ -86,8 +85,7 @@ namespace MockHttp.Matchers
 		public void Given_null_parameters_when_creating_matcher_should_throw()
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
+			Func<QueryStringMatcher> act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("parameters");

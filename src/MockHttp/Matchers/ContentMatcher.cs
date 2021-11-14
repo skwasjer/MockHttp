@@ -28,11 +28,7 @@ namespace MockHttp.Matchers
 		/// </summary>
 		public ContentMatcher()
 		{
-#if NETSTANDARD1_1 || NETFRAMEWORK
-			ByteContent = new byte[0];
-#else
 			ByteContent = Array.Empty<byte>();
-#endif
 		}
 
 		/// <summary>
@@ -58,10 +54,8 @@ namespace MockHttp.Matchers
 		/// <summary>
 		/// Gets the expected content in bytes.
 		/// </summary>
-#pragma warning disable CA1819 // Properties should not return arrays
 		// ReSharper disable once MemberCanBeProtected.Global
 		protected internal byte[] ByteContent { get; }
-#pragma warning restore CA1819 // Properties should not return arrays
 
 		/// <inheritdoc />
 		public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)

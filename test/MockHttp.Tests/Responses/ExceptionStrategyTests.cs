@@ -15,9 +15,8 @@ namespace MockHttp.Responses
 		{
 			Func<Exception> exceptionFactory = null;
 
-			// ReSharper disable once ObjectCreationAsStatement
 			// ReSharper disable once ExpressionIsAlwaysNull
-			Action act = () => new ExceptionStrategy(exceptionFactory);
+			Func<ExceptionStrategy> act = () => new ExceptionStrategy(exceptionFactory);
 
 			// Assert
 			act.Should()

@@ -15,8 +15,7 @@ namespace MockHttp.Http
 
 			// Act
 			// ReSharper disable once ExpressionIsAlwaysNull
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new QueryString(values);
+			Func<QueryString> act = () => new QueryString(values);
 
 			// Assert
 			act.Should()
@@ -30,8 +29,7 @@ namespace MockHttp.Http
 		public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string key)
 		{
 			// Act
-			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new QueryString(new []
+			Func<QueryString> act = () => new QueryString(new []
 			{
 				new KeyValuePair<string, IEnumerable<string>>(key, new List<string>())
 			});
@@ -58,7 +56,7 @@ namespace MockHttp.Http
 		public void Given_empty_queryString_when_parsing_should_return_empty_dictionary()
 		{
 			// Act
-			QueryString actual = QueryString.Parse(string.Empty);
+			var actual = QueryString.Parse(string.Empty);
 
 			// Assert
 			actual.Should().BeEmpty();
@@ -73,7 +71,7 @@ namespace MockHttp.Http
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse("?key=value");
+			var actual = QueryString.Parse("?key=value");
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
@@ -88,7 +86,7 @@ namespace MockHttp.Http
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse("key=value#hash");
+			var actual = QueryString.Parse("key=value#hash");
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
@@ -103,7 +101,7 @@ namespace MockHttp.Http
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse("%C3%A9%C3%B4x%C3%84=%24%25%5E%26*");
+			var actual = QueryString.Parse("%C3%A9%C3%B4x%C3%84=%24%25%5E%26*");
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
@@ -118,7 +116,7 @@ namespace MockHttp.Http
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse("?key=value&key=%24%25%5E%20%26%2A&key=another%20value");
+			var actual = QueryString.Parse("?key=value&key=%24%25%5E%20%26%2A&key=another%20value");
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
@@ -147,14 +145,14 @@ namespace MockHttp.Http
 			const string queryString = "?key1&key2=value&key3=&key4=value1&key4=value2";
 			var expected = new Dictionary<string, IEnumerable<string>>
 			{
-				{ "key1", new string[0] },
+				{ "key1", Array.Empty<string>() },
 				{ "key2", new [] { "value" } },
 				{ "key3", new [] { "" } },
 				{ "key4", new [] { "value1", "value2" } },
 			};
 
 			// Act
-			QueryString actual = QueryString.Parse(queryString);
+			var actual = QueryString.Parse(queryString);
 
 			// Assert
 			actual.Should().BeEquivalentTo(expected);
@@ -170,7 +168,7 @@ namespace MockHttp.Http
 			const string expectedQueryString = "?query=string";
 
 			// Act
-			QueryString actual = QueryString.Parse(uri);
+			var actual = QueryString.Parse(uri);
 
 			// Assert
 			actual.ToString().Should().BeEquivalentTo(expectedQueryString);
@@ -180,7 +178,7 @@ namespace MockHttp.Http
 		public void Given_empty_queryString_when_formatting_should_return_empty_string()
 		{
 			// Act
-			QueryString actual = QueryString.Parse("");
+			var actual = QueryString.Parse("");
 
 			// Assert
 			actual.ToString().Should().BeEmpty();
