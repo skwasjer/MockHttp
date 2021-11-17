@@ -83,7 +83,9 @@ namespace MockHttp.Extensions
 			};
 			yield return CreateTestCase(mpc, $"--boundary{Environment.NewLine}Content-Type: text/plain; charset=utf-8{Environment.NewLine}{Environment.NewLine}<b>data</b>{Environment.NewLine}--boundary--{Environment.NewLine}");
 			yield return CreateTestCase(new ObjectContent(typeof(string), data, new JsonMediaTypeFormatter()), $"\"{data}\"");
+#if !NETFRAMEWORK
 			yield return CreateTestCase(new ReadOnlyMemoryContent(buffer.AsMemory()), data);
+#endif
 		}
 	}
 }

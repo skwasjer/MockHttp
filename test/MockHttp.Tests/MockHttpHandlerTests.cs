@@ -411,7 +411,9 @@ namespace MockHttp
 
 			// Assert
 			_sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
+#if !NETFRAMEWORK
 			await _sut.VerifyAsync(matching => matching.Content(jsonPostContent), IsSent.Once, "we sent it");
+#endif
 			_sut.Verify();
 			_sut.VerifyNoOtherRequests();
 
@@ -640,4 +642,21 @@ namespace MockHttp
 			}
 		}
 	}
+#if NETFRAMEWORK
+	internal static class EnumerableExtensions
+	{
+		// Polyfill SkipLast
+		public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
+		{
+			if (enumerable is null)
+			{
+				throw new ArgumentNullException(nameof(enumerable));
+			}
+
+			var list = new List<T>(enumerable);
+			list.RemoveRange(list.Count - count, count);
+			return list;
+		}
+	}
+#endif
 }
