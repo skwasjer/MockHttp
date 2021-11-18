@@ -2,8 +2,8 @@
 
 public class MockHttpsServerFixture : MockHttpServerFixture
 {
-	public MockHttpsServerFixture()
-		: base("https")
-	{
-	}
+    public MockHttpsServerFixture()
+        : base("https")
+    {
+    }
 }

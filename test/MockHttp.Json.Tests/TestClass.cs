@@ -2,5 +2,5 @@
 
 public class TestClass
 {
-	public string SomeProperty { get; set; }
+    public string SomeProperty { get; set; }
 }

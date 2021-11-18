@@ -6,37 +6,39 @@ namespace MockHttp.Server;
 
 internal class WrappedHttpRequest : HttpRequestMessage
 {
-	private const int DefaultPort = 80;
+    private const int DefaultPort = 80;
 
-	public WrappedHttpRequest(HttpRequest request)
-	{
-		Method = new HttpMethod(request.Method);
+    public WrappedHttpRequest(HttpRequest request)
+    {
+        Method = new HttpMethod(request.Method);
 
-		var uriBuilder = new UriBuilder(
-			request.Scheme,
-			request.Host.Host,
-			request.Host.Port ?? DefaultPort,
-			request.PathBase + request.Path,
-			request.QueryString.Value);
+        var uriBuilder = new UriBuilder(
+            request.Scheme,
+            request.Host.Host,
+            request.Host.Port ?? DefaultPort,
+            request.PathBase + request.Path,
+            request.QueryString.Value);
 
-		RequestUri = uriBuilder.Uri;
+        RequestUri = uriBuilder.Uri;
 
-		if (request.Body != null)
-		{
-			Content = new StreamContent(request.Body)
-			{
-				Headers =
-				{
-					ContentType = request.ContentType == null ? null : MediaTypeHeaderValue.Parse(request.ContentType),
-					ContentLength = request.ContentLength
-				}
-			};
-		}
+        if (request.Body != null)
+        {
+            Content = new StreamContent(request.Body)
+            {
+                Headers =
+                {
+                    ContentType = request.ContentType == null
+                        ? null
+                        : MediaTypeHeaderValue.Parse(request.ContentType),
+                    ContentLength = request.ContentLength
+                }
+            };
+        }
 
-		// ReSharper disable once UseDeconstruction
-		foreach (KeyValuePair<string, StringValues> header in request.Headers)
-		{
-			Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
-		}
-	}
+        // ReSharper disable once UseDeconstruction
+        foreach (KeyValuePair<string, StringValues> header in request.Headers)
+        {
+            Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+        }
+    }
 }

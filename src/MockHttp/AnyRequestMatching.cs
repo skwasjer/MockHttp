@@ -7,8 +7,8 @@ namespace MockHttp;
 /// </summary>
 internal sealed class AnyRequestMatching : RequestMatching
 {
-	protected internal override void ValidateMatcher(IAsyncHttpRequestMatcher matcher)
-	{
-		// Ignore validation.
-	}
+    protected internal override void ValidateMatcher(IAsyncHttpRequestMatcher matcher)
+    {
+        // Ignore validation.
+    }
 }

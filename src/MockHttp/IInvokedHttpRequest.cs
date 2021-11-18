@@ -7,13 +7,13 @@ namespace MockHttp;
 /// </summary>
 public interface IInvokedHttpRequest
 {
-	/// <summary>
-	/// Gets the HTTP request message.
-	/// </summary>
-	HttpRequestMessage Request { get; }
+    /// <summary>
+    /// Gets the HTTP request message.
+    /// </summary>
+    HttpRequestMessage Request { get; }
 
-	/// <summary>
-	/// Gets the matchers that matched the request.
-	/// </summary>
-	IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
+    /// <summary>
+    /// Gets the matchers that matched the request.
+    /// </summary>
+    IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
 }

@@ -7,10 +7,10 @@ namespace MockHttp.Language;
 /// Implements the fluent API.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public interface IConfiguredRequest :
-	IResponds<ISequenceResponseResult>, ISequenceResponseResult,
-	IThrows<ISequenceThrowsResult>, ISequenceThrowsResult,
-	ICallback<ISequenceResponseResult, ISequenceThrowsResult>, ICallbackResult<ISequenceResponseResult, ISequenceThrowsResult>,
-	IFluentInterface
+public interface IConfiguredRequest
+    : IResponds<ISequenceResponseResult>, ISequenceResponseResult,
+      IThrows<ISequenceThrowsResult>, ISequenceThrowsResult,
+      ICallback<ISequenceResponseResult, ISequenceThrowsResult>, ICallbackResult<ISequenceResponseResult, ISequenceThrowsResult>,
+      IFluentInterface
 {
 }

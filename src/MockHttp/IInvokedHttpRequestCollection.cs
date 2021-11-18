@@ -7,8 +7,8 @@ namespace MockHttp;
 /// </summary>
 public interface IInvokedHttpRequestCollection : IConcurrentReadOnlyCollection<IInvokedHttpRequest>
 {
-	/// <summary>
-	/// Clears the invoked requests collection.
-	/// </summary>
-	void Clear();
+    /// <summary>
+    /// Clears the invoked requests collection.
+    /// </summary>
+    void Clear();
 }

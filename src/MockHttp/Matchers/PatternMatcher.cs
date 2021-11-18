@@ -2,5 +2,5 @@
 
 internal abstract class PatternMatcher
 {
-	public abstract bool IsMatch(string value);
+    public abstract bool IsMatch(string value);
 }

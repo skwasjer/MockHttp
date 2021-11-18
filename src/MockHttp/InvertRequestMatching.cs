@@ -4,15 +4,15 @@ namespace MockHttp;
 
 internal sealed class InvertRequestMatching : RequestMatching
 {
-	private readonly RequestMatching _requestMatching;
+    private readonly RequestMatching _requestMatching;
 
-	public InvertRequestMatching(RequestMatching requestMatching)
-	{
-		_requestMatching = requestMatching;
-	}
+    public InvertRequestMatching(RequestMatching requestMatching)
+    {
+        _requestMatching = requestMatching;
+    }
 
-	protected internal override RequestMatching RegisterMatcher(IAsyncHttpRequestMatcher matcher)
-	{
-		return _requestMatching.RegisterMatcher(new NotMatcher(matcher));
-	}
+    protected internal override RequestMatching RegisterMatcher(IAsyncHttpRequestMatcher matcher)
+    {
+        return _requestMatching.RegisterMatcher(new NotMatcher(matcher));
+    }
 }

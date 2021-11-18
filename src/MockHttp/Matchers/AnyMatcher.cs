@@ -8,54 +8,54 @@ namespace MockHttp.Matchers;
 /// </summary>
 public class AnyMatcher : IAsyncHttpRequestMatcher
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="AnyMatcher"/> class using specified list of <paramref name="matchers"/>.
-	/// </summary>
-	/// <param name="matchers">A list of matchers for which at least one has to match.</param>
-	public AnyMatcher(IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers)
-	{
-		Matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
-		IsExclusive = false;
-	}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnyMatcher" /> class using specified list of <paramref name="matchers" />.
+    /// </summary>
+    /// <param name="matchers">A list of matchers for which at least one has to match.</param>
+    public AnyMatcher(IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers)
+    {
+        Matchers = matchers ?? throw new ArgumentNullException(nameof(matchers));
+        IsExclusive = false;
+    }
 
-	/// <summary>
-	/// Gets the inner matchers.
-	/// </summary>
-	public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
+    /// <summary>
+    /// Gets the inner matchers.
+    /// </summary>
+    public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
 
-	/// <inheritdoc />
-	public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
-	{
-		if (requestContext is null)
-		{
-			throw new ArgumentNullException(nameof(requestContext));
-		}
+    /// <inheritdoc />
+    public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
+    {
+        if (requestContext is null)
+        {
+            throw new ArgumentNullException(nameof(requestContext));
+        }
 
-		return Matchers.AnyAsync(requestContext);
-	}
+        return Matchers.AnyAsync(requestContext);
+    }
 
-	/// <inheritdoc />
-	public bool IsExclusive { get; }
+    /// <inheritdoc />
+    public bool IsExclusive { get; }
 
-	/// <inheritdoc />
-	public override string ToString()
-	{
-		if (Matchers.Count == 0)
-		{
-			return string.Empty;
-		}
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        if (Matchers.Count == 0)
+        {
+            return string.Empty;
+        }
 
-		var sb = new StringBuilder();
-		sb.AppendLine("Any:");
-		sb.Append('{');
-		sb.AppendLine();
-		foreach (IAsyncHttpRequestMatcher m in Matchers)
-		{
-			sb.Append('\t');
-			sb.AppendLine(m.ToString());
-		}
+        var sb = new StringBuilder();
+        sb.AppendLine("Any:");
+        sb.Append('{');
+        sb.AppendLine();
+        foreach (IAsyncHttpRequestMatcher m in Matchers)
+        {
+            sb.Append('\t');
+            sb.AppendLine(m.ToString());
+        }
 
-		sb.Append('}');
-		return sb.ToString();
-	}
+        sb.Append('}');
+        return sb.ToString();
+    }
 }
