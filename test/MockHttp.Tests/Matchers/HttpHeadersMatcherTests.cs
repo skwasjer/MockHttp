@@ -127,7 +127,7 @@ namespace MockHttp.Matchers
 		[Fact]
 		public void When_formatting_single_header_should_return_human_readable_representation()
 		{
-			string expectedText = "Headers: header-name: header-value";
+			const string expectedText = "Headers: header-name: header-value";
 			_sut = new HttpHeadersMatcher("header-name", "header-value");
 
 			// Act

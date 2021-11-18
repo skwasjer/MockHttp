@@ -110,7 +110,12 @@ namespace MockHttp.Matchers
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return $"Headers: {Value.ToString().TrimEnd('\r', '\n')}";
+			string value = Value.ToString();
+#if !NET5_0_OR_GREATER
+			value = value.Replace("\r\n", Environment.NewLine);
+#endif
+
+			return $"Headers: {value.TrimEnd('\r', '\n')}";
 		}
 
 		private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
