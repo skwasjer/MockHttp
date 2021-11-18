@@ -46,7 +46,7 @@ namespace MockHttp.Matchers
 				throw new ArgumentNullException(nameof(requestContext));
 			}
 
-			QueryString query = QueryString.Parse(requestContext.Request.RequestUri.Query);
+			var query = QueryString.Parse(requestContext.Request.RequestUri.Query);
 
 			// When match collection is empty, behavior is flipped, and we expect no query string parameters on request.
 			if (_matchQs.Count == 0 && query.Count > 0)

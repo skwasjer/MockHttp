@@ -6,7 +6,7 @@ using MockHttp.Responses;
 
 namespace MockHttp
 {
-	internal class HttpCallSequence : HttpCall
+	internal sealed class HttpCallSequence : HttpCall
 	{
 		private int _requestIndex;
 		private readonly List<IResponseStrategy> _responseSequence;

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MockHttp.Responses
 {
-	internal class ExceptionStrategy : IResponseStrategy
+	internal sealed class ExceptionStrategy : IResponseStrategy
 	{
 		private readonly Func<Exception> _exceptionFactory;
 

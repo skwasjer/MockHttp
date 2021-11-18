@@ -6,7 +6,7 @@ namespace MockHttp
 	/// <summary>
 	/// Defines the number of times a request is allowed to be sent.
 	/// </summary>
-	public class IsSent
+	public sealed class IsSent
 	{
 		private readonly Func<int, bool> _evaluator;
 		private readonly int _min;

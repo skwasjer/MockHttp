@@ -8,7 +8,7 @@ using Xunit;
 
 namespace MockHttp
 {
-	public class InvertRequestMatchingTests : IDisposable
+	public sealed class InvertRequestMatchingTests : IDisposable
 	{
 		private readonly MockHttpHandler _mockHttp;
 		private readonly HttpClient _httpClient;

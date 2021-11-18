@@ -68,7 +68,9 @@ namespace MockHttp.Server
 		private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception ex = null)
 		{
 			string formattedMessage = Resources.RequestLogMessage + message;
+#pragma warning disable CA2254 // Template should be a static expression
 			_logger.Log(logLevel, ex, formattedMessage, httpContext.Connection.Id, httpContext.TraceIdentifier);
+#pragma warning restore CA2254 // Template should be a static expression
 		}
 	}
 }

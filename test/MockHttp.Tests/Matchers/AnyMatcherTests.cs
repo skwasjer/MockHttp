@@ -54,7 +54,7 @@ namespace MockHttp.Matchers
 		{
 			// Act
 			// ReSharper disable once ObjectCreationAsStatement
-			Action act = () => new AnyMatcher(null);
+			Func<AnyMatcher> act = () => new AnyMatcher(null);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>().WithParamName("matchers");

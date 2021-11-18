@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MockHttp.Responses
 {
-	internal class ResponseFuncStrategy : IResponseStrategy
+	internal sealed class ResponseFuncStrategy : IResponseStrategy
 	{
 		private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _responseFunc;
 

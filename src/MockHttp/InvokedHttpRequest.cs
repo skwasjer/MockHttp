@@ -5,7 +5,7 @@ using MockHttp.Matchers;
 
 namespace MockHttp
 {
-	internal class InvokedHttpRequest : IInvokedHttpRequest
+	internal sealed class InvokedHttpRequest : IInvokedHttpRequest
 	{
 		private bool _markedAsVerified;
 

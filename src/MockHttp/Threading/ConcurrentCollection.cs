@@ -8,7 +8,7 @@ namespace MockHttp.Threading
 	internal class ConcurrentCollection<T> : IConcurrentReadOnlyCollection<T>
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly object _syncLock = new object();
+		private readonly object _syncLock = new();
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private List<T> _items;
@@ -17,11 +17,7 @@ namespace MockHttp.Threading
 		{
 			lock (_syncLock)
 			{
-				if (_items is null)
-				{
-					_items = new List<T>();
-				}
-
+				_items ??= new List<T>();
 				_items.Add(item);
 			}
 		}

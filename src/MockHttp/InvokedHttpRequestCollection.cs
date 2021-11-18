@@ -3,7 +3,7 @@ using MockHttp.Threading;
 
 namespace MockHttp
 {
-	internal class InvokedHttpRequestCollection : ConcurrentCollection<IInvokedHttpRequest>, IInvokedHttpRequestCollection
+	internal sealed class InvokedHttpRequestCollection : ConcurrentCollection<IInvokedHttpRequest>, IInvokedHttpRequestCollection
 	{
 		private readonly MockHttpHandler _owner;
 
@@ -15,7 +15,7 @@ namespace MockHttp
 		void IInvokedHttpRequestCollection.Clear()
 		{
 			_owner.UninvokeAll();
-			base.Clear();
+			Clear();
 		}
 	}
 }

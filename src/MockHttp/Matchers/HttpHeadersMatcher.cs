@@ -28,7 +28,7 @@ namespace MockHttp.Matchers
 			_equalityComparer = new HttpHeaderEqualityComparer(true);
 			Value.TryAddWithoutValidation(name, (string)null);
 		}
-		
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HttpHeadersMatcher"/> class using specified header <paramref name="name"/> and <paramref name="value"/>.
 		/// </summary>

@@ -6,9 +6,9 @@ using System.Linq;
 namespace MockHttp.Http
 {
 	[DebuggerDisplay("{ToString(),nq}")]
-	internal class QueryString : Dictionary<string, IEnumerable<string>>
+	internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 	{
-		private static readonly Uri UnknownBaseUri = new Uri("http://0.0.0.0");
+		private static readonly Uri UnknownBaseUri = new("http://0.0.0.0");
 
 		private const char TokenQuestionMark = '?';
 		private const char TokenTerminator = '#';
