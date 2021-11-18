@@ -149,6 +149,9 @@ csharp_prefer_simple_default_expression = true:suggestion
 csharp_style_pattern_local_over_anonymous_function = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 
+# File scoped ns
+csharp_style_namespace_declarations = file_scoped:error
+
 ###############################
 # C# Formatting Rules         #
 ###############################

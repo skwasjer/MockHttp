@@ -1,28 +1,27 @@
 ﻿using MockHttp.Matchers;
 
-namespace MockHttp
+namespace MockHttp;
+
+internal sealed class InvokedHttpRequest : IInvokedHttpRequest
 {
-	internal sealed class InvokedHttpRequest : IInvokedHttpRequest
+	private bool _markedAsVerified;
+
+	public InvokedHttpRequest(HttpCall setup, HttpRequestMessage request)
 	{
-		private bool _markedAsVerified;
+		Setup = setup ?? throw new ArgumentNullException(nameof(setup));
+		Request = request ?? throw new ArgumentNullException(nameof(request));
+	}
 
-		public InvokedHttpRequest(HttpCall setup, HttpRequestMessage request)
-		{
-			Setup = setup ?? throw new ArgumentNullException(nameof(setup));
-			Request = request ?? throw new ArgumentNullException(nameof(request));
-		}
+	internal HttpCall Setup { get; }
 
-		internal HttpCall Setup { get; }
+	public HttpRequestMessage Request { get; }
 
-		public HttpRequestMessage Request { get; }
+	public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers => Setup.Matchers;
 
-		public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers => Setup.Matchers;
+	internal bool IsVerified => Setup.IsVerified || _markedAsVerified;
 
-		internal bool IsVerified => Setup.IsVerified || _markedAsVerified;
-
-		internal void MarkAsVerified()
-		{
-			_markedAsVerified = true;
-		}
+	internal void MarkAsVerified()
+	{
+		_markedAsVerified = true;
 	}
 }

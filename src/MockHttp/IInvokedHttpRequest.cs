@@ -1,20 +1,19 @@
 ﻿using MockHttp.Matchers;
 
-namespace MockHttp
+namespace MockHttp;
+
+/// <summary>
+/// Represents an invoked HTTP request that was matched.
+/// </summary>
+public interface IInvokedHttpRequest
 {
 	/// <summary>
-	/// Represents an invoked HTTP request that was matched.
+	/// Gets the HTTP request message.
 	/// </summary>
-	public interface IInvokedHttpRequest
-	{
-		/// <summary>
-		/// Gets the HTTP request message.
-		/// </summary>
-		HttpRequestMessage Request { get; }
+	HttpRequestMessage Request { get; }
 
-		/// <summary>
-		/// Gets the matchers that matched the request.
-		/// </summary>
-		IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
-	}
+	/// <summary>
+	/// Gets the matchers that matched the request.
+	/// </summary>
+	IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers { get; }
 }

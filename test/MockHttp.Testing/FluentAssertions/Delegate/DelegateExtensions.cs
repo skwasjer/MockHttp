@@ -1,12 +1,11 @@
 ﻿using FluentAssertions;
 
-namespace MockHttp.FluentAssertions.Delegate
+namespace MockHttp.FluentAssertions.Delegate;
+
+public static class DelegateExtensions
 {
-	public static class DelegateExtensions
+	public static DelegateAssertions Should(this System.Delegate instance)
 	{
-		public static DelegateAssertions Should(this System.Delegate instance)
-		{
-			return new DelegateAssertions(instance, new AggregateExceptionExtractor());
-		}
+		return new DelegateAssertions(instance, new AggregateExceptionExtractor());
 	}
 }

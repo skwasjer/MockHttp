@@ -1,43 +1,42 @@
 ﻿using System.Runtime.ExceptionServices;
 
-namespace MockHttp.Threading
+namespace MockHttp.Threading;
+
+internal static class TaskHelpers
 {
-	internal static class TaskHelpers
+	public static void RunSync(Func<Task> action, TimeSpan timeout)
 	{
-		public static void RunSync(Func<Task> action, TimeSpan timeout)
+		if (SynchronizationContext.Current is null)
 		{
-			if (SynchronizationContext.Current is null)
+			RunSyncAndWait(action, timeout);
+		}
+		else
+		{
+			RunSyncAndWait(() => Task.Factory.StartNew(action,
+				CancellationToken.None,
+				TaskCreationOptions.None,
+				TaskScheduler.Default
+			).Unwrap(), timeout);
+		}
+	}
+
+	private static void RunSyncAndWait(Func<Task> action, TimeSpan timeout)
+	{
+		try
+		{
+			action().Wait(timeout);
+		}
+		catch (AggregateException ex)
+		{
+			AggregateException flattened = ex.Flatten();
+			if (flattened.InnerExceptions.Count == 1)
 			{
-				RunSyncAndWait(action, timeout);
+				// ReSharper disable once AssignNullToNotNullAttribute
+				ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
 			}
 			else
 			{
-				RunSyncAndWait(() => Task.Factory.StartNew(action,
-					CancellationToken.None,
-					TaskCreationOptions.None,
-					TaskScheduler.Default
-				).Unwrap(), timeout);
-			}
-		}
-
-		private static void RunSyncAndWait(Func<Task> action, TimeSpan timeout)
-		{
-			try
-			{
-				action().Wait(timeout);
-			}
-			catch (AggregateException ex)
-			{
-				AggregateException flattened = ex.Flatten();
-				if (flattened.InnerExceptions.Count == 1)
-				{
-					// ReSharper disable once AssignNullToNotNullAttribute
-					ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-				}
-				else
-				{
-					throw;
-				}
+				throw;
 			}
 		}
 	}

@@ -1,7 +1,6 @@
-﻿namespace MockHttp.Matchers
+﻿namespace MockHttp.Matchers;
+
+internal abstract class PatternMatcher
 {
-	internal abstract class PatternMatcher
-	{
-		public abstract bool IsMatch(string value);
-	}
+	public abstract bool IsMatch(string value);
 }

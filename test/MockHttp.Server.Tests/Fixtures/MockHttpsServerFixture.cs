@@ -1,10 +1,9 @@
-﻿namespace MockHttp.Fixtures
+﻿namespace MockHttp.Fixtures;
+
+public class MockHttpsServerFixture : MockHttpServerFixture
 {
-	public class MockHttpsServerFixture : MockHttpServerFixture
+	public MockHttpsServerFixture()
+		: base("https")
 	{
-		public MockHttpsServerFixture()
-			: base("https")
-		{
-		}
 	}
 }

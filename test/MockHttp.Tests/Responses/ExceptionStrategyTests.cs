@@ -2,51 +2,50 @@
 using MockHttp.FluentAssertions;
 using Xunit;
 
-namespace MockHttp.Responses
+namespace MockHttp.Responses;
+
+public class ExceptionStrategyTests
 {
-	public class ExceptionStrategyTests
+	[Fact]
+	public void Given_null_factory_when_creating_instance_should_throw()
 	{
-		[Fact]
-		public void Given_null_factory_when_creating_instance_should_throw()
-		{
-			Func<Exception> exceptionFactory = null;
+		Func<Exception> exceptionFactory = null;
 
-			// ReSharper disable once ExpressionIsAlwaysNull
-			Func<ExceptionStrategy> act = () => new ExceptionStrategy(exceptionFactory);
+		// ReSharper disable once ExpressionIsAlwaysNull
+		Func<ExceptionStrategy> act = () => new ExceptionStrategy(exceptionFactory);
 
-			// Assert
-			act.Should()
-				.Throw<ArgumentNullException>()
-				.WithParamName(nameof(exceptionFactory));
-		}
+		// Assert
+		act.Should()
+			.Throw<ArgumentNullException>()
+			.WithParamName(nameof(exceptionFactory));
+	}
 
-		[Fact]
-		public async Task Given_factory_returns_null_exception_when_getting_response_should_throw()
-		{
-			var sut = new ExceptionStrategy(() => null);
+	[Fact]
+	public async Task Given_factory_returns_null_exception_when_getting_response_should_throw()
+	{
+		var sut = new ExceptionStrategy(() => null);
 
-			// Act
-			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
+		// Act
+		Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
-			// Assert
-			await act.Should()
-				.ThrowAsync<HttpMockException>()
-				.WithMessage("The configured exception cannot be null.");
-		}
+		// Assert
+		await act.Should()
+			.ThrowAsync<HttpMockException>()
+			.WithMessage("The configured exception cannot be null.");
+	}
 
-		[Fact]
-		public async Task Given_factory_returns_exception_when_getting_response_should_throw()
-		{
-			var ex = new InvalidOperationException();
-			var sut = new ExceptionStrategy(() => ex);
+	[Fact]
+	public async Task Given_factory_returns_exception_when_getting_response_should_throw()
+	{
+		var ex = new InvalidOperationException();
+		var sut = new ExceptionStrategy(() => ex);
 
-			// Act
-			Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
+		// Act
+		Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
-			// Assert
-			(await act.Should().ThrowExactlyAsync<InvalidOperationException>())
-				.Which.Should()
-				.Be(ex);
-		}
+		// Assert
+		(await act.Should().ThrowExactlyAsync<InvalidOperationException>())
+			.Which.Should()
+			.Be(ex);
 	}
 }

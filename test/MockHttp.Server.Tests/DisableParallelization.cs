@@ -1,9 +1,8 @@
 ﻿using Xunit;
 
-namespace MockHttp
+namespace MockHttp;
+
+[CollectionDefinition(nameof(DisableParallelization), DisableParallelization = true)]
+public class DisableParallelization
 {
-	[CollectionDefinition(nameof(DisableParallelization), DisableParallelization = true)]
-	public class DisableParallelization
-	{
-	}
 }

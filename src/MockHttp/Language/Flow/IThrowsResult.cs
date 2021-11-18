@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel;
 
-namespace MockHttp.Language.Flow
+namespace MockHttp.Language.Flow;
+
+/// <summary>
+/// Implements the fluent API.
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public interface IThrowsResult : IFluentInterface
 {
-	/// <summary>
-	/// Implements the fluent API.
-	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public interface IThrowsResult : IFluentInterface
-	{
-	}
 }

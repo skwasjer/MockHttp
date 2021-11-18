@@ -1,42 +1,41 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 
-namespace MockHttp.Responses
+namespace MockHttp.Responses;
+
+/// <summary>
+/// Strategy that buffers a stream to a byte array, and serves responses with the byte array as content.
+/// </summary>
+internal sealed class FromStreamStrategy : IResponseStrategy
 {
-	/// <summary>
-	/// Strategy that buffers a stream to a byte array, and serves responses with the byte array as content.
-	/// </summary>
-	internal sealed class FromStreamStrategy : IResponseStrategy
+	private readonly Func<Stream> _content;
+	private readonly HttpStatusCode _statusCode;
+	private readonly MediaTypeHeaderValue _mediaType;
+
+	public FromStreamStrategy(HttpStatusCode statusCode, Func<Stream> content, MediaTypeHeaderValue mediaType)
 	{
-		private readonly Func<Stream> _content;
-		private readonly HttpStatusCode _statusCode;
-		private readonly MediaTypeHeaderValue _mediaType;
+		_content = content ?? throw new ArgumentNullException(nameof(content));
+		_statusCode = statusCode;
+		_mediaType = mediaType;
+	}
 
-		public FromStreamStrategy(HttpStatusCode statusCode, Func<Stream> content, MediaTypeHeaderValue mediaType)
+	public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+	{
+		Stream stream = _content();
+		if (!stream.CanRead)
 		{
-			_content = content ?? throw new ArgumentNullException(nameof(content));
-			_statusCode = statusCode;
-			_mediaType = mediaType;
+			throw new IOException("Cannot read from stream.");
 		}
 
-		public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+		return Task.FromResult(new HttpResponseMessage(_statusCode)
 		{
-			Stream stream = _content();
-			if (!stream.CanRead)
+			Content = new StreamContent(stream)
 			{
-				throw new IOException("Cannot read from stream.");
-			}
-
-			return Task.FromResult(new HttpResponseMessage(_statusCode)
-			{
-				Content = new StreamContent(stream)
+				Headers =
 				{
-					Headers =
-					{
-						ContentType = _mediaType
-					}
+					ContentType = _mediaType
 				}
-			});
-		}
+			}
+		});
 	}
 }

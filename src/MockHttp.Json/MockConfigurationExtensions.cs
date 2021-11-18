@@ -1,26 +1,25 @@
 ﻿using Newtonsoft.Json;
 
-namespace MockHttp.Json
+namespace MockHttp.Json;
+
+/// <summary>
+/// Configuration extensions.
+/// </summary>
+public static class MockConfigurationExtensions
 {
 	/// <summary>
-	/// Configuration extensions.
+	/// Registers specified <paramref name="serializerSettings"/> as default serializer settings.
 	/// </summary>
-	public static class MockConfigurationExtensions
+	/// <param name="config">The mock handler.</param>
+	/// <param name="serializerSettings">The serializer settings.</param>
+	/// <returns></returns>
+	public static IMockConfiguration UseJsonSerializerSettings(this IMockConfiguration config, JsonSerializerSettings serializerSettings)
 	{
-		/// <summary>
-		/// Registers specified <paramref name="serializerSettings"/> as default serializer settings.
-		/// </summary>
-		/// <param name="config">The mock handler.</param>
-		/// <param name="serializerSettings">The serializer settings.</param>
-		/// <returns></returns>
-		public static IMockConfiguration UseJsonSerializerSettings(this IMockConfiguration config, JsonSerializerSettings serializerSettings)
+		if (config is null)
 		{
-			if (config is null)
-			{
-				throw new ArgumentNullException(nameof(config));
-			}
-
-			return config.Use(serializerSettings);
+			throw new ArgumentNullException(nameof(config));
 		}
+
+		return config.Use(serializerSettings);
 	}
 }
