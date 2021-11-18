@@ -1,8 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace MockHttp.Responses
+﻿namespace MockHttp.Responses
 {
 	/// <summary>
 	/// Represents a strategy that produces a mocked response.

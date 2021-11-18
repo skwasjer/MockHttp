@@ -2,5 +2,6 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 </Project>

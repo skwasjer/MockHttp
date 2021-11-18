@@ -1,5 +1,4 @@
-﻿using System;
-using MockHttp.Threading;
+﻿using MockHttp.Threading;
 
 namespace MockHttp
 {

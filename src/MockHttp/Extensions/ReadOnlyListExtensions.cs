@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MockHttp
+﻿namespace MockHttp
 {
 	internal static class ReadOnlyListExtensions
 	{

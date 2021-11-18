@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace MockHttp
+﻿namespace MockHttp
 {
 	internal class CanSeekMemoryStream : MemoryStream
 	{

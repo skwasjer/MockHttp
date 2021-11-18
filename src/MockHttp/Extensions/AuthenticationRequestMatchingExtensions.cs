@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MockHttp
+﻿namespace MockHttp
 {
 	/// <summary>
 	/// Extensions for <see cref="RequestMatching"/>.

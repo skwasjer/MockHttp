@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace MockHttp.FluentAssertions
+﻿namespace MockHttp.FluentAssertions
 {
 	public static class ResponseAssertionExtensions
 	{

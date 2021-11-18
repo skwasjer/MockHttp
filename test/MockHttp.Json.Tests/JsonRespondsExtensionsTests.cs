@@ -1,10 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Runtime.Serialization;
 using System.Net.Http.Formatting;
-using System.Threading;
-using System.Threading.Tasks;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;

@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MockHttp.Matchers;
 using Moq;
 using Xunit;

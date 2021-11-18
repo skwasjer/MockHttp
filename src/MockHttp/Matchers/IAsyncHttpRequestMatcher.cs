@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using MockHttp.Responses;
+﻿using MockHttp.Responses;
 
 namespace MockHttp.Matchers
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Responses;
 using Xunit;

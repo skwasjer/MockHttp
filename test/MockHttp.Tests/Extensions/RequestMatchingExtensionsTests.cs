@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Specialized;
 using System.Linq.Expressions;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using FluentAssertions;
 using MockHttp.FluentAssertions;

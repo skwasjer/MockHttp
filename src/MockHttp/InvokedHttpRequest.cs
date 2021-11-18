@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using MockHttp.Matchers;
+﻿using MockHttp.Matchers;
 
 namespace MockHttp
 {

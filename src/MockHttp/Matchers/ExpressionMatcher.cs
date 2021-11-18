@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Net.Http;
+﻿using System.Linq.Expressions;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers

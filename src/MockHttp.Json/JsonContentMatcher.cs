@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using MockHttp.Matchers;
+﻿using MockHttp.Matchers;
 using MockHttp.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

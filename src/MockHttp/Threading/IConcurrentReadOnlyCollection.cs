@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MockHttp.Threading
+﻿namespace MockHttp.Threading
 {
 	/// <summary>
 	/// Represents a thread safe read-only collection of elements that can be accessed by index.
