@@ -43,7 +43,11 @@ namespace MockHttp.Http
 				})
 				// Group values for same key.
 				.GroupBy(kvp => kvp.Key)
-				.Select(g => new KeyValuePair<string, IEnumerable<string>>(g.Key, g.Select(v => v.Value).Where(v => v is { })))
+				.Select(g => new KeyValuePair<string, IEnumerable<string>>(
+					g.Key,
+					g.Select(v => v.Value)
+						.Where(v => v is not null))
+				)
 				.ToList();
 		}
 

@@ -11,7 +11,7 @@ namespace MockHttp.Responses
 	/// <summary>
 	/// Strategy that buffers a stream to a byte array, and serves responses with the byte array as content.
 	/// </summary>
-	internal class FromStreamStrategy : IResponseStrategy
+	internal sealed class FromStreamStrategy : IResponseStrategy
 	{
 		private readonly Func<Stream> _content;
 		private readonly HttpStatusCode _statusCode;

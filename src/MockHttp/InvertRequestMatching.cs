@@ -2,7 +2,7 @@
 
 namespace MockHttp
 {
-	internal class InvertRequestMatching : RequestMatching
+	internal sealed class InvertRequestMatching : RequestMatching
 	{
 		private readonly RequestMatching _requestMatching;
 

@@ -15,7 +15,6 @@ namespace MockHttp
 		/// <returns><see langword="true" /> if all <paramref name="matchers"/> match the <paramref name="requestContext"/>.</returns>
 		public static async Task<bool> AllAsync(this IEnumerable<IAsyncHttpRequestMatcher> matchers, MockHttpRequestContext requestContext)
 		{
-			var noMatchList = new List<IAsyncHttpRequestMatcher>();
 			bool hasMatchedAll = true;
 			foreach (IAsyncHttpRequestMatcher m in matchers)
 			{
@@ -24,11 +23,9 @@ namespace MockHttp
 					continue;
 				}
 
-				noMatchList.Add(m);
 				hasMatchedAll = false;
 			}
 
-//			notMatchedOn = noMatchList;
 			return hasMatchedAll;
 		}
 

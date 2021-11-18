@@ -35,7 +35,7 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(response));
 			}
 
-			return responds.Respond((_, __) => Task.FromResult(response()));
+			return responds.Respond((_, _) => Task.FromResult(response()));
 		}
 
 		/// <summary>

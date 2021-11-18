@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MockHttp.Responses
 {
-	internal class TimeoutStrategy : IResponseStrategy
+	internal sealed class TimeoutStrategy : IResponseStrategy
 	{
 		private readonly TimeSpan _timeoutAfter;
 

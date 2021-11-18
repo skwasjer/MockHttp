@@ -159,10 +159,7 @@ namespace MockHttp
 				throw new ArgumentNullException(nameof(matching));
 			}
 
-			if (times is null)
-			{
-				times = IsSent.AtLeastOnce();
-			}
+			times ??= IsSent.AtLeastOnce();
 
 			var rm = new RequestMatching();
 			matching(rm);
@@ -227,7 +224,7 @@ namespace MockHttp
 		/// </summary>
 		public void VerifyNoOtherRequests()
 		{
-			List<InvokedHttpRequest> unverifiedRequests = InvokedRequests
+			var unverifiedRequests = InvokedRequests
 				.Cast<InvokedHttpRequest>()
 				.Where(r => !r.IsVerified)
 				.ToList();
@@ -249,7 +246,7 @@ namespace MockHttp
 
 		private void Verify(IEnumerable<HttpCall> verifiableSetups)
 		{
-			List<HttpCall> expectedInvocations = verifiableSetups
+			var expectedInvocations = verifiableSetups
 				.Where(setup => !setup.VerifyIfInvoked())
 				.ToList();
 			if (!expectedInvocations.Any())

@@ -6,12 +6,8 @@ using System.Net.Http.Headers;
 
 namespace MockHttp.Http
 {
-	internal class HttpHeadersCollection : HttpHeaders
+	internal sealed class HttpHeadersCollection : HttpHeaders
 	{
-		internal HttpHeadersCollection()
-		{
-		}
-
 		public static HttpHeaders Parse(string headers)
 		{
 			if (headers is null)
@@ -25,27 +21,25 @@ namespace MockHttp.Http
 				return httpHeaders;
 			}
 
-			using (var sr = new StringReader(headers))
+			using var sr = new StringReader(headers);
+			while (true)
 			{
-				while (true)
+				string header = sr.ReadLine();
+				if (header is null)
 				{
-					string header = sr.ReadLine();
-					if (header is null)
-					{
-						break;
-					}
-
-					if (string.IsNullOrWhiteSpace(header))
-					{
-						continue;
-					}
-
-					string[] hvp = header.Split(new[] { ':' }, 2, StringSplitOptions.None);
-
-					string fieldName = hvp.Length > 0 ? hvp[0] : null;
-					string fieldValue = hvp.Length > 1 ? hvp[1] : null;
-					httpHeaders.Add(fieldName, ParseHttpHeaderValue(fieldValue));
+					break;
 				}
+
+				if (string.IsNullOrWhiteSpace(header))
+				{
+					continue;
+				}
+
+				string[] hvp = header.Split(new[] { ':' }, 2, StringSplitOptions.None);
+
+				string fieldName = hvp.Length > 0 ? hvp[0] : null;
+				string fieldValue = hvp.Length > 1 ? hvp[1] : null;
+				httpHeaders.Add(fieldName, ParseHttpHeaderValue(fieldValue));
 			}
 
 			return httpHeaders;

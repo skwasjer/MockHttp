@@ -21,7 +21,7 @@ namespace MockHttp
 	public sealed class MockHttpServer : IDisposable
 	{
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly object _syncLock = new object();
+		private readonly object _syncLock = new();
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly IWebHostBuilder _webHostBuilder;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]

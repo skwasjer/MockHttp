@@ -5,7 +5,7 @@ using MockHttp.Matchers;
 
 namespace MockHttp.Http
 {
-	internal class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
+	internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 	{
 		private readonly PatternMatcher _valuePatternMatcher;
 		private readonly bool _isOnlyMatchingHeaderName;
