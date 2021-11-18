@@ -12,20 +12,19 @@ public class TimeoutStrategyTests
     [InlineData(50)]
     [InlineData(100)]
     [InlineData(1000)]
-    public void Given_timeout_when_sending_should_timeout_after_time_passed(int timeoutInMilliseconds)
+    public async Task Given_timeout_when_sending_should_timeout_after_time_passed(int timeoutInMilliseconds)
     {
         var timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
         var sut = new TimeoutStrategy(timeout);
+        var sw = new Stopwatch();
 
         // Act
         Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
         // Assert
-        act.ExecutionTimeOf(func => func
-                .Should()
-                .Throw<TaskCanceledException>("the timeout expired")
-            )
-            .Should()
+        sw.Start();
+        await act.Should().ThrowAsync<TaskCanceledException>("the timeout expired");
+        sw.Elapsed.Should()
             // Allow 5% diff.
             .BeGreaterThan(timeout - TimeSpan.FromMilliseconds(timeoutInMilliseconds * 0.95));
     }

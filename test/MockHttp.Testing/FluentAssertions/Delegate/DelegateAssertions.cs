@@ -5,7 +5,7 @@ using FluentAssertions.Specialized;
 
 namespace MockHttp.FluentAssertions.Delegate;
 
-public class DelegateAssertions : DelegateAssertions<System.Delegate>
+public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAssertions>
 {
     public DelegateAssertions(System.Delegate @delegate, IExtractExceptions extractor) : base(@delegate, extractor)
     {
@@ -41,7 +41,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate>
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context} to throw {0}{reason}, but found <null>.", (object)typeof(TException));
 
-        return Throw<TException>(InvokeSubjectWithInterception(args), because, becauseArgs);
+        return ThrowInternal<TException>(InvokeSubjectWithInterception(args), because, becauseArgs);
     }
 
     /// <summary>
@@ -70,12 +70,12 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate>
         }
         catch (TargetInvocationException ex) when (ex.InnerException is { })
         {
-            NotThrow(ex.InnerException, because, becauseArgs);
+            NotThrowInternal(ex.InnerException, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
         }
         catch (Exception ex)
         {
-            NotThrow(ex, because, becauseArgs);
+            NotThrowInternal(ex, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
         }
     }
@@ -108,12 +108,12 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate>
         }
         catch (TargetInvocationException ex) when (ex.InnerException is { })
         {
-            NotThrow(ex.InnerException, because, becauseArgs);
+            NotThrowInternal(ex.InnerException, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
         }
         catch (Exception ex)
         {
-            NotThrow(ex, because, becauseArgs);
+            NotThrowInternal(ex, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
         }
     }
