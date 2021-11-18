@@ -37,7 +37,6 @@ namespace MockHttp.Server
 			cancellationToken.ThrowIfCancellationRequested();
 
 			HttpResponseMessage httpResponseMessage;
-			IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
 			try
 			{
 				httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
@@ -61,7 +60,9 @@ namespace MockHttp.Server
 			response.RegisterForDispose(httpResponseMessage);
 			cancellationToken.ThrowIfCancellationRequested();
 
-			await httpResponseMessage.MapToFeatureAsync(responseFeature, cancellationToken).ConfigureAwait(false);
+			IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
+			IHttpResponseBodyFeature responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
+			await httpResponseMessage.MapToFeatureAsync(responseFeature, responseBodyFeature, cancellationToken).ConfigureAwait(false);
 		}
 
 		private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception ex = null)

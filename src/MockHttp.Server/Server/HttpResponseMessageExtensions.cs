@@ -13,7 +13,12 @@ namespace MockHttp.Server
 {
 	internal static class HttpResponseMessageExtensions
 	{
-		internal static async Task MapToFeatureAsync(this HttpResponseMessage response, IHttpResponseFeature responseFeature, CancellationToken cancellationToken)
+		internal static async Task MapToFeatureAsync
+		(
+			this HttpResponseMessage response,
+			IHttpResponseFeature responseFeature,
+			IHttpResponseBodyFeature responseBodyFeature,
+			CancellationToken cancellationToken)
 		{
 			responseFeature.StatusCode = (int)response.StatusCode;
 			responseFeature.ReasonPhrase = response.ReasonPhrase;
@@ -25,9 +30,9 @@ namespace MockHttp.Server
 #if NET5_0_OR_GREATER
 				await using Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 #else
-				using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+				await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
-				await contentStream.CopyToAsync(responseFeature.Body, 4096, cancellationToken).ConfigureAwait(false);
+				await contentStream.CopyToAsync(responseBodyFeature.Writer.AsStream(), 4096, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
