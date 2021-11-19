@@ -12,4 +12,9 @@ public interface IMockConfiguration
     /// <param name="service">The service.</param>
     /// <returns>The configuration instance.</returns>
     IMockConfiguration Use<TService>(TService service);
+
+    /// <summary>
+    /// Gets the registered items.
+    /// </summary>
+    IReadOnlyDictionary<Type, object> Items { get; }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MockHttp.Json.Newtonsoft;
+using Newtonsoft.Json;
 
 namespace MockHttp.Json;
 
@@ -25,13 +26,21 @@ public static class JsonRequestMatchingExtensions
     /// <param name="content">The JSON request content.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, JsonSerializerSettings serializerSettings)
+    // TODO: move Newtonsoft extensions to separate class.
+    public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, JsonSerializerSettings? serializerSettings)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new JsonContentMatcher(content, serializerSettings));
+        return builder.With(
+            new JsonContentMatcher(
+                content,
+                serializerSettings is null
+                    ? null
+                    : new NewtonsoftAdapter(serializerSettings)
+            )
+        );
     }
 }

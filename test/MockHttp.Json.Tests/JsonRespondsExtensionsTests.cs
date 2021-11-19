@@ -2,6 +2,7 @@
 using System.Net.Http.Formatting;
 using System.Runtime.Serialization;
 using MockHttp.FluentAssertions;
+using MockHttp.Json.Newtonsoft;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using Newtonsoft.Json;
@@ -127,15 +128,18 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
         string expectedJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"some_property\":\"value\"}";
         var testClass = new TestClass { SomeProperty = "value" };
 
-        if (!useDefaultSerializer)
-        {
-            _httpMock.UseJsonSerializerSettings(new JsonSerializerSettings
+        var adapter = new NewtonsoftAdapter(
+            new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver
                 {
                     NamingStrategy = new SnakeCaseNamingStrategy()
                 }
             });
+
+        if (!useDefaultSerializer)
+        {
+            _httpMock.UseJsonAdapter(adapter);
         }
 
         // Act

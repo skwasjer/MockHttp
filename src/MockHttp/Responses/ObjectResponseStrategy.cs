@@ -16,7 +16,12 @@ public abstract class ObjectResponseStrategy : IResponseStrategy
     /// <param name="typeOfValue">The type of the value to return.</param>
     /// <param name="valueFactory">The value factory.</param>
     /// <param name="mediaType">The media type to return.</param>
-    public ObjectResponseStrategy(HttpStatusCode statusCode, Type typeOfValue, Func<HttpRequestMessage, object> valueFactory, MediaTypeHeaderValue mediaType)
+    public ObjectResponseStrategy
+    (
+        HttpStatusCode statusCode,
+        Type typeOfValue,
+        Func<HttpRequestMessage, object?> valueFactory,
+        MediaTypeHeaderValue mediaType)
     {
         StatusCode = statusCode;
         TypeOfValue = typeOfValue ?? throw new ArgumentNullException(nameof(typeOfValue));
@@ -37,7 +42,7 @@ public abstract class ObjectResponseStrategy : IResponseStrategy
     /// <summary>
     /// Gets the value factory.
     /// </summary>
-    public Func<HttpRequestMessage, object> ValueFactory { get; }
+    public Func<HttpRequestMessage, object?> ValueFactory { get; }
 
     /// <summary>
     /// Gets the media type to return.

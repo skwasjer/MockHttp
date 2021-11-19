@@ -238,6 +238,8 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         return this;
     }
 
+    IReadOnlyDictionary<Type, object> IMockConfiguration.Items => _readOnlyItems;
+
     private void Verify(IEnumerable<HttpCall> verifiableSetups)
     {
         var expectedInvocations = verifiableSetups

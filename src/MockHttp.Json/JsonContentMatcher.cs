@@ -1,52 +1,46 @@
-﻿using MockHttp.Matchers;
+﻿using MockHttp.Json.Extensions;
+using MockHttp.Json.Newtonsoft;
+using MockHttp.Matchers;
 using MockHttp.Responses;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace MockHttp.Json;
 
-internal class JsonContentMatcher : IAsyncHttpRequestMatcher
+internal sealed class JsonContentMatcher : IAsyncHttpRequestMatcher
 {
-    private readonly object _jsonContentAsObject;
-    private readonly JsonSerializerSettings _serializerSettings;
+    private readonly object? _jsonContentAsObject;
+    private readonly IJsonAdapter? _adapter;
+    private readonly IEqualityComparer<string> _jsonComparer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentMatcher" /> class using specified raw <paramref name="jsonContentAsObject" />.
     /// </summary>
     /// <param name="jsonContentAsObject">The request content to match.</param>
-    /// <param name="serializerSettings">The JSON serializer settings.</param>
-    public JsonContentMatcher(object jsonContentAsObject, JsonSerializerSettings serializerSettings = null)
+    /// <param name="adapter">The JSON serializer adapter.</param>
+    public JsonContentMatcher(object? jsonContentAsObject, IJsonAdapter? adapter = null)
+        : this(jsonContentAsObject, adapter, new NewtonsoftEqualityComparer())
+    {
+    }
+
+    internal JsonContentMatcher(object? jsonContentAsObject, IJsonAdapter? adapter, IEqualityComparer<string> jsonComparer)
     {
         _jsonContentAsObject = jsonContentAsObject;
-        _serializerSettings = serializerSettings;
+        _adapter = adapter;
+        _jsonComparer = jsonComparer;
     }
 
     public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
-        string requestContent = null;
+        string actualJsonContent = string.Empty;
         if (requestContext.Request.Content is not null && requestContext.Request.Content.Headers.ContentLength > 0)
         {
             // Use of ReadAsStringAsync() will use internal buffer, so we can re-enter this method multiple times.
             // In comparison, ReadAsStream() will return the underlying stream which can only be read once.
-            requestContent = await requestContext.Request.Content.ReadAsStringAsync().ConfigureAwait(false);
+            actualJsonContent = await requestContext.Request.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
-        if (string.IsNullOrEmpty(requestContent) && _jsonContentAsObject is null)
-        {
-            return true;
-        }
-
-        JsonSerializerSettings serializerSettings = _serializerSettings;
-        if (serializerSettings is null)
-        {
-            requestContext.TryGetService(out serializerSettings);
-        }
-
-        var jsonSerializer = JsonSerializer.Create(serializerSettings);
-        JToken requestJsonObject = JsonConvert.DeserializeObject<JToken>(requestContent, serializerSettings);
-        var matchingJsonObject = JToken.FromObject(_jsonContentAsObject, jsonSerializer);
-
-        return JToken.DeepEquals(requestJsonObject, matchingJsonObject);
+        IJsonAdapter adapter = _adapter ?? requestContext.GetAdapter();
+        string expectedJson = adapter.Serialize(_jsonContentAsObject);
+        return _jsonComparer.Equals(actualJsonContent, expectedJson);
     }
 
     public bool IsExclusive => true;

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using MockHttp.Json.Newtonsoft;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using Newtonsoft.Json;
@@ -155,7 +156,8 @@ public static class JsonRespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
+    // TODO: move all Newtonsoft extensions to separate class.
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType, JsonSerializerSettings? serializerSettings)
         where TResult : IResponseResult
     {
         if (responds is null)
@@ -165,7 +167,16 @@ public static class JsonRespondsExtensions
 
         MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
 
-        return responds.RespondUsing(new JsonResponseStrategy<T>(statusCode, content, mt, serializerSettings));
+        return responds.RespondUsing(
+            new JsonResponseStrategy<T>(
+                statusCode,
+                content,
+                mt,
+                serializerSettings is null
+                    ? null
+                    : new NewtonsoftAdapter(serializerSettings)
+            )
+        );
     }
 
     /// <summary>

@@ -1,32 +1,33 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using MockHttp.Json.Extensions;
 using MockHttp.Responses;
-using Newtonsoft.Json;
 
 namespace MockHttp.Json;
 
 internal class JsonResponseStrategy : ObjectResponseStrategy
 {
-    public JsonResponseStrategy(HttpStatusCode statusCode, Type typeOfValue, Func<HttpRequestMessage, object> valueFactory, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
+    private readonly IJsonAdapter? _adapter;
+
+    public JsonResponseStrategy
+    (
+        HttpStatusCode statusCode,
+        Type typeOfValue,
+        Func<HttpRequestMessage, object?> valueFactory,
+        MediaTypeHeaderValue mediaType,
+        IJsonAdapter? adapter)
         : base(statusCode, typeOfValue, valueFactory, mediaType)
     {
-        SerializerSettings = serializerSettings;
+        _adapter = adapter;
     }
-
-    protected JsonSerializerSettings SerializerSettings { get; }
 
     public override Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
     {
-        JsonSerializerSettings serializerSettings = SerializerSettings;
-        if (serializerSettings is null)
-        {
-            requestContext.TryGetService(out serializerSettings);
-        }
-
-        object value = ValueFactory(requestContext.Request);
+        IJsonAdapter jsonSerializerAdapter = _adapter ?? requestContext.GetAdapter();
+        object? value = ValueFactory(requestContext.Request);
         return Task.FromResult(new HttpResponseMessage(StatusCode)
         {
-            Content = new StringContent(JsonConvert.SerializeObject(value, serializerSettings))
+            Content = new StringContent(jsonSerializerAdapter.Serialize(value))
             {
                 Headers =
                 {
@@ -39,13 +40,15 @@ internal class JsonResponseStrategy : ObjectResponseStrategy
 
 internal class JsonResponseStrategy<T> : JsonResponseStrategy
 {
-    public JsonResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> valueFactory, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
+    public JsonResponseStrategy(HttpStatusCode statusCode, Func<HttpRequestMessage, T> valueFactory, MediaTypeHeaderValue mediaType, IJsonAdapter? adapter)
         : base(
             statusCode,
             typeof(T),
-            r => valueFactory is not null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
+            r => valueFactory is not null
+                ? valueFactory(r)
+                : throw new ArgumentNullException(nameof(valueFactory)),
             mediaType,
-            serializerSettings
+            adapter
         )
     {
     }

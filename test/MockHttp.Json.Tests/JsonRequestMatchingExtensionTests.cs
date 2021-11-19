@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using MockHttp.FluentAssertions;
+using MockHttp.Json.Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Xunit;
@@ -59,7 +60,7 @@ public class JsonRequestMatchingExtensionTests
     [InlineData(false)]
     public async Task When_matching_with_custom_serializerSettings_it_should_match(bool useDefaultSerializer)
     {
-        JsonSerializerSettings serializerSettings = useDefaultSerializer
+        JsonSerializerSettings? serializerSettings = useDefaultSerializer
             ? null
             : new JsonSerializerSettings
             {
@@ -92,7 +93,7 @@ public class JsonRequestMatchingExtensionTests
 
         if (!useDefaultSerializer)
         {
-            _httpMock.UseJsonSerializerSettings(new JsonSerializerSettings
+            _httpMock.UseNewtonsoftJson(new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver
                 {
