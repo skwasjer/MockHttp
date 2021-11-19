@@ -1,5 +1,5 @@
 ﻿using MockHttp.Json.Extensions;
-using MockHttp.Json.Newtonsoft;
+using MockHttp.Json.SystemTextJson;
 using MockHttp.Matchers;
 using MockHttp.Responses;
 
@@ -17,7 +17,7 @@ internal sealed class JsonContentMatcher : IAsyncHttpRequestMatcher
     /// <param name="jsonContentAsObject">The request content to match.</param>
     /// <param name="adapter">The JSON serializer adapter.</param>
     public JsonContentMatcher(object? jsonContentAsObject, IJsonAdapter? adapter = null)
-        : this(jsonContentAsObject, adapter, new NewtonsoftEqualityComparer())
+        : this(jsonContentAsObject, adapter, new SystemTextJsonEqualityComparer(null))
     {
     }
 
