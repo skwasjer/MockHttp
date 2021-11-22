@@ -35,7 +35,7 @@ public class RequestUriMatcher : HttpRequestMatcher
 
         if (allowWildcards
 #if NETSTANDARD2_0
-			 && uriString.Contains("*")
+         && uriString.Contains("*")
 #else
          && uriString.Contains('*', StringComparison.InvariantCultureIgnoreCase)
 #endif

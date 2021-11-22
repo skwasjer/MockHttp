@@ -109,7 +109,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
     {
         string value = Value.ToString();
 #if !NET5_0_OR_GREATER
-		value = value.Replace("\r\n", Environment.NewLine);
+        value = value.Replace("\r\n", Environment.NewLine);
 #endif
 
         return $"Headers: {value.TrimEnd('\r', '\n')}";

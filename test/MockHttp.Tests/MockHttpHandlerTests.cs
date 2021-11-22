@@ -342,10 +342,10 @@ public class MockHttpHandlerTests : IDisposable
         // ReSharper disable once JoinDeclarationAndInitializer
         Version version;
 #if NETCOREAPP3_1 || NET5_0
-			version = _httpClient.DefaultRequestVersion;
+        version = _httpClient.DefaultRequestVersion;
 #else
 #if NETCOREAPP2_1
-			version = new Version(2, 0);
+        version = new Version(2, 0);
 #else
         version = new Version(1, 1);
 #endif
@@ -618,17 +618,17 @@ public class MockHttpHandlerTests : IDisposable
 #if NETFRAMEWORK
 internal static class EnumerableExtensions
 {
-		// Polyfill SkipLast
-		public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
-		{
-			if (enumerable is null)
-			{
-				throw new ArgumentNullException(nameof(enumerable));
-			}
+    // Polyfill SkipLast
+    public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
+    {
+        if (enumerable is null)
+        {
+            throw new ArgumentNullException(nameof(enumerable));
+        }
 
-			var list = new List<T>(enumerable);
-			list.RemoveRange(list.Count - count, count);
-			return list;
-		}
+        var list = new List<T>(enumerable);
+        list.RemoveRange(list.Count - count, count);
+        return list;
+    }
 }
 #endif

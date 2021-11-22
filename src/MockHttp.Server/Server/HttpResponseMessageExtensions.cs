@@ -24,7 +24,7 @@ internal static class HttpResponseMessageExtensions
 #if NET5_0_OR_GREATER
             await using Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 #else
-			await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
             await contentStream.CopyToAsync(responseBodyFeature.Writer.AsStream(), 4096, cancellationToken).ConfigureAwait(false);
         }
