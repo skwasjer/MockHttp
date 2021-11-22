@@ -58,7 +58,7 @@ internal static class DataEscapingHelper
         var sb = new StringBuilder();
         foreach (KeyValuePair<string, IEnumerable<string>> item in items)
         {
-            bool hasValues = item.Value is { } && item.Value.Any();
+            bool hasValues = item.Value is not null && item.Value.Any();
             if (hasValues)
             {
                 foreach (string v in item.Value)

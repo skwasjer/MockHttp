@@ -18,7 +18,8 @@ internal static class HttpResponseMessageExtensions
         responseFeature.ReasonPhrase = response.ReasonPhrase;
 
         CopyHeaders(response.Headers, responseFeature.Headers);
-        if (response.Content != null)
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        if (response.Content is not null)
         {
             CopyHeaders(response.Content.Headers, responseFeature.Headers);
 #if NET5_0_OR_GREATER

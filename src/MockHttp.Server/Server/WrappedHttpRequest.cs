@@ -21,13 +21,14 @@ internal class WrappedHttpRequest : HttpRequestMessage
 
         RequestUri = uriBuilder.Uri;
 
-        if (request.Body != null)
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        if (request.Body is not null)
         {
             Content = new StreamContent(request.Body)
             {
                 Headers =
                 {
-                    ContentType = request.ContentType == null
+                    ContentType = request.ContentType is null
                         ? null
                         : MediaTypeHeaderValue.Parse(request.ContentType),
                     ContentLength = request.ContentLength

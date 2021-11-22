@@ -37,7 +37,7 @@ public class ResponseAssertions : ObjectAssertions
 
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
-            .ForCondition(subject is { })
+            .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
             .ForCondition(subject.StatusCode == expectedStatusCode)
@@ -66,10 +66,10 @@ public class ResponseAssertions : ObjectAssertions
 
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
-            .ForCondition(subject is { })
+            .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject.Content is { })
+            .ForCondition(subject.Content is not null)
             .FailWith("Expected response with content {0}{reason}, but found none.")
             .Then
             .ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || (expectedMediaType.CharSet is null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType)))
@@ -108,7 +108,7 @@ public class ResponseAssertions : ObjectAssertions
             throw new ArgumentNullException(nameof(expectedContent));
         }
 
-        if (expectedContent.Headers.ContentType is { })
+        if (expectedContent.Headers.ContentType is not null)
         {
             HaveContentType(expectedContent.Headers.ContentType);
         }
@@ -116,10 +116,10 @@ public class ResponseAssertions : ObjectAssertions
         var subject = (HttpResponseMessage)Subject;
 
         ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks)
-            .ForCondition(subject is { })
+            .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject.Content is { })
+            .ForCondition(subject.Content is not null)
             .FailWith("Expected response with content {reason}, but has no content.");
 
         byte[] currentContentBytes = await subject.Content.ReadAsByteArrayAsync();
@@ -162,7 +162,7 @@ public class ResponseAssertions : ObjectAssertions
 
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
-            .ForCondition(subject is { })
+            .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
             .ForCondition(subject.Headers.Contains(key) || (subject.Content?.Headers.Contains(key) ?? false))

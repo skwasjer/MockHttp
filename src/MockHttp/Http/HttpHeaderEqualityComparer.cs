@@ -39,7 +39,7 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
                     .All(xValue =>
                     {
                         string[] headerValues = HttpHeadersCollection.ParseHttpHeaderValue(yValue).ToArray();
-                        return headerValues.Contains(xValue) || (_valuePatternMatcher != null && headerValues.Any(_valuePatternMatcher.IsMatch));
+                        return headerValues.Contains(xValue) || (_valuePatternMatcher is not null && headerValues.Any(_valuePatternMatcher.IsMatch));
                     })
             ))
         {

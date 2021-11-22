@@ -73,7 +73,7 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
     // ReSharper disable once MemberCanBeMadeStatic.Global
     public void LogServerTrace(ITestOutputHelper testOutputHelper)
     {
-        if (_testCorrelatorContext == null)
+        if (_testCorrelatorContext is null)
         {
             return;
         }

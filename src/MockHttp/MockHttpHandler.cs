@@ -264,7 +264,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 
     private static async Task LoadIntoBufferAsync(HttpContent httpContent)
     {
-        if (httpContent is { })
+        if (httpContent is not null)
         {
             // Force read content, so content can be checked more than once.
             await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);

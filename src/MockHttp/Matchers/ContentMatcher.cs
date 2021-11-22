@@ -63,7 +63,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
         }
 
         byte[] requestContent = null;
-        if (requestContext.Request.Content is { })
+        if (requestContext.Request.Content is not null)
         {
             // Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
             // In comparison, ReadAsStream() will return the underlying stream which can only be read once.
@@ -104,7 +104,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
             return "Content: <empty>";
         }
 
-        if (_encoding is { })
+        if (_encoding is not null)
         {
             return $"Content: {_encoding.GetString(ByteContent, 0, ByteContent.Length)}";
         }

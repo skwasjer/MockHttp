@@ -37,7 +37,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         where TException : Exception
     {
         Execute.Assertion
-            .ForCondition((object)Subject is { })
+            .ForCondition((object)Subject is not null)
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context} to throw {0}{reason}, but found <null>.", (object)typeof(TException));
 
@@ -60,7 +60,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         params object[] becauseArgs)
     {
         Execute.Assertion
-            .ForCondition(Subject is { })
+            .ForCondition(Subject is not null)
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context} not to throw{reason}, but found <null>.");
         try
@@ -68,7 +68,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
             // ReSharper disable once PossibleNullReferenceException
             return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke());
         }
-        catch (TargetInvocationException ex) when (ex.InnerException is { })
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
         {
             NotThrowInternal(ex.InnerException, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
@@ -98,7 +98,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         params object[] becauseArgs)
     {
         Execute.Assertion
-            .ForCondition(Subject is { })
+            .ForCondition(Subject is not null)
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context} not to throw{reason}, but found <null>.");
         try
@@ -106,7 +106,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
             // ReSharper disable once PossibleNullReferenceException
             return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke(args));
         }
-        catch (TargetInvocationException ex) when (ex.InnerException is { })
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
         {
             NotThrowInternal(ex.InnerException, because, becauseArgs);
             return new AndWhichConstraint<DelegateAssertions, object>(this, default);
@@ -125,7 +125,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         {
             Subject.DynamicInvoke(args);
         }
-        catch (TargetInvocationException ex) when (ex.InnerException is { })
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
         {
             exception = ex.InnerException;
         }

@@ -43,7 +43,7 @@ internal class JsonResponseStrategy<T> : JsonResponseStrategy
         : base(
             statusCode,
             typeof(T),
-            r => valueFactory != null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
+            r => valueFactory is not null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
             mediaType,
             serializerSettings
         )

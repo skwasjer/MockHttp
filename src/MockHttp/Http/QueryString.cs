@@ -38,7 +38,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
             // TODO: implement/override Add, because empty string for key is possible but not allowed. Even though we checked here, still possible to call Add externally.
             // Accept null values enumerable, but then use empty list.
             // Null values in values enumerable are filtered.
-            Add(kvp.Key, kvp.Value?.Where(v => v is { }).ToList() ?? new List<string>());
+            Add(kvp.Key, kvp.Value?.Where(v => v is not null).ToList() ?? new List<string>());
         }
     }
 

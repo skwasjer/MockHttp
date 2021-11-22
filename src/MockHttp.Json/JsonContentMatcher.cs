@@ -24,7 +24,7 @@ internal class JsonContentMatcher : IAsyncHttpRequestMatcher
     public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
         string requestContent = null;
-        if (requestContext.Request.Content is { } && requestContext.Request.Content.Headers.ContentLength > 0)
+        if (requestContext.Request.Content is not null && requestContext.Request.Content.Headers.ContentLength > 0)
         {
             // Use of ReadAsStringAsync() will use internal buffer, so we can re-enter this method multiple times.
             // In comparison, ReadAsStream() will return the underlying stream which can only be read once.

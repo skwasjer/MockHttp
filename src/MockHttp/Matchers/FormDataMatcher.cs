@@ -28,7 +28,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
 
         _matchQs = formData.ToDictionary(
             kvp => kvp.Key,
-            kvp => kvp.Value?.Where(v => v is { }) ?? new List<string>()
+            kvp => kvp.Value?.Where(v => v is not null) ?? new List<string>()
         );
     }
 
@@ -96,11 +96,11 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
         {
             var formData = new List<KeyValuePair<string, string>>();
             foreach (HttpContent httpContent in multipartFormDataContent
-                         .Where(c => c.Headers.ContentDisposition is { } && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
+                         .Where(c => c.Headers.ContentDisposition is not null && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
                     )
             {
                 string key = httpContent.Headers.ContentDisposition.Name;
-                bool isFileUpload = httpContent.Headers.ContentType is { } && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
+                bool isFileUpload = httpContent.Headers.ContentType is not null && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
                 if (isFileUpload)
                 {
                     // TODO: Support file uploads? Maybe using different matcher, to support (large) streams.
@@ -128,7 +128,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
 
     private static bool CanProcessContent(HttpContent httpContent)
     {
-        return httpContent?.Headers.ContentType is { } && IsFormData(httpContent.Headers.ContentType.MediaType);
+        return httpContent?.Headers.ContentType is not null && IsFormData(httpContent.Headers.ContentType.MediaType);
     }
 
     private static bool IsFormData(string mediaType)

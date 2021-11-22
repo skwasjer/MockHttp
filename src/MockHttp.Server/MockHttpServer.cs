@@ -70,7 +70,7 @@ public sealed class MockHttpServer : IDisposable
         {
             lock (_syncLock)
             {
-                return _host?.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First() ?? _hostUrl;
+                return _host?.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses.First() ?? _hostUrl;
             }
         }
     }
@@ -171,7 +171,7 @@ public sealed class MockHttpServer : IDisposable
 
     private void SetHostUrl(string hostUrl)
     {
-        if (hostUrl == null)
+        if (hostUrl is null)
         {
             throw new ArgumentNullException(nameof(hostUrl));
         }

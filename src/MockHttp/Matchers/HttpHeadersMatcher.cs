@@ -41,7 +41,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
         }
 
         RegexPatternMatcher patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
-        _equalityComparer = patternMatcher == null
+        _equalityComparer = patternMatcher is null
             ? new HttpHeaderEqualityComparer()
             : new HttpHeaderEqualityComparer(patternMatcher);
 
@@ -117,7 +117,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 
     private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
     {
-        return headers is { }
+        return headers is not null
          && headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
          && _equalityComparer.Equals(
                 expectedHeader,

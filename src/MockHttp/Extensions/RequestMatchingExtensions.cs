@@ -330,7 +330,7 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching Header(this RequestMatching builder, string name)
     {
-        if (builder == null)
+        if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
