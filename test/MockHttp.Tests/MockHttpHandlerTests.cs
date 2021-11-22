@@ -36,7 +36,7 @@ public class MockHttpHandlerTests : IDisposable
     }
 
     [Fact]
-    public void Given_request_is_configured_to_throw_when_sending_request_should_throw_exception()
+    public async Task Given_request_is_configured_to_throw_when_sending_request_should_throw_exception()
     {
         _sut.When(matching => { })
             .Throws<TestableException>()
@@ -46,13 +46,13 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
 
         // Assert
-        act.Should().ThrowExactly<TestableException>();
+        await act.Should().ThrowExactlyAsync<TestableException>();
         _sut.Verify(m => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
     [Fact]
-    public void Given_request_is_configured_to_throw_specific_exception_when_sending_request_should_throw_exception()
+    public async Task Given_request_is_configured_to_throw_specific_exception_when_sending_request_should_throw_exception()
     {
         var exception = new TestableException();
         _sut.When(matching => { })
@@ -63,8 +63,8 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
 
         // Assert
-        act.Should()
-            .Throw<TestableException>()
+        (await act.Should()
+                .ThrowAsync<TestableException>())
             .Which.Should()
             .Be(exception);
         _sut.Verify(m => { }, IsSent.Once);
@@ -158,7 +158,7 @@ public class MockHttpHandlerTests : IDisposable
     }
 
     [Fact]
-    public void Given_no_response_is_configured_when_sending_request_should_throw()
+    public async Task Given_no_response_is_configured_when_sending_request_should_throw()
     {
         _sut.When(matching => { });
 
@@ -166,8 +166,8 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
 
         // Assert
-        act.Should()
-            .Throw<HttpMockException>("the mock is configured without a response")
+        await act.Should()
+            .ThrowAsync<HttpMockException>("the mock is configured without a response")
             .WithMessage("No response configured for mock.");
     }
 
@@ -337,10 +337,7 @@ public class MockHttpHandlerTests : IDisposable
         };
         string jsonPostContent = JsonConvert.SerializeObject(postObject);
         var lastModified = new DateTime(2018, 4, 12, 7, 22, 43, DateTimeKind.Local);
-        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json")
-        {
-            Headers = { LastModified = lastModified }
-        };
+        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json") { Headers = { LastModified = lastModified } };
 
         // ReSharper disable once JoinDeclarationAndInitializer
         Version version;
@@ -422,7 +419,7 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
         // Assert
-        act.Should().NotThrow();
+        await act.Should().NotThrowAsync();
 
         _sut.Verify(matching => { }, IsSent.Exactly(2));
         firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
@@ -448,7 +445,7 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
         // Assert
-        act.Should().NotThrow();
+        await act.Should().NotThrowAsync();
 
         _sut.Verify(matching => { }, IsSent.Exactly(2));
         firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
@@ -526,7 +523,7 @@ public class MockHttpHandlerTests : IDisposable
     }
 
     [Fact]
-    public void Given_request_is_configured_to_fail_and_then_succeed_should_return_response_in_sequence()
+    public async Task Given_request_is_configured_to_fail_and_then_succeed_should_return_response_in_sequence()
     {
         var ex = new Exception("My exception");
 
@@ -542,9 +539,9 @@ public class MockHttpHandlerTests : IDisposable
         Func<Task<HttpResponseMessage>> act3 = async () => response3 = await _httpClient.GetAsync("");
 
         // Assert
-        act1.Should().Throw<Exception>().Which.Should().Be(ex);
-        act2.Should().Throw<TaskCanceledException>();
-        act3.Should().NotThrow();
+        (await act1.Should().ThrowAsync<Exception>()).Which.Should().Be(ex);
+        await act2.Should().ThrowAsync<TaskCanceledException>();
+        await act3.Should().NotThrowAsync();
         response3.Should().HaveStatusCode(HttpStatusCode.OK);
 
         _sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(3));
@@ -621,17 +618,17 @@ public class MockHttpHandlerTests : IDisposable
 #if NETFRAMEWORK
 internal static class EnumerableExtensions
 {
-	// Polyfill SkipLast
-	public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
-	{
-		if (enumerable is null)
+		// Polyfill SkipLast
+		public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
 		{
-			throw new ArgumentNullException(nameof(enumerable));
-		}
+			if (enumerable is null)
+			{
+				throw new ArgumentNullException(nameof(enumerable));
+			}
 
-		var list = new List<T>(enumerable);
-		list.RemoveRange(list.Count - count, count);
-		return list;
-	}
+			var list = new List<T>(enumerable);
+			list.RemoveRange(list.Count - count, count);
+			return list;
+		}
 }
 #endif
