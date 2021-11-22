@@ -10,7 +10,17 @@
     <Description>JSON and MediaTypeFormatter extensions for skwas.MockHttp.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
+    <PackageReleaseNotes>
+      v3.0.0
+      - Added .NET 6 target framework
+      - Removed .NET Standard &lt; 2 and .NET Framework
+    </PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.4" />

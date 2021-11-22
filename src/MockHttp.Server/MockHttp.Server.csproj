@@ -11,7 +11,17 @@
     <Description>.NET library to mock HTTP responses for any HTTP client and verify request expectations with an experience inspired by Moq.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>httpclient httpserver test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
+    <PackageReleaseNotes>
+      v3.0.0
+      - Added .NET 6 target framework
+      - Removed .NET Standard &lt; 2 and .NET Framework
+    </PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

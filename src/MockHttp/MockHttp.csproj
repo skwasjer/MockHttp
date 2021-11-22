@@ -11,11 +11,16 @@
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
-      v2.4.0
-      - Added .Not matcher (negating any matcher)
-      - Added request header name only matcher
+      v3.0.0
+      - Added .NET 6 target framework
+      - Removed .NET Standard &lt; 2 and .NET Framework
     </PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="*.DotSettings" />
