@@ -9,6 +9,7 @@ namespace MockHttp.Json;
 /// <summary>
 /// <see cref="MediaTypeFormatter" /> extensions for <see cref="IResponds{TResult}" />.
 /// </summary>
+[Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
 public static class ObjectRespondsExtensions
 {
     /// <summary>
@@ -17,6 +18,7 @@ public static class ObjectRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter)
         where TResult : IResponseResult
     {
@@ -29,6 +31,7 @@ public static class ObjectRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter)
         where TResult : IResponseResult
     {
@@ -42,6 +45,7 @@ public static class ObjectRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter)
         where TResult : IResponseResult
     {
@@ -55,6 +59,7 @@ public static class ObjectRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter)
         where TResult : IResponseResult
     {
@@ -68,6 +73,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, string mediaType)
         where TResult : IResponseResult
     {
@@ -81,6 +87,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, string mediaType)
         where TResult : IResponseResult
     {
@@ -95,6 +102,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, string mediaType)
         where TResult : IResponseResult
     {
@@ -109,6 +117,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, string mediaType)
         where TResult : IResponseResult
     {
@@ -122,6 +131,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -135,6 +145,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -149,6 +160,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -163,6 +175,7 @@ public static class ObjectRespondsExtensions
     /// <param name="value">The response value.</param>
     /// <param name="formatter">The media type formatter</param>
     /// <param name="mediaType">The media type. Can be null, in which case the <paramref name="formatter" /> default content type will be used.</param>
+    [Obsolete("MockHttp is dropping support for MediaTypeFormatter in a future major release.")]
     public static TResult RespondObject<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> value, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {

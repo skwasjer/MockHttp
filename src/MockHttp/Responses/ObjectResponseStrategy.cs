@@ -6,6 +6,7 @@ namespace MockHttp.Responses;
 /// <summary>
 /// Represents a base strategy that produces a mocked response based on a provided value.
 /// </summary>
+[Obsolete($"Will be removed in a future major release. Implement {nameof(IResponseStrategy)} directly.")]
 public abstract class ObjectResponseStrategy : IResponseStrategy
 {
     /// <summary>
