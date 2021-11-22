@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.0.0
+
+- Added .NET 6 target framework
+- Removed .NET Standard < 2 and .NET Framework
+
 ## v2.4.0
 
 - Added `.Not` matcher (negating any matcher)

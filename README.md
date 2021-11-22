@@ -32,7 +32,7 @@ mockHttp
     .RespondJson(HttpStatusCode.OK, new { id = 123, firstName = "John", lastName = "Doe" })
     .Verifiable();
 
-var client = new HttpClient(mockHttp)
+var client = new HttpClient(mockHttp);
 
 var response = await client.GetAsync("http://localhost/controller/action?test=1");
 
@@ -40,3 +40,6 @@ var response = await client.GetAsync("http://localhost/controller/action?test=1"
 mockHttp.Verify();
 ```
 
+### Contributions
+
+Please check out the [contribution guidelines](./CONTRIBUTING.md).
