@@ -41,15 +41,15 @@ public class JsonRequestMatchingExtensionTests
     public async Task Given_no_json_content_when_request_content_is_empty_should_be_true(bool hasContent)
     {
         _httpMock
-            .When(m => m.JsonContent((object)null))
+            .When(m => m.JsonContent((object?)null))
             .Respond(HttpStatusCode.OK);
 
-        StringContent content = hasContent
+        StringContent? content = hasContent
             ? new StringContent("", Encoding.UTF8, "application/json")
             : null;
 
         // Act
-        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", content);
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", content!);
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);

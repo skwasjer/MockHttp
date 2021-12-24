@@ -23,7 +23,7 @@ public static class RespondsExtensions
         this IResponds<TResult> responds,
         T content,
         MediaTypeHeaderValue? mediaType,
-        JsonSerializerSettings serializerSettings)
+        JsonSerializerSettings? serializerSettings)
         where TResult : IResponseResult
     {
         return responds.RespondJson(_ => content, mediaType, serializerSettings);
@@ -41,7 +41,7 @@ public static class RespondsExtensions
         this IResponds<TResult> responds,
         Func<HttpRequestMessage, T> content,
         MediaTypeHeaderValue? mediaType,
-        JsonSerializerSettings serializerSettings)
+        JsonSerializerSettings? serializerSettings)
         where TResult : IResponseResult
     {
         return responds.RespondJson(HttpStatusCode.OK, content, mediaType, serializerSettings);
@@ -61,7 +61,7 @@ public static class RespondsExtensions
         HttpStatusCode statusCode,
         T content,
         MediaTypeHeaderValue? mediaType,
-        JsonSerializerSettings serializerSettings)
+        JsonSerializerSettings? serializerSettings)
         where TResult : IResponseResult
     {
         return responds.RespondJson(statusCode, _ => content, mediaType, serializerSettings);

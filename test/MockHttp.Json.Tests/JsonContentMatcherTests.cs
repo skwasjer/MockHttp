@@ -19,7 +19,7 @@ public sealed class JsonContentMatcherTests : IDisposable
 
         _equalityComparerMock = new Mock<IEqualityComparer<string>>();
         _equalityComparerMock
-            .Setup(m => m.Equals(It.IsAny<string?>(), It.IsAny<string?>()))
+            .Setup(m => m.Equals(It.IsAny<string?>()!, It.IsAny<string?>()!))
             .Returns(true);
 
         _services = new Dictionary<Type, object>();
@@ -119,7 +119,7 @@ public sealed class JsonContentMatcherTests : IDisposable
         var sut = new JsonContentMatcher("something to compare with", _adapterMock.Object, _equalityComparerMock.Object);
 
         _equalityComparerMock
-            .Setup(m => m.Equals(It.IsAny<string?>(), It.IsAny<string?>()))
+            .Setup(m => m.Equals(It.IsAny<string?>()!, It.IsAny<string?>()!))
             .Returns(equals)
             .Verifiable();
 

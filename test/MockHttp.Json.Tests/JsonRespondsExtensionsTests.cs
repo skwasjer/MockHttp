@@ -99,8 +99,8 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
     public async Task When_responding_with_custom_serializerSettings_it_should_return_correct_json(bool useDefaultSerializer)
     {
         var request = new HttpRequestMessage();
-        JsonSerializerSettings serializerSettings = useDefaultSerializer 
-            ? null 
+        JsonSerializerSettings? serializerSettings = useDefaultSerializer
+            ? null
             : new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver
@@ -154,7 +154,7 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
     public class MyXmlSerializableType
     {
         [DataMember(Name = "Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     [Fact]

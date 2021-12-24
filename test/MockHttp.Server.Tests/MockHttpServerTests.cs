@@ -175,11 +175,15 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             .Verifiable();
 
         // Act
+#pragma warning disable CS0618
+#pragma warning disable SYSLIB0014 // Type or member is obsolete - justification: testing other API's
         var request = WebRequest.Create($"{_fixture.Server.HostUrl}/web-request");
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
+#pragma warning restore CS0618
         request.Method = "POST";
         request.Headers.Add("test", "value");
         request.ContentType = "text/plain";
-        using (Stream requestStream = await request.GetRequestStreamAsync())
+        await using (Stream requestStream = await request.GetRequestStreamAsync())
         {
             requestStream.Write(Encoding.ASCII.GetBytes("request-content"));
         }

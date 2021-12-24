@@ -30,7 +30,7 @@ internal class MediaTypeFormatterObjectResponseStrategy<T> : MediaTypeFormatterO
         : base(
             statusCode,
             typeof(T),
-            r => valueFactory is not null ? valueFactory(r) : throw new ArgumentNullException(nameof(valueFactory)),
+            r => valueFactory is not null ? valueFactory(r)! : throw new ArgumentNullException(nameof(valueFactory)),
             mediaType,
             formatter)
     {
@@ -41,7 +41,7 @@ internal class MediaTypeFormatterObjectResponseStrategy<T> : MediaTypeFormatterO
         MediaTypeFormatter formatter = Formatter.GetPerRequestFormatterInstance(TypeOfValue, requestContext.Request, MediaType);
         return Task.FromResult(new HttpResponseMessage(StatusCode)
         {
-            Content = new ObjectContent<T>((T)ValueFactory(requestContext.Request), formatter, MediaType)
+            Content = new ObjectContent<T>((T)ValueFactory(requestContext.Request)!, formatter, MediaType)
         });
     }
 }
