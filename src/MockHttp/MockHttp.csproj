@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0;net48;net472;net462</TargetFrameworks>
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
   </PropertyGroup>
@@ -12,7 +12,7 @@
     <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
       v3.0.0
-      - Added .NET 6 and .NET 4.8 target framework support.
+      - Added .NET 6.0 and .NET Framework 4.8/4.7.2/4.6.2 target framework support.
       - Removed .NET Standard &lt; 2 and .NET Framework 4.5 support.
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
