@@ -1,5 +1,4 @@
-﻿using MockHttp.Json.Newtonsoft;
-using MockHttp.Responses;
+﻿using MockHttp.Responses;
 
 namespace MockHttp.Json.Extensions;
 
@@ -13,6 +12,6 @@ internal static class MockHttpRequestContextExtensions
     internal static IJsonAdapter GetAdapter(this MockHttpRequestContext context)
     {
         context.TryGetService<IJsonAdapter>(out IJsonAdapter? adapter);
-        return adapter ?? new NewtonsoftAdapter();
+        return adapter ?? Defaults.Adapter;
     }
 }

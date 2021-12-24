@@ -1,16 +1,14 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using MockHttp.Json.Newtonsoft;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
-using Newtonsoft.Json;
 
 namespace MockHttp.Json;
 
 /// <summary>
 /// JSON extensions for <see cref="IResponds{TResult}" />.
 /// </summary>
-public static class JsonRespondsExtensions
+public static class RespondsExtensions
 {
     /// <summary>
     /// Specifies the <see cref="HttpStatusCode.OK" /> and <paramref name="content" /> to respond with for a request.
@@ -31,7 +29,7 @@ public static class JsonRespondsExtensions
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content)
         where TResult : IResponseResult
     {
-        return responds.RespondJson(content, (MediaTypeHeaderValue)null);
+        return responds.RespondJson(content, (MediaTypeHeaderValue?)null);
     }
 
     /// <summary>
@@ -55,7 +53,7 @@ public static class JsonRespondsExtensions
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content)
         where TResult : IResponseResult
     {
-        return responds.RespondJson(statusCode, content, (MediaTypeHeaderValue)null);
+        return responds.RespondJson(statusCode, content, (MediaTypeHeaderValue?)null);
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public static class JsonRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(_ => content, mediaType);
@@ -76,36 +74,10 @@ public static class JsonRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
-        where TResult : IResponseResult
-    {
-        return responds.RespondJson(_ => content, mediaType, serializerSettings);
-    }
-
-    /// <summary>
-    /// Specifies the <see cref="HttpStatusCode.OK" /> and <paramref name="content" /> to respond with for a request.
-    /// </summary>
-    /// <param name="responds"></param>
-    /// <param name="content">The response content.</param>
-    /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
-    }
-
-    /// <summary>
-    /// Specifies the <see cref="HttpStatusCode.OK" /> and <paramref name="content" /> to respond with for a request.
-    /// </summary>
-    /// <param name="responds"></param>
-    /// <param name="content">The response content.</param>
-    /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
-        where TResult : IResponseResult
-    {
-        return responds.RespondJson(HttpStatusCode.OK, content, mediaType, serializerSettings);
     }
 
     /// <summary>
@@ -115,7 +87,7 @@ public static class JsonRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(statusCode, _ => content, mediaType);
@@ -128,7 +100,7 @@ public static class JsonRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(statusCode, content, mediaType, null);
@@ -141,23 +113,8 @@ public static class JsonRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue mediaType, JsonSerializerSettings serializerSettings)
-        where TResult : IResponseResult
-    {
-        return responds.RespondJson(statusCode, _ => content, mediaType, serializerSettings);
-    }
-
-    /// <summary>
-    /// Specifies the <paramref name="statusCode" /> and <paramref name="content" /> to respond with for a request.
-    /// </summary>
-    /// <param name="responds"></param>
-    /// <param name="statusCode">The status code response for given request.</param>
-    /// <param name="content">The response content.</param>
-    /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    // TODO: move all Newtonsoft extensions to separate class.
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue mediaType, JsonSerializerSettings? serializerSettings)
+    /// <param name="adapter">The JSON adapter.</param>
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType, IJsonAdapter? adapter)
         where TResult : IResponseResult
     {
         if (responds is null)
@@ -172,9 +129,7 @@ public static class JsonRespondsExtensions
                 statusCode,
                 content,
                 mt,
-                serializerSettings is null
-                    ? null
-                    : new NewtonsoftAdapter(serializerSettings)
+                adapter
             )
         );
     }
@@ -185,7 +140,7 @@ public static class JsonRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, string mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, string? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(_ => content, mediaType);
@@ -197,7 +152,7 @@ public static class JsonRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, string mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, string? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(HttpStatusCode.OK, content, mediaType);
@@ -210,7 +165,7 @@ public static class JsonRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, string mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, string? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(statusCode, _ => content, mediaType);
@@ -223,7 +178,7 @@ public static class JsonRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
-    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, string mediaType)
+    public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, string? mediaType)
         where TResult : IResponseResult
     {
         return responds.RespondJson(statusCode, content, mediaType is null ? null : new MediaTypeHeaderValue(mediaType));
