@@ -14,6 +14,7 @@
     <PackageReleaseNotes>
       v3.0.0
       - Added .NET 6 target framework
+      - Changed to System.Text.Json as default serializer
       - Removed .NET Standard &lt; 2 and .NET Framework
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>

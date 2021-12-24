@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MockHttp.Json.Newtonsoft;
+using MockHttp.Json.SystemTextJson;
 using MockHttp.Responses;
 using Moq;
 using Xunit;
@@ -22,7 +23,7 @@ public class MockHttpRequestContextExtensionsTests
         actual
             .Should()
             .NotBeNull()
-            .And.BeOfType<NewtonsoftAdapter>();
+            .And.BeOfType<SystemTextJsonAdapter>();
     }
 
     [Fact]
