@@ -20,11 +20,11 @@ public sealed class MockHttpServer : IDisposable
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly IWebHostBuilder _webHostBuilder;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private IWebHost _host;
+    private IWebHost? _host;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string _hostUrl;
+    private readonly string _hostUrl;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private Action<IApplicationBuilder> _configureAppBuilder;
+    private Action<IApplicationBuilder>? _configureAppBuilder;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockHttpServer" /> using specified <paramref name="mockHttpHandler" /> and configures it to listen on specified <paramref name="hostUrl" />.
@@ -42,11 +42,12 @@ public sealed class MockHttpServer : IDisposable
     /// <param name="mockHttpHandler">The mock http handler.</param>
     /// <param name="loggerFactory">The logger factory to use to log pipeline requests to.</param>
     /// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
-    public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory loggerFactory, string hostUrl)
+    public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory? loggerFactory, string hostUrl)
     {
         Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
         _webHostBuilder = CreateWebHostBuilder(loggerFactory);
-        SetHostUrl(hostUrl);
+        _hostUrl = GetHostUrl(hostUrl);
+        _webHostBuilder.UseUrls(_hostUrl);
     }
 
     /// <inheritdoc />
@@ -141,7 +142,7 @@ public sealed class MockHttpServer : IDisposable
         return new HttpClient { BaseAddress = new Uri(HostUrl) };
     }
 
-    private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory loggerFactory)
+    private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory? loggerFactory)
     {
         return new WebHostBuilder()
             .ConfigureServices(services =>
@@ -169,21 +170,20 @@ public sealed class MockHttpServer : IDisposable
         _configureAppBuilder = configureAppBuilder;
     }
 
-    private void SetHostUrl(string hostUrl)
+    private static string GetHostUrl(string hostUrl)
     {
         if (hostUrl is null)
         {
             throw new ArgumentNullException(nameof(hostUrl));
         }
 
-        if (!Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri uri))
+        if (!Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri? uri))
         {
             throw new ArgumentException(Resources.Error_HostUrlIsNotValid, nameof(hostUrl));
         }
 
         // Ensure we have a proper host URL without path/query.
-        _hostUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}";
-        _webHostBuilder.UseUrls(_hostUrl);
+        return $"{uri.Scheme}://{uri.Host}:{uri.Port}";
     }
 
     private void AddMockHttpServerHeader(IApplicationBuilder applicationBuilder)

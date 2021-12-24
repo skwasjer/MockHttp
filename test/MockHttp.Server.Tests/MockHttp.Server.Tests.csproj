@@ -6,6 +6,7 @@
     <IsTestProject>true</IsTestProject>
 
     <RootNamespace>MockHttp</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

@@ -13,7 +13,7 @@ namespace MockHttp.Fixtures;
 
 public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 {
-    private ITestCorrelatorContext _testCorrelatorContext;
+    private ITestCorrelatorContext? _testCorrelatorContext;
 
     public MockHttpServerFixture()
         : this("http")
@@ -33,7 +33,7 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
         Server = new MockHttpServer(Handler, LoggerFactory, SupportsIpv6() ? $"{scheme}://[::1]:0" : $"{scheme}://127.0.0.1:0");
         Server
             .Configure(builder => builder
-                .Use((httpContext, next) =>
+                .Use((_, next) =>
                 {
                     _testCorrelatorContext ??= TestCorrelator.CreateContext();
                     return next();
@@ -41,7 +41,7 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
             );
     }
 
-    public ILoggerFactory LoggerFactory { get; set; }
+    public ILoggerFactory LoggerFactory { get; }
 
     public MockHttpHandler Handler { get; }
 
@@ -49,8 +49,8 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 
     public void Dispose()
     {
-        Server?.Dispose();
-        Handler?.Dispose();
+        Server.Dispose();
+        Handler.Dispose();
         GC.SuppressFinalize(this);
     }
 

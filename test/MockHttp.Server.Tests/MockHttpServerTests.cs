@@ -166,7 +166,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             )
             .Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
             {
-                Content = new StringContent("Response content", Encoding.UTF8, "text/html"), 
+                Content = new StringContent("Response content", Encoding.UTF8, "text/html"),
                 Headers =
                 {
                     { "return-test", "return-value" }
@@ -215,7 +215,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         response.Should().HaveStatusCode(HttpStatusCode.BadRequest);
         await response.Should().HaveContentAsync("Should return fallback.");
         response.ReasonPhrase.Should().Be("Bad Request");
-        _fixture.Handler.Verify(matching => { }, IsSent.Once);
+        await _fixture.Handler.VerifyAsync(_ => { }, IsSent.Once);
     }
 
     [Fact]
@@ -245,11 +245,12 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     [Fact]
     public void When_creating_server_with_null_handler_it_should_throw()
     {
-        MockHttpHandler mockHttpHandler = null;
+        MockHttpHandler? mockHttpHandler = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
+#pragma warning disable CS8604
         Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, "");
+#pragma warning restore CS8604
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParamName(nameof(mockHttpHandler));
@@ -258,7 +259,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     [Fact]
     public async Task When_creating_and_starting_server_with_null_logger_it_should_not_throw()
     {
-        ILoggerFactory loggerFactory = null;
+        ILoggerFactory? loggerFactory = null;
 
         // Act
         // ReSharper disable once ExpressionIsAlwaysNull
@@ -273,11 +274,12 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     [Fact]
     public void When_creating_server_with_null_host_it_should_throw()
     {
-        string hostUrl = null;
+        string? hostUrl = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
+#pragma warning disable CS8604
         Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+#pragma warning restore CS8604
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParamName(nameof(hostUrl));

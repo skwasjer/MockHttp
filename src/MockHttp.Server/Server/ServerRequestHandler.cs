@@ -10,7 +10,7 @@ internal class ServerRequestHandler : DelegatingHandler
 {
     private readonly ILogger<ServerRequestHandler> _logger;
 
-    // ReSharper disable once SuggestBaseTypeForParameter
+    // ReSharper disable once SuggestBaseTypeForParameterInConstructor
     public ServerRequestHandler(MockHttpHandler mockHttpHandler, ILogger<ServerRequestHandler> logger)
     {
         _logger = logger;
@@ -56,12 +56,16 @@ internal class ServerRequestHandler : DelegatingHandler
         response.RegisterForDispose(httpResponseMessage);
         cancellationToken.ThrowIfCancellationRequested();
 
-        IHttpResponseFeature responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
-        IHttpResponseBodyFeature responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
+        IHttpResponseFeature? responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
+        IHttpResponseBodyFeature? responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
+        if (responseFeature is null || responseBodyFeature is null)
+        {
+            throw new InvalidOperationException(Resources.MissingHttpResponseFeature);
+        }
         await httpResponseMessage.MapToFeatureAsync(responseFeature, responseBodyFeature, cancellationToken).ConfigureAwait(false);
     }
 
-    private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception ex = null)
+    private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception? ex = null)
     {
         string formattedMessage = Resources.RequestLogMessage + message;
 #pragma warning disable CA2254 // Template should be a static expression
