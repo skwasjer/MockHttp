@@ -29,6 +29,7 @@ public class JsonNotMatchTestCases : IEnumerable<object?[]>
 
             // Bool
             yield return new object[] { "true", "false" };
+            yield return new object[] { "true", "\"true\"" };
 
             // Text
             yield return new object[] { "\"some text\"", "\"other text\"" };
@@ -44,9 +45,16 @@ public class JsonNotMatchTestCases : IEnumerable<object?[]>
             yield return new object[] { "[1, 2, 3, 4]", "[1, 2, 4, 3]" };
 
             // Complex
+
+            // Other value
             yield return new object[] { "{\"value\":1,\"complex\":{\"other\":true}}", "{\"value\":2,\"complex\":{\"other\":true}}" };
+            // Nested other value
             yield return new object[] { "{\"value\":1,\"complex\":{\"other\":true}}", "{\"value\":1,\"complex\":{\"other\":false}}" };
+            // Nested with different number of properties
             yield return new object[] { "{\"value\":1,\"complex\":{\"other\":true}}", "{\"value\":1,\"complex\":{\"other\":true,\"and-another\":\"text\"}}" };
+            // Properties with other value types.
+            yield return new object[] { "{\"value\":1}", "{\"value\":true}" };
+            yield return new object[] { "{\"value\":1}", "{\"value\":\"1\"}" };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
