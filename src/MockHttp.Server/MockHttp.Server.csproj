@@ -15,7 +15,7 @@
     <PackageReleaseNotes>
       v3.0.0
       - Added .NET 6 and .NET Core 3.1 target framework
-      - Removed .NET Standard &lt; 2.x target framework
+      - Removed .NET Standard 2.x target frameworks
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
