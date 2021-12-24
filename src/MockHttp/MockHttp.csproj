@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0;net48</TargetFrameworks>
     <PackageId>skwas.MockHttp</PackageId>
     <AssemblyName>skwas.MockHttp</AssemblyName>
   </PropertyGroup>
@@ -12,8 +12,8 @@
     <PackageTags>httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
       v3.0.0
-      - Added .NET 6 target framework
-      - Removed .NET Standard &lt; 2 and .NET Framework
+      - Added .NET 6 and .NET 4.8 target framework support.
+      - Removed .NET Standard &lt; 2 and .NET Framework 4.5 support.
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" Condition="'$(TargetFramework)'=='net48'" />
     <PackageReference Include="IFluentInterface" Version="2.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

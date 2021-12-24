@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.1;netstandard2.0;net48</TargetFrameworks>
     <PackageId>skwas.MockHttp.Json</PackageId>
     <AssemblyName>skwas.MockHttp.Json</AssemblyName>
     <Nullable>enable</Nullable>
@@ -13,9 +13,9 @@
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
       v3.0.0
-      - Added .NET 6 target framework
-      - Changed to System.Text.Json as default serializer
-      - Removed .NET Standard &lt; 2 and .NET Framework
+      - Changed to System.Text.Json as default serializer, JSON.NET can be configured as default if desired (mockHttpHandler.UseNewtonsoftJson()).
+      - Added .NET 6 and .NET 4.8 target framework support.
+      - Removed .NET Standard &lt; 2 and .NET Framework 4.5 support.
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="System.Text.Json" Version="5.0.0" Condition="'$(TargetFramework)'=='netstandard2.0' Or '$(TargetFramework)'=='netstandard2.1'" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" Condition="'$(TargetFramework)'!='net48'"/>
+    <PackageReference Include="System.Text.Json" Version="5.0.0" Condition="'$(TargetFramework)'=='net48' Or '$(TargetFramework)'=='netstandard2.0' Or '$(TargetFramework)'=='netstandard2.1'" />
   </ItemGroup>
 
   <ItemGroup>

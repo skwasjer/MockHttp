@@ -14,8 +14,8 @@
     <PackageTags>httpclient httpserver test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
       v3.0.0
-      - Added .NET 6 and .NET Core 3.1 target framework
-      - Removed .NET Standard 2.x target frameworks
+      - Added .NET 6 and .NET Core 3.1 target framework support.
+      - Removed .NET Standard 2.x target frameworks support.
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

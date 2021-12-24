@@ -4,19 +4,19 @@
 
 ### MockHttp
 
-- Added .NET 6 target framework.
-- Removed .NET Standard < 2 and .NET Framework.
+- Added .NET 6 and .NET 4.8 target framework support.
+- Removed .NET Standard < 2 and .NET Framework 4.5 support.
 
 ### MockHttp.Json
 
-- Added .NET 6 target framework.
 - Changed to System.Text.Json as default serializer, JSON.NET can be configured as default if desired (`mockHttpHandler.UseNewtonsoftJson()`).
-- Removed .NET Standard < 2 and .NET Framework.
+- Added .NET 6 and .NET 4.8 target framework support.
+- Removed .NET Standard < 2 and .NET Framework 4.5 support.
 
 ### MockHttp.Server
 
-- Added .NET 6 and .NET Core 3.1 target framework.
-- Removed .NET Standard 2.x target frameworks.
+- Added .NET 6 and .NET Core 3.1 target framework support.
+- Removed .NET Standard 2.x target frameworks support.
 
 ## v2.4.0
 

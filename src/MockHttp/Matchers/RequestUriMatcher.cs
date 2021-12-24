@@ -34,7 +34,7 @@ public class RequestUriMatcher : HttpRequestMatcher
         _formattedUri = uriString ?? throw new ArgumentNullException(nameof(uriString));
 
         if (allowWildcards
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
          && uriString.Contains("*")
 #else
          && uriString.Contains('*', StringComparison.InvariantCultureIgnoreCase)

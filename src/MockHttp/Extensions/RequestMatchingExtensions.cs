@@ -280,7 +280,7 @@ public static class RequestMatchingExtensions
     {
         // https://tools.ietf.org/html/rfc2616#section-3.3.1
         CultureInfo ci = CultureInfo.InvariantCulture;
-#if NETFRAMEWORK
+#if NETFRAMEWORK && NET452
 			// .NET Framework does not normalize other common date formats,
 			// so we use multiple matches.
 			return builder.Any(any => any
