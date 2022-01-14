@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Json.Newtonsoft;
 using Newtonsoft.Json;
@@ -33,6 +34,24 @@ public class JsonRequestMatchingExtensionTests
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
+    }
+    
+    [Fact]
+    public async Task Given_not_a_json_content_matching_request_and_a_different_request_uri_when_matching_should_not_test_others_matcher()
+    {
+        var obj = new TestClass { SomeProperty = "value" };
+
+        _httpMock
+            .When(m => m
+                .RequestUri("/users")
+                .JsonContent(obj))
+            .Respond(HttpStatusCode.OK);
+
+        // Act
+        Func<Task> act = () => _httpClient.PostAsync("http://0.0.0.0", new StringContent("test=test", Encoding.UTF8, "application/x-www-form-urlencoded"));
+
+        // Assert
+        await act.Should().NotThrowAsync<System.Text.Json.JsonException>();
     }
 
     [Theory]

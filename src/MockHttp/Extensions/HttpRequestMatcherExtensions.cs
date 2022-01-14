@@ -13,18 +13,15 @@ internal static class HttpRequestMatcherExtensions
     /// <returns><see langword="true" /> if all <paramref name="matchers" /> match the <paramref name="requestContext" />.</returns>
     public static async Task<bool> AllAsync(this IEnumerable<IAsyncHttpRequestMatcher> matchers, MockHttpRequestContext requestContext)
     {
-        bool hasMatchedAll = true;
         foreach (IAsyncHttpRequestMatcher m in matchers)
         {
-            if (await m.IsMatchAsync(requestContext).ConfigureAwait(false))
+            if (!await m.IsMatchAsync(requestContext).ConfigureAwait(false))
             {
-                continue;
+                return false;
             }
-
-            hasMatchedAll = false;
         }
 
-        return hasMatchedAll;
+        return true;
     }
 
     /// <summary>
