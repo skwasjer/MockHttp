@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.1
+
+- fix: stop evaluating next matchers as soon as a failed match is encountered.
+
 ## v3.0.0
 
 ### MockHttp
