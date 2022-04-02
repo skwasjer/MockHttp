@@ -121,7 +121,7 @@ public abstract class RequestMatchingExtensionsTests
             Action act = () => _sut.QueryString(string.Empty);
 
             // Assert
-            act.Should().Throw<ArgumentException>().WithParamName("queryString").WithMessage("Specify a query string*");
+            act.Should().Throw<ArgumentException>().WithParameterName("queryString").WithMessage("Specify a query string*");
         }
 
         [Fact]
@@ -131,7 +131,7 @@ public abstract class RequestMatchingExtensionsTests
             Action act = () => _sut.QueryString((string)null);
 
             // Assert
-            act.Should().Throw<ArgumentException>().WithParamName("queryString").WithMessage("Specify a query string*");
+            act.Should().Throw<ArgumentException>().WithParameterName("queryString").WithMessage("Specify a query string*");
         }
 
         [Theory]
@@ -352,7 +352,7 @@ public abstract class RequestMatchingExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentException>()
-                .WithParamName(nameof(urlEncodedFormData))
+                .WithParameterName(nameof(urlEncodedFormData))
                 .WithMessage("Specify the url encoded form data*");
         }
 
@@ -368,7 +368,7 @@ public abstract class RequestMatchingExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentException>()
-                .WithParamName(nameof(urlEncodedFormData))
+                .WithParameterName(nameof(urlEncodedFormData))
                 .WithMessage("Specify the url encoded form data*");
         }
 

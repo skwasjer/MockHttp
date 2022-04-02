@@ -92,7 +92,7 @@ public class MediaTypeHeaderMatcherTests
         Func<MediaTypeHeaderMatcher> act = () => new MediaTypeHeaderMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("headerValue");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("headerValue");
     }
 
     [Fact]
@@ -121,6 +121,6 @@ public class MediaTypeHeaderMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

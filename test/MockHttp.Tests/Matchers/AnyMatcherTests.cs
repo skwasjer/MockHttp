@@ -55,7 +55,7 @@ public class AnyMatcherTests
         Func<AnyMatcher> act = () => new AnyMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("matchers");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("matchers");
     }
 
     [Fact]
@@ -89,6 +89,6 @@ public class AnyMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

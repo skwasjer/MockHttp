@@ -97,7 +97,7 @@ public class FormDataMatcherTests
         Func<FormDataMatcher> act = () => new FormDataMatcher(urlEncodedFormData);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName(nameof(urlEncodedFormData));
+        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(urlEncodedFormData));
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class FormDataMatcherTests
         Func<FormDataMatcher> act = () => new FormDataMatcher(formData);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName(nameof(formData));
+        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(formData));
     }
 
     [Fact]
@@ -190,6 +190,6 @@ public class FormDataMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

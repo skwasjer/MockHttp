@@ -108,7 +108,7 @@ public class RequestMatchingTests
         Action act = () => _sut.With(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("matcher");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("matcher");
     }
 
     [Fact]

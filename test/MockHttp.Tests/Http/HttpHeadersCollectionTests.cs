@@ -16,7 +16,7 @@ public class HttpHeadersCollectionTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName("headers");
+            .WithParameterName("headers");
     }
 
     [Fact]

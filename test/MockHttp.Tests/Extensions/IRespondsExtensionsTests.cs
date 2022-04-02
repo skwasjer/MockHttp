@@ -162,7 +162,7 @@ public class IRespondsExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParamName("streamContent");
+                .WithParameterName("streamContent");
         }
 
         [Fact]
@@ -187,7 +187,7 @@ public class IRespondsExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentException>()
-                .WithParamName("streamContent")
+                .WithParameterName("streamContent")
                 .WithMessage("Cannot read from stream.*");
         }
     }
@@ -239,7 +239,7 @@ public class IRespondsExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParamName("content");
+                .WithParameterName("content");
         }
 
         [Theory]
@@ -298,7 +298,7 @@ public class IRespondsExtensionsTests
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParamName("content");
+                .WithParameterName("content");
         }
 
         [Fact]

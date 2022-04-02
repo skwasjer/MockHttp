@@ -68,7 +68,7 @@ public class QueryStringMatcherTests
         Func<QueryStringMatcher> act = () => new QueryStringMatcher((string)null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("queryString");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("queryString");
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class QueryStringMatcherTests
         Func<QueryStringMatcher> act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("parameters");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("parameters");
     }
 
     [Fact]
@@ -107,6 +107,6 @@ public class QueryStringMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

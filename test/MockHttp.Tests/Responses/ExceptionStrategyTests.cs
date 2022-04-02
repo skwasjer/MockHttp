@@ -17,7 +17,7 @@ public class ExceptionStrategyTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(exceptionFactory));
+            .WithParameterName(nameof(exceptionFactory));
     }
 
     [Fact]

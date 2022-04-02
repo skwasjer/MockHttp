@@ -44,7 +44,7 @@ public class HttpMethodMatcherTests
         Func<HttpMethodMatcher> act = () => new HttpMethodMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("method");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("method");
     }
 
     [Fact]
@@ -73,6 +73,6 @@ public class HttpMethodMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

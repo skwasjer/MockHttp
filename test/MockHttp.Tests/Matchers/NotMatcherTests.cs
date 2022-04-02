@@ -40,7 +40,7 @@ public class NotMatcherTests
         Func<NotMatcher> act = () => new NotMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("matcher");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("matcher");
     }
 
     [Fact]
@@ -69,6 +69,6 @@ public class NotMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

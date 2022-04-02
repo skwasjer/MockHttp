@@ -87,7 +87,7 @@ public class ContentMatcherTests
         Func<ContentMatcher> act = () => new ContentMatcher(null, Encoding.UTF8);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("content");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class ContentMatcherTests
         Func<ContentMatcher> act = () => new ContentMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("content");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
     }
 
     [Theory]
@@ -143,6 +143,6 @@ public class ContentMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

@@ -60,6 +60,6 @@ public class TimeoutStrategyTests
         // Assert
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
-            .WithParamName("timeoutAfter");
+            .WithParameterName("timeoutAfter");
     }
 }

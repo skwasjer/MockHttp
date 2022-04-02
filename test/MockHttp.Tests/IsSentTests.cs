@@ -16,7 +16,7 @@ public static class IsSentTests
             Action act = () => IsSent.AtLeast(callCount);
 
             // Assert
-            act.Should().Throw<ArgumentOutOfRangeException>().WithParamName(nameof(callCount));
+            act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName(nameof(callCount));
         }
 
         [Theory]
@@ -70,7 +70,7 @@ public static class IsSentTests
             Action act = () => IsSent.AtMost(callCount);
 
             // Assert
-            act.Should().Throw<ArgumentOutOfRangeException>().WithParamName(nameof(callCount));
+            act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName(nameof(callCount));
         }
 
         [Theory]
@@ -126,7 +126,7 @@ public static class IsSentTests
             Action act = () => IsSent.Exactly(callCount);
 
             // Assert
-            act.Should().Throw<ArgumentOutOfRangeException>().WithParamName(nameof(callCount));
+            act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName(nameof(callCount));
         }
 
         [Theory]

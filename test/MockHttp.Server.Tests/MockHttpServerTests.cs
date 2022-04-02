@@ -253,7 +253,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 #pragma warning restore CS8604
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName(nameof(mockHttpHandler));
+        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(mockHttpHandler));
     }
 
     [Fact]
@@ -282,7 +282,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 #pragma warning restore CS8604
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName(nameof(hostUrl));
+        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(hostUrl));
     }
 
     [Fact]
@@ -295,7 +295,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithParamName(nameof(hostUrl));
+        act.Should().Throw<ArgumentException>().WithParameterName(nameof(hostUrl));
     }
 
     [Fact]

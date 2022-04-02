@@ -34,7 +34,7 @@ public class ExpressionMatcherTests
         Func<ExpressionMatcher> act = () => new ExpressionMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("expression");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("expression");
     }
 
     [Fact]
@@ -63,6 +63,6 @@ public class ExpressionMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

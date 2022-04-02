@@ -18,7 +18,7 @@ public class NameValueCollectionExtensionsTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(nameValueCollection));
+            .WithParameterName(nameof(nameValueCollection));
     }
 
     [Fact]

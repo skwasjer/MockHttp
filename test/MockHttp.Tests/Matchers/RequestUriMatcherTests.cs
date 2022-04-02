@@ -63,7 +63,7 @@ public class RequestUriMatcherTests
         Func<RequestUriMatcher> act = () => new RequestUriMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("uri");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("uri");
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class RequestUriMatcherTests
         Func<RequestUriMatcher> act = () => new RequestUriMatcher(null, false);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("uriString");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("uriString");
     }
 
     [Fact]
@@ -102,6 +102,6 @@ public class RequestUriMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

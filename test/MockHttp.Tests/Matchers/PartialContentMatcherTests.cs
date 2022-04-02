@@ -91,7 +91,7 @@ public class PartialContentMatcherTests
         Func<PartialContentMatcher> act = () => new PartialContentMatcher(string.Empty, Encoding.UTF8);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithParamName("content");
+        act.Should().Throw<ArgumentException>().WithParameterName("content");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class PartialContentMatcherTests
         Func<PartialContentMatcher> act = () => new PartialContentMatcher(null, Encoding.UTF8);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("content");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class PartialContentMatcherTests
         Func<PartialContentMatcher> act = () => new PartialContentMatcher(string.Empty, Encoding.UTF8);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithParamName("content");
+        act.Should().Throw<ArgumentException>().WithParameterName("content");
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class PartialContentMatcherTests
         Func<PartialContentMatcher> act = () => new PartialContentMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("content");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class PartialContentMatcherTests
         Func<PartialContentMatcher> act = () => new PartialContentMatcher(Array.Empty<byte>());
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithParamName("content");
+        act.Should().Throw<ArgumentException>().WithParameterName("content");
     }
 
     [Theory]
@@ -176,6 +176,6 @@ public class PartialContentMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

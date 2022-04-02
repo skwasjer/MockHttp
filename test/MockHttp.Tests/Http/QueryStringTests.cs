@@ -18,7 +18,7 @@ public class QueryStringTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(values));
+            .WithParameterName(nameof(values));
     }
 
     [Theory]
@@ -44,7 +44,7 @@ public class QueryStringTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName("queryString");
+            .WithParameterName("queryString");
     }
 
     [Fact]

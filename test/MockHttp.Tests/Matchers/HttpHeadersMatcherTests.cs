@@ -87,7 +87,7 @@ public class HttpHeadersMatcherTests
         Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, (string)null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("name");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("name");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class HttpHeadersMatcherTests
         Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("name");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("name");
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class HttpHeadersMatcherTests
         Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, string>>)null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("headers");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("headers");
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class HttpHeadersMatcherTests
         Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("headers");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("headers");
     }
 
     [Fact]
@@ -185,6 +185,6 @@ public class HttpHeadersMatcherTests
         // Assert
         await act.Should()
             .ThrowAsync<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

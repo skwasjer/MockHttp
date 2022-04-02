@@ -38,7 +38,7 @@ public class VersionMatcherTests
         Func<VersionMatcher> act = () => new VersionMatcher(null);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParamName("version");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("version");
     }
 
     [Fact]
@@ -54,6 +54,6 @@ public class VersionMatcherTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(requestContext));
+            .WithParameterName(nameof(requestContext));
     }
 }

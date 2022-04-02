@@ -18,7 +18,7 @@ public class DataEscapingHelperTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParamName(nameof(dataEscapedString));
+            .WithParameterName(nameof(dataEscapedString));
     }
 
     [Fact]
