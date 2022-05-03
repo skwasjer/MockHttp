@@ -307,5 +307,34 @@ public static class ResponseBuilderExtensions
         builder.Behaviors.Add(new TimeoutBehavior(timeoutAfter));
         return builder;
     }
+
+    /// <summary>
+    /// Adds artificial (simulated) network latency to the request/response.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="latency">The network latency to simulate.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="latency" /> is <see langword="null" />.</exception>
+    public static IResponseBuilder Latency(this IResponseBuilder builder, NetworkLatency latency)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        return builder.RegisterBehavior(new NetworkLatencyBehavior(latency));
+    }
+
+    /// <summary>
+    /// Adds artificial (simulated) network latency to the request/response.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="latency">The network latency to simulate.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="latency" /> is <see langword="null" />.</exception>
+    public static IResponseBuilder Latency(this IResponseBuilder builder, Func<NetworkLatency> latency)
+    {
+        return builder.Latency(latency());
+    }
 }
 #nullable restore

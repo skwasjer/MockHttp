@@ -15,9 +15,10 @@ internal class ResponseBuilder
     private static readonly Dictionary<Type, int> BehaviorPriority = new()
     {
         { typeof(TimeoutBehavior), 0 },
-        { typeof(StatusCodeBehavior), 1 },
-        { typeof(HttpContentBehavior), 2 },
-        { typeof(HttpHeaderBehavior), 3 }
+        { typeof(NetworkLatencyBehavior), 1 },
+        { typeof(StatusCodeBehavior), 2 },
+        { typeof(HttpContentBehavior), 3 },
+        { typeof(HttpHeaderBehavior), 4 }
     };
 
     async Task<HttpResponseMessage> IResponseStrategy.ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)

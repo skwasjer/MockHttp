@@ -373,7 +373,11 @@ public class MockHttpHandlerTests : IDisposable
             .Callback(() =>
             {
             })
-            .Respond(HttpStatusCode.Accepted, JsonConvert.SerializeObject(new { firstName = "John", lastName = "Doe" }))
+            .Respond(with => with
+                .StatusCode(HttpStatusCode.Accepted)
+                .Body(JsonConvert.SerializeObject(new { firstName = "John", lastName = "Doe" }))
+                .Latency(NetworkLatency.TwoG)
+            )
             .Verifiable();
 
         // Act
