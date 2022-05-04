@@ -79,7 +79,7 @@ public static class IRespondsExtensions
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode)
         where TResult : IResponseResult
     {
-        return responds.Respond(() => new HttpResponseMessage(statusCode));
+        return responds.Respond(with => with.StatusCode(statusCode));
     }
 
     /// <summary>
@@ -157,13 +157,11 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return responds.Respond(() => new HttpResponseMessage(statusCode)
-        {
-            Content = new StringContent(content)
-            {
-                Headers = { ContentType = mediaType }
-            }
-        });
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(content)
+            .ContentType(mediaType ?? ResponseBuilder.DefaultMediaType)
+        );
     }
 
     /// <summary>
@@ -190,7 +188,7 @@ public static class IRespondsExtensions
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
         where TResult : IResponseResult
     {
-        return responds.Respond(statusCode, content, new MediaTypeHeaderValue(mediaType ?? "text/plain") { CharSet = (encoding ?? Encoding.UTF8).WebName });
+        return responds.Respond(statusCode, content, new MediaTypeHeaderValue(mediaType ?? ResponseBuilder.DefaultMediaType.MediaType) { CharSet = (encoding ?? ResponseBuilder.DefaultWebEncoding).WebName });
     }
 
     /// <summary>
@@ -273,14 +271,11 @@ public static class IRespondsExtensions
             throw new ArgumentException("Cannot read from stream.", nameof(streamContent));
         }
 
-        byte[] buffer;
-        using (var ms = new MemoryStream())
-        {
-            streamContent.CopyTo(ms);
-            buffer = ms.ToArray();
-        }
-
-        return responds.Respond(statusCode, () => new MemoryStream(buffer), mediaType);
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(streamContent)
+            .ContentType(mediaType ?? ResponseBuilder.DefaultMediaType)
+        );
     }
 
     /// <summary>
@@ -303,7 +298,11 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(streamContent));
         }
 
-        return responds.RespondUsing(new FromStreamStrategy(statusCode, streamContent, mediaType));
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(streamContent)
+            .ContentType(mediaType ?? ResponseBuilder.DefaultMediaType)
+        );
     }
 
     /// <summary>
@@ -336,10 +335,11 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return responds.Respond(async () => new HttpResponseMessage(statusCode)
-        {
-            Content = await content.CloneAsByteArrayContentAsync().ConfigureAwait(false)
-        });
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            // Caller is responsible for disposal of the original content.
+            .Body(async _ => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
+        );
     }
 
     /// <summary>
@@ -376,6 +376,29 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(responds));
         }
 
-        return responds.RespondUsing(new TimeoutStrategy(timeoutAfter));
+        return responds.Respond(with => with.TimesOutAfter(timeoutAfter));
+    }
+
+    /// <summary>
+    /// Specifies to throw a <see cref="TaskCanceledException" /> after a specified amount of time, simulating a HTTP request timeout.
+    /// </summary>
+    /// <param name="responds"></param>
+    /// <param name="with">The response builder.</param>
+    public static TResult Respond<TResult>(this IResponds<TResult> responds, Action<IResponseBuilder> with)
+        where TResult : IResponseResult
+    {
+        if (responds is null)
+        {
+            throw new ArgumentNullException(nameof(responds));
+        }
+
+        if (with is null)
+        {
+            throw new ArgumentNullException(nameof(with));
+        }
+
+        var builder = new ResponseBuilder();
+        with(builder);
+        return responds.RespondUsing(builder);
     }
 }
