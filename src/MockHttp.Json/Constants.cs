@@ -2,5 +2,5 @@
 
 internal static class MediaTypes
 {
-    public const string JsonMediaTypeWithUtf8 = "application/json; charset=utf-8";
+    public const string JsonMediaType = "application/json";
 }
