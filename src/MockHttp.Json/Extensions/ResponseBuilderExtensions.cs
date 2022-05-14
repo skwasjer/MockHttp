@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Json.Extensions;
+using MockHttp.Language.Flow.Response;
+using MockHttp.Language.Response;
 using MockHttp.Responses;
 
 namespace MockHttp.Json;
@@ -19,7 +21,7 @@ public static class ResponseBuilderExtensions
     /// <param name="adapter">The optional JSON adapter. When null uses the default adapter.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder JsonBody<T>(this IResponseBuilder builder, T jsonContent, Encoding? encoding = null, IJsonAdapter? adapter = null)
+    public static IWithContentResult JsonBody<T>(this IWithContent builder, T jsonContent, Encoding? encoding = null, IJsonAdapter? adapter = null)
     {
         return builder.JsonBody(_ => jsonContent, encoding, adapter);
     }
@@ -33,7 +35,7 @@ public static class ResponseBuilderExtensions
     /// <param name="adapter">The optional JSON adapter. When null uses the default adapter.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="jsonContentFactory" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder JsonBody<T>(this IResponseBuilder builder, Func<MockHttpRequestContext, T> jsonContentFactory, Encoding? encoding = null, IJsonAdapter? adapter = null)
+    public static IWithContentResult JsonBody<T>(this IWithContent builder, Func<MockHttpRequestContext, T> jsonContentFactory, Encoding? encoding = null, IJsonAdapter? adapter = null)
     {
         if (jsonContentFactory is null)
         {

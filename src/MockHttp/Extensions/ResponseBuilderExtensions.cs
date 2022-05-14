@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
+using MockHttp.Language.Flow.Response;
+using MockHttp.Language.Response;
 using MockHttp.Responses;
 
 namespace MockHttp;
@@ -20,28 +22,9 @@ public static class ResponseBuilderExtensions
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="statusCode" /> is less than 100.</exception>
-    public static IResponseBuilder StatusCode(this IResponseBuilder builder, int statusCode)
+    public static IWithStatusCodeResult StatusCode(this IWithStatusCode builder, int statusCode)
     {
         return builder.StatusCode((HttpStatusCode)statusCode);
-    }
-
-    /// <summary>
-    /// Sets the status code for the response.
-    /// </summary>
-    /// <param name="builder">The builder.</param>
-    /// <param name="statusCode">The status code to return with the response.</param>
-    /// <returns>The builder to continue chaining additional behaviors.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="statusCode" /> is less than 100.</exception>
-    public static IResponseBuilder StatusCode(this IResponseBuilder builder, HttpStatusCode statusCode)
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.Behaviors.Add(new StatusCodeBehavior(statusCode));
-        return builder;
     }
 
     /// <summary>
@@ -52,7 +35,7 @@ public static class ResponseBuilderExtensions
     /// <param name="encoding">The optional encoding to use when encoding the text.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, string content, Encoding? encoding = null)
+    public static IWithContentResult Body(this IWithContent builder, string content, Encoding? encoding = null)
     {
         if (content is null)
         {
@@ -69,7 +52,7 @@ public static class ResponseBuilderExtensions
     /// <param name="content">The binary content.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, byte[] content)
+    public static IWithContentResult Body(this IWithContent builder, byte[] content)
     {
         return builder.Body(content, 0, content.Length);
     }
@@ -84,7 +67,7 @@ public static class ResponseBuilderExtensions
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="offset" /> or <paramref name="count" /> exceeds beyond end of array.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, byte[] content, int offset, int count)
+    public static IWithContentResult Body(this IWithContent builder, byte[] content, int offset, int count)
     {
         if (offset < 0 || offset > content.Length)
         {
@@ -108,7 +91,7 @@ public static class ResponseBuilderExtensions
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentException">Thrown when the <paramref name="content" /> stream does not support reading.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, Stream content)
+    public static IWithContentResult Body(this IWithContent builder, Stream content)
     {
         if (content is null)
         {
@@ -140,7 +123,7 @@ public static class ResponseBuilderExtensions
     /// <param name="streamFactory">The factory returning a new <see cref="Stream" /> on each invocation containing the binary content.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="streamFactory" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, Func<Stream> streamFactory)
+    public static IWithContentResult Body(this IWithContent builder, Func<Stream> streamFactory)
     {
         if (streamFactory is null)
         {
@@ -160,29 +143,6 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
-    /// Sets the content for the response using a factory returning a new <see cref="HttpContent" /> on each invocation.
-    /// </summary>
-    /// <param name="builder">The builder.</param>
-    /// <param name="httpContentFactory">The factory returning a new instance of <see cref="HttpContent" /> on each invocation.</param>
-    /// <returns>The builder to continue chaining additional behaviors.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="httpContentFactory" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Body(this IResponseBuilder builder, Func<MockHttpRequestContext, Task<HttpContent>> httpContentFactory)
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (httpContentFactory is null)
-        {
-            throw new ArgumentNullException(nameof(httpContentFactory));
-        }
-
-        builder.Behaviors.Add(new HttpContentBehavior(httpContentFactory));
-        return builder;
-    }
-
-    /// <summary>
     /// Sets the content type for the response. Will be ignored if no content is set.
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -190,7 +150,7 @@ public static class ResponseBuilderExtensions
     /// <param name="encoding">The optional encoding.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="contentType" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder ContentType(this IResponseBuilder builder, string contentType, Encoding? encoding = null)
+    public static IWithHeadersResult ContentType(this IWithContentType builder, string contentType, Encoding? encoding = null)
     {
         if (contentType is null)
         {
@@ -207,23 +167,6 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
-    /// Sets the content type for the response. Will be ignored if no content is set.
-    /// </summary>
-    /// <param name="builder">The builder.</param>
-    /// <param name="mediaType">The media type.</param>
-    /// <returns>The builder to continue chaining additional behaviors.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="mediaType" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder ContentType(this IResponseBuilder builder, MediaTypeHeaderValue mediaType)
-    {
-        if (mediaType is null)
-        {
-            throw new ArgumentNullException(nameof(mediaType));
-        }
-
-        return builder.Header("Content-Type", mediaType.ToString());
-    }
-
-    /// <summary>
     /// Adds a HTTP header value.
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -231,7 +174,7 @@ public static class ResponseBuilderExtensions
     /// <param name="value">The header value.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="name" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Header(this IResponseBuilder builder, string name, string value)
+    public static IWithHeadersResult Header(this IWithHeaders builder, string name, string value)
     {
         return builder.Header(name, new[] { value });
     }
@@ -244,7 +187,7 @@ public static class ResponseBuilderExtensions
     /// <param name="values">The header values.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="name" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Header(this IResponseBuilder builder, string name, IEnumerable<string> values)
+    public static IWithHeadersResult Header(this IWithHeaders builder, string name, IEnumerable<string> values)
     {
         if (name is null)
         {
@@ -255,31 +198,8 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
-    /// Adds HTTP headers.
-    /// </summary>
-    /// <param name="builder">The builder.</param>
-    /// <param name="headers">The headers.</param>
-    /// <returns>The builder to continue chaining additional behaviors.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="headers" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Headers(this IResponseBuilder builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (headers is null)
-        {
-            throw new ArgumentNullException(nameof(headers));
-        }
-
-        builder.Behaviors.Add(new HttpHeaderBehavior(headers));
-        return builder;
-    }
-
-    /// <summary>
-    /// Specifies to throw a <see cref="TaskCanceledException" /> simulating a HTTP request timeout.
-    /// <para>Note: the response is short-circuited when running outside of the HTTP server. To simulate server timeouts, use <code>.StatusCode(HttpStatusCode.RequestTimeout)</code> instead.</para>
+    /// Specifies to throw a <see cref="TaskCanceledException" /> simulating a HTTP client request timeout.
+    /// <para>Note: the response is short-circuited when running outside of the HTTP mock server. To simulate server timeouts, use <code>.StatusCode(HttpStatusCode.RequestTimeout)</code> instead.</para>
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
@@ -290,8 +210,8 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
-    /// Specifies to throw a <see cref="TaskCanceledException" /> after a specified amount of time, simulating a HTTP request timeout.
-    /// <para>Note: the response is short-circuited when running outside of the HTTP server. To simulate server timeouts, use <code>.StatusCode(HttpStatusCode.RequestTimeout)</code> instead.</para>
+    /// Specifies to throw a <see cref="TaskCanceledException" /> after a specified amount of time, simulating a HTTP client request timeout.
+    /// <para>Note: the response is short-circuited when running outside of the HTTP mock server. To simulate server timeouts, use <c>.StatusCode(HttpStatusCode.RequestTimeout)</c> instead.</para>
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="timeoutAfter">The time after which the timeout occurs.</param>
@@ -304,7 +224,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.Behaviors.Add(new TimeoutBehavior(timeoutAfter));
+        builder.Behaviors.Replace(new TimeoutBehavior(timeoutAfter));
         return builder;
     }
 
@@ -315,14 +235,15 @@ public static class ResponseBuilderExtensions
     /// <param name="latency">The network latency to simulate.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="latency" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Latency(this IResponseBuilder builder, NetworkLatency latency)
+    public static IWithResponse Latency(this IWithResponse builder, NetworkLatency latency)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.RegisterBehavior(new NetworkLatencyBehavior(latency));
+        builder.Behaviors.Replace(new NetworkLatencyBehavior(latency));
+        return builder;
     }
 
     /// <summary>
@@ -332,7 +253,7 @@ public static class ResponseBuilderExtensions
     /// <param name="latency">The network latency to simulate.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="latency" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder Latency(this IResponseBuilder builder, Func<NetworkLatency> latency)
+    public static IWithResponse Latency(this IWithResponse builder, Func<NetworkLatency> latency)
     {
         return builder.Latency(latency());
     }

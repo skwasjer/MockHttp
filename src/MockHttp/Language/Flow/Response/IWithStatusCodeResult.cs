@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel;
 using MockHttp.Language.Response;
 
-namespace MockHttp;
+namespace MockHttp.Language.Flow.Response;
 
 /// <summary>
-/// A builder to compose HTTP responses via a behavior pipeline.
+/// Implements the fluent API.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public interface IResponseBuilder
-    : IWithResponse,
-      IWithStatusCode,
-      IWithContent,
+public interface IWithStatusCodeResult
+    : IWithContent,
       IWithHeaders,
       IFluentInterface
 {

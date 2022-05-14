@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
+using MockHttp.Language.Flow.Response;
+using MockHttp.Language.Response;
 using MockHttp.Responses;
 
 namespace MockHttp.Json.SystemTextJson;
@@ -18,9 +20,9 @@ public static class ResponseBuilderExtensions
     /// <param name="serializerOptions">The optional JSON serializer options. When null uses the default serializer settings.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder JsonBody<T>
+    public static IWithContentResult JsonBody<T>
     (
-        this IResponseBuilder builder,
+        this IWithContent builder,
         T jsonContent,
         Encoding? encoding = null,
         JsonSerializerOptions? serializerOptions = null
@@ -38,9 +40,9 @@ public static class ResponseBuilderExtensions
     /// <param name="serializerOptions">The optional JSON serializer options. When null uses the default serializer settings.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="jsonContentFactory" /> is <see langword="null" />.</exception>
-    public static IResponseBuilder JsonBody<T>
+    public static IWithContentResult JsonBody<T>
     (
-        this IResponseBuilder builder,
+        this IWithContent builder,
         Func<MockHttpRequestContext, T> jsonContentFactory,
         Encoding? encoding = null,
         JsonSerializerOptions? serializerOptions = null

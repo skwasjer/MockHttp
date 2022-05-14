@@ -3,6 +3,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Language.Flow.Response;
+using MockHttp.Language.Response;
 
 namespace MockHttp.Json;
 
@@ -133,15 +135,25 @@ public static class RespondsExtensions
             throw new ArgumentNullException(nameof(responds));
         }
 
-        MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
-        Encoding? enc = mt.CharSet is not null
-            ? Encoding.GetEncoding(mt.CharSet)
+        Encoding? enc = mediaType?.CharSet is not null
+            ? Encoding.GetEncoding(mediaType.CharSet)
             : null;
-        return responds.Respond(with => with
-            .StatusCode(statusCode)
-            .JsonBody(ctx => content(ctx.Request), enc, adapter)
-            .ContentType(mt)
-        );
+
+        IWithResponse With(IWithStatusCode with)
+        {
+            IWithContentResult builder = with
+                .StatusCode(statusCode)
+                .JsonBody(ctx => content(ctx.Request), enc, adapter);
+
+            if (mediaType is not null)
+            {
+                return builder.ContentType(mediaType);
+            }
+
+            return builder;
+        }
+
+        return responds.Respond(with => With(with));
     }
 
     /// <summary>
