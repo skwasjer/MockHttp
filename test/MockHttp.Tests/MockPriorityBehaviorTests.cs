@@ -12,9 +12,15 @@ public class MockPriorityBehaviorTests
     {
         using var httpMock = new MockHttpHandler();
         using var httpClient = new HttpClient(httpMock) { BaseAddress = new Uri("http://0.0.0.0") };
-        httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.OK);
-        httpMock.When(matching => matching.Method("POST")).Respond(HttpStatusCode.Accepted);
-        httpMock.When(matching => matching.Method("PUT")).Respond(HttpStatusCode.BadRequest);
+        httpMock
+            .When(matching => matching.Method("POST"))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK));
+        httpMock
+            .When(matching => matching.Method("POST"))
+            .Respond(with => with.StatusCode(HttpStatusCode.Accepted));
+        httpMock
+            .When(matching => matching.Method("PUT"))
+            .Respond(with => with.StatusCode(HttpStatusCode.BadRequest));
 
         // Act
         HttpResponseMessage response1 = await httpClient.PostAsync("", new StringContent("data 1"));

@@ -38,7 +38,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 .RequestUri("test/wtf/")
                 .Header("test", "value")
                 .Method(HttpMethod.Post)
-                .Content("request-content")
+                .Body("request-content")
                 .ContentType(MediaTypes.PlainText, Encoding.ASCII)
             )
             .Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
@@ -97,7 +97,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         {
             (Action<MockHttpHandler>)(m => m
                 .When(matching => matching.Method(HttpMethod.Post))
-                .Respond(HttpStatusCode.BadGateway)
+                .Respond(with => with.StatusCode(HttpStatusCode.BadGateway))
             ),
             new HttpRequestMessage(HttpMethod.Post, ""),
             (Func<HttpResponseMessage, Task>)(response =>
@@ -115,7 +115,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                     .RequestUri("*path/child*")
                     .QueryString("?key=value")
                 )
-                .Respond("has content")
+                .Respond(with => with.Body("has content"))
             ),
             new HttpRequestMessage(HttpMethod.Get, "/path/child/?key=value"),
             (Func<HttpResponseMessage, Task>)(async response =>
@@ -133,11 +133,11 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 .When(matching => matching
                     .Header(headerKey, headerValue)
                 )
-                .Respond((r) => new HttpResponseMessage
+                .Respond((req, _) => new HttpResponseMessage
                 {
                     Headers =
                     {
-                        { headerKey, r.Headers.GetValues(headerKey) }
+                        { headerKey, req.Headers.GetValues(headerKey) }
                     }
                 })
             ),
@@ -163,7 +163,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             .When(matching => matching
                 .RequestUri("web-request")
                 .Method(HttpMethod.Post)
-                .Content("request-content", Encoding.ASCII)
+                .Body("request-content", Encoding.ASCII)
             )
             .Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
             {
@@ -205,7 +205,10 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     public async Task Given_unmocked_request_when_sending_it_should_respond_with_fallback_response()
     {
         _fixture.Handler.Reset();
-        _fixture.Handler.Fallback.Respond(HttpStatusCode.BadRequest, "Should return fallback.");
+        _fixture.Handler.Fallback.Respond(with => with
+            .StatusCode(HttpStatusCode.BadRequest)
+            .Body("Should return fallback.")
+        );
 
         using HttpClient client = _fixture.Server.CreateClient();
 

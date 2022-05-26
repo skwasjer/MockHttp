@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.0.0
+- Removed obsolete `ObjectResponseStrategy` and its extensions.
+- Removed obsolete `MockHttpHandler.VerifyNoOtherCalls()`. Use the replacement `VerifyNoOtherRequests()`
+- Removed obsolete `UrlMatcher` and its extensions.
+
 ## v3.1.0-rc0003
 
 - Added `.XmlBody()` response builder extension for LINQ to XML.

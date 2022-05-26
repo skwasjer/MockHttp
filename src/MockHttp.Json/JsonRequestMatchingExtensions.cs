@@ -6,18 +6,6 @@
 public static class JsonRequestMatchingExtensions
 {
     /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The JSON request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.JsonContent)]
-    public static RequestMatching JsonContent<T>(this RequestMatching builder, T content)
-    {
-        return builder.JsonBody(content);
-    }
-
-    /// <summary>
     /// Matches a request by the specified JSON request content.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
@@ -26,19 +14,6 @@ public static class JsonRequestMatchingExtensions
     public static RequestMatching JsonBody<T>(this RequestMatching builder, T content)
     {
         return builder.JsonBody(content, null);
-    }
-
-    /// <summary>
-    /// Matches a request by request content using specified.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The JSON request content.</param>
-    /// <param name="adapter">The JSON adapter.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.JsonContent)]
-    public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, IJsonAdapter? adapter)
-    {
-        return builder.JsonBody(content, adapter);
     }
 
     /// <summary>

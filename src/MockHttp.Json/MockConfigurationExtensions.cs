@@ -1,7 +1,4 @@
-﻿using MockHttp.Json.Newtonsoft;
-using Newtonsoft.Json;
-
-namespace MockHttp.Json;
+﻿namespace MockHttp.Json;
 
 /// <summary>
 /// Configuration extensions.
@@ -28,22 +25,5 @@ public static class MockConfigurationExtensions
         }
 
         return mockConfig.Use(jsonAdapter);
-    }
-
-    /// <summary>
-    /// Registers the specified <paramref name="serializerSettings" /> with the <see cref="NewtonsoftAdapter"/> as the default adapter.
-    /// </summary>
-    /// <param name="config">The mock handler.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    /// <returns>The instance to continue chaining configuration.</returns>
-    [Obsolete("Use UseNewtonsoftJson() instead.")]
-    public static IMockConfiguration UseJsonSerializerSettings(this IMockConfiguration config, JsonSerializerSettings? serializerSettings)
-    {
-        if (config is null)
-        {
-            throw new ArgumentNullException(nameof(config));
-        }
-
-        return config.UseNewtonsoftJson(serializerSettings);
     }
 }

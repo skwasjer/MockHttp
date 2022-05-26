@@ -18,21 +18,6 @@ internal abstract class SetupPhrase<TResponseResult, TThrowsResult>
 
     protected HttpCall Setup { get; }
 
-    public TResponseResult Respond(Func<Task<HttpResponseMessage>> responseFunc)
-    {
-        return RespondUsing(new ResponseFuncStrategy((_, __) => responseFunc()));
-    }
-
-    public TResponseResult Respond(Func<HttpRequestMessage, Task<HttpResponseMessage>> responseFunc)
-    {
-        return RespondUsing(new ResponseFuncStrategy((r, __) => responseFunc(r)));
-    }
-
-    public TResponseResult Respond(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc)
-    {
-        return RespondUsing(new ResponseFuncStrategy(responseFunc));
-    }
-
     public TResponseResult RespondUsing(IResponseStrategy responseStrategy)
     {
         if (responseStrategy is null)

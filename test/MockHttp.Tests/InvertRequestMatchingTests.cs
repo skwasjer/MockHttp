@@ -24,7 +24,7 @@ public sealed class InvertRequestMatchingTests : IDisposable
     {
         _mockHttp
             .When(m => m.Not.Method(notMethod))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act
@@ -44,7 +44,7 @@ public sealed class InvertRequestMatchingTests : IDisposable
     {
         _mockHttp
             .When(m => m.Not.Method(notMethod))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act

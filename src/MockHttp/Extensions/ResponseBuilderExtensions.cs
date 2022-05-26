@@ -44,17 +44,21 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="httpContent" /> is <see langword="null" />.</exception>
     public static IWithContentResult Body(this IWithContent builder, HttpContent httpContent)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         if (httpContent is null)
         {
             throw new ArgumentNullException(nameof(httpContent));
         }
 
-        return builder.Body(_ => Task.FromResult(httpContent));
+        using (httpContent)
+        {
+#if NET6_0_OR_GREATER
+            using Stream stream = httpContent.ReadAsStream();
+#else
+            using Stream stream = Threading.TaskHelpers.RunSync(httpContent.ReadAsStreamAsync, TimeSpan.FromMinutes(1));
+#endif
+            return (IWithContentResult)BufferedStreamBody(builder, stream)
+                .Headers(httpContent.Headers.Select(kvp => new KeyValuePair<string, IEnumerable<string?>>(kvp.Key, kvp.Value)));
+        }
     }
 
     /// <summary>
@@ -62,7 +66,7 @@ public static class ResponseBuilderExtensions
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="textContent">The plain text content.</param>
-    /// <param name="encoding">The optional encoding to use when encoding the text.</param>
+    /// <param name="encoding">The optional encoding to use when encoding the text. Defaults to UTF-8.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="textContent" /> is <see langword="null" />.</exception>
     public static IWithContentResult Body(this IWithContent builder, string textContent, Encoding? encoding = null)
