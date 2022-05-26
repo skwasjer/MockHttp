@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Http;

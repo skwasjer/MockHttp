@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Formatting;
 using System.Runtime.Serialization;
+using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Json.Newtonsoft;
 using MockHttp.Language;

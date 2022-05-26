@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Text;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using MockHttp.Json.Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

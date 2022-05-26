@@ -1,6 +1,5 @@
 ﻿using System.Collections.Specialized;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Extensions;
