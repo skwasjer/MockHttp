@@ -15,7 +15,10 @@ mockHttp
         .Method("GET")
         .RequestUri("http://localhost/controller/*")
     )
-    .Respond(HttpStatusCode.OK)
+    .Respond(with => with
+        .StatusCode(200)
+        .JsonBody(new { id = 123, firstName = "John", lastName = "Doe" })
+    )
     .Verifiable();
 
 var client = new HttpClient(mockHttp);

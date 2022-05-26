@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.0-rcX
+
+- Added new fluent response API which provides more flexibility and control over the response. This new API replaces the current `.Respond()` API, and as such most of the old methods/overloads are now deprecated and will be removed in v4.
+- Added `RateLimitedStream` helper to simulate network transfer rates.
+
 ## v3.0.1
 
 - fix: stop evaluating next matchers as soon as a failed match is encountered.
