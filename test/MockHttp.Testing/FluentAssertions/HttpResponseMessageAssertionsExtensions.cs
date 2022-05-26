@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -9,96 +8,66 @@ using Newtonsoft.Json;
 
 namespace MockHttp.FluentAssertions;
 
-public class ResponseAssertions : ObjectAssertions
+public static class HttpResponseMessageAssertionsExtensions
 {
-    public ResponseAssertions(HttpResponseMessage responseMessage)
-        : base(responseMessage)
-    {
-    }
-
-    public AndConstraint<ResponseAssertions> BeSameAs
+    public static AndConstraint<HttpResponseMessageAssertions> HaveContentType
     (
-        HttpResponseMessage expectedResponseMessage,
-        string because = "",
-        params object[] becauseArgs)
-    {
-        new ObjectAssertions(Subject).BeSameAs(expectedResponseMessage, because, becauseArgs);
-
-        return new AndConstraint<ResponseAssertions>(this);
-    }
-
-    public AndConstraint<ResponseAssertions> HaveStatusCode
-    (
-        HttpStatusCode expectedStatusCode,
-        string because = "",
-        params object[] becauseArgs)
-    {
-        var subject = (HttpResponseMessage)Subject;
-
-        var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
-        assertionScope
-            .ForCondition(subject is not null)
-            .FailWith("The subject is null.")
-            .Then
-            .ForCondition(subject.StatusCode == expectedStatusCode)
-            .FailWith("Expected response with status code {0}{reason}, but found {1} instead.", expectedStatusCode, subject.StatusCode)
-            ;
-
-        return new AndConstraint<ResponseAssertions>(this);
-    }
-
-    public AndConstraint<ResponseAssertions> HaveContentType
-    (
+        this HttpResponseMessageAssertions should,
         string expectedMediaType,
         string because = "",
         params object[] becauseArgs)
     {
-        return HaveContentType(MediaTypeHeaderValue.Parse(expectedMediaType), because, becauseArgs);
+        return should.HaveContentType(MediaTypeHeaderValue.Parse(expectedMediaType), because, becauseArgs);
     }
 
-    public AndConstraint<ResponseAssertions> HaveContentType
+    public static AndConstraint<HttpResponseMessageAssertions> HaveContentType
     (
+        this HttpResponseMessageAssertions should,
         MediaTypeHeaderValue expectedMediaType,
         string because = "",
         params object[] becauseArgs)
     {
-        var subject = (HttpResponseMessage)Subject;
+        HttpResponseMessage subject = should.Subject;
 
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
             .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject.Content is not null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            .ForCondition(subject!.Content is not null)
             .FailWith("Expected response with content {0}{reason}, but found none.")
             .Then
             .ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || (expectedMediaType.CharSet is null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType)))
-            .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content.Headers.ContentType)
+            .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content!.Headers.ContentType)
             ;
 
-        return new AndConstraint<ResponseAssertions>(this);
+        return new AndConstraint<HttpResponseMessageAssertions>(should);
     }
 
-    public Task<AndConstraint<ResponseAssertions>> HaveJsonContent<T>
+    public static Task<AndConstraint<HttpResponseMessageAssertions>> HaveJsonContent<T>
     (
+        this HttpResponseMessageAssertions should,
         T expectedContent,
         string because = "",
         params object[] becauseArgs)
     {
-        return HaveContentAsync(JsonConvert.SerializeObject(expectedContent), because, becauseArgs);
+        return should.HaveContentAsync(JsonConvert.SerializeObject(expectedContent), because, becauseArgs);
     }
 
-    public Task<AndConstraint<ResponseAssertions>> HaveContentAsync
+    public static Task<AndConstraint<HttpResponseMessageAssertions>> HaveContentAsync
     (
+        this HttpResponseMessageAssertions should,
         string expectedContent,
         string because = "",
         params object[] becauseArgs)
     {
-        return HaveContentAsync(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
+        return should.HaveContentAsync(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
     }
 
-    public async Task<AndConstraint<ResponseAssertions>> HaveContentAsync
+    public static async Task<AndConstraint<HttpResponseMessageAssertions>> HaveContentAsync
     (
+        this HttpResponseMessageAssertions should,
         HttpContent expectedContent,
         string because = "",
         params object[] becauseArgs)
@@ -110,19 +79,20 @@ public class ResponseAssertions : ObjectAssertions
 
         if (expectedContent.Headers.ContentType is not null)
         {
-            HaveContentType(expectedContent.Headers.ContentType);
+            should.HaveContentType(expectedContent.Headers.ContentType);
         }
 
-        var subject = (HttpResponseMessage)Subject;
+        HttpResponseMessage subject = should.Subject;
 
         ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks)
             .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject.Content is not null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            .ForCondition(subject!.Content is not null)
             .FailWith("Expected response with content {reason}, but has no content.");
 
-        byte[] currentContentBytes = await subject.Content.ReadAsByteArrayAsync();
+        byte[] currentContentBytes = await subject.Content!.ReadAsByteArrayAsync();
         byte[] expectedContentBytes = await expectedContent.ReadAsByteArrayAsync();
 
         ((IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks)
@@ -131,21 +101,23 @@ public class ResponseAssertions : ObjectAssertions
             // Since this is a private test helper, we accept this for now.
             .FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", Encoding.UTF8.GetString(currentContentBytes), Encoding.UTF8.GetString(expectedContentBytes));
 
-        return new AndConstraint<ResponseAssertions>(this);
+        return new AndConstraint<HttpResponseMessageAssertions>(should);
     }
 
-    public AndConstraint<ResponseAssertions> HaveHeader
+    public static AndConstraint<HttpResponseMessageAssertions> HaveHeader
     (
+        this HttpResponseMessageAssertions should,
         string key,
         string value,
         string because = "",
         params object[] becauseArgs)
     {
-        return HaveHeader(key, value is null ? null : new[] { value }, because, becauseArgs);
+        return should.HaveHeader(key, value is null ? null : new[] { value }, because, becauseArgs);
     }
 
-    public AndConstraint<ResponseAssertions> HaveHeader
+    public static AndConstraint<HttpResponseMessageAssertions> HaveHeader
     (
+        this HttpResponseMessageAssertions should,
         string key,
         IEnumerable<string> values,
         string because = "",
@@ -156,7 +128,7 @@ public class ResponseAssertions : ObjectAssertions
             throw new ArgumentNullException(nameof(key));
         }
 
-        var subject = (HttpResponseMessage)Subject;
+        HttpResponseMessage subject = should.Subject;
         var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values);
         var equalityComparer = new HttpHeaderEqualityComparer();
 
@@ -165,7 +137,7 @@ public class ResponseAssertions : ObjectAssertions
             .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject.Headers.Contains(key) || (subject.Content?.Headers.Contains(key) ?? false))
+            .ForCondition(subject!.Headers.Contains(key) || (subject.Content?.Headers.Contains(key) ?? false))
             .FailWith("Expected response to have header {0}{reason}, but found none.", key)
             .Then
             .ForCondition(
@@ -173,12 +145,12 @@ public class ResponseAssertions : ObjectAssertions
              || (subject.Content?.Headers.Any(h => equalityComparer.Equals(h, expectedHeader)) ?? false))
             .FailWith(() =>
             {
-                if (subject.Headers.TryGetValues(key, out IEnumerable<string> headerValues))
+                if (subject.Headers.TryGetValues(key, out IEnumerable<string>? headerValues))
                 {
                     return new FailReason("Expected response to have header {0} with value {1}{reason}, but found value {2}.", key, values, headerValues);
                 }
 
-                if (!subject.Content.Headers.TryGetValues(key, out headerValues))
+                if (!subject.Content!.Headers.TryGetValues(key, out headerValues))
                 {
                     headerValues = new List<string>();
                 }
@@ -187,6 +159,6 @@ public class ResponseAssertions : ObjectAssertions
             })
             ;
 
-        return new AndConstraint<ResponseAssertions>(this);
+        return new AndConstraint<HttpResponseMessageAssertions>(should);
     }
 }

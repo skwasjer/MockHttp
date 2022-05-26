@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using Moq;
 using Xunit;
 

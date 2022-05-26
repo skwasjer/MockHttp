@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using MockHttp.FluentAssertions;
 using MockHttp.Responses;
 using Moq;
 using Xunit;

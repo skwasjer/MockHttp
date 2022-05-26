@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using Xunit;
 
 namespace MockHttp.Responses;
