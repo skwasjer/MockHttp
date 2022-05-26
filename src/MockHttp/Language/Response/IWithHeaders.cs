@@ -17,5 +17,6 @@ public interface IWithHeaders
     /// <param name="headers">The headers.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="headers" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="headers" /> is empty.</exception>
     IWithHeadersResult Headers(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers);
 }

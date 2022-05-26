@@ -398,7 +398,7 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(responds));
         }
 
-        return responds.Respond(with => with.TimesOutAfter(timeoutAfter));
+        return responds.Respond(with => with.ClientTimeout(timeoutAfter));
     }
 
     /// <summary>

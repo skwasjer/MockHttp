@@ -62,7 +62,33 @@ public static class HttpResponseMessageAssertionsExtensions
         string because = "",
         params object[] becauseArgs)
     {
-        return should.HaveContentAsync(new ByteArrayContent(Encoding.UTF8.GetBytes(expectedContent)), because, becauseArgs);
+        return should.HaveContentAsync(expectedContent, Encoding.UTF8, because, becauseArgs);
+    }
+
+    public static Task<AndConstraint<HttpResponseMessageAssertions>> HaveContentAsync
+    (
+        this HttpResponseMessageAssertions should,
+        string expectedContent,
+        Encoding encoding,
+        string because = "",
+        params object[] becauseArgs)
+    {
+        if (encoding is null)
+        {
+            throw new ArgumentNullException(nameof(encoding));
+        }
+
+        return should.HaveContentAsync(new ByteArrayContent(encoding.GetBytes(expectedContent)), because, becauseArgs);
+    }
+
+    public static Task<AndConstraint<HttpResponseMessageAssertions>> HaveContentAsync
+    (
+        this HttpResponseMessageAssertions should,
+        byte[] expectedContent,
+        string because = "",
+        params object[] becauseArgs)
+    {
+        return should.HaveContentAsync(new ByteArrayContent(expectedContent), because, becauseArgs);
     }
 
     public static async Task<AndConstraint<HttpResponseMessageAssertions>> HaveContentAsync
@@ -132,12 +158,14 @@ public static class HttpResponseMessageAssertionsExtensions
         var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values);
         var equalityComparer = new HttpHeaderEqualityComparer();
 
+        static bool SafeContains(HttpHeaders headers, string s) => headers?.TryGetValues(s, out _) ?? false;
+
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
             .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(subject!.Headers.Contains(key) || (subject.Content?.Headers.Contains(key) ?? false))
+            .ForCondition(SafeContains(subject.Headers, key) || SafeContains(subject.Content?.Headers, key))
             .FailWith("Expected response to have header {0}{reason}, but found none.", key)
             .Then
             .ForCondition(

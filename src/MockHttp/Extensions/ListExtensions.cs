@@ -33,6 +33,13 @@ internal static class ListExtensions
             list.RemoveAt(existing[i]);
         }
 
-        list.Add(instance);
+        if (existing.Length > 0)
+        {
+            list.Insert(existing[0], instance);
+        }
+        else
+        {
+            list.Add(instance);
+        }
     }
 }

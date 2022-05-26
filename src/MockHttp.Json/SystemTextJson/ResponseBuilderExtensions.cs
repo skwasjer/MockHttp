@@ -28,7 +28,7 @@ public static class ResponseBuilderExtensions
         JsonSerializerOptions? serializerOptions = null
     )
     {
-        return builder.JsonBody(jsonContent, encoding, new SystemTextJsonAdapter(serializerOptions));
+        return builder.JsonBody(_ => jsonContent, encoding, serializerOptions);
     }
 
     /// <summary>
@@ -40,6 +40,7 @@ public static class ResponseBuilderExtensions
     /// <param name="serializerOptions">The optional JSON serializer options. When null uses the default serializer settings.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="jsonContentFactory" /> is <see langword="null" />.</exception>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static IWithContentResult JsonBody<T>
     (
         this IWithContent builder,

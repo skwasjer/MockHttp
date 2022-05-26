@@ -55,33 +55,49 @@ internal class ResponseBuilder
     /// <inheritdoc />
     public IWithStatusCodeResult StatusCode(HttpStatusCode statusCode)
     {
-        Behaviors.Add(new StatusCodeBehavior(statusCode));
+        Behaviors.Replace(new StatusCodeBehavior(statusCode));
         return this;
     }
 
     /// <inheritdoc />
     public IWithContentResult Body(Func<MockHttpRequestContext, Task<HttpContent>> httpContentFactory)
     {
-        Behaviors.Add(new HttpContentBehavior(httpContentFactory));
+        Behaviors.Replace(new HttpContentBehavior(httpContentFactory));
         return this;
     }
 
     /// <inheritdoc />
     public IWithHeadersResult ContentType(MediaTypeHeaderValue mediaType)
     {
-        return Headers(new HttpHeadersCollection { { "Content-Type", new[] { mediaType.ToString() } } });
+        if (mediaType is null)
+        {
+            throw new ArgumentNullException(nameof(mediaType));
+        }
+
+        return Headers(new HttpHeadersCollection { { "Content-Type", mediaType.ToString() } });
     }
 
     /// <inheritdoc />
     public IWithHeadersResult Headers(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
     {
+        if (headers is null)
+        {
+            throw new ArgumentNullException(nameof(headers));
+        }
+
+        var headerList = headers.ToList();
+        if (headerList.Count == 0)
+        {
+            throw new ArgumentException("At least one header must be specified.", nameof(headers));
+        }
+
         // If no content when adding headers, we force empty content so that content headers can still be set.
         if (!Behaviors.OfType<HttpContentBehavior>().Any())
         {
             Body(EmptyHttpContentFactory);
         }
 
-        Behaviors.Add(new HttpHeaderBehavior(headers));
+        Behaviors.Add(new HttpHeaderBehavior(headerList));
         return this;
     }
 }

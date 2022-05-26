@@ -31,6 +31,7 @@ internal sealed class HttpHeaderBehavior
 
     public HttpHeaderBehavior(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
     {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _headers = headers?.ToList() ?? throw new ArgumentNullException(nameof(headers));
     }
 
@@ -42,10 +43,18 @@ internal sealed class HttpHeaderBehavior
             // Special case handling of headers which only allow single values.
             if (HeadersWithSingleValueOnly.Contains(header.Key))
             {
-                responseMessage.Content?.Headers.Remove(header.Key);
+                if (responseMessage.Content?.Headers.TryGetValues(header.Key, out _) == true)
+                {
+                    responseMessage.Content.Headers.Remove(header.Key);
+                }
+                if (responseMessage.Headers.TryGetValues(header.Key, out _))
+                {
+                    responseMessage.Headers.Remove(header.Key);
+                }
             }
 
-            responseMessage.Content?.Headers.Add(header.Key, header.Value);
+            responseMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            responseMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
         return next(requestContext, responseMessage, cancellationToken);

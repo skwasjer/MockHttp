@@ -473,6 +473,9 @@ public class IRespondsExtensionsTests
                     IRespondsExtensions.TimesOutAfter,
                     responds,
                     TimeSpan.FromMilliseconds(1)),
+                DelegateTestCase.Create(
+                    IRespondsExtensions.Respond,
+                    responds, (Action<IResponseBuilder>)(_ => { }))
             };
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
