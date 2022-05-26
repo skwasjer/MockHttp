@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Language;
@@ -77,7 +78,7 @@ public class MockHttpHandlerTests : IDisposable
     {
         const string data = "data";
         _sut.When(_ => { })
-            .Respond(HttpStatusCode.OK, new StringContent(data));
+            .Respond(with => with.Body(new StringContent(data)));
 
         // Act
         HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -106,7 +107,7 @@ public class MockHttpHandlerTests : IDisposable
     [Fact]
     public async Task Given_no_request_is_configured_and_custom_fallback_is_configured_when_sending_request_should_return_fallback_response()
     {
-        _sut.Fallback.Respond(HttpStatusCode.BadRequest);
+        _sut.Fallback.Respond(with => with.StatusCode(HttpStatusCode.BadRequest));
 
         // Act
         HttpResponseMessage actualResponse = await _httpClient.GetAsync("");
@@ -210,7 +211,7 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_expectation_fails_when_verifying_should_throw()
     {
         _sut.When(matching => matching.Method(HttpMethod.Post))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         await _httpClient.GetAsync("");
@@ -228,7 +229,7 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_expectation_succeeds_when_verifying_should_throw()
     {
         _sut.When(matching => matching.Method(HttpMethod.Get))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         await _httpClient.GetAsync("");
@@ -358,8 +359,8 @@ public class MockHttpHandlerTests : IDisposable
                 .QueryString("test", "$%^&*")
                 .QueryString("test2=value")
                 .Method("POST")
-                .Content(jsonPostContent)
-                .PartialContent(jsonPostContent.Substring(10))
+                .Body(jsonPostContent)
+                .PartialBody(jsonPostContent.Substring(10))
                 .ContentType($"{MediaTypes.Json}; charset=utf-8")
                 .BearerToken()
                 .Header("Content-Length", jsonPostContent.Length)
@@ -394,7 +395,7 @@ public class MockHttpHandlerTests : IDisposable
         // Assert
         _sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
 #if !NETFRAMEWORK
-        await _sut.VerifyAsync(matching => matching.Content(jsonPostContent), IsSent.Once, "we sent it");
+        await _sut.VerifyAsync(matching => matching.Body(jsonPostContent), IsSent.Once, "we sent it");
 #endif
         _sut.Verify();
         _sut.VerifyNoOtherRequests();
@@ -415,7 +416,10 @@ public class MockHttpHandlerTests : IDisposable
         byte[] buffer = Encoding.UTF8.GetBytes(data);
         using Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream);
         _sut.When(_ => { })
-            .Respond(HttpStatusCode.OK, stream, MediaTypes.PlainText)
+            .Respond(with => with
+                .Body(stream)
+                .ContentType(MediaTypes.PlainText)
+            )
             .Verifiable();
 
         // Act
@@ -428,7 +432,7 @@ public class MockHttpHandlerTests : IDisposable
 
         _sut.Verify(_ => { }, IsSent.Exactly(2));
         secondResponse.Should().NotBeNull();
-        firstResponse.Content.Should().NotBeSameAs(secondResponse!.Content);
+        firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
         await (await firstResponse.Should()
                 .HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
             .And.HaveContentAsync(data);
@@ -442,7 +446,9 @@ public class MockHttpHandlerTests : IDisposable
         const string data = "data";
         using HttpContent httpContent = new StringContent(data);
         _sut.When(_ => { })
-            .Respond(HttpStatusCode.OK, httpContent)
+            .Respond(with => with
+                .Body(httpContent)
+            )
             .Verifiable();
 
         // Act
@@ -453,7 +459,7 @@ public class MockHttpHandlerTests : IDisposable
         // Assert
         await act.Should().NotThrowAsync();
 
-        _sut.Verify(_ => { }, IsSent.Exactly(2));
+        await _sut.VerifyAsync(_ => { }, IsSent.Exactly(2));
         firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
         secondResponse.Should().NotBeNull();
         firstResponse.Content.Should().NotBeSameAs(secondResponse!.Content);
@@ -468,7 +474,9 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_request_is_configured_to_time_out_when_sending_request_should_throw()
     {
         _sut.When(_ => { })
-            .TimesOut()
+            .Respond(with => with
+                .ClientTimeout()
+            )
             .Verifiable();
 
         // Act
@@ -483,7 +491,7 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_request_is_not_verified_when_verifying_no_other_calls_should_throw()
     {
         _sut.When(matching => matching.Method("GET"))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(200))
             .Verifiable();
 
         await _httpClient.GetAsync("");
@@ -509,9 +517,9 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_request_is_configured_to_have_different_responses_should_return_response_in_sequence()
     {
         _sut.When(_ => { })
-            .Respond(HttpStatusCode.BadRequest)
-            .Respond(HttpStatusCode.BadGateway)
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.BadRequest))
+            .Respond(with => with.StatusCode(HttpStatusCode.BadGateway))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act
@@ -536,8 +544,8 @@ public class MockHttpHandlerTests : IDisposable
 
         _sut.When(_ => { })
             .Throws(ex)
-            .TimesOutAfter(500)
-            .Respond(HttpStatusCode.OK);
+            .Respond(with => with.ClientTimeout(500.Milliseconds()))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK));
 
         // Act & assert
         Func<Task<HttpResponseMessage>> act1 = () => _httpClient.GetAsync("");
@@ -571,7 +579,7 @@ public class MockHttpHandlerTests : IDisposable
             int requestIndex = i;
             expectedIndices.Add(requestIndex);
             // Each next response returns the counter value as content, so we can assert on this.
-            responseResult = responseResult.Respond(requestIndex.ToString());
+            responseResult = responseResult.Respond(with => with.Body(requestIndex.ToString()));
         }
 
         Task<List<int>> GetParallelTask()
@@ -605,7 +613,10 @@ public class MockHttpHandlerTests : IDisposable
         HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
 
         IResponds<IResponseResult> result = _sut.When(_ => { });
-        _ = statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
+        _ = statusCodeSequence.Aggregate(result,
+            (current, next) =>
+                (IResponds<IResponseResult>)current.Respond(with => with.StatusCode(next))
+        );
 
         // Act
         foreach (HttpStatusCode expectedStatus in statusCodeSequence.SkipLast(1))
@@ -631,7 +642,7 @@ public class MockHttpHandlerTests : IDisposable
         public void Given_null_argument_when_executing_method_it_should_throw(params object[] args)
         {
             NullArgumentTest.Execute(args);
-        }
+}
 
         public static IEnumerable<object[]> TestCases()
         {

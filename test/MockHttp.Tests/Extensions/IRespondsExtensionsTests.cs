@@ -1,10 +1,7 @@
-﻿#nullable disable
-using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net;
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
-using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Responses;
@@ -45,7 +42,7 @@ public class IRespondsExtensionsTests
             var request = new HttpRequestMessage(HttpMethod.Get, "http://0.0.0.0/controller/action?query=1");
 
             // Act
-            _sut.Respond(r => new HttpResponseMessage { Headers = { { "query", r.RequestUri.Query } } });
+            _sut.Respond((req, _) => new HttpResponseMessage { Headers = { { "query", req.RequestUri.Query } } });
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -65,7 +62,7 @@ public class IRespondsExtensionsTests
             var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
 
             // Act
-            _sut.Respond(ms);
+            _sut.Respond(with => with.Body(ms));
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -76,105 +73,21 @@ public class IRespondsExtensionsTests
             // Second assert, to test we can read stream twice, even if not seekable.
             await actualResponse.Should()
                 .HaveStatusCode(HttpStatusCode.OK)
-                .And.HaveContentAsync(expectedContent);
-        }
-
-        [Theory]
-        [InlineData(HttpStatusCode.Accepted, true)]
-        [InlineData(HttpStatusCode.BadGateway, false)]
-        public async Task When_responding_with_status_code_stream_it_should_return_response
-        (
-            HttpStatusCode statusCode,
-            bool isSeekable
-        )
-        {
-            using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
-            var request = new HttpRequestMessage();
-            var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
-
-            // Act
-            _sut.Respond(statusCode, ms);
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
-                .And.HaveContentAsync(expectedContent);
-
-            // Second assert, to test we can read stream twice, even if not seekable.
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
-                .And.HaveContentAsync(expectedContent);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task When_responding_with_stream_and_media_type_it_should_return_response(bool isSeekable)
-        {
-            using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
-            var request = new HttpRequestMessage();
-            var expectedContent = new StringContent("content", Encoding.UTF8, MediaTypes.Html);
-
-            // Act
-            _sut.Respond(ms, $"{MediaTypes.Html}; charset=utf-8");
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            await actualResponse.Should()
-                .HaveStatusCode(HttpStatusCode.OK)
-                .And.HaveContentAsync(expectedContent);
-
-            // Second assert, to test we can read stream twice, even if not seekable.
-            await actualResponse.Should()
-                .HaveStatusCode(HttpStatusCode.OK)
-                .And.HaveContentAsync(expectedContent);
-        }
-
-        [Theory]
-        [InlineData(HttpStatusCode.Accepted, true)]
-        [InlineData(HttpStatusCode.BadGateway, false)]
-        public async Task When_responding_with_statusCode_and_stream_and_media_type_it_should_return_response(HttpStatusCode statusCode, bool isSeekable)
-        {
-            using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
-            var request = new HttpRequestMessage();
-            var expectedContent = new StringContent("content", Encoding.UTF8, MediaTypes.Html);
-
-            // Act
-            _sut.Respond(statusCode, ms, $"{MediaTypes.Html}; charset=utf-8");
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
-                .And.HaveContentAsync(expectedContent);
-
-            // Second assert, to test we can read stream twice, even if not seekable.
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
                 .And.HaveContentAsync(expectedContent);
         }
 
         [Fact]
         public void When_responding_with_null_stream_it_should_throw()
         {
+            Stream? streamContent = null;
+
             // Act
-            Action act = () => _sut.Respond((Stream)null);
+            Action act = () => _sut.Respond(with => with.Body(streamContent!));
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName("streamContent");
-        }
-
-        [Fact]
-        public void When_responding_with_stream_and_null_media_type_it_should_not_throw()
-        {
-            // Act
-            Action act = () => _sut.Respond(Stream.Null, (MediaTypeHeaderValue)null);
-
-            // Assert
-            act.Should().NotThrow();
+                .WithParameterName(nameof(streamContent));
         }
 
         [Fact]
@@ -182,14 +95,15 @@ public class IRespondsExtensionsTests
         {
             var streamMock = new Mock<Stream>();
             streamMock.Setup(m => m.CanRead).Returns(false);
+            Stream? streamContent = streamMock.Object;
 
             // Act
-            Action act = () => _sut.Respond(streamMock.Object);
+            Action act = () => _sut.Respond(with => with.Body(streamContent));
 
             // Assert
             act.Should()
                 .Throw<ArgumentException>()
-                .WithParameterName("streamContent")
+                .WithParameterName(nameof(streamContent))
                 .WithMessage("Cannot read from stream.*");
         }
     }
@@ -204,7 +118,7 @@ public class IRespondsExtensionsTests
             var expectedContent = new StringContent("content");
 
             // Act
-            _sut.Respond(httpContent);
+            _sut.Respond(with => with.Body(httpContent));
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -213,50 +127,18 @@ public class IRespondsExtensionsTests
                 .And.HaveContentAsync(expectedContent);
         }
 
-        [Theory]
-        [InlineData(HttpStatusCode.Accepted)]
-        [InlineData(HttpStatusCode.BadRequest)]
-        public async Task When_responding_with_statusCode_and_httpContent_it_should_return_response(HttpStatusCode statusCode)
-        {
-            var httpContent = new StringContent("content");
-            var request = new HttpRequestMessage();
-            var expectedContent = new StringContent("content");
-
-            // Act
-            _sut.Respond(statusCode, httpContent);
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
-                .And.HaveContentAsync(expectedContent);
-        }
-
         [Fact]
         public void When_responding_with_null_httpContent_it_should_throw()
         {
+            HttpContent? httpContent = null;
+
             // Act
-            Action act = () => _sut.Respond((HttpContent)null);
+            Action act = () => _sut.Respond(with => with.Body(httpContent!));
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName("content");
-        }
-
-        [Theory]
-        [InlineData(HttpStatusCode.Accepted)]
-        [InlineData(HttpStatusCode.BadRequest)]
-        public async Task When_responding_with_statusCode_it_should_return_response(HttpStatusCode statusCode)
-        {
-            var request = new HttpRequestMessage();
-
-            // Act
-            _sut.Respond(statusCode);
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            actualResponse.Should().HaveStatusCode(statusCode);
+                .WithParameterName(nameof(httpContent));
         }
 
         [Fact]
@@ -265,7 +147,7 @@ public class IRespondsExtensionsTests
             var request = new HttpRequestMessage();
 
             // Act
-            _sut.Respond("content");
+            _sut.Respond(with => with.Body("content"));
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -274,33 +156,18 @@ public class IRespondsExtensionsTests
                 .And.HaveContentAsync("content");
         }
 
-        [Theory]
-        [InlineData(HttpStatusCode.Accepted)]
-        [InlineData(HttpStatusCode.BadRequest)]
-        public async Task When_responding_with_statusCode_and_string_content_it_should_return_response(HttpStatusCode statusCode)
-        {
-            var request = new HttpRequestMessage();
-
-            // Act
-            _sut.Respond(statusCode, "content");
-            HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
-
-            // Assert
-            await actualResponse.Should()
-                .HaveStatusCode(statusCode)
-                .And.HaveContentAsync("content");
-        }
-
         [Fact]
         public void When_responding_with_null_string_content_it_should_throw()
         {
+            string? textContent = null;
+
             // Act
-            Action act = () => _sut.Respond((string)null);
+            Action act = () => _sut.Respond(with => with.Body(textContent!));
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName("content");
+                .WithParameterName(nameof(textContent));
         }
 
         [Fact]
@@ -311,33 +178,16 @@ public class IRespondsExtensionsTests
             var request = new HttpRequestMessage();
 
             // Act
-            _sut.Respond("content", mediaType);
+            _sut.Respond(with => with
+                .Body("content")
+                .ContentType(mediaType, Encoding.UTF8)
+            );
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
             actualResponse.Should()
                 .HaveStatusCode(HttpStatusCode.OK)
                 .And.HaveContentType(expectedMediaType);
-        }
-
-        [Fact]
-        public void When_responding_with_string_content_and_null_media_type_it_should_not_throw()
-        {
-            // Act
-            Action act = () => _sut.Respond("content", (string)null);
-
-            // Assert
-            act.Should().NotThrow();
-        }
-
-        [Fact]
-        public void When_responding_with_string_content_and_null_mediaType_it_should_not_throw()
-        {
-            // Act
-            Action act = () => _sut.Respond("content", (MediaTypeHeaderValue)null);
-
-            // Assert
-            act.Should().NotThrow();
         }
     }
 
@@ -359,122 +209,17 @@ public class IRespondsExtensionsTests
 
             DelegateTestCase[] testCases =
             {
-                DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpResponseMessage>, IResponseResult>(
+                DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,
                     () => new HttpResponseMessage()),
-                DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpRequestMessage, HttpResponseMessage>, IResponseResult>(
+                DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>, IResponseResult>(
                     IRespondsExtensions.Respond,
                     responds,
-                    _ => new HttpResponseMessage()),
+                    (_, _) => new HttpResponseMessage()),
                 DelegateTestCase.Create(
                     IRespondsExtensions.RespondUsing<FakeResponseStrategy, IResponseResult>,
                     responds),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    "test content"),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    "test content"),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    "test content",
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    "test content",
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    "test content",
-                    (MediaTypeHeaderValue)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    "test content",
-                    (MediaTypeHeaderValue)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    "test content",
-                    (Encoding)null,
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    "test content",
-                    (Encoding)null,
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    streamMock.Object),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    streamMock.Object,
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    streamMock.Object),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    streamMock.Object,
-                    (string)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    streamMock.Object,
-                    (MediaTypeHeaderValue)null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    streamMock.Object,
-                    (MediaTypeHeaderValue)null),
-                DelegateTestCase.Create<IResponds<IResponseResult>, HttpStatusCode, Func<Stream>, MediaTypeHeaderValue, IResponseResult>(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    () => streamMock.Object,
-                    null),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    content),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    HttpStatusCode.OK,
-                    content),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.TimesOut,
-                    responds),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.TimesOutAfter,
-                    responds,
-                    1),
-                DelegateTestCase.Create(
-                    IRespondsExtensions.TimesOutAfter,
-                    responds,
-                    TimeSpan.FromMilliseconds(1)),
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,

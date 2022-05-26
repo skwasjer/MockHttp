@@ -8,19 +8,6 @@ namespace MockHttp.Json.Newtonsoft;
 public static class RequestMatchingExtensions
 {
     /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The JSON request content.</param>
-    /// <param name="serializerSettings">The serializer settings.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.JsonContent)]
-    public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, JsonSerializerSettings? serializerSettings)
-    {
-        return builder.JsonBody(content, serializerSettings);
-    }
-
-    /// <summary>
     /// Matches a request by the specified JSON request content.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>

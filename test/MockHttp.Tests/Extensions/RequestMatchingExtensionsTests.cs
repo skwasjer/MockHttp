@@ -384,7 +384,7 @@ public abstract class RequestMatchingExtensionsTests
         }
     }
 
-    public class Content : RequestMatchingExtensionsTests
+    public class Body : RequestMatchingExtensionsTests
     {
         [Theory]
         [InlineData("content", true)]
@@ -394,7 +394,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("content") };
 
             // Act
-            _sut.Content(content);
+            _sut.Body(content);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -410,7 +410,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("straße", Encoding.UTF8) };
 
             // Act
-            _sut.Content("straße", Encoding.GetEncoding(encoding));
+            _sut.Body("straße", Encoding.GetEncoding(encoding));
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -427,7 +427,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("content") };
             using var ms = new MemoryStream(data);
             // Act
-            _sut.Content(ms);
+            _sut.Body(ms);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -438,10 +438,10 @@ public abstract class RequestMatchingExtensionsTests
         [Fact]
         public void Given_content_matcher_is_already_added_when_configuring_should_throw()
         {
-            _sut.Content("content");
+            _sut.Body("content");
 
             // Act
-            Action act = () => _sut.Content("content");
+            Action act = () => _sut.Body("content");
 
             // Assert
             act.Should().Throw<InvalidOperationException>();
@@ -459,7 +459,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("one two three") };
 
             // Act
-            _sut.PartialContent(content);
+            _sut.PartialBody(content);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -475,7 +475,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("straße", Encoding.UTF8) };
 
             // Act
-            _sut.PartialContent("ß", Encoding.GetEncoding(encoding));
+            _sut.PartialBody("ß", Encoding.GetEncoding(encoding));
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -493,7 +493,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("one two three") };
             using var ms = new MemoryStream(data);
             // Act
-            _sut.PartialContent(ms);
+            _sut.PartialBody(ms);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -504,10 +504,10 @@ public abstract class RequestMatchingExtensionsTests
         [Fact]
         public void Given_partial_content_matcher_is_already_added_when_configuring_should_not_throw()
         {
-            _sut.PartialContent("content");
+            _sut.PartialBody("content");
 
             // Act
-            Action act = () => _sut.PartialContent("content");
+            Action act = () => _sut.PartialBody("content");
 
             // Assert
             act.Should().NotThrow();
@@ -519,8 +519,8 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { Content = new StringContent("one two three", Encoding.UTF8) };
 
             // Act
-            _sut.PartialContent("one");
-            _sut.PartialContent("three");
+            _sut.PartialBody("one");
+            _sut.PartialBody("three");
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -609,8 +609,8 @@ public abstract class RequestMatchingExtensionsTests
         {
             // Act
             Action act = () => _sut.Any(any => any
-                .Content("data")
-                .WithoutContent()
+                .Body("data")
+                .WithoutBody()
             );
 
             // Assert
@@ -821,43 +821,6 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.FormData,
                     instance,
                     "key=value"),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.Content,
-                    instance,
-                    "content"),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.Content,
-                    instance,
-                    "content",
-                    (Encoding?)null!),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.Content,
-                    instance,
-                    Encoding.UTF8.GetBytes("content")),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.Content,
-                    instance,
-                    streamMock.Object),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.WithoutContent,
-                    instance),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.PartialContent,
-                    instance,
-                    "partial content"),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.PartialContent,
-                    instance,
-                    "partial content",
-                    (Encoding?)null!),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.PartialContent,
-                    instance,
-                    Encoding.UTF8.GetBytes("partial content")),
-                DelegateTestCase.Create(
-                    RequestMatchingExtensions.PartialContent,
-                    instance,
-                    streamMock.Object),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,

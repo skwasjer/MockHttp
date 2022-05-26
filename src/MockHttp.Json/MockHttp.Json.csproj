@@ -11,9 +11,8 @@
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
     <PackageReleaseNotes>
-      v3.1.0-alpha1
-      - Added new fluent response API which provides more flexibility and control over the response. This new API replaces the current `.Respond()` API, and as such most of the old methods/overloads are now deprecated and will be removed in v4.
-      - Added `RateLimitedStream` helper to simulate network transfer rates.
+      v4.0.0
+      - Removed obsolete `ObjectResponseStrategy` extensions.
     </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

@@ -5,6 +5,20 @@ namespace MockHttp.Threading;
 
 internal static class TaskHelpers
 {
+    public static T RunSync<T>(Func<Task<T>> action, TimeSpan timeout)
+    {
+        Task<T> task = null;
+
+        RunSync(() =>
+            {
+                task = action();
+                return (Task)task;
+            },
+            timeout);
+
+        return task.Result;
+    }
+
     public static void RunSync(Func<Task> action, TimeSpan timeout)
     {
         if (SynchronizationContext.Current is null)

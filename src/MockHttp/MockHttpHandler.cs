@@ -229,15 +229,6 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <summary>
     /// Verifies that there were no requests sent other than those already verified.
     /// </summary>
-    [Obsolete("Renamed to " + nameof(VerifyNoOtherRequests) + ". This method will be removed in future.")]
-    public void VerifyNoOtherCalls()
-    {
-        VerifyNoOtherRequests();
-    }
-
-    /// <summary>
-    /// Verifies that there were no requests sent other than those already verified.
-    /// </summary>
     public void VerifyNoOtherRequests()
     {
         var unverifiedRequests = InvokedRequests

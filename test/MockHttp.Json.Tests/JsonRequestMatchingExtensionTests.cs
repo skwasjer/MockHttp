@@ -28,8 +28,8 @@ public class JsonRequestMatchingExtensionTests
         var obj = new TestClass { SomeProperty = "value" };
 
         _httpMock
-            .When(m => m.JsonContent(obj))
-            .Respond(HttpStatusCode.OK)
+            .When(m => m.JsonBody(obj))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act
@@ -48,8 +48,8 @@ public class JsonRequestMatchingExtensionTests
         _httpMock
             .When(m => m
                 .RequestUri("/users")
-                .JsonContent(obj))
-            .Respond(HttpStatusCode.OK);
+                .JsonBody(obj))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK));
 
         // Act
         Func<Task> act = () => _httpClient.PostAsync("http://0.0.0.0", new StringContent("test=test", Encoding.UTF8, MediaTypes.FormUrlEncoded));
@@ -64,8 +64,8 @@ public class JsonRequestMatchingExtensionTests
     public async Task Given_no_json_content_when_request_content_is_empty_should_be_true(bool hasContent)
     {
         _httpMock
-            .When(m => m.JsonContent((object?)null))
-            .Respond(HttpStatusCode.OK)
+            .When(m => m.JsonBody((object?)null))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         StringContent? content = hasContent
@@ -98,8 +98,8 @@ public class JsonRequestMatchingExtensionTests
         var testClass = new TestClass { SomeProperty = "value" };
 
         _httpMock
-            .When(m => m.JsonContent(testClass, serializerSettings))
-            .Respond(HttpStatusCode.OK)
+            .When(m => m.JsonBody(testClass, serializerSettings))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act
@@ -126,7 +126,7 @@ public class JsonRequestMatchingExtensionTests
 
         _httpMock
             .When(m => m.JsonBody(testClass, serializerOptions))
-            .Respond(HttpStatusCode.OK)
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act
@@ -157,8 +157,8 @@ public class JsonRequestMatchingExtensionTests
         }
 
         _httpMock
-            .When(m => m.JsonContent(testClass))
-            .Respond(HttpStatusCode.OK)
+            .When(m => m.JsonBody(testClass))
+            .Respond(with => with.StatusCode(HttpStatusCode.OK))
             .Verifiable();
 
         // Act

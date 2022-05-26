@@ -20,18 +20,6 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="requestUri">The request URI or a URI wildcard.</param>
     /// <returns>The request matching builder instance.</returns>
-    [Obsolete("Use `RequestUri` instead, will be removed.")]
-    public static RequestMatching Url(this RequestMatching builder, string requestUri)
-    {
-        return builder.RequestUri(requestUri);
-    }
-
-    /// <summary>
-    /// Matches a request by specified <paramref name="requestUri" />.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="requestUri">The request URI or a URI wildcard.</param>
-    /// <returns>The request matching builder instance.</returns>
     public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
     {
         if (builder is null)
@@ -45,18 +33,6 @@ public static class RequestMatchingExtensions
         }
 
         return builder.With(new RequestUriMatcher(requestUri, true));
-    }
-
-    /// <summary>
-    /// Matches a request by specified <paramref name="requestUri" />.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="requestUri">The request URI or a URI wildcard.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete("Use `RequestUri` instead, will be removed.")]
-    public static RequestMatching Url(this RequestMatching builder, Uri requestUri)
-    {
-        return builder.RequestUri(requestUri);
     }
 
     /// <summary>
@@ -359,19 +335,6 @@ public static class RequestMatchingExtensions
     /// Matches a request by HTTP header.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="name">The header name.</param>
-    /// <param name="values">The header values.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete("Renamed to Header(). Will be removed in future version.")]
-    public static RequestMatching Headers(this RequestMatching builder, string name, params string[] values)
-    {
-        return builder.Header(name, values);
-    }
-
-    /// <summary>
-    /// Matches a request by HTTP header.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
     /// <param name="headers">The headers.</param>
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> headers)
@@ -546,23 +509,6 @@ public static class RequestMatchingExtensions
     }
 
     /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestContent)]
-    public static RequestMatching Content(this RequestMatching builder, string content)
-    {
-        if (content is null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
-
-        return builder.Body(content);
-    }
-
-    /// <summary>
     /// Matches a request by the request body.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
@@ -571,24 +517,6 @@ public static class RequestMatchingExtensions
     public static RequestMatching Body(this RequestMatching builder, string body)
     {
         return builder.Body(body, ContentMatcher.DefaultEncoding);
-    }
-
-    /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The request content.</param>
-    /// <param name="encoding">The request content encoding.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestContent)]
-    public static RequestMatching Content(this RequestMatching builder, string content, Encoding encoding)
-    {
-        if (content is null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
-
-        return builder.Body(content, encoding);
     }
 
     /// <summary>
@@ -614,23 +542,6 @@ public static class RequestMatchingExtensions
     }
 
     /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestContent)]
-    public static RequestMatching Content(this RequestMatching builder, byte[] content)
-    {
-        if (content is null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
-
-        return builder.Body(content);
-    }
-
-    /// <summary>
     /// Matches a request by request body.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
@@ -652,23 +563,6 @@ public static class RequestMatchingExtensions
     }
 
     /// <summary>
-    /// Matches a request by request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="content">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestContent)]
-    public static RequestMatching Content(this RequestMatching builder, Stream content)
-    {
-        if (content is null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
-
-        return builder.Body(content);
-    }
-
-    /// <summary>
     /// Matches a request by request body.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
@@ -684,17 +578,6 @@ public static class RequestMatchingExtensions
         using var ms = new MemoryStream();
         body.CopyTo(ms);
         return builder.Body(ms.ToArray());
-    }
-
-    /// <summary>
-    /// Matches a request explicitly that has no request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestWithoutContent)]
-    public static RequestMatching WithoutContent(this RequestMatching builder)
-    {
-        return builder.WithoutBody();
     }
 
     /// <summary>
@@ -716,46 +599,11 @@ public static class RequestMatchingExtensions
     /// Matches a request by partially matching the request content.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="partialContent">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestPartialContent)]
-    public static RequestMatching PartialContent(this RequestMatching builder, string partialContent)
-    {
-        if (partialContent is null)
-        {
-            throw new ArgumentNullException(nameof(partialContent));
-        }
-
-        return builder.PartialBody(partialContent);
-    }
-
-    /// <summary>
-    /// Matches a request by partially matching the request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
     /// <param name="partialBody">The partial request body.</param>
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching PartialBody(this RequestMatching builder, string partialBody)
     {
         return builder.PartialBody(partialBody, ContentMatcher.DefaultEncoding);
-    }
-
-    /// <summary>
-    /// Matches a request by partially matching the request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="partialContent">The request content.</param>
-    /// <param name="encoding">The request content encoding.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestPartialContent)]
-    public static RequestMatching PartialContent(this RequestMatching builder, string partialContent, Encoding encoding)
-    {
-        if (partialContent is null)
-        {
-            throw new ArgumentNullException(nameof(partialContent));
-        }
-
-        return builder.PartialBody(partialContent, encoding);
     }
 
     /// <summary>
@@ -784,23 +632,6 @@ public static class RequestMatchingExtensions
     /// Matches a request by partially matching the request content.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="partialContent">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestPartialContent)]
-    public static RequestMatching PartialContent(this RequestMatching builder, byte[] partialContent)
-    {
-        if (partialContent is null)
-        {
-            throw new ArgumentNullException(nameof(partialContent));
-        }
-
-        return builder.PartialBody(partialContent);
-    }
-
-    /// <summary>
-    /// Matches a request by partially matching the request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
     /// <param name="partialBody">The partial request body.</param>
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching PartialBody(this RequestMatching builder, byte[] partialBody)
@@ -816,23 +647,6 @@ public static class RequestMatchingExtensions
         }
 
         return builder.With(new PartialContentMatcher(partialBody));
-    }
-
-    /// <summary>
-    /// Matches a request by partially matching the request content.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="partialContent">The request content.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete(DeprecationWarnings.RequestPartialContent)]
-    public static RequestMatching PartialContent(this RequestMatching builder, Stream partialContent)
-    {
-        if (partialContent is null)
-        {
-            throw new ArgumentNullException(nameof(partialContent));
-        }
-
-        return builder.PartialBody(partialContent);
     }
 
     /// <summary>
@@ -874,18 +688,6 @@ public static class RequestMatchingExtensions
         var anyRequestMatching = new AnyRequestMatching();
         anyBuilder(anyRequestMatching);
         return builder.With(new AnyMatcher(anyRequestMatching.Build()));
-    }
-
-    /// <summary>
-    /// Matches a request using a custom expression.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="expression">The expression.</param>
-    /// <returns>The request matching builder instance.</returns>
-    [Obsolete("Replaced by " + nameof(Where) + ".")]
-    public static RequestMatching When(this RequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
-    {
-        return builder.Where(expression);
     }
 
     /// <summary>

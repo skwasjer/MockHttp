@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using FluentAssertions;
+using MockHttp.FluentAssertions;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -15,7 +16,7 @@ public class HttpContentBodySpec : ResponseSpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        response.Content.Should().BeSameAs(Content);
+        response.Should().HaveContentAsync("text");
         return Task.CompletedTask;
     }
 
