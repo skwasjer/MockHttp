@@ -59,8 +59,29 @@ public class NetworkLatency
     }
 
     /// <summary>
+    /// Configures a latency to be around <paramref name="latency" />.
+    /// </summary>
+    /// <param name="latency">The latency.</param>
+    public static NetworkLatency Around(TimeSpan latency)
+    {
+        int latencyInMs = Convert.ToInt32(latency.TotalMilliseconds);
+        return Between(latencyInMs, latencyInMs, $"{nameof(Around)}({latency})");
+    }
+
+    /// <summary>
+    /// Configures a latency to be around <paramref name="latency" />.
+    /// </summary>
+    /// <param name="latencyInMs">The latency in milliseconds.</param>
+    public static NetworkLatency Around(int latencyInMs)
+    {
+        return Between(latencyInMs, latencyInMs, $"{nameof(Around)}({latencyInMs})");
+    }
+
+    /// <summary>
     /// Configures a random latency between <paramref name="min" /> and <paramref name="max" />.
     /// </summary>
+    /// <param name="min">The minimum latency.</param>
+    /// <param name="max">The maximum latency.</param>
     public static NetworkLatency Between(TimeSpan min, TimeSpan max)
     {
         return Between(Convert.ToInt32(min.TotalMilliseconds), Convert.ToInt32(max.TotalMilliseconds), $"{nameof(Between)}({min}, {max})");
@@ -69,6 +90,8 @@ public class NetworkLatency
     /// <summary>
     /// Configures a random latency between <paramref name="minMs" /> and <paramref name="maxMs" />.
     /// </summary>
+    /// <param name="minMs">The minimum latency in milliseconds.</param>
+    /// <param name="maxMs">The maximum latency in milliseconds.</param>
     public static NetworkLatency Between(int minMs, int maxMs)
     {
         return Between(minMs, maxMs, $"{nameof(Between)}({minMs}, {maxMs})");
@@ -81,7 +104,7 @@ public class NetworkLatency
             throw new ArgumentOutOfRangeException(nameof(minMs));
         }
 
-        if (maxMs <= minMs)
+        if (minMs > maxMs)
         {
             throw new ArgumentOutOfRangeException(nameof(maxMs));
         }

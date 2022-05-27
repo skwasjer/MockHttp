@@ -55,6 +55,8 @@ public sealed class NetworkLatencyTests
         yield return new object[] { FiveG(), 5, 10 };
         yield return new object[] { Between(50, 60), 50, 60 };
         yield return new object[] { Between(TimeSpan.FromMilliseconds(2500), TimeSpan.FromMilliseconds(3000)), 2500, 3000 };
+        yield return new object[] { Around(100), 100, 100 };
+        yield return new object[] { Around(TimeSpan.FromMilliseconds(70)), 70, 70 };
     }
 
     [Theory]
@@ -73,5 +75,7 @@ public sealed class NetworkLatencyTests
         yield return new object[] { FiveG(), prefix + nameof(FiveG) };
         yield return new object[] { Between(50, 60), prefix + "Between(50, 60)" };
         yield return new object[] { Between(TimeSpan.FromMilliseconds(150), TimeSpan.FromMilliseconds(160)), prefix + "Between(00:00:00.1500000, 00:00:00.1600000)" };
+        yield return new object[] { Around(100), prefix + "Around(100)" };
+        yield return new object[] { Around(TimeSpan.FromMilliseconds(70)), prefix + "Around(00:00:00.0700000)" };
     }
 }
