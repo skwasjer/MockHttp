@@ -22,9 +22,9 @@ internal sealed class ResponseBuilder
     public IList<IResponseBehavior> Behaviors { get; } = new List<IResponseBehavior>();
 
     /// <inheritdoc />
-    public IWithStatusCodeResult StatusCode(HttpStatusCode statusCode)
+    public IWithStatusCodeResult StatusCode(HttpStatusCode statusCode, string? reasonPhrase = null)
     {
-        Behaviors.Replace(new StatusCodeBehavior(statusCode));
+        Behaviors.Replace(new StatusCodeBehavior(statusCode, reasonPhrase));
         return this;
     }
 

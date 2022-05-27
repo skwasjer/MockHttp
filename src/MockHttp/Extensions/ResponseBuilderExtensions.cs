@@ -21,17 +21,18 @@ public static class ResponseBuilderExtensions
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="statusCode">The status code to return with the response.</param>
+    /// <param name="reasonPhrase">The reason phrase which typically is sent by servers together with the status code.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="statusCode" /> is less than 100.</exception>
-    public static IWithStatusCodeResult StatusCode(this IWithStatusCode builder, int statusCode)
+    public static IWithStatusCodeResult StatusCode(this IWithStatusCode builder, int statusCode, string? reasonPhrase = null)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.StatusCode((HttpStatusCode)statusCode);
+        return builder.StatusCode((HttpStatusCode)statusCode, reasonPhrase);
     }
 
     /// <summary>
