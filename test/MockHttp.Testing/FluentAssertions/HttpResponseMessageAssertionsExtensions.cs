@@ -156,33 +156,31 @@ public static class HttpResponseMessageAssertionsExtensions
 
         HttpResponseMessage subject = should.Subject;
         var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values);
-        var equalityComparer = new HttpHeaderEqualityComparer();
+        var equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.Exact);
 
-        static bool SafeContains(HttpHeaders headers, string s) => headers?.TryGetValues(s, out _) ?? false;
+        static bool SafeContains(HttpHeaders? headers, string s) => headers?.TryGetValues(s, out _) ?? false;
+
+        var allHeaders = new HttpHeadersCollection();
+        if (subject is not null)
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            allHeaders = subject.Content is not null
+                ? new HttpHeadersCollection(subject.Headers.Concat(subject.Content.Headers)!)
+                : new HttpHeadersCollection(subject.Headers!);
+        }
 
         var assertionScope = (IAssertionScope)Execute.Assertion.BecauseOf(because, becauseArgs).UsingLineBreaks;
         assertionScope
             .ForCondition(subject is not null)
             .FailWith("The subject is null.")
             .Then
-            .ForCondition(SafeContains(subject.Headers, key) || SafeContains(subject.Content?.Headers, key))
+            .ForCondition(SafeContains(allHeaders, key))
             .FailWith("Expected response to have header {0}{reason}, but found none.", key)
             .Then
-            .ForCondition(
-                subject.Headers.Any(h => equalityComparer.Equals(h, expectedHeader))
-             || (subject.Content?.Headers.Any(h => equalityComparer.Equals(h, expectedHeader)) ?? false))
+            .ForCondition(allHeaders.Any(h => equalityComparer.Equals(h, expectedHeader)))
             .FailWith(() =>
             {
-                if (subject.Headers.TryGetValues(key, out IEnumerable<string>? headerValues))
-                {
-                    return new FailReason("Expected response to have header {0} with value {1}{reason}, but found value {2}.", key, values, headerValues);
-                }
-
-                if (!subject.Content!.Headers.TryGetValues(key, out headerValues))
-                {
-                    headerValues = new List<string>();
-                }
-
+                _ = allHeaders.TryGetValues(key, out IEnumerable<string>? headerValues);
                 return new FailReason("Expected response to have header {0} with value {1}{reason}, but found value {2}.", key, values, headerValues);
             })
             ;

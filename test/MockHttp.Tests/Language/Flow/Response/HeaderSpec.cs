@@ -40,7 +40,7 @@ public class HeaderSpec : ResponseSpec
             .And.HaveHeader("Date", _utcNow.ToString("R", DateTimeFormatInfo.InvariantInfo))
             .And.HaveHeader("Content-Length", "456")
             .And.HaveHeader("Content-Language", "nl,fr,de")
-            .And.HaveHeader("X-Date", _now.AddYears(-1).ToString("R") + "," + _now.ToString("R"))
+            .And.HaveHeader("X-Date", new[] { _now.AddYears(-1).ToString("R"), _now.ToString("R") })
             .And.HaveHeader("X-Null", string.Empty);
         return Task.CompletedTask;
     }

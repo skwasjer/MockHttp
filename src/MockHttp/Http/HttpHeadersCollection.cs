@@ -1,9 +1,22 @@
-﻿using System.Net.Http.Headers;
+﻿#nullable enable
+using System.Net.Http.Headers;
 
 namespace MockHttp.Http;
 
 internal sealed class HttpHeadersCollection : HttpHeaders
 {
+    public HttpHeadersCollection()
+    {
+    }
+
+    public HttpHeadersCollection(IEnumerable<KeyValuePair<string, IEnumerable<string?>>> headers)
+    {
+        foreach (KeyValuePair<string, IEnumerable<string?>> header in headers)
+        {
+            Add(header.Key, header.Value);
+        }
+    }
+
     public static HttpHeaders Parse(string headers)
     {
         if (headers is null)
@@ -20,7 +33,7 @@ internal sealed class HttpHeadersCollection : HttpHeaders
         using var sr = new StringReader(headers);
         while (true)
         {
-            string header = sr.ReadLine();
+            string? header = sr.ReadLine();
             if (header is null)
             {
                 break;
@@ -33,15 +46,15 @@ internal sealed class HttpHeadersCollection : HttpHeaders
 
             string[] hvp = header.Split(new[] { ':' }, 2, StringSplitOptions.None);
 
-            string fieldName = hvp.Length > 0 ? hvp[0] : null;
-            string fieldValue = hvp.Length > 1 ? hvp[1] : null;
+            string fieldName = hvp.Length > 0 ? hvp[0] : string.Empty;
+            string? fieldValue = hvp.Length > 1 ? hvp[1] : null;
             httpHeaders.Add(fieldName, ParseHttpHeaderValue(fieldValue));
         }
 
         return httpHeaders;
     }
 
-    internal static IEnumerable<string> ParseHttpHeaderValue(string headerValue)
+    internal static IEnumerable<string> ParseHttpHeaderValue(string? headerValue)
     {
         if (headerValue is null)
         {
@@ -55,3 +68,4 @@ internal sealed class HttpHeadersCollection : HttpHeaders
             .ToArray();
     }
 }
+#nullable restore

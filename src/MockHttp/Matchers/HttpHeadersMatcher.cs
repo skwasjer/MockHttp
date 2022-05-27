@@ -22,7 +22,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
             throw new ArgumentNullException(nameof(name));
         }
 
-        _equalityComparer = new HttpHeaderEqualityComparer(true);
+        _equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameOnly);
         Value.TryAddWithoutValidation(name, (string)null);
     }
 
@@ -42,7 +42,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 
         RegexPatternMatcher patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
         _equalityComparer = patternMatcher is null
-            ? new HttpHeaderEqualityComparer()
+            ? new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues)
             : new HttpHeaderEqualityComparer(patternMatcher);
 
         Value.Add(name, value);
@@ -61,7 +61,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
             throw new ArgumentNullException(nameof(name));
         }
 
-        _equalityComparer = new HttpHeaderEqualityComparer();
+        _equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues);
 
         Value.Add(name, values);
     }
@@ -78,7 +78,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
             throw new ArgumentNullException(nameof(headers));
         }
 
-        _equalityComparer = new HttpHeaderEqualityComparer();
+        _equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues);
 
         foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
         {
