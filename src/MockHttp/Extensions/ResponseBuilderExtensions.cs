@@ -89,6 +89,11 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
     public static IWithContentResult Body(this IWithContent builder, byte[] content)
     {
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
         return builder.Body(content, 0, content.Length);
     }
 
@@ -107,6 +112,11 @@ public static class ResponseBuilderExtensions
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
         }
 
         if (offset < 0 || offset > content.Length)
@@ -314,6 +324,11 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
+        if (latency is null)
+        {
+            throw new ArgumentNullException(nameof(latency));
+        }
+
         int existingIndex = builder.Behaviors.IndexOf(typeof(NetworkLatencyBehavior));
         if (existingIndex == -1)
         {
@@ -335,6 +350,11 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="latency" /> is <see langword="null" />.</exception>
     public static IWithResponse Latency(this IWithResponse builder, Func<NetworkLatency> latency)
     {
+        if (latency is null)
+        {
+            throw new ArgumentNullException(nameof(latency));
+        }
+
         return builder.Latency(latency());
     }
 
