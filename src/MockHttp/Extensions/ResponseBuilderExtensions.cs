@@ -36,6 +36,28 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
+    /// Sets the <see cref="HttpContent" /> for the response.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="content">The HTTP content.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
+    public static IWithContentResult Body(this IWithContent builder, HttpContent content)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
+        return builder.Body(_ => Task.FromResult(content));
+    }
+
+    /// <summary>
     /// Sets the plain text content for the response.
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -113,6 +135,11 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentException">Thrown when the <paramref name="content" /> stream does not support reading.</exception>
     public static IWithContentResult Body(this IWithContent builder, Stream content)
     {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
         if (content is null)
         {
             throw new ArgumentNullException(nameof(content));
