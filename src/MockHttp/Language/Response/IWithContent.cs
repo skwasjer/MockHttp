@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using MockHttp.Language.Flow.Response;
-using MockHttp.Responses;
 
 namespace MockHttp.Language.Response;
 
@@ -18,5 +17,5 @@ public interface IWithContent
     /// <param name="httpContentFactory">The factory returning a new instance of <see cref="HttpContent" /> on each invocation.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContentFactory" /> is <see langword="null" />.</exception>
-    IWithContentResult Body(Func<MockHttpRequestContext, Task<HttpContent>> httpContentFactory);
+    IWithContentResult Body(Func<Task<HttpContent>> httpContentFactory);
 }

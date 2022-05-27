@@ -54,7 +54,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return builder.Body(_ => Task.FromResult(content));
+        return builder.Body(() => Task.FromResult(content));
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return builder.Body(_ => Task.FromResult<HttpContent>(new StringContent(content, encoding)));
+        return builder.Body(() => Task.FromResult<HttpContent>(new StringContent(content, encoding)));
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        return builder.Body(_ => Task.FromResult<HttpContent>(new ByteArrayContent(content, offset, count)));
+        return builder.Body(() => Task.FromResult<HttpContent>(new ByteArrayContent(content, offset, count)));
     }
 
     /// <summary>
@@ -205,7 +205,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(contentFactory));
         }
 
-        return builder.Body(_ =>
+        return builder.Body(() =>
         {
             Stream stream = contentFactory();
             if (!stream.CanRead)

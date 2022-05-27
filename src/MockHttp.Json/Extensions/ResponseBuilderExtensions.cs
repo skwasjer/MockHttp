@@ -23,7 +23,7 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
     public static IWithContentResult JsonBody<T>(this IWithContent builder, T jsonContent, Encoding? encoding = null, IJsonAdapter? adapter = null)
     {
-        return builder.JsonBody(_ => jsonContent, encoding, adapter);
+        return builder.JsonBody(() => jsonContent, encoding, adapter);
     }
 
     /// <summary>
@@ -35,27 +35,55 @@ public static class ResponseBuilderExtensions
     /// <param name="adapter">The optional JSON adapter. When null uses the default adapter.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="jsonContentFactory" /> is <see langword="null" />.</exception>
-    public static IWithContentResult JsonBody<T>(this IWithContent builder, Func<MockHttpRequestContext, T> jsonContentFactory, Encoding? encoding = null, IJsonAdapter? adapter = null)
+    public static IWithContentResult JsonBody<T>
+    (
+        this IWithContent builder,
+        Func<T> jsonContentFactory,
+        Encoding? encoding = null,
+        IJsonAdapter? adapter = null
+    )
     {
-        if (jsonContentFactory is null)
+        if (builder is null)
         {
-            throw new ArgumentNullException(nameof(jsonContentFactory));
+            throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.Body(requestContext =>
-        {
-            IJsonAdapter jsonSerializerAdapter = adapter ?? requestContext.GetAdapter();
-            object? value = jsonContentFactory(requestContext);
+        builder.Behaviors.Add(new JsonContentBehavior<T>(jsonContentFactory, encoding, adapter));
+        return (IWithContentResult)builder;
+    }
 
-            var httpContent = new StringContent(jsonSerializerAdapter.Serialize(value), encoding)
+    private class JsonContentBehavior<T> : IResponseBehavior
+    {
+        private readonly Func<T> _jsonContentFactory;
+        private readonly Encoding? _encoding;
+        private readonly IJsonAdapter? _adapter;
+
+        internal JsonContentBehavior
+        (
+            Func<T> jsonContentFactory,
+            Encoding? encoding = null,
+            IJsonAdapter? adapter = null
+        )
+        {
+            _jsonContentFactory = jsonContentFactory ?? throw new ArgumentNullException(nameof(jsonContentFactory));
+            _encoding = encoding;
+            _adapter = adapter;
+        }
+
+        public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+        {
+            IJsonAdapter jsonSerializerAdapter = _adapter ?? requestContext.GetAdapter();
+            object? value = _jsonContentFactory();
+
+            responseMessage.Content = new StringContent(jsonSerializerAdapter.Serialize(value), _encoding)
             {
                 Headers =
                 {
-                    ContentType = new MediaTypeHeaderValue(MediaTypes.JsonMediaType) { CharSet = (encoding ?? Encoding.UTF8).WebName }
+                    ContentType = new MediaTypeHeaderValue(MediaTypes.JsonMediaType) { CharSet = (_encoding ?? Encoding.UTF8).WebName }
                 }
             };
 
-            return Task.FromResult<HttpContent>(httpContent);
-        });
+            return next(requestContext, responseMessage, cancellationToken);
+        }
     }
 }

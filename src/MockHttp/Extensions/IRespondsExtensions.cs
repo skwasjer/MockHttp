@@ -357,7 +357,7 @@ public static class IRespondsExtensions
         return responds.Respond(with => with
             .StatusCode(statusCode)
             // Caller is responsible for disposal of the original content.
-            .Body(async _ => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
+            .Body(async () => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
         );
     }
 
@@ -402,7 +402,7 @@ public static class IRespondsExtensions
     }
 
     /// <summary>
-    /// Specifies to throw a <see cref="TaskCanceledException" /> after a specified amount of time, simulating a HTTP request timeout.
+    /// Configures a response via the response builder API.
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="with">The response builder.</param>
@@ -423,5 +423,39 @@ public static class IRespondsExtensions
         with(builder);
         IResponseStrategy responseStrategy = builder.Build();
         return responds.RespondUsing(responseStrategy);
+    }
+
+    /// <summary>
+    /// Configures a response via the response builder API with access to the request context.
+    /// </summary>
+    /// <param name="responds"></param>
+    /// <param name="with">The response builder.</param>
+    public static TResult Respond<TResult>(this IResponds<TResult> responds, Action<MockHttpRequestContext, IResponseBuilder> with)
+        where TResult : IResponseResult
+    {
+        if (responds is null)
+        {
+            throw new ArgumentNullException(nameof(responds));
+        }
+
+        return responds.RespondUsing(new RequestSpecificResponseBuilder(with));
+    }
+
+    private class RequestSpecificResponseBuilder : IResponseStrategy
+    {
+        private readonly Action<MockHttpRequestContext, IResponseBuilder> _with;
+
+        public RequestSpecificResponseBuilder(Action<MockHttpRequestContext, IResponseBuilder> with)
+        {
+            _with = with ?? throw new ArgumentNullException(nameof(with));
+        }
+
+        public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+        {
+            var builder = new ResponseBuilder();
+            _with(requestContext, builder);
+            IResponseStrategy responseStrategy = builder.Build();
+            return responseStrategy.ProduceResponseAsync(requestContext, cancellationToken);
+        }
     }
 }

@@ -16,7 +16,7 @@ internal sealed class ResponseBuilder
 {
     internal static readonly Encoding DefaultWebEncoding = Encoding.UTF8;
 
-    private static readonly Func<MockHttpRequestContext, Task<HttpContent>> EmptyHttpContentFactory = _ => Task.FromResult<HttpContent>(new EmptyContent());
+    private static readonly Func<Task<HttpContent>> EmptyHttpContentFactory = () => Task.FromResult<HttpContent>(new EmptyContent());
 
     /// <inheritdoc />
     public IList<IResponseBehavior> Behaviors { get; } = new List<IResponseBehavior>();
@@ -29,7 +29,7 @@ internal sealed class ResponseBuilder
     }
 
     /// <inheritdoc />
-    public IWithContentResult Body(Func<MockHttpRequestContext, Task<HttpContent>> httpContentFactory)
+    public IWithContentResult Body(Func<Task<HttpContent>> httpContentFactory)
     {
         Behaviors.Replace(new HttpContentBehavior(httpContentFactory));
         return this;

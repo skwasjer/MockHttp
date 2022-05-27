@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
-using MockHttp.Responses;
 using Newtonsoft.Json;
 
 namespace MockHttp.Json.Newtonsoft;
@@ -28,7 +27,7 @@ public static class ResponseBuilderExtensions
         JsonSerializerSettings? serializerSettings = null
     )
     {
-        return builder.JsonBody(_ => jsonContent, encoding, serializerSettings);
+        return builder.JsonBody(() => jsonContent, encoding, serializerSettings);
     }
 
     /// <summary>
@@ -44,7 +43,7 @@ public static class ResponseBuilderExtensions
     public static IWithContentResult JsonBody<T>
     (
         this IWithContent builder,
-        Func<MockHttpRequestContext, T> jsonContentFactory,
+        Func<T> jsonContentFactory,
         Encoding? encoding = null,
         JsonSerializerSettings? serializerSettings = null
     )

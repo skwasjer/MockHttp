@@ -139,11 +139,11 @@ public static class RespondsExtensions
             ? Encoding.GetEncoding(mediaType.CharSet)
             : null;
 
-        IWithResponse With(IWithStatusCode with)
+        IWithResponse With(HttpRequestMessage request, IWithStatusCode with)
         {
             IWithContentResult builder = with
                 .StatusCode(statusCode)
-                .JsonBody(ctx => content(ctx.Request), enc, adapter);
+                .JsonBody(() => content(request), enc, adapter);
 
             if (mediaType is not null)
             {
@@ -153,7 +153,7 @@ public static class RespondsExtensions
             return builder;
         }
 
-        return responds.Respond(with => With(with));
+        return responds.Respond((ctx, with) => With(ctx.Request, with));
     }
 
     /// <summary>

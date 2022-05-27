@@ -475,7 +475,12 @@ public class IRespondsExtensionsTests
                     TimeSpan.FromMilliseconds(1)),
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
-                    responds, (Action<IResponseBuilder>)(_ => { }))
+                    responds,
+                    (Action<IResponseBuilder>)(_ => { })),
+                DelegateTestCase.Create(
+                    IRespondsExtensions.Respond,
+                    responds,
+                    (Action<MockHttpRequestContext, IResponseBuilder>)((_, _) => { }))
             };
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
