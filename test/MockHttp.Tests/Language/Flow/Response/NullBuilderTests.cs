@@ -70,6 +70,26 @@ public class NullBuilderTests
                     (string?[])null!
                 ),
                 DelegateTestCase.Create(
+                    ResponseBuilderExtensions.Header,
+                    withHeaders,
+                    new KeyValuePair<string, string>()
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.Header,
+                    withHeaders,
+                    new KeyValuePair<string, object>()
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.Header,
+                    withHeaders,
+                    new KeyValuePair<string, IEnumerable<string>>()
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.Header,
+                    withHeaders,
+                    new KeyValuePair<string, IEnumerable<object>>()
+                ),
+                DelegateTestCase.Create(
                     ResponseBuilderExtensions.ClientTimeout,
                     responseBuilder,
                     (TimeSpan?)null

@@ -255,20 +255,44 @@ public static class ResponseBuilderExtensions
     /// <param name="value">The header value or values.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="name" /> is <see langword="null" />.</exception>
-    public static IWithHeadersResult Header<T>(this IWithHeaders builder, string name, params T?[] value)
+    public static IWithHeadersResult Header<T>(this IWithHeaders builder, string name, params T[] value)
+    {
+        if (name is null)
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
+        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(name, value ?? Array.Empty<T>()));
+    }
+
+    /// <summary>
+    /// Adds a HTTP header value.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="header">The header.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
+    public static IWithHeadersResult Header<T>(this IWithHeaders builder, KeyValuePair<string, T> header)
+    {
+        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(header.Key, new [] { header.Value }));
+    }
+
+    /// <summary>
+    /// Adds a HTTP header value.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="header">The header.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
+    public static IWithHeadersResult Header<T>(this IWithHeaders builder, KeyValuePair<string, IEnumerable<T>> header)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        if (name is null)
-        {
-            throw new ArgumentNullException(nameof(name));
-        }
-
-        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        return builder.Headers(new HttpHeadersCollection { { name, value?.Select(ConvertToString).ToArray() ?? Array.Empty<string?>() } });
+        return builder.Headers(new HttpHeadersCollection { { header.Key, header.Value.Select(ConvertToString) } }!);
     }
 
     /// <summary>
@@ -358,7 +382,7 @@ public static class ResponseBuilderExtensions
         return builder.Latency(latency());
     }
 
-    private static string? ConvertToString<T>(T? v)
+    private static string? ConvertToString<T>(T v)
     {
         switch (v)
         {

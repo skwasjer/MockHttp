@@ -43,11 +43,11 @@ internal sealed class ResponseBuilder
             throw new ArgumentNullException(nameof(mediaType));
         }
 
-        return Headers(new HttpHeadersCollection { { "Content-Type", mediaType.ToString() } });
+        return Headers(new HttpHeadersCollection { { "Content-Type", mediaType.ToString() } }!);
     }
 
     /// <inheritdoc />
-    public IWithHeadersResult Headers(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
+    public IWithHeadersResult Headers(IEnumerable<KeyValuePair<string, IEnumerable<string?>>> headers)
     {
         if (headers is null)
         {

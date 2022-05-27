@@ -29,9 +29,9 @@ internal sealed class HttpHeaderBehavior
         "Server"
     };
 
-    private readonly IList<KeyValuePair<string, IEnumerable<string>>> _headers;
+    private readonly IList<KeyValuePair<string, IEnumerable<string?>>> _headers;
 
-    public HttpHeaderBehavior(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
+    public HttpHeaderBehavior(IEnumerable<KeyValuePair<string, IEnumerable<string?>>> headers)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _headers = headers?.ToList() ?? throw new ArgumentNullException(nameof(headers));
@@ -40,7 +40,7 @@ internal sealed class HttpHeaderBehavior
     public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
     {
         // ReSharper disable once UseDeconstruction
-        foreach (KeyValuePair<string, IEnumerable<string>> header in _headers)
+        foreach (KeyValuePair<string, IEnumerable<string?>> header in _headers)
         {
             Add(header, responseMessage);
         }
@@ -52,7 +52,7 @@ internal sealed class HttpHeaderBehavior
     /// When adding header, we have to differentiate between message headers and content headers and prevent adding the header to both.
     /// We also have to prevent adding values to an existing header that only allows a single value.
     /// </summary>
-    private static void Add(KeyValuePair<string, IEnumerable<string>> header, HttpResponseMessage responseMessage)
+    private static void Add(KeyValuePair<string, IEnumerable<string?>> header, HttpResponseMessage responseMessage)
     {
         // Special case handling of headers which only allow single values.
         if (HeadersWithSingleValueOnly.Contains(header.Key))
@@ -74,7 +74,7 @@ internal sealed class HttpHeaderBehavior
         }
     }
 
-    private static bool TryAdd(HttpHeaders? headers, string name, IEnumerable<string> values)
+    private static bool TryAdd(HttpHeaders? headers, string name, IEnumerable<string?> values)
     {
         if (headers is null)
         {
