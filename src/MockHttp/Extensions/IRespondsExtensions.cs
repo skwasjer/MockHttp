@@ -421,6 +421,7 @@ public static class IRespondsExtensions
 
         var builder = new ResponseBuilder();
         with(builder);
-        return responds.RespondUsing(builder);
+        IResponseStrategy responseStrategy = builder.Build();
+        return responds.RespondUsing(responseStrategy);
     }
 }

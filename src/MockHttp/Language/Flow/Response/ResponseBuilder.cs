@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,9 +8,8 @@ using MockHttp.Responses;
 
 namespace MockHttp.Language.Flow.Response;
 
-internal class ResponseBuilder
-    : IResponseStrategy,
-      IResponseBuilder,
+internal sealed class ResponseBuilder
+    : IResponseBuilder,
       IWithStatusCodeResult,
       IWithContentResult,
       IWithHeadersResult
@@ -17,37 +17,6 @@ internal class ResponseBuilder
     internal static readonly Encoding DefaultWebEncoding = Encoding.UTF8;
 
     private static readonly Func<MockHttpRequestContext, Task<HttpContent>> EmptyHttpContentFactory = _ => Task.FromResult<HttpContent>(new EmptyContent());
-    private static readonly Dictionary<Type, int> BehaviorPriority = new()
-    {
-        { typeof(TimeoutBehavior), 0 },
-        { typeof(NetworkLatencyBehavior), 1 },
-        { typeof(StatusCodeBehavior), 2 },
-        { typeof(HttpContentBehavior), 3 },
-        { typeof(HttpHeaderBehavior), 4 }
-    };
-
-    async Task<HttpResponseMessage> IResponseStrategy.ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
-    {
-        static Task Seed(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        var response = new HttpResponseMessage
-        {
-            RequestMessage = requestContext.Request
-        };
-
-        await Behaviors
-            .ToArray() // clone to array prevent the list from changing while executing.
-            .OrderBy(behavior => BehaviorPriority.TryGetValue(behavior.GetType(), out int priority) ? priority : int.MaxValue)
-            .Reverse()
-            .Aggregate((ResponseHandlerDelegate)Seed,
-                (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(context, message, next, ct)
-            )(requestContext, response, cancellationToken);
-
-        return response;
-    }
 
     /// <inheritdoc />
     public IList<IResponseBehavior> Behaviors { get; } = new List<IResponseBehavior>();
@@ -99,6 +68,45 @@ internal class ResponseBuilder
 
         Behaviors.Add(new HttpHeaderBehavior(headerList));
         return this;
+    }
+
+    internal IResponseStrategy Build()
+    {
+        return new ResponseStrategy(Behaviors);
+    }
+
+    private sealed class ResponseStrategy : IResponseStrategy
+    {
+        private readonly ReadOnlyCollection<IResponseBehavior> _invertedBehaviors;
+
+        public ResponseStrategy(IEnumerable<IResponseBehavior> behaviors)
+        {
+            _invertedBehaviors = new ReadOnlyCollection<IResponseBehavior>(
+                behaviors
+                    .Reverse()
+                    .ToList()
+            );
+        }
+
+        public async Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+        {
+            static Task Seed(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, CancellationToken cancellationToken)
+            {
+                return Task.CompletedTask;
+            }
+
+            var response = new HttpResponseMessage
+            {
+                RequestMessage = requestContext.Request
+            };
+
+            await _invertedBehaviors
+                .Aggregate((ResponseHandlerDelegate)Seed,
+                    (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(context, message, next, ct)
+                )(requestContext, response, cancellationToken);
+
+            return response;
+        }
     }
 }
 
