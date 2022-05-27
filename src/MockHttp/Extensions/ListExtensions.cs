@@ -2,6 +2,29 @@
 
 internal static class ListExtensions
 {
+    internal static int IndexOf<T>(this IList<T> list, Type type)
+    {
+        if (list is null)
+        {
+            throw new ArgumentNullException(nameof(list));
+        }
+
+        if (type is null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].GetType() == type)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     internal static void Replace<T>(this IList<T> list, T instance)
     {
         if (list is null)

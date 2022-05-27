@@ -286,7 +286,15 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.Behaviors.Replace(new NetworkLatencyBehavior(latency));
+        int existingIndex = builder.Behaviors.IndexOf(typeof(NetworkLatencyBehavior));
+        if (existingIndex == -1)
+        {
+            builder.Behaviors.Insert(0, new NetworkLatencyBehavior(latency));
+        }
+        else
+        {
+            builder.Behaviors[existingIndex] = new NetworkLatencyBehavior(latency);
+        }
         return builder;
     }
 
