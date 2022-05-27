@@ -12,6 +12,7 @@ using Xunit;
 
 namespace MockHttp.Json;
 
+[Obsolete(DeprecationWarnings.RespondsExtensions, false)]
 public sealed class JsonRespondsExtensionsTests : IDisposable
 {
     private readonly IResponds<ISequenceResponseResult> _sut;

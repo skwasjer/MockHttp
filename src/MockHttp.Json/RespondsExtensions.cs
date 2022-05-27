@@ -1,13 +1,17 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Language.Flow.Response;
+using MockHttp.Language.Response;
 
 namespace MockHttp.Json;
 
 /// <summary>
 /// JSON extensions for <see cref="IResponds{TResult}" />.
 /// </summary>
+[Obsolete(DeprecationWarnings.RespondsExtensions, false)]
 public static class RespondsExtensions
 {
     /// <summary>
@@ -15,6 +19,7 @@ public static class RespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content)
         where TResult : IResponseResult
     {
@@ -26,6 +31,7 @@ public static class RespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content)
         where TResult : IResponseResult
     {
@@ -38,6 +44,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content)
         where TResult : IResponseResult
     {
@@ -50,6 +57,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content)
         where TResult : IResponseResult
     {
@@ -62,6 +70,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
@@ -74,6 +83,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
@@ -87,6 +97,7 @@ public static class RespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
@@ -100,6 +111,7 @@ public static class RespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType)
         where TResult : IResponseResult
     {
@@ -114,6 +126,7 @@ public static class RespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="adapter">The JSON adapter.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, MediaTypeHeaderValue? mediaType, IJsonAdapter? adapter)
         where TResult : IResponseResult
     {
@@ -122,16 +135,25 @@ public static class RespondsExtensions
             throw new ArgumentNullException(nameof(responds));
         }
 
-        MediaTypeHeaderValue mt = mediaType ?? MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
+        Encoding? enc = mediaType?.CharSet is not null
+            ? Encoding.GetEncoding(mediaType.CharSet)
+            : null;
 
-        return responds.RespondUsing(
-            new JsonResponseStrategy<T>(
-                statusCode,
-                content,
-                mt,
-                adapter
-            )
-        );
+        IWithResponse With(IWithStatusCode with)
+        {
+            IWithContentResult builder = with
+                .StatusCode(statusCode)
+                .JsonBody(ctx => content(ctx.Request), enc, adapter);
+
+            if (mediaType is not null)
+            {
+                return builder.ContentType(mediaType);
+            }
+
+            return builder;
+        }
+
+        return responds.Respond(with => With(with));
     }
 
     /// <summary>
@@ -140,6 +162,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, T content, string? mediaType)
         where TResult : IResponseResult
     {
@@ -152,6 +175,7 @@ public static class RespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, T> content, string? mediaType)
         where TResult : IResponseResult
     {
@@ -165,6 +189,7 @@ public static class RespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, T content, string? mediaType)
         where TResult : IResponseResult
     {
@@ -178,6 +203,7 @@ public static class RespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<HttpRequestMessage, T> content, string? mediaType)
         where TResult : IResponseResult
     {

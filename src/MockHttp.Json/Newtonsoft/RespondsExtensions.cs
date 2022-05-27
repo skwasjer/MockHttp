@@ -9,6 +9,7 @@ namespace MockHttp.Json.Newtonsoft;
 /// <summary>
 /// JSON extensions for <see cref="IResponds{TResult}" />.
 /// </summary>
+[Obsolete(DeprecationWarnings.RespondsExtensions, false)]
 public static class RespondsExtensions
 {
     /// <summary>
@@ -18,6 +19,7 @@ public static class RespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>
     (
         this IResponds<TResult> responds,
@@ -36,6 +38,7 @@ public static class RespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>
     (
         this IResponds<TResult> responds,
@@ -55,6 +58,7 @@ public static class RespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>
     (
         this IResponds<TResult> responds,
@@ -75,6 +79,7 @@ public static class RespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type. Can be null, in which case the default JSON content type will be used.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult RespondJson<T, TResult>
     (
         this IResponds<TResult> responds,

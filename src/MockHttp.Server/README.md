@@ -13,7 +13,11 @@ MockHttpHandler mockHttp = new MockHttpHandler();
 // Configure setup(s).
 mockHttp
     .When(matching => matching.Method("GET"))
-    .Respond(HttpStatusCode.OK)
+    .Respond(with => with
+        .StatusCode(200)
+        .JsonBody("<b>Hello world</b>")
+        .ContentType("text/html")
+    )
     .Verifiable();
 
 // Mount the mock handler in a server.

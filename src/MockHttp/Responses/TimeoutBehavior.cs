@@ -1,12 +1,14 @@
-﻿namespace MockHttp.Responses;
+﻿#nullable enable
+namespace MockHttp.Responses;
 
-internal sealed class TimeoutStrategy : IResponseStrategy
+internal sealed class TimeoutBehavior
+    : IResponseBehavior
 {
     private readonly TimeSpan _timeoutAfter;
 
-    public TimeoutStrategy(TimeSpan timeoutAfter)
+    public TimeoutBehavior(TimeSpan timeoutAfter)
     {
-        if (timeoutAfter.TotalMilliseconds <= -1L || timeoutAfter.TotalMilliseconds > int.MaxValue)
+        if (timeoutAfter.TotalMilliseconds is <= -1L or > int.MaxValue)
         {
             throw new ArgumentOutOfRangeException(nameof(timeoutAfter));
         }
@@ -14,7 +16,7 @@ internal sealed class TimeoutStrategy : IResponseStrategy
         _timeoutAfter = timeoutAfter;
     }
 
-    public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
+    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
     {
         // It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does atm,
         // so we simulate same behavior.
@@ -30,3 +32,4 @@ internal sealed class TimeoutStrategy : IResponseStrategy
             .Unwrap();
     }
 }
+#nullable restore

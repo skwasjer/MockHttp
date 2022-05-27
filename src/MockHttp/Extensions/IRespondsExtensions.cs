@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Language.Flow.Response;
 using MockHttp.Responses;
 
 namespace MockHttp;
@@ -76,10 +77,11 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode)
         where TResult : IResponseResult
     {
-        return responds.Respond(() => new HttpResponseMessage(statusCode));
+        return responds.Respond(with => with.StatusCode(statusCode));
     }
 
     /// <summary>
@@ -87,6 +89,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, string content)
         where TResult : IResponseResult
     {
@@ -99,6 +102,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content)
         where TResult : IResponseResult
     {
@@ -111,6 +115,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, string mediaType)
         where TResult : IResponseResult
     {
@@ -124,6 +129,7 @@ public static class IRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, string mediaType)
         where TResult : IResponseResult
     {
@@ -136,6 +142,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -149,6 +156,7 @@ public static class IRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -157,13 +165,11 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return responds.Respond(() => new HttpResponseMessage(statusCode)
-        {
-            Content = new StringContent(content)
-            {
-                Headers = { ContentType = mediaType }
-            }
-        });
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(content)
+            .ContentType(mediaType ?? new MediaTypeHeaderValue(MediaTypes.DefaultMediaType))
+        );
     }
 
     /// <summary>
@@ -173,6 +179,7 @@ public static class IRespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="encoding">The encoding.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, string content, Encoding encoding, string mediaType)
         where TResult : IResponseResult
     {
@@ -187,10 +194,11 @@ public static class IRespondsExtensions
     /// <param name="content">The response content.</param>
     /// <param name="encoding">The encoding.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, string content, Encoding encoding, string mediaType)
         where TResult : IResponseResult
     {
-        return responds.Respond(statusCode, content, new MediaTypeHeaderValue(mediaType ?? "text/plain") { CharSet = (encoding ?? Encoding.UTF8).WebName });
+        return responds.Respond(statusCode, content, new MediaTypeHeaderValue(mediaType ?? MediaTypes.DefaultMediaType) { CharSet = (encoding ?? ResponseBuilder.DefaultWebEncoding).WebName });
     }
 
     /// <summary>
@@ -198,6 +206,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="streamContent">The response stream.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream streamContent)
         where TResult : IResponseResult
     {
@@ -210,6 +219,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="streamContent">The response stream.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream streamContent, string mediaType)
         where TResult : IResponseResult
     {
@@ -222,6 +232,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="streamContent">The response stream.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent)
         where TResult : IResponseResult
     {
@@ -235,6 +246,7 @@ public static class IRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="streamContent">The response stream.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent, string mediaType)
         where TResult : IResponseResult
     {
@@ -247,6 +259,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="streamContent">The response stream.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, Stream streamContent, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -260,6 +273,7 @@ public static class IRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="streamContent">The response stream.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Stream streamContent, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -273,14 +287,11 @@ public static class IRespondsExtensions
             throw new ArgumentException("Cannot read from stream.", nameof(streamContent));
         }
 
-        byte[] buffer;
-        using (var ms = new MemoryStream())
-        {
-            streamContent.CopyTo(ms);
-            buffer = ms.ToArray();
-        }
-
-        return responds.Respond(statusCode, () => new MemoryStream(buffer), mediaType);
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(streamContent)
+            .ContentType(mediaType ?? new MediaTypeHeaderValue(MediaTypes.DefaultMediaType))
+        );
     }
 
     /// <summary>
@@ -290,6 +301,7 @@ public static class IRespondsExtensions
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="streamContent">The factory to create the response stream with.</param>
     /// <param name="mediaType">The media type.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, Func<Stream> streamContent, MediaTypeHeaderValue mediaType)
         where TResult : IResponseResult
     {
@@ -303,7 +315,11 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(streamContent));
         }
 
-        return responds.RespondUsing(new FromStreamStrategy(statusCode, streamContent, mediaType));
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            .Body(streamContent)
+            .ContentType(mediaType ?? new MediaTypeHeaderValue(MediaTypes.DefaultMediaType))
+        );
     }
 
     /// <summary>
@@ -311,6 +327,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static T Respond<T>(this IResponds<T> responds, HttpContent content)
         where T : IResponseResult
     {
@@ -323,6 +340,7 @@ public static class IRespondsExtensions
     /// <param name="responds"></param>
     /// <param name="statusCode">The status code response for given request.</param>
     /// <param name="content">The response content.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, HttpStatusCode statusCode, HttpContent content)
         where TResult : IResponseResult
     {
@@ -336,16 +354,18 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return responds.Respond(async () => new HttpResponseMessage(statusCode)
-        {
-            Content = await content.CloneAsByteArrayContentAsync().ConfigureAwait(false)
-        });
+        return responds.Respond(with => with
+            .StatusCode(statusCode)
+            // Caller is responsible for disposal of the original content.
+            .Body(async _ => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
+        );
     }
 
     /// <summary>
     /// Specifies to throw a <see cref="TaskCanceledException" /> simulating a HTTP request timeout.
     /// </summary>
     /// <param name="responds"></param>
+    [Obsolete(DeprecationWarnings.RespondsTimeoutExtensions, false)]
     public static TResult TimesOut<TResult>(this IResponds<TResult> responds)
         where TResult : IResponseResult
     {
@@ -357,6 +377,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="timeoutAfterMilliseconds">The number of milliseconds after which the timeout occurs.</param>
+    [Obsolete(DeprecationWarnings.RespondsTimeoutExtensions, false)]
     public static TResult TimesOutAfter<TResult>(this IResponds<TResult> responds, int timeoutAfterMilliseconds)
         where TResult : IResponseResult
     {
@@ -368,6 +389,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="timeoutAfter">The time after which the timeout occurs.</param>
+    [Obsolete(DeprecationWarnings.RespondsTimeoutExtensions, false)]
     public static TResult TimesOutAfter<TResult>(this IResponds<TResult> responds, TimeSpan timeoutAfter)
         where TResult : IResponseResult
     {
@@ -376,6 +398,29 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(responds));
         }
 
-        return responds.RespondUsing(new TimeoutStrategy(timeoutAfter));
+        return responds.Respond(with => with.ClientTimeout(timeoutAfter));
+    }
+
+    /// <summary>
+    /// Specifies to throw a <see cref="TaskCanceledException" /> after a specified amount of time, simulating a HTTP request timeout.
+    /// </summary>
+    /// <param name="responds"></param>
+    /// <param name="with">The response builder.</param>
+    public static TResult Respond<TResult>(this IResponds<TResult> responds, Action<IResponseBuilder> with)
+        where TResult : IResponseResult
+    {
+        if (responds is null)
+        {
+            throw new ArgumentNullException(nameof(responds));
+        }
+
+        if (with is null)
+        {
+            throw new ArgumentNullException(nameof(with));
+        }
+
+        var builder = new ResponseBuilder();
+        with(builder);
+        return responds.RespondUsing(builder);
     }
 }
