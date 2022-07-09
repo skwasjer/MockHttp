@@ -14,13 +14,26 @@ public static class RequestMatchingExtensions
     /// <param name="content">The JSON request content.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
     /// <returns>The request matching builder instance.</returns>
+    [Obsolete(DeprecationWarnings.JsonContent)]
     public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, JsonSerializerSettings? serializerSettings)
+    {
+        return builder.JsonBody(content, serializerSettings);
+    }
+
+    /// <summary>
+    /// Matches a request by the specified JSON request content.
+    /// </summary>
+    /// <param name="builder">The request matching builder instance.</param>
+    /// <param name="body">The JSON request body.</param>
+    /// <param name="serializerSettings">The serializer settings.</param>
+    /// <returns>The request matching builder instance.</returns>
+    public static RequestMatching JsonBody<T>(this RequestMatching builder, T body, JsonSerializerSettings? serializerSettings)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.JsonContent(content, new NewtonsoftAdapter(serializerSettings));
+        return builder.JsonBody(body, new NewtonsoftAdapter(serializerSettings));
     }
 }

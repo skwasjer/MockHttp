@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Text;
+using System.Text.Json;
 using FluentAssertions;
 using MockHttp.Json.Newtonsoft;
+using MockHttp.Json.SystemTextJson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Xunit;
@@ -26,15 +28,17 @@ public class JsonRequestMatchingExtensionTests
 
         _httpMock
             .When(m => m.JsonContent(obj))
-            .Respond(HttpStatusCode.OK);
+            .Respond(HttpStatusCode.OK)
+            .Verifiable();
 
         // Act
         HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent("{\"SomeProperty\": \"value\"}", Encoding.UTF8, "application/json"));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
+        _httpMock.Verify();
     }
-    
+
     [Fact]
     public async Task Given_not_a_json_content_matching_request_and_a_different_request_uri_when_matching_should_not_test_others_matcher()
     {
@@ -60,7 +64,8 @@ public class JsonRequestMatchingExtensionTests
     {
         _httpMock
             .When(m => m.JsonContent((object?)null))
-            .Respond(HttpStatusCode.OK);
+            .Respond(HttpStatusCode.OK)
+            .Verifiable();
 
         StringContent? content = hasContent
             ? new StringContent("", Encoding.UTF8, "application/json")
@@ -71,6 +76,7 @@ public class JsonRequestMatchingExtensionTests
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
+        _httpMock.Verify();
     }
 
     [Theory]
@@ -92,13 +98,42 @@ public class JsonRequestMatchingExtensionTests
 
         _httpMock
             .When(m => m.JsonContent(testClass, serializerSettings))
-            .Respond(HttpStatusCode.OK);
+            .Respond(HttpStatusCode.OK)
+            .Verifiable();
 
         // Act
         HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
+        _httpMock.Verify();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task When_matching_with_custom_serializerOptions_it_should_match(bool useDefaultSerializer)
+    {
+        JsonSerializerOptions? serializerOptions = useDefaultSerializer
+            ? null
+            : new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+        string postJson = useDefaultSerializer ? "{\"SomeProperty\":\"value\"}" : "{\"someProperty\":\"value\"}";
+        var testClass = new TestClass { SomeProperty = "value" };
+
+        _httpMock
+            .When(m => m.JsonBody(testClass, serializerOptions))
+            .Respond(HttpStatusCode.OK)
+            .Verifiable();
+
+        // Act
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
+
+        // Assert
+        response.Should().HaveStatusCode(HttpStatusCode.OK);
+        _httpMock.Verify();
     }
 
     [Theory]
@@ -122,12 +157,14 @@ public class JsonRequestMatchingExtensionTests
 
         _httpMock
             .When(m => m.JsonContent(testClass))
-            .Respond(HttpStatusCode.OK);
+            .Respond(HttpStatusCode.OK)
+            .Verifiable();
 
         // Act
         HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
+        _httpMock.Verify();
     }
 }

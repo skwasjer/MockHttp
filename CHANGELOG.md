@@ -4,6 +4,7 @@
 
 - Added new fluent response API which provides more flexibility and control over the response. This new API replaces the current `.Respond()` API, and as such most of the old methods/overloads are now deprecated and will be removed in v4.
 - Added `RateLimitedStream` helper to simulate network transfer rates.
+- Renamed `Content`, `PartialContent`, `JsonContent` request matchers to `Body`, `PartialBody`, `JsonBody` respectively. The old methods are obsolete and will be removed in v4.
 
 ## v3.0.1
 

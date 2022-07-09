@@ -11,9 +11,21 @@ public static class JsonRequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="content">The JSON request content.</param>
     /// <returns>The request matching builder instance.</returns>
+    [Obsolete(DeprecationWarnings.JsonContent)]
     public static RequestMatching JsonContent<T>(this RequestMatching builder, T content)
     {
-        return builder.JsonContent(content, null);
+        return builder.JsonBody(content);
+    }
+
+    /// <summary>
+    /// Matches a request by the specified JSON request content.
+    /// </summary>
+    /// <param name="builder">The request matching builder instance.</param>
+    /// <param name="content">The JSON request body.</param>
+    /// <returns>The request matching builder instance.</returns>
+    public static RequestMatching JsonBody<T>(this RequestMatching builder, T content)
+    {
+        return builder.JsonBody(content, null);
     }
 
     /// <summary>
@@ -23,13 +35,26 @@ public static class JsonRequestMatchingExtensions
     /// <param name="content">The JSON request content.</param>
     /// <param name="adapter">The JSON adapter.</param>
     /// <returns>The request matching builder instance.</returns>
+    [Obsolete(DeprecationWarnings.JsonContent)]
     public static RequestMatching JsonContent<T>(this RequestMatching builder, T content, IJsonAdapter? adapter)
+    {
+        return builder.JsonBody(content, adapter);
+    }
+
+    /// <summary>
+    /// Matches a request by the specified JSON request content.
+    /// </summary>
+    /// <param name="builder">The request matching builder instance.</param>
+    /// <param name="body">The JSON request body.</param>
+    /// <param name="adapter">The JSON adapter.</param>
+    /// <returns>The request matching builder instance.</returns>
+    public static RequestMatching JsonBody<T>(this RequestMatching builder, T body, IJsonAdapter? adapter)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new JsonContentMatcher(content, adapter));
+        return builder.With(new JsonContentMatcher(body, adapter));
     }
 }

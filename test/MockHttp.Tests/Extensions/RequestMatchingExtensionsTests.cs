@@ -858,6 +858,43 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.PartialContent,
                     instance,
                     streamMock.Object),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.Body,
+                    instance,
+                    "content"),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.Body,
+                    instance,
+                    "content",
+                    (Encoding)null),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.Body,
+                    instance,
+                    Encoding.UTF8.GetBytes("content")),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.Body,
+                    instance,
+                    streamMock.Object),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.WithoutBody,
+                    instance),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.PartialBody,
+                    instance,
+                    "partial content"),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.PartialBody,
+                    instance,
+                    "partial content",
+                    (Encoding)null),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.PartialBody,
+                    instance,
+                    Encoding.UTF8.GetBytes("partial content")),
+                DelegateTestCase.Create(
+                    RequestMatchingExtensions.PartialBody,
+                    instance,
+                    streamMock.Object),
                 DelegateTestCase.Create<RequestMatching, Action<RequestMatching>, RequestMatching>(
                     RequestMatchingExtensions.Any,
                     instance,

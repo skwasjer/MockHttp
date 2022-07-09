@@ -12,7 +12,7 @@ MockHttpHandler mockHttp = new MockHttpHandler();
 // Configure setup(s).
 mockHttp
     .When(matching => matching
-        .JsonContent(new { id = 123 })
+        .JsonBody(new { id = 123 })
         .Method("GET")
         .RequestUri("http://localhost/controller/*")
     )
