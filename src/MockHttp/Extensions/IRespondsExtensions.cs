@@ -32,7 +32,7 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(response));
         }
 
-        return responds.Respond((_, _) => Task.FromResult(response()));
+        return responds.RespondUsing(new ResponseFuncStrategy((_, _) => Task.FromResult(response())));
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public static class IRespondsExtensions
             throw new ArgumentNullException(nameof(response));
         }
 
-        return responds.Respond((request, _) => Task.FromResult(response(request)));
+        return responds.RespondUsing(new ResponseFuncStrategy((request, _) => Task.FromResult(response(request))));
     }
 
     /// <summary>

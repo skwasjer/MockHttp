@@ -7,4 +7,5 @@ internal static class DeprecationWarnings
     public const string RequestContent = "Obsolete, will be removed in next major release. Use the fluent .When(matching => matching.Body(..)) fluent API.";
     public const string RequestWithoutContent = "Obsolete, will be removed in next major release. Use the fluent .When(matching => matching.WithoutBody()) fluent API.";
     public const string RequestPartialContent = "Obsolete, will be removed in next major release. Use the fluent .When(matching => matching.PartialBody(..)) fluent API.";
+    public const string RespondsResult = "Obsolete, will be removed in next major release.";
 }

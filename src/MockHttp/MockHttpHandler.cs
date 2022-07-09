@@ -101,7 +101,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         _fallbackSetup.Reset();
         _setups.Clear();
 
-        Fallback.Respond(_ => CreateDefaultResponse());
+        Fallback.Respond(with => with.StatusCode(HttpStatusCode.NotFound, "No request is configured, returning default response."));
     }
 
     /// <summary>
@@ -257,11 +257,6 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         }
 
         throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}{invokedRequestsStr}");
-    }
-
-    private static HttpResponseMessage CreateDefaultResponse()
-    {
-        return new HttpResponseMessage(HttpStatusCode.NotFound) { ReasonPhrase = "No request is configured, returning default response." };
     }
 
     private static async Task LoadIntoBufferAsync(HttpContent httpContent)
