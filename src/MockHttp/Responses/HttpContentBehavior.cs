@@ -12,7 +12,7 @@ internal sealed class HttpContentBehavior
 
     public async Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
     {
-        responseMessage.Content = await _httpContentFactory(cancellationToken);
+        responseMessage.Content = await _httpContentFactory(cancellationToken).ConfigureAwait(false);
         await next(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
     }
 }
