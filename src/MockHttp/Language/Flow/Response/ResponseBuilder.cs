@@ -13,8 +13,6 @@ internal sealed class ResponseBuilder
       IWithContentResult,
       IWithHeadersResult
 {
-    internal static readonly Encoding DefaultWebEncoding = Encoding.UTF8;
-
     private static readonly Func<CancellationToken, Task<HttpContent>> EmptyHttpContentFactory = _ => Task.FromResult<HttpContent>(new EmptyContent());
 
     /// <inheritdoc />
@@ -102,7 +100,8 @@ internal sealed class ResponseBuilder
             await _invertedBehaviors
                 .Aggregate((ResponseHandlerDelegate)Seed,
                     (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(context, message, next, ct)
-                )(requestContext, response, cancellationToken);
+                )(requestContext, response, cancellationToken)
+                .ConfigureAwait(false);
 
             return response;
         }

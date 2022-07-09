@@ -127,8 +127,8 @@ public class NetworkLatency
     internal async Task<TimeSpan> SimulateAsync(Func<Task> task, CancellationToken cancellationToken = default)
     {
         TimeSpan latency = _factory();
-        await TaskHelpers.HighResDelay(latency, cancellationToken);
-        await task();
+        await TaskHelpers.HighResDelay(latency, cancellationToken).ConfigureAwait(false);
+        await task().ConfigureAwait(false);
         return latency;
     }
 
