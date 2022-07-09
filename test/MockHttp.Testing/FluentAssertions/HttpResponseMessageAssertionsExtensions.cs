@@ -125,7 +125,7 @@ public static class HttpResponseMessageAssertionsExtensions
             .ForCondition(currentContentBytes.SequenceEqual(expectedContentBytes))
             // Using UTF-8 for fail msg, but this will not produce correct result for other encodings or binary responses.
             // Since this is a private test helper, we accept this for now.
-            .FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", Encoding.UTF8.GetString(currentContentBytes), Encoding.UTF8.GetString(expectedContentBytes));
+             .FailWith("Expected response with content {0} to match {1}{reason}, but it did not.", Encoding.UTF8.GetString(expectedContentBytes), Encoding.UTF8.GetString(currentContentBytes));
 
         return new AndConstraint<HttpResponseMessageAssertions>(should);
     }
