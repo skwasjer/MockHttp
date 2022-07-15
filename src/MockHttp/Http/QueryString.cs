@@ -6,7 +6,7 @@ namespace MockHttp.Http;
 [DebuggerDisplay("{ToString(),nq}")]
 internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 {
-    private static readonly Uri UnknownBaseUri = new("http://0.0.0.0");
+    private static readonly Uri UnknownBaseUri = new("https://0.0.0.0");
 
     private const char TokenQuestionMark = '?';
     private const char TokenTerminator = '#';
