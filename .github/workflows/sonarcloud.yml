@@ -13,6 +13,9 @@ permissions:
 jobs:
   Analysis:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        framework-version: [net6.0, netcoreapp3.1]
 
     steps:
       - name: Checkout repository
@@ -47,6 +50,6 @@ jobs:
         run: |
           dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /o:"$SONAR_ORG_KEY" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login="$SONAR_TOKEN" /d:sonar.cs.opencover.reportsPaths="**/*opencover.xml"
 
-          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs"
+          dotnet test -c Release -f ${{ matrix.framework-version }} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs"
 
           dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
