@@ -1,0 +1,52 @@
+name: SonarCloud analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
+
+jobs:
+  Analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            6.0.x
+            5.0.x
+            3.1.x
+            2.1.x
+
+      - name: Install Sonar scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Install Coverlet
+        run: |
+          find ./test -type f -name "*Tests.csproj" -exec dotnet add "{}" package coverlet.msbuild \;
+
+      - name: Set env
+        run: |
+          echo "GITHUB_REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "SONAR_PROJECT_KEY=${GITHUB_REPOSITORY_OWNER}_${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "SONAR_ORG_KEY=${GITHUB_REPOSITORY_OWNER}" >> $GITHUB_ENV
+
+      - name: Analyze with SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /o:"$SONAR_ORG_KEY" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login="$SONAR_TOKEN" /d:sonar.cs.opencover.reportsPaths="**/*opencover.xml"
+
+          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs"
+
+          dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
