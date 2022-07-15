@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Net;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using MockHttp.IO;
 using MockHttp.Specs;
 
@@ -35,3 +34,4 @@ public class TransferRateSpec : ResponseSpec
         responseContent.Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 }
+#nullable restore

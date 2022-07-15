@@ -3,6 +3,7 @@
 ## v3.1.0-rc0002
 
 - fix: allow zero timespan in `ServerTimeout()` and `ClientTimeout()`.
+- fix: do not allow `RateLimitedStream` if the underlying stream is not seekable (except for via stream factory).
 
 ## v3.1.0-rc0001
 

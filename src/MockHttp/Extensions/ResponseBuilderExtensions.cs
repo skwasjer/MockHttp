@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
+using MockHttp.IO;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
 using MockHttp.Responses;
@@ -136,6 +137,7 @@ public static class ResponseBuilderExtensions
     /// Sets the stream content for the response.
     /// <para>This overload is not thread safe. Do not use when requests are (expected to be) served in parallel.</para>
     /// <para>This overload should not be used with large (> ~1 megabyte) non-seekable streams, due to internal buffering.</para>
+    /// <para>This overload cannot be used with a <see cref="RateLimitedStream" /> if the underlying stream is not seekable.</para>
     /// <para>If the above cases are true, it is recommend to use the overload that accepts <c>Func&lt;Stream&gt;</c>.</para>
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -172,8 +174,12 @@ public static class ResponseBuilderExtensions
             });
         }
 
-        // Because stream is not seekable, we must serve from byte buffer as the stream cannot be
-        // rewound and served more than once.
+        if (content is RateLimitedStream)
+        {
+            throw new InvalidOperationException("Cannot use a rate limited stream that is not seekable. Use the overload accepting a stream factory instead.");
+        }
+
+        // Because stream is not seekable, we must clone so it can be rewound and served more than once.
         // This could be an issue with very big streams.
         // Should we throw if greater than a certain size and force use of Func<Stream> instead?
         byte[] buffer;
