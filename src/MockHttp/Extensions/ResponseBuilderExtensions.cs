@@ -328,10 +328,18 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        TimeSpan timeout = timeoutAfter ?? TimeSpan.Zero;
+        if (timeoutAfter < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(timeoutAfter), "The timeout cannot be less than 00:00:00.");
+        }
+
         IWithStatusCodeResult statusCodeResult = builder.StatusCode(HttpStatusCode.RequestTimeout);
-        statusCodeResult.Latency(NetworkLatency.Between(timeout, timeout.Add(TimeSpan.FromMilliseconds(1))));
-        return statusCodeResult;
+        if (!timeoutAfter.HasValue || timeoutAfter == TimeSpan.Zero)
+        {
+            return statusCodeResult;
+        }
+
+        return (IWithStatusCodeResult)statusCodeResult.Latency(NetworkLatency.Around(timeoutAfter.Value));
     }
 
     /// <summary>

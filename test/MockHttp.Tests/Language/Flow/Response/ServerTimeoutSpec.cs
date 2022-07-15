@@ -9,18 +9,29 @@ namespace MockHttp.Language.Flow.Response;
 public class ServerTimeoutSpec : ResponseSpec
 {
     private readonly Stopwatch _stopwatch = new();
-    private readonly TimeSpan _timeoutAfter = TimeSpan.FromMilliseconds(500);
+
+    public ServerTimeoutSpec()
+        : this(TimeSpan.FromMilliseconds(500))
+    {
+    }
+
+    protected ServerTimeoutSpec(TimeSpan? timeoutAfter)
+    {
+        TimeoutAfter = timeoutAfter;
+    }
+
+    public TimeSpan? TimeoutAfter { get; }
 
     protected override void Given(IResponseBuilder with)
     {
-        with.ServerTimeout(_timeoutAfter);
+        with.ServerTimeout(TimeoutAfter);
         _stopwatch.Start();
     }
 
     protected override Task Should(HttpResponseMessage response)
     {
         _stopwatch.Stop();
-        _stopwatch.Elapsed.Should().BeGreaterThanOrEqualTo(_timeoutAfter);
+        _stopwatch.Elapsed.Should().BeGreaterThanOrEqualTo(TimeoutAfter ?? TimeSpan.Zero);
         response.Should().HaveStatusCode(HttpStatusCode.RequestTimeout);
         return Task.CompletedTask;
     }

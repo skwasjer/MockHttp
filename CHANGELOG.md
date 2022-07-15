@@ -1,6 +1,10 @@
 # Changelog
 
-## v3.1.0-rcX
+## v3.1.0-rc0002
+
+- fix: allow zero timespan in ServerTimeout()
+
+## v3.1.0-rc0001
 
 - Added new fluent response API which provides more flexibility and control over the response. This new API replaces the current `.Respond()` API, and as such most of the old methods/overloads are now deprecated and will be removed in v4.
 - Added `RateLimitedStream` helper to simulate network transfer rates.
