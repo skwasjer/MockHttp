@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -144,7 +145,8 @@ public static class HttpResponseMessageAssertionsExtensions
     (
         this HttpResponseMessageAssertions should,
         string key,
-        string value,
+        // ReSharper disable once UseNullableAnnotationInsteadOfAttribute
+        [AllowNull] string value,
         string because = "",
         params object[] becauseArgs)
     {
@@ -155,7 +157,8 @@ public static class HttpResponseMessageAssertionsExtensions
     (
         this HttpResponseMessageAssertions should,
         string key,
-        IEnumerable<string> values,
+        // ReSharper disable once UseNullableAnnotationInsteadOfAttribute
+        [AllowNull] IEnumerable<string> values,
         string because = "",
         params object[] becauseArgs)
     {

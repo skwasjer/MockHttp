@@ -11,12 +11,17 @@ internal static class NameValueCollectionExtensions
             throw new ArgumentNullException(nameof(nameValueCollection));
         }
 
-        foreach (string key in nameValueCollection)
+        return Iterator(nameValueCollection);
+
+        static IEnumerable<KeyValuePair<string, IEnumerable<string>>> Iterator(NameValueCollection nvc)
         {
-            yield return new KeyValuePair<string, IEnumerable<string>>(
-                key,
-                nameValueCollection.GetValues(key)
-            );
+            foreach (string key in nvc)
+            {
+                yield return new KeyValuePair<string, IEnumerable<string>>(
+                    key,
+                    nvc.GetValues(key)
+                );
+            }
         }
     }
 }

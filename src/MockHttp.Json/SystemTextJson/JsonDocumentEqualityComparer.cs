@@ -19,8 +19,7 @@ internal sealed class JsonDocumentEqualityComparer
             return true;
         }
 
-        if (x is null || y is null
-         || x.GetType() != typeof(JsonDocument) || y.GetType() != typeof(JsonDocument))
+        if (x is null || y is null)
         {
             return false;
         }

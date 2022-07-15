@@ -37,9 +37,9 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         where TException : Exception
     {
         Execute.Assertion
-            .ForCondition((object)Subject is not null)
+            .ForCondition((object?)Subject is not null)
             .BecauseOf(because, becauseArgs)
-            .FailWith("Expected {context} to throw {0}{reason}, but found <null>.", (object)typeof(TException));
+            .FailWith("Expected {context} to throw {0}{reason}, but found <null>.", typeof(TException));
 
         return ThrowInternal<TException>(InvokeSubjectWithInterception(args), because, becauseArgs);
     }
@@ -66,7 +66,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         try
         {
             // ReSharper disable once PossibleNullReferenceException
-            return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke());
+            return new AndWhichConstraint<DelegateAssertions, object>(this, Subject!.DynamicInvoke()!);
         }
         catch (TargetInvocationException ex) when (ex.InnerException is not null)
         {
@@ -104,7 +104,7 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         try
         {
             // ReSharper disable once PossibleNullReferenceException
-            return new AndWhichConstraint<DelegateAssertions, object>(this, Subject.DynamicInvoke(args));
+            return new AndWhichConstraint<DelegateAssertions, object>(this, Subject!.DynamicInvoke(args)!);
         }
         catch (TargetInvocationException ex) when (ex.InnerException is not null)
         {
@@ -118,9 +118,9 @@ public class DelegateAssertions : DelegateAssertions<System.Delegate, DelegateAs
         }
     }
 
-    private Exception InvokeSubjectWithInterception(object[] args)
+    private Exception? InvokeSubjectWithInterception(object[] args)
     {
-        Exception exception = null;
+        Exception? exception = null;
         try
         {
             Subject.DynamicInvoke(args);

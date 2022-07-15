@@ -441,7 +441,7 @@ public static class IRespondsExtensions
         return responds.RespondUsing(new RequestSpecificResponseBuilder(with));
     }
 
-    private class RequestSpecificResponseBuilder : IResponseStrategy
+    private sealed class RequestSpecificResponseBuilder : IResponseStrategy
     {
         private readonly Action<MockHttpRequestContext, IResponseBuilder> _with;
 

@@ -42,31 +42,33 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
     }
 
     /// <inheritdoc />
-    public virtual async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
+    public virtual Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
         if (requestContext is null)
         {
             throw new ArgumentNullException(nameof(requestContext));
         }
 
-        if (!CanProcessContent(requestContext.Request.Content))
+        return CanProcessContent(requestContext.Request.Content)
+            ? InternalIsMatchAsync(requestContext)
+            : Task.FromResult(false);
+
+        async Task<bool> InternalIsMatchAsync(MockHttpRequestContext mockHttpRequestContext)
         {
-            return false;
+            IDictionary<string, IEnumerable<string>> formData = await GetFormDataAsync(mockHttpRequestContext.Request.Content).ConfigureAwait(false);
+
+            // When match collection is empty, behavior is flipped, and we expect no form data parameters on request.
+            if (_matchQs.Count == 0 && formData.Count > 0)
+            {
+                return false;
+            }
+
+            return _matchQs.All(q => formData.ContainsKey(q.Key)
+             && (
+                BothAreEmpty(formData[q.Key], q.Value)
+             || HasOneOf(formData[q.Key], q.Value))
+            );
         }
-
-        IDictionary<string, IEnumerable<string>> formData = await GetFormDataAsync(requestContext.Request.Content).ConfigureAwait(false);
-
-        // When match collection is empty, behavior is flipped, and we expect no form data parameters on request.
-        if (_matchQs.Count == 0 && formData.Count > 0)
-        {
-            return false;
-        }
-
-        return _matchQs.All(q => formData.ContainsKey(q.Key)
-         && (
-            BothAreEmpty(formData[q.Key], q.Value)
-         || HasOneOf(formData[q.Key], q.Value))
-        );
     }
 
     private static bool BothAreEmpty(IEnumerable<string> left, IEnumerable<string> right)

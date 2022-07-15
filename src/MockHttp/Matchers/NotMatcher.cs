@@ -19,14 +19,19 @@ internal class NotMatcher : IAsyncHttpRequestMatcher
     }
 
     /// <inheritdoc />
-    public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
+    public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
         if (requestContext is null)
         {
             throw new ArgumentNullException(nameof(requestContext));
         }
 
-        return !await _matcher.IsMatchAsync(requestContext).ConfigureAwait(false);
+        return InternalIsMatchAsync(requestContext);
+
+        async Task<bool> InternalIsMatchAsync(MockHttpRequestContext mockHttpRequestContext)
+        {
+            return !await _matcher.IsMatchAsync(mockHttpRequestContext).ConfigureAwait(false);
+        }
     }
 
     /// <inheritdoc />

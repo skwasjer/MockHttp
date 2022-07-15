@@ -69,7 +69,7 @@ public class NetworkLatency
     }
 
     /// <summary>
-    /// Configures a latency to be around <paramref name="latency" />.
+    /// Configures a latency to be around <paramref name="latencyInMs" />.
     /// </summary>
     /// <param name="latencyInMs">The latency in milliseconds.</param>
     public static NetworkLatency Around(int latencyInMs)

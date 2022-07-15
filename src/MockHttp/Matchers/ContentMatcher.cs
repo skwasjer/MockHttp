@@ -55,32 +55,37 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     protected internal byte[] ByteContent { get; }
 
     /// <inheritdoc />
-    public async Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
+    public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
         if (requestContext is null)
         {
             throw new ArgumentNullException(nameof(requestContext));
         }
 
-        byte[] requestContent = null;
-        if (requestContext.Request.Content is not null)
-        {
-            // Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
-            // In comparison, ReadAsStream() will return the underlying stream which can only be read once.
-            requestContent = await requestContext.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-        }
+        return InternalIsMatchAsync(requestContext);
 
-        if (requestContent is null)
+        async Task<bool> InternalIsMatchAsync(MockHttpRequestContext mockHttpRequestContext)
         {
-            return ByteContent.Length == 0;
-        }
+            byte[] requestContent = null;
+            if (mockHttpRequestContext.Request.Content is not null)
+            {
+                // Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.
+                // In comparison, ReadAsStream() will return the underlying stream which can only be read once.
+                requestContent = await mockHttpRequestContext.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            }
 
-        if (requestContent.Length == 0 && ByteContent.Length == 0)
-        {
-            return true;
-        }
+            if (requestContent is null)
+            {
+                return ByteContent.Length == 0;
+            }
 
-        return IsMatch(requestContent);
+            if (requestContent.Length == 0 && ByteContent.Length == 0)
+            {
+                return true;
+            }
+
+            return IsMatch(requestContent);
+        }
     }
 
     /// <inheritdoc />

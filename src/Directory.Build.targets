@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <WarningsAsErrors>NU1605;CS1591</WarningsAsErrors>
-    <NoWarn>$(NoWarn);IDE0079</NoWarn>
+    <NoWarn>$(NoWarn);IDE0079;S1939</NoWarn>
+    <NoWarn Condition="'$(Configuration)'=='Release'">$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

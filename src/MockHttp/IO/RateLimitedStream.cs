@@ -127,11 +127,6 @@ public class RateLimitedStream : Stream
             _samples.Dequeue();
         }
 
-        //if (_samples.Count == 0)
-        //{
-        //    return 0;
-        //}
-
         int bytesReadForAllSamples = _samples.Sum(m => m.BytesRead);
         TimeSpan totalSampleTime = _stopwatch.Elapsed - _samples.First().Time;
         return bytesReadForAllSamples / totalSampleTime.TotalSeconds;

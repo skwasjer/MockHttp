@@ -44,25 +44,29 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     public IRespondsThrows Fallback { get; }
 
     /// <inheritdoc />
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));
         }
 
-        await LoadIntoBufferAsync(request.Content).ConfigureAwait(false);
-
         var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
-        foreach (HttpCall setup in _setups.Reverse())
-        {
-            if (await setup.Matchers.AllAsync(requestContext).ConfigureAwait(false))
-            {
-                return await SendAsync(setup, requestContext, cancellationToken).ConfigureAwait(false);
-            }
-        }
+        return InternalSendAsync(cancellationToken, requestContext);
 
-        return await SendAsync(_fallbackSetup, requestContext, cancellationToken).ConfigureAwait(false);
+        async Task<HttpResponseMessage> InternalSendAsync(CancellationToken cancellationToken1, MockHttpRequestContext mockHttpRequestContext)
+        {
+            await LoadIntoBufferAsync(mockHttpRequestContext.Request.Content).ConfigureAwait(false);
+            foreach (HttpCall setup in _setups.Reverse())
+            {
+                if (await setup.Matchers.AllAsync(mockHttpRequestContext).ConfigureAwait(false))
+                {
+                    return await SendAsync(setup, mockHttpRequestContext, cancellationToken1).ConfigureAwait(false);
+                }
+            }
+
+            return await SendAsync(_fallbackSetup, mockHttpRequestContext, cancellationToken1).ConfigureAwait(false);
+        }
     }
 
     private Task<HttpResponseMessage> SendAsync(HttpCall setup, MockHttpRequestContext requestContext, CancellationToken cancellationToken)
@@ -102,6 +106,16 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         _setups.Clear();
 
         Fallback.Respond(with => with.StatusCode(HttpStatusCode.NotFound, "No request is configured, returning default response."));
+    }
+
+    /// <summary>
+    /// Verifies that all verifiable expected requests have been sent.
+    /// </summary>
+    public void Verify()
+    {
+        IEnumerable<HttpCall> verifiableSetups = _setups.Where(r => r.IsVerifiable);
+
+        Verify(verifiableSetups);
     }
 
     /// <summary>
@@ -146,7 +160,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public async Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
+    public Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
     {
         if (matching is null)
         {
@@ -160,40 +174,36 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 
         IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = rm.Build();
         IReadOnlyList<IInvokedHttpRequest> matchedRequests = InvokedRequests;
-        if (matchers.Count > 0)
+
+        return InternalVerifyAsync();
+
+        async Task InternalVerifyAsync()
         {
-            var list = new List<IInvokedHttpRequest>();
-            foreach (IInvokedHttpRequest invokedHttpRequest in InvokedRequests)
+            if (matchers.Count > 0)
             {
-                var requestContext = new MockHttpRequestContext(invokedHttpRequest.Request);
-                if (await matchers.AllAsync(requestContext).ConfigureAwait(false))
+                var list = new List<IInvokedHttpRequest>();
+                foreach (IInvokedHttpRequest invokedHttpRequest in InvokedRequests)
                 {
-                    list.Add(invokedHttpRequest);
+                    var requestContext = new MockHttpRequestContext(invokedHttpRequest.Request);
+                    if (await matchers.AllAsync(requestContext).ConfigureAwait(false))
+                    {
+                        list.Add(invokedHttpRequest);
+                    }
                 }
+
+                matchedRequests = list;
             }
 
-            matchedRequests = list;
+            if (!times.Verify(matchedRequests.Count))
+            {
+                throw new HttpMockException(times.GetErrorMessage(matchedRequests.Count, BecauseMessage(because)));
+            }
+
+            foreach (InvokedHttpRequest r in matchedRequests.Cast<InvokedHttpRequest>())
+            {
+                r.MarkAsVerified();
+            }
         }
-
-        if (!times.Verify(matchedRequests.Count))
-        {
-            throw new HttpMockException(times.GetErrorMessage(matchedRequests.Count, BecauseMessage(because)));
-        }
-
-        foreach (InvokedHttpRequest r in matchedRequests.Cast<InvokedHttpRequest>())
-        {
-            r.MarkAsVerified();
-        }
-    }
-
-    /// <summary>
-    /// Verifies that all verifiable expected requests have been sent.
-    /// </summary>
-    public void Verify()
-    {
-        IEnumerable<HttpCall> verifiableSetups = _setups.Where(r => r.IsVerifiable);
-
-        Verify(verifiableSetups);
     }
 
     /// <summary>
@@ -266,10 +276,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
             // Force read content, so content can be checked more than once.
             await httpContent.LoadIntoBufferAsync().ConfigureAwait(false);
             // Force read content length, in case it will be checked via header matcher.
-            // ReSharper disable once UnusedVariable
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-            long? cl = httpContent.Headers.ContentLength;
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
+            _ = httpContent.Headers.ContentLength;
         }
     }
 

@@ -6,6 +6,7 @@ namespace MockHttp;
 
 public static class NullArgumentTest
 {
+    [AssertionMethod]
     public static void Execute(params object[] testArgs)
     {
         if (testArgs is null)

@@ -52,7 +52,7 @@ public static class ResponseBuilderExtensions
         return (IWithContentResult)builder;
     }
 
-    private class JsonContentBehavior<T> : IResponseBehavior
+    private sealed class JsonContentBehavior<T> : IResponseBehavior
     {
         private readonly Func<T> _jsonContentFactory;
         private readonly Encoding? _encoding;

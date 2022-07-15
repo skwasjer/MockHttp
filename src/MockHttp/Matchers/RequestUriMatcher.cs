@@ -8,6 +8,8 @@ namespace MockHttp.Matchers;
 /// </summary>
 public class RequestUriMatcher : HttpRequestMatcher
 {
+    private const char UriSegmentDelimiter = '/';
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private Uri _requestUri;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -57,9 +59,9 @@ public class RequestUriMatcher : HttpRequestMatcher
         if (!_requestUri.IsAbsoluteUri)
         {
             string relUri = _requestUri.ToString();
-            if (relUri.Length > 0 && _requestUri.ToString()[0] != '/')
+            if (relUri.Length > 0 && _requestUri.ToString()[0] != UriSegmentDelimiter)
             {
-                _requestUri = new Uri("/" + _requestUri, UriKind.Relative);
+                _requestUri = new Uri($"{UriSegmentDelimiter}{_requestUri}", UriKind.Relative);
             }
         }
 
