@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.0-rc0003
+
+- Added `.XmlBody()` response builder extension for LINQ to XML.
+
 ## v3.1.0-rc0002
 
 - fix: allow zero timespan in `ServerTimeout()` and `ClientTimeout()`.

@@ -1,6 +1,8 @@
 ﻿#nullable enable
 using System.Net.Http.Headers;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using MockHttp.Language.Response;
 using Moq;
 using Xunit;
@@ -129,6 +131,12 @@ public class NullBuilderTests
                     ResponseBuilderExtensions.Latency,
                     responseBuilder,
                     () => NetworkLatency.FourG()
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderLinqToXmlExtensions.XmlBody,
+                    responseBuilder,
+                    new XDocument(),
+                    (XmlWriterSettings?)null
                 )
             };
 
