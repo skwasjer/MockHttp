@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Language.Response;
 using Moq;
@@ -17,13 +18,25 @@ public class NullBuilderTests
 
         public static IEnumerable<object[]> TestCases()
         {
+            var responseBuilderImpl = new ResponseBuilder();
             IResponseBuilder responseBuilder = Mock.Of<IResponseBuilder>();
             IWithContent withContent = Mock.Of<IWithContent>();
+            IWithStatusCode withStatusCode = Mock.Of<IWithStatusCode>();
             IWithContentType withContentType = Mock.Of<IWithContentType>();
             IWithHeaders withHeaders = Mock.Of<IWithHeaders>();
 
             DelegateTestCase[] testCases =
             {
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.StatusCode,
+                    withStatusCode,
+                    200,
+                    (string?)null
+                ),
+                DelegateTestCase.Create(
+                    responseBuilderImpl.Body,
+                    () => Task.FromResult<HttpContent>(new StringContent(""))
+                ),
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.Body,
                     withContent,
@@ -58,10 +71,18 @@ public class NullBuilderTests
                     () => Stream.Null
                 ),
                 DelegateTestCase.Create(
+                    responseBuilderImpl.ContentType,
+                    new MediaTypeHeaderValue("text/plain")
+                ),
+                DelegateTestCase.Create(
                     ResponseBuilderExtensions.ContentType,
                     withContentType,
                     "text/plain",
                     (Encoding?)null
+                ),
+                DelegateTestCase.Create(
+                    responseBuilderImpl.Headers,
+                    Enumerable.Empty<KeyValuePair<string, IEnumerable<string?>>>()
                 ),
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.Header,
