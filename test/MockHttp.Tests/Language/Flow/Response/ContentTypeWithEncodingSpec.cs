@@ -16,7 +16,7 @@ public class ContentTypeWithEncodingSpec : ResponseSpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        response.Should().HaveContentType("text/html; charset=utf-16");
+        response.Should().HaveContentType("text/html", Encoding.Unicode);
         return Task.CompletedTask;
     }
 }

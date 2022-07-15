@@ -22,7 +22,10 @@ public class StreamBodySpec : ByteBodySpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        return response.Should().HaveContentAsync(Content);
+        return response
+            .Should()
+            .HaveContentType(MediaTypes.OctetStream)
+            .And.HaveContentAsync(Content);
     }
 
     public override Task DisposeAsync()

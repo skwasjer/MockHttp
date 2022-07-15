@@ -14,10 +14,17 @@ public static class HttpResponseMessageAssertionsExtensions
     (
         this HttpResponseMessageAssertions should,
         string expectedMediaType,
+        Encoding? encoding = null,
         string because = "",
         params object[] becauseArgs)
     {
-        return should.HaveContentType(MediaTypeHeaderValue.Parse(expectedMediaType), because, becauseArgs);
+        var mediaType = MediaTypeHeaderValue.Parse(expectedMediaType);
+        if (encoding is not null)
+        {
+            mediaType.CharSet = encoding.WebName;
+        }
+
+        return should.HaveContentType(mediaType, because, becauseArgs);
     }
 
     public static AndConstraint<HttpResponseMessageAssertions> HaveContentType
@@ -39,6 +46,9 @@ public static class HttpResponseMessageAssertionsExtensions
             .FailWith("Expected response with content {0}{reason}, but found none.")
             .Then
             .ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || (expectedMediaType.CharSet is null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType)))
+            .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content!.Headers.ContentType)
+            .Then
+            .ForCondition(expectedMediaType.CharSet is null && subject.Content.Headers.ContentType?.CharSet is null || Equals(subject.Content.Headers.ContentType.CharSet, expectedMediaType.CharSet))
             .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content!.Headers.ContentType)
             ;
 

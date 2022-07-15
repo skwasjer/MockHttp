@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Formatting;
 using System.Runtime.Serialization;
+using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Json.Newtonsoft;
@@ -186,6 +187,6 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
         HttpResponseMessage actualResponse = await _httpClient.SendAsync(request, CancellationToken.None);
 
         // Assert
-        actualResponse.Should().HaveContentType(contentType);
+        actualResponse.Should().HaveContentType(contentType, Encoding.UTF8);
     }
 }

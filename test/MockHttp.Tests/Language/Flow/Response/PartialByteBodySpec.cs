@@ -13,7 +13,10 @@ public class PartialByteBodySpec : ByteBodySpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        return response.Should().HaveContentAsync(new byte[] { 5, 4, 3, 2 });
+        return response
+            .Should()
+            .HaveContentType(MediaTypes.OctetStream)
+            .And.HaveContentAsync(new byte[] { 5, 4, 3, 2 });
     }
 }
 #nullable restore

@@ -130,7 +130,9 @@ public static class ResponseBuilderExtensions
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        return builder.Body(() => Task.FromResult<HttpContent>(new ByteArrayContent(content, offset, count)));
+        return builder.Body(() => Task.FromResult<HttpContent>(
+            new ByteArrayContent(content, offset, count) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } })
+        );
     }
 
     /// <summary>
@@ -219,7 +221,9 @@ public static class ResponseBuilderExtensions
                 throw new InvalidOperationException("Cannot read from stream.");
             }
 
-            return Task.FromResult<HttpContent>(new StreamContent(stream));
+            return Task.FromResult<HttpContent>(
+                new StreamContent(stream) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } }
+            );
         });
     }
 

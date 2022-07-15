@@ -15,7 +15,10 @@ public class StringBodyWithEncodingSpec : ResponseSpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        return response.Should().HaveContentAsync("my text", Encoding.Unicode);
+        return response
+            .Should()
+            .HaveContentType(MediaTypes.TextPlain, Encoding.Unicode)
+            .And.HaveContentAsync("my text", Encoding.Unicode);
     }
 }
 #nullable restore

@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Specs;
@@ -14,7 +15,10 @@ public class StringBodySpec : ResponseSpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        return response.Should().HaveContentAsync("my text");
+        return response
+            .Should()
+            .HaveContentType(MediaTypes.TextPlain, Encoding.UTF8)
+            .And.HaveContentAsync("my text");
     }
 }
 #nullable restore

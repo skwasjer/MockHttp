@@ -13,7 +13,10 @@ public class FuncStreamBodySpec : ByteBodySpec
 
     protected override Task Should(HttpResponseMessage response)
     {
-        return response.Should().HaveContentAsync(Content);
+        return response
+            .Should()
+            .HaveContentType(MediaTypes.OctetStream)
+            .And.HaveContentAsync(Content);
     }
 }
 #nullable restore

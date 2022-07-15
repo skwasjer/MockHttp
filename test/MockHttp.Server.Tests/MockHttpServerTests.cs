@@ -64,7 +64,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.Accepted);
-        response.Should().HaveContentType("text/html");
+        response.Should().HaveContentType("text/html", Encoding.UTF8);
         response.Should().HaveHeader("return-test", "return-value");
         await response.Should().HaveContentAsync("Some content");
         _fixture.Handler.Verify();
