@@ -147,7 +147,9 @@ public sealed class MockHttpServer : IDisposable
         return new WebHostBuilder()
             .ConfigureServices(services =>
             {
+#pragma warning disable S4792 // Justification: not a security issue, we are injection a null impl. if none is provided.
                 services.Replace(ServiceDescriptor.Singleton(loggerFactory ?? new NullLoggerFactory()));
+#pragma warning restore S4792
                 services.AddSingleton(Handler);
                 services.AddTransient<ServerRequestHandler>();
             })
