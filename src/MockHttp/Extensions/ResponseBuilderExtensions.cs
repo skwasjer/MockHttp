@@ -166,14 +166,7 @@ public static class ResponseBuilderExtensions
 
         if (content.CanSeek)
         {
-            // Stream is reusable, delegate to Func<Stream>.
-            // Note: this is not thread safe!
-            long startPos = content.Position;
-            return builder.Body(() =>
-            {
-                content.Position = startPos;
-                return content;
-            });
+            return UnbufferedStreamBody(builder, content);
         }
 
         if (content is RateLimitedStream)
@@ -181,17 +174,7 @@ public static class ResponseBuilderExtensions
             throw new InvalidOperationException("Cannot use a rate limited stream that is not seekable. Use the overload accepting a stream factory instead.");
         }
 
-        // Because stream is not seekable, we must clone so it can be rewound and served more than once.
-        // This could be an issue with very big streams.
-        // Should we throw if greater than a certain size and force use of Func<Stream> instead?
-        byte[] buffer;
-        using (var ms = new MemoryStream())
-        {
-            content.CopyTo(ms);
-            buffer = ms.ToArray();
-        }
-
-        return builder.Body(buffer);
+        return BufferedStreamBody(builder, content);
     }
 
     /// <summary>
@@ -225,6 +208,33 @@ public static class ResponseBuilderExtensions
                 new StreamContent(stream) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } }
             );
         });
+    }
+
+    private static IWithContentResult UnbufferedStreamBody(IWithContent builder, Stream content)
+    {
+        // When stream is reusable, delegate to Func<Stream>.
+        // Note: this is not thread safe!
+        long startPos = content.Position;
+        return builder.Body(() =>
+        {
+            content.Position = startPos;
+            return content;
+        });
+    }
+
+    private static IWithContentResult BufferedStreamBody(IWithContent builder, Stream content)
+    {
+        // When stream is not seekable, we must clone so it can be rewound and served more than once.
+        // This could be an issue with very big streams.
+        // Should we throw if greater than a certain size and force use of Func<Stream> instead?
+        byte[] buffer;
+        using (var ms = new MemoryStream())
+        {
+            content.CopyTo(ms);
+            buffer = ms.ToArray();
+        }
+
+        return builder.Body(buffer);
     }
 
     /// <summary>
