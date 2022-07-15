@@ -6,22 +6,22 @@ namespace MockHttp.Language.Flow.Response;
 
 public class HttpContentBodySpec : ResponseSpec
 {
-    private readonly HttpContent _content = new StringContent("text");
+    protected readonly HttpContent Content = new StringContent("text");
 
     protected override void Given(IResponseBuilder with)
     {
-        with.Body(_content);
+        with.Body(Content);
     }
 
     protected override Task Should(HttpResponseMessage response)
     {
-        response.Content.Should().BeSameAs(_content);
+        response.Content.Should().BeSameAs(Content);
         return Task.CompletedTask;
     }
 
     public override Task DisposeAsync()
     {
-        _content.Dispose();
+        Content.Dispose();
         return base.DisposeAsync();
     }
 }
