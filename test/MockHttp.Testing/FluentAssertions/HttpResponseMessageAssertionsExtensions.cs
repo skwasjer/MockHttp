@@ -49,7 +49,7 @@ public static class HttpResponseMessageAssertionsExtensions
             .ForCondition(Equals(subject.Content?.Headers.ContentType, expectedMediaType) || (expectedMediaType.CharSet is null && Equals(subject.Content?.Headers.ContentType?.MediaType, expectedMediaType.MediaType)))
             .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content!.Headers.ContentType)
             .Then
-            .ForCondition(expectedMediaType.CharSet is null && subject.Content.Headers.ContentType?.CharSet is null || Equals(subject.Content.Headers.ContentType.CharSet, expectedMediaType.CharSet))
+            .ForCondition(expectedMediaType.CharSet is null && subject.Content.Headers.ContentType?.CharSet is null || Equals(subject.Content.Headers.ContentType?.CharSet, expectedMediaType.CharSet))
             .FailWith("Expected response with content type {0}{reason}, but found {1} instead.", expectedMediaType, subject.Content!.Headers.ContentType)
             ;
 
