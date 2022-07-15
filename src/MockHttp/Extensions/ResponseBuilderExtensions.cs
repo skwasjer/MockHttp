@@ -310,6 +310,11 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
+        if (timeoutAfter < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(timeoutAfter), "The timeout cannot be less than 00:00:00.");
+        }
+
         builder.Behaviors.Replace(new TimeoutBehavior(timeoutAfter ?? TimeSpan.Zero));
         return builder;
     }

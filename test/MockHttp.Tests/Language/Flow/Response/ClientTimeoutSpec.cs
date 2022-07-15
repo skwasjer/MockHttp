@@ -8,11 +8,22 @@ namespace MockHttp.Language.Flow.Response;
 public class ClientTimeoutSpec : GuardedResponseSpec
 {
     private readonly Stopwatch _stopwatch = new();
-    private readonly TimeSpan _timeoutAfter = TimeSpan.FromMilliseconds(500);
+
+    public ClientTimeoutSpec()
+        : this(TimeSpan.FromMilliseconds(500))
+    {
+    }
+
+    protected ClientTimeoutSpec(TimeSpan? timeoutAfter)
+    {
+        TimeoutAfter = timeoutAfter;
+    }
+
+    public TimeSpan? TimeoutAfter { get; set; }
 
     protected override void Given(IResponseBuilder with)
     {
-        with.ClientTimeout(_timeoutAfter);
+        with.ClientTimeout(TimeoutAfter);
         _stopwatch.Start();
     }
 
@@ -20,7 +31,7 @@ public class ClientTimeoutSpec : GuardedResponseSpec
     {
         await act.Should().ThrowExactlyAsync<TaskCanceledException>();
         _stopwatch.Stop();
-        _stopwatch.Elapsed.Should().BeGreaterThanOrEqualTo(_timeoutAfter);
+        _stopwatch.Elapsed.Should().BeGreaterThanOrEqualTo(TimeoutAfter ?? TimeSpan.Zero);
     }
 }
 #nullable restore

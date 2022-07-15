@@ -2,7 +2,7 @@
 
 ## v3.1.0-rc0002
 
-- fix: allow zero timespan in ServerTimeout()
+- fix: allow zero timespan in `ServerTimeout()` and `ClientTimeout()`.
 
 ## v3.1.0-rc0001
 
