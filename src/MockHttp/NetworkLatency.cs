@@ -130,31 +130,6 @@ public class NetworkLatency
         await TaskHelpers.HighResDelay(latency, cancellationToken);
         await task();
         return latency;
-
-        //return TaskHelpers.HighResDelay(latency, cancellationToken)
-        //    .ContinueWith(t => t.IsCompleted && !t.IsCanceled && !t.IsFaulted
-        //        ? task()
-        //        : Task.CompletedTask,
-        //        cancellationToken)
-        //    .Unwrap()
-        //    .ContinueWith(t =>
-        //        {
-        //            var tcs = new TaskCompletionSource<TimeSpan>();
-        //            if (t.IsCanceled)
-        //            {
-        //                tcs.SetCanceled();
-        //                return tcs.Task;
-        //            }
-        //            else if (t.IsFaulted)
-        //            {
-        //                tcs.SetException(t.Exception);
-        //                return tcs.Task;
-        //            }
-
-        //            return Task.FromResult(latency);
-        //        },
-        //        cancellationToken)
-        //    .Unwrap();
     }
 
     /// <inheritdoc />

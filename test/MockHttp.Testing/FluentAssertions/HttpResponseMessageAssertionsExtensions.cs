@@ -168,7 +168,7 @@ public static class HttpResponseMessageAssertionsExtensions
         }
 
         HttpResponseMessage subject = should.Subject;
-        var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values);
+        var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values!);
         var equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.Exact);
 
         static bool SafeContains(HttpHeaders? headers, string s) => headers?.TryGetValues(s, out _) ?? false;

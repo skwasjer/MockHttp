@@ -1,7 +1,10 @@
 <Project>
+
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn Condition="'$(Configuration)'=='Release'">$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
+
 </Project>
