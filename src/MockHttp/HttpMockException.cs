@@ -6,6 +6,7 @@ namespace MockHttp;
 /// <summary>
 /// The exception thrown when a mock is configured incorrectly or no invocation is matched.
 /// </summary>
+[Serializable]
 public class HttpMockException : Exception
 {
     /// <summary>
