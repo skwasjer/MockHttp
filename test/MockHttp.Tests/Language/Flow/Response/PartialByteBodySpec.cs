@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 
 namespace MockHttp.Language.Flow.Response;
 

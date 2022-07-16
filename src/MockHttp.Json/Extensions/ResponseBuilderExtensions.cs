@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
+using MockHttp.Http;
 using MockHttp.Json.Extensions;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
@@ -79,7 +80,7 @@ public static class ResponseBuilderExtensions
             {
                 Headers =
                 {
-                    ContentType = new MediaTypeHeaderValue(MediaTypes.JsonMediaType) { CharSet = (_encoding ?? Encoding.UTF8).WebName }
+                    ContentType = new MediaTypeHeaderValue(MediaTypes.Json) { CharSet = (_encoding ?? Encoding.UTF8).WebName }
                 }
             };
 

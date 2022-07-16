@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Specs;
 
 namespace MockHttp.Json.Specs.Response;
@@ -16,6 +17,6 @@ public class JsonBodyWithDateTimeOffset : ResponseSpec
         await base.Should(response);
         (await response.Should()
             .HaveContentAsync("\"2022-05-26T10:53:34.123+02:00\""))
-            .And.HaveContentType("application/json; charset=utf-8");
+            .And.HaveContentType($"{MediaTypes.Json}; charset=utf-8");
     }
 }

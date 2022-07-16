@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Json.Newtonsoft;
 using MockHttp.Json.SystemTextJson;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ public class JsonRequestMatchingExtensionTests
             .Verifiable();
 
         // Act
-        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent("{\"SomeProperty\": \"value\"}", Encoding.UTF8, "application/json"));
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent("{\"SomeProperty\": \"value\"}", Encoding.UTF8, MediaTypes.Json));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -51,7 +52,7 @@ public class JsonRequestMatchingExtensionTests
             .Respond(HttpStatusCode.OK);
 
         // Act
-        Func<Task> act = () => _httpClient.PostAsync("http://0.0.0.0", new StringContent("test=test", Encoding.UTF8, "application/x-www-form-urlencoded"));
+        Func<Task> act = () => _httpClient.PostAsync("http://0.0.0.0", new StringContent("test=test", Encoding.UTF8, MediaTypes.FormUrlEncoded));
 
         // Assert
         await act.Should().NotThrowAsync<System.Text.Json.JsonException>();
@@ -68,7 +69,7 @@ public class JsonRequestMatchingExtensionTests
             .Verifiable();
 
         StringContent? content = hasContent
-            ? new StringContent("", Encoding.UTF8, "application/json")
+            ? new StringContent("", Encoding.UTF8, MediaTypes.Json)
             : null;
 
         // Act
@@ -102,7 +103,7 @@ public class JsonRequestMatchingExtensionTests
             .Verifiable();
 
         // Act
-        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, MediaTypes.Json));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -129,7 +130,7 @@ public class JsonRequestMatchingExtensionTests
             .Verifiable();
 
         // Act
-        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, MediaTypes.Json));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
@@ -161,7 +162,7 @@ public class JsonRequestMatchingExtensionTests
             .Verifiable();
 
         // Act
-        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, "application/json"));
+        HttpResponseMessage response = await _httpClient.PostAsync("http://0.0.0.0", new StringContent(postJson, Encoding.UTF8, MediaTypes.Json));
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);

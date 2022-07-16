@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Json.Newtonsoft;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
@@ -71,7 +72,7 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
     [Fact]
     public async Task When_responding_without_setting_media_type_it_should_return_with_correct_content_type_header()
     {
-        const string expectedDefaultContentType = "application/json; charset=utf-8";
+        const string expectedDefaultContentType = $"{MediaTypes.Json}; charset=utf-8";
         var request = new HttpRequestMessage();
 
         // Act
@@ -85,7 +86,7 @@ public sealed class JsonRespondsExtensionsTests : IDisposable
     [Fact]
     public async Task When_responding_with_custom_media_type_it_should_return_with_correct_content_type_header()
     {
-        const string contentType = "application/problem+json";
+        const string contentType = MediaTypes.JsonProblemDetails;
         var request = new HttpRequestMessage();
 
         // Act

@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
+using MockHttp.Http;
 using Xunit;
 
 namespace MockHttp.Extensions;
@@ -61,7 +62,7 @@ public class HttpContentExtensionsTests
         static object[] CreateTestCase(HttpContent content, string expectedData)
         {
             content.Headers.Add("Custom", "Header");
-            content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            content.Headers.ContentType = new MediaTypeHeaderValue(MediaTypes.Html);
             return new object[] { content, expectedData };
         }
 

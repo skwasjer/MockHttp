@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Responses;
@@ -112,10 +113,10 @@ public class IRespondsExtensionsTests
         {
             using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
             var request = new HttpRequestMessage();
-            var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
+            var expectedContent = new StringContent("content", Encoding.UTF8, MediaTypes.Html);
 
             // Act
-            _sut.Respond(ms, "text/html; charset=utf-8");
+            _sut.Respond(ms, $"{MediaTypes.Html}; charset=utf-8");
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -136,10 +137,10 @@ public class IRespondsExtensionsTests
         {
             using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
             var request = new HttpRequestMessage();
-            var expectedContent = new StringContent("content", Encoding.UTF8, "text/html");
+            var expectedContent = new StringContent("content", Encoding.UTF8, MediaTypes.Html);
 
             // Act
-            _sut.Respond(statusCode, ms, "text/html; charset=utf-8");
+            _sut.Respond(statusCode, ms, $"{MediaTypes.Html}; charset=utf-8");
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert

@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Xml;
 using System.Xml.Linq;
+using MockHttp.Http;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
 

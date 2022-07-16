@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using Newtonsoft.Json;
@@ -337,7 +338,7 @@ public class MockHttpHandlerTests : IDisposable
         };
         string jsonPostContent = JsonConvert.SerializeObject(postObject);
         var lastModified = new DateTime(2018, 4, 12, 7, 22, 43, DateTimeKind.Local);
-        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, "application/json") { Headers = { LastModified = lastModified } };
+        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, MediaTypes.Json) { Headers = { LastModified = lastModified } };
 
         // ReSharper disable once JoinDeclarationAndInitializer
         Version version;
@@ -359,7 +360,7 @@ public class MockHttpHandlerTests : IDisposable
                 .Method("POST")
                 .Content(jsonPostContent)
                 .PartialContent(jsonPostContent.Substring(10))
-                .ContentType("application/json; charset=utf-8")
+                .ContentType($"{MediaTypes.Json}; charset=utf-8")
                 .BearerToken()
                 .Header("Content-Length", jsonPostContent.Length)
                 .Header("Last-Modified", lastModified)
@@ -414,7 +415,7 @@ public class MockHttpHandlerTests : IDisposable
         byte[] buffer = Encoding.UTF8.GetBytes(data);
         using Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream);
         _sut.When(matching => { })
-            .Respond(HttpStatusCode.OK, stream, "text/plain")
+            .Respond(HttpStatusCode.OK, stream, MediaTypes.PlainText)
             .Verifiable();
 
         // Act

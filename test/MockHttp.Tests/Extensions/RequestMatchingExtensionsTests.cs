@@ -209,14 +209,14 @@ public abstract class RequestMatchingExtensionsTests
     public class ContentType : RequestMatchingExtensionsTests
     {
         [Theory]
-        [InlineData("text/plain; charset=us-ascii", true)]
-        [InlineData("text/html; charset=us-ascii", false)]
-        [InlineData("text/plain; charset=utf-8", false)]
+        [InlineData($"{MediaTypes.PlainText}; charset=us-ascii", true)]
+        [InlineData($"{MediaTypes.Html}; charset=us-ascii", false)]
+        [InlineData($"{MediaTypes.PlainText}; charset=utf-8", false)]
         public async Task When_configuring_contentType_should_match(string mediaType, bool expectedResult)
         {
             var request = new HttpRequestMessage
             {
-                Content = new StringContent(string.Empty, Encoding.ASCII, "text/plain")
+                Content = new StringContent(string.Empty, Encoding.ASCII, MediaTypes.PlainText)
             };
 
             // Act
@@ -231,10 +231,10 @@ public abstract class RequestMatchingExtensionsTests
         [Fact]
         public void Given_mediaType_matcher_is_already_added_when_configuring_another_should_throw()
         {
-            _sut.ContentType("text/plain");
+            _sut.ContentType(MediaTypes.PlainText);
 
             // Act
-            Action act = () => _sut.ContentType("text/html");
+            Action act = () => _sut.ContentType(MediaTypes.Html);
 
             // Assert
             act.Should().Throw<InvalidOperationException>();
@@ -299,7 +299,7 @@ public abstract class RequestMatchingExtensionsTests
                 {
                     Headers =
                     {
-                        ContentType = new MediaTypeHeaderValue(FormDataMatcher.FormUrlEncodedMediaType)
+                        ContentType = new MediaTypeHeaderValue(MediaTypes.FormUrlEncoded)
                     }
                 }
             };
@@ -324,7 +324,7 @@ public abstract class RequestMatchingExtensionsTests
             {
                 { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
                 { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
-                { new StringContent("file content 1", Encoding.UTF8, "text/plain"), "file1", "file1.txt" }
+                { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
             };
             var request = new HttpRequestMessage
             {
@@ -791,16 +791,16 @@ public abstract class RequestMatchingExtensionsTests
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
-                    "text/plain"),
+                    MediaTypes.PlainText),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
-                    "text/plain",
+                    MediaTypes.PlainText,
                     Encoding.UTF8),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
-                    new MediaTypeHeaderValue("text/plain")),
+                    new MediaTypeHeaderValue(MediaTypes.PlainText)),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,

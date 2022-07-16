@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Language.Flow.Response;

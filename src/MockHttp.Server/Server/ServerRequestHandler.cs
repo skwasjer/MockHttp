@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
+using MockHttp.Http;
 
 namespace MockHttp.Server;
 
@@ -44,7 +45,7 @@ internal class ServerRequestHandler : DelegatingHandler
             httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
             {
                 ReasonPhrase = Resources.Error_VerifyMockSetup,
-                Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, Encoding.UTF8, "text/plain")
+                Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, Encoding.UTF8, MediaTypes.PlainText)
             };
         }
         finally

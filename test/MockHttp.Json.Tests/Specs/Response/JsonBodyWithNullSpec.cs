@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Specs;
 
 namespace MockHttp.Json.Specs.Response;
@@ -16,6 +17,6 @@ public class JsonBodyWithNullSpec : ResponseSpec
         await base.Should(response);
         (await response.Should()
             .HaveContentAsync("null"))
-            .And.HaveContentType("application/json; charset=utf-8");
+            .And.HaveContentType($"{MediaTypes.Json}; charset=utf-8");
     }
 }

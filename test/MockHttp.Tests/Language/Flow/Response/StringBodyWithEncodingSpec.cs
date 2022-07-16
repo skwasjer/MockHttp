@@ -2,6 +2,7 @@
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -17,7 +18,7 @@ public class StringBodyWithEncodingSpec : ResponseSpec
     {
         return response
             .Should()
-            .HaveContentType(MediaTypes.TextPlain, Encoding.Unicode)
+            .HaveContentType(MediaTypes.PlainText, Encoding.Unicode)
             .And.HaveContentAsync("my text", Encoding.Unicode);
     }
 }

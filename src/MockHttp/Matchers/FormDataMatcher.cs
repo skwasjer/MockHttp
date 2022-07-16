@@ -9,7 +9,6 @@ namespace MockHttp.Matchers;
 /// </summary>
 public class FormDataMatcher : IAsyncHttpRequestMatcher
 {
-    internal const string FormUrlEncodedMediaType = "application/x-www-form-urlencoded";
     internal const string MultipartFormDataMediaType = "multipart/form-data";
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -101,7 +100,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
                          .Where(c => c.Headers.ContentDisposition is not null && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
                     )
             {
-                string key = httpContent.Headers.ContentDisposition.Name;
+                string key = httpContent.Headers.ContentDisposition!.Name;
                 bool isFileUpload = httpContent.Headers.ContentType is not null && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
                 if (isFileUpload)
                 {
@@ -135,6 +134,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
 
     private static bool IsFormData(string mediaType)
     {
-        return mediaType == FormUrlEncodedMediaType || mediaType == MultipartFormDataMediaType;
+        return string.Equals(mediaType, MediaTypes.FormUrlEncoded, StringComparison.OrdinalIgnoreCase)
+         || string.Equals(mediaType, MediaTypes.MultipartFormData, StringComparison.OrdinalIgnoreCase);
     }
 }

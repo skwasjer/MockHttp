@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Responses;
 using Xunit;
 
@@ -26,7 +27,7 @@ public class FormDataMatcherTests
             {
                 Headers =
                 {
-                    ContentType = new MediaTypeHeaderValue(FormDataMatcher.FormUrlEncodedMediaType)
+                    ContentType = new MediaTypeHeaderValue(MediaTypes.FormUrlEncoded)
                 }
             }
         };
@@ -57,7 +58,7 @@ public class FormDataMatcherTests
             Content = new StringContent(
                 formData,
                 Encoding.UTF8,
-                FormDataMatcher.FormUrlEncodedMediaType
+                MediaTypes.FormUrlEncoded
             )
         };
 
@@ -78,7 +79,7 @@ public class FormDataMatcherTests
             Content = new StringContent(
                 "unexpected=formdata",
                 Encoding.UTF8,
-                FormDataMatcher.FormUrlEncodedMediaType
+                MediaTypes.FormUrlEncoded
             )
         };
 
@@ -132,7 +133,7 @@ public class FormDataMatcherTests
         {
             { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
             { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
-            { new StringContent("file content 1", Encoding.UTF8, "text/plain"), "file1", "file1.txt" }
+            { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
         };
 
         var request = new HttpRequestMessage
@@ -158,7 +159,7 @@ public class FormDataMatcherTests
         {
             { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
             { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
-            { new StringContent("file content 1", Encoding.UTF8, "text/plain"), "file1", "file1.txt" }
+            { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
         };
 
         var request = new HttpRequestMessage

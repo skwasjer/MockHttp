@@ -2,6 +2,7 @@
 using System.Text;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -11,12 +12,12 @@ public class ContentTypeWithEncodingSpec : ResponseSpec
     protected override void Given(IResponseBuilder with)
     {
         with.Body("<b>Text</b>")
-            .ContentType("text/html", Encoding.Unicode);
+            .ContentType(MediaTypes.Html, Encoding.Unicode);
     }
 
     protected override Task Should(HttpResponseMessage response)
     {
-        response.Should().HaveContentType("text/html", Encoding.Unicode);
+        response.Should().HaveContentType(MediaTypes.Html, Encoding.Unicode);
         return Task.CompletedTask;
     }
 }

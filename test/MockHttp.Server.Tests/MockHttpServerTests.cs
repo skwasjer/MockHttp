@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MockHttp.Fixtures;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,11 +39,11 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 .Header("test", "value")
                 .Method(HttpMethod.Post)
                 .Content("request-content")
-                .ContentType("text/plain", Encoding.ASCII)
+                .ContentType(MediaTypes.PlainText, Encoding.ASCII)
             )
             .Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
             {
-                Content = new StringContent("Some content", Encoding.UTF8, "text/html"),
+                Content = new StringContent("Some content", Encoding.UTF8, MediaTypes.Html),
                 Headers =
                 {
                     { "return-test", "return-value" }
@@ -53,7 +54,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         // Act
         using var request = new HttpRequestMessage(HttpMethod.Post, "test/wtf/")
         {
-            Content = new StringContent("request-content", Encoding.ASCII, "text/plain"),
+            Content = new StringContent("request-content", Encoding.ASCII, MediaTypes.PlainText),
             Headers =
             {
                 { "test", "value" }
@@ -64,7 +65,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.Accepted);
-        response.Should().HaveContentType("text/html", Encoding.UTF8);
+        response.Should().HaveContentType(MediaTypes.Html, Encoding.UTF8);
         response.Should().HaveHeader("return-test", "return-value");
         await response.Should().HaveContentAsync("Some content");
         _fixture.Handler.Verify();
@@ -166,7 +167,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             )
             .Respond(() => new HttpResponseMessage(HttpStatusCode.Accepted)
             {
-                Content = new StringContent("Response content", Encoding.UTF8, "text/html"),
+                Content = new StringContent("Response content", Encoding.UTF8, MediaTypes.Html),
                 Headers =
                 {
                     { "return-test", "return-value" }
@@ -182,7 +183,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 #pragma warning restore CS0618
         request.Method = "POST";
         request.Headers.Add("test", "value");
-        request.ContentType = "text/plain";
+        request.ContentType = MediaTypes.PlainText;
         await using (Stream requestStream = await request.GetRequestStreamAsync())
         {
             requestStream.Write(Encoding.ASCII.GetBytes("request-content"));
@@ -191,7 +192,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         // Assert
         var response = (HttpWebResponse)await request.GetResponseAsync();
         response.StatusCode.Should().Be(HttpStatusCode.Accepted);
-        response.ContentType.Should().Be("text/html; charset=utf-8");
+        response.ContentType.Should().Be($"{MediaTypes.Html}; charset=utf-8");
         using (var sr = new StreamReader(response.GetResponseStream()))
         {
             (await sr.ReadToEndAsync()).Should().Be("Response content");

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Responses;
 using Xunit;
 
@@ -10,9 +11,9 @@ public class MediaTypeHeaderMatcherTests
     private MediaTypeHeaderMatcher _sut;
 
     [Theory]
-    [InlineData("text/plain; charset=us-ascii")]
-    [InlineData("application/json; charset=utf-8")]
-    [InlineData("application/octet-stream")]
+    [InlineData($"{MediaTypes.PlainText}; charset=us-ascii")]
+    [InlineData($"{MediaTypes.Json}; charset=utf-8")]
+    [InlineData(MediaTypes.OctetStream)]
     public void Given_headerValue_equals_expected_headerValue_when_matching_should_match(string headerValue)
     {
         var request = new HttpRequestMessage
@@ -35,8 +36,8 @@ public class MediaTypeHeaderMatcherTests
     [Fact]
     public void Given_headerValue_does_not_equal_expected_headerValue_when_matching_should_not_match()
     {
-        const string headerValue = "text/plain";
-        const string expectedHeaderValue = "text/html";
+        const string headerValue = MediaTypes.PlainText;
+        const string expectedHeaderValue = MediaTypes.Html;
 
         var request = new HttpRequestMessage
         {
@@ -58,7 +59,7 @@ public class MediaTypeHeaderMatcherTests
     [Fact]
     public void Given_content_is_null_when_matching_should_not_throw()
     {
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/plain"));
+        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
 
         // Act
         bool? result = null;
@@ -73,7 +74,7 @@ public class MediaTypeHeaderMatcherTests
     public void Given_contentType_header_is_null_when_matching_should_not_throw()
     {
         var request = new HttpRequestMessage { Content = new StringContent("") };
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/plain"));
+        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
 
         // Act
         bool? result = null;
@@ -98,7 +99,7 @@ public class MediaTypeHeaderMatcherTests
     public void When_formatting_should_return_human_readable_representation()
     {
         const string expectedText = "MediaType: text/html";
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse("text/html"));
+        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.Html));
 
         // Act
         string displayText = _sut.ToString();
@@ -110,7 +111,7 @@ public class MediaTypeHeaderMatcherTests
     [Fact]
     public void Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new MediaTypeHeaderMatcher(new MediaTypeHeaderValue("text/plain"));
+        _sut = new MediaTypeHeaderMatcher(new MediaTypeHeaderValue(MediaTypes.PlainText));
         MockHttpRequestContext requestContext = null;
 
         // Act

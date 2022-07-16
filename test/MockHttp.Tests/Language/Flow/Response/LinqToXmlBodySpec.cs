@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using FluentAssertions;
 using MockHttp.FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;

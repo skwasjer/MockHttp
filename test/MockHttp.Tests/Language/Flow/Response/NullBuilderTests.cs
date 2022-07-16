@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using MockHttp.Http;
 using MockHttp.Language.Response;
 using Moq;
 using Xunit;
@@ -74,12 +75,12 @@ public class NullBuilderTests
                 ),
                 DelegateTestCase.Create(
                     responseBuilderImpl.ContentType,
-                    new MediaTypeHeaderValue("text/plain")
+                    new MediaTypeHeaderValue(MediaTypes.PlainText)
                 ),
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.ContentType,
                     withContentType,
-                    "text/plain",
+                    MediaTypes.PlainText,
                     (Encoding?)null
                 ),
                 DelegateTestCase.Create(
