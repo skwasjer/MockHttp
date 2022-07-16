@@ -37,6 +37,28 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
+    /// Sets the content for the response using a factory returning a new <see cref="HttpContent" /> on each invocation.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="httpContentFactory">The factory returning a new instance of <see cref="HttpContent" /> on each invocation.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContentFactory" /> is <see langword="null" />.</exception>
+    public static IWithContentResult Body(this IWithContent builder, Func<Task<HttpContent>> httpContentFactory)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (httpContentFactory is null)
+        {
+            throw new ArgumentNullException(nameof(httpContentFactory));
+        }
+
+        return builder.Body(_ => httpContentFactory());
+    }
+
+    /// <summary>
     /// Sets the <see cref="HttpContent" /> for the response.
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -45,11 +67,6 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
     public static IWithContentResult Body(this IWithContent builder, HttpContent content)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         if (content is null)
         {
             throw new ArgumentNullException(nameof(content));
@@ -184,7 +201,7 @@ public static class ResponseBuilderExtensions
     /// <param name="contentFactory">The factory returning a new <see cref="Stream" /> on each invocation containing the binary content.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="contentFactory" /> is <see langword="null" />.</exception>
-    public static IWithContentResult Body(this IWithContent builder, Func<Stream> contentFactory)
+    public static IWithContentResult Body(this IWithContent builder, Func<CancellationToken, Stream> contentFactory)
     {
         if (builder is null)
         {
@@ -196,9 +213,9 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(contentFactory));
         }
 
-        return builder.Body(() =>
+        return builder.Body(cts =>
         {
-            Stream stream = contentFactory();
+            Stream stream = contentFactory(cts);
             if (!stream.CanRead)
             {
                 throw new InvalidOperationException("Cannot read from stream.");
@@ -210,12 +227,29 @@ public static class ResponseBuilderExtensions
         });
     }
 
+    /// <summary>
+    /// Sets the stream content for the response using a factory returning a new <see cref="Stream" /> on each invocation.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="contentFactory">The factory returning a new <see cref="Stream" /> on each invocation containing the binary content.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="contentFactory" /> is <see langword="null" />.</exception>
+    public static IWithContentResult Body(this IWithContent builder, Func<Stream> contentFactory)
+    {
+        if (contentFactory is null)
+        {
+            throw new ArgumentNullException(nameof(contentFactory));
+        }
+
+        return builder.Body(_ => contentFactory());
+    }
+
     private static IWithContentResult UnbufferedStreamBody(IWithContent builder, Stream content)
     {
         // When stream is reusable, delegate to Func<Stream>.
         // Note: this is not thread safe!
         long startPos = content.Position;
-        return builder.Body(() =>
+        return builder.Body(_ =>
         {
             content.Position = startPos;
             return content;

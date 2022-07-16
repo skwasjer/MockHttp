@@ -41,7 +41,7 @@ public static class ResponseBuilderLinqToXmlExtensions
         settings.Async = true;
 
         return builder
-            .Body(async () =>
+            .Body(async ct =>
             {
                 var stream = new MemoryStream();
 #if NET5_0_OR_GREATER
@@ -58,7 +58,7 @@ public static class ResponseBuilderLinqToXmlExtensions
                 async Task<HttpContent> WriteAsync(XmlWriter writer)
                 {
 #if NETSTANDARD2_1 || NET5_0_OR_GREATER
-                    await xml.WriteToAsync(writer, CancellationToken.None).ConfigureAwait(false);
+                    await xml.WriteToAsync(writer, ct).ConfigureAwait(false);
 #else
                     xml.WriteTo(writer);
 #endif

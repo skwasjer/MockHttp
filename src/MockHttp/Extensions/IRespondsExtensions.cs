@@ -358,7 +358,7 @@ public static class IRespondsExtensions
         return responds.Respond(with => with
             .StatusCode(statusCode)
             // Caller is responsible for disposal of the original content.
-            .Body(async () => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
+            .Body(async _ => await content.CloneAsByteArrayContentAsync().ConfigureAwait(false))
         );
     }
 

@@ -4,16 +4,16 @@ namespace MockHttp.Responses;
 internal sealed class HttpContentBehavior
     : IResponseBehavior
 {
-    private readonly Func<Task<HttpContent>> _httpContentFactory;
+    private readonly Func<CancellationToken, Task<HttpContent>> _httpContentFactory;
 
-    public HttpContentBehavior(Func<Task<HttpContent>> httpContentFactory)
+    public HttpContentBehavior(Func<CancellationToken, Task<HttpContent>> httpContentFactory)
     {
         _httpContentFactory = httpContentFactory ?? throw new ArgumentNullException(nameof(httpContentFactory));
     }
 
     public async Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
     {
-        responseMessage.Content = await _httpContentFactory();
+        responseMessage.Content = await _httpContentFactory(cancellationToken);
         await next(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
     }
 }
