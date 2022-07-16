@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 using FluentAssertions;
+using MockHttp.Http;
 using MockHttp.Matchers;
 using MockHttp.Responses;
 using Moq;
@@ -559,8 +560,8 @@ public abstract class RequestMatchingExtensionsTests
         }
 
         [Theory]
-        [InlineData("Cache-Control", true)]
-        [InlineData("Content-Type", false)]
+        [InlineData(HeaderNames.CacheControl, true)]
+        [InlineData(HeaderNames.ContentType, false)]
         public async Task When_configuring_name_should_match(string name, bool expectedResult)
         {
             var request = new HttpRequestMessage

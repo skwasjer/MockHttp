@@ -43,7 +43,7 @@ internal sealed class ResponseBuilder
             throw new ArgumentNullException(nameof(mediaType));
         }
 
-        return Headers(new HttpHeadersCollection { { "Content-Type", mediaType.ToString() } }!);
+        return Headers(new HttpHeadersCollection { { HeaderNames.ContentType, mediaType.ToString() } }!);
     }
 
     /// <inheritdoc />

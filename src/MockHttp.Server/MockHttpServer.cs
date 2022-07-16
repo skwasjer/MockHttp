@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using MockHttp.Http;
 using MockHttp.Server;
 
 namespace MockHttp;
@@ -194,9 +195,9 @@ public sealed class MockHttpServer : IDisposable
         {
             context.Response.OnStarting(() =>
             {
-                if (!context.Response.Headers.TryGetValue("Server", out _))
+                if (!context.Response.Headers.TryGetValue(HeaderNames.Server, out _))
                 {
-                    context.Response.Headers["Server"] = GetType().ToString();
+                    context.Response.Headers[HeaderNames.Server] = GetType().ToString();
                 }
 
                 return Task.CompletedTask;

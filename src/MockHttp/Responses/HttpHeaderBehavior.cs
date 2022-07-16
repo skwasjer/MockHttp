@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Net.Http.Headers;
+using MockHttp.Http;
 
 namespace MockHttp.Responses;
 
@@ -10,23 +11,23 @@ internal sealed class HttpHeaderBehavior
     private static readonly ISet<string> HeadersWithSingleValueOnly = new HashSet<string>
     {
         // TODO: expand this list.
-        "Age",
-        "Authorization",
-        "Connection",
-        "Content-Length",
-        "Content-Location",
-        "Content-MD5",
-        "Content-Range",
-        "Content-Type",
-        "Date",
-        "ETag",
-        "Expires",
-        "Host",
-        "Last-Modified",
-        "Location",
-        "Max-Forwards",
-        "Retry-After",
-        "Server"
+        HeaderNames.Age,
+        HeaderNames.Authorization,
+        HeaderNames.Connection,
+        HeaderNames.ContentLength,
+        HeaderNames.ContentLocation,
+        HeaderNames.ContentMD5,
+        HeaderNames.ContentRange,
+        HeaderNames.ContentType,
+        HeaderNames.Date,
+        HeaderNames.ETag,
+        HeaderNames.Expires,
+        HeaderNames.Host,
+        HeaderNames.LastModified,
+        HeaderNames.Location,
+        HeaderNames.MaxForwards,
+        HeaderNames.RetryAfter,
+        HeaderNames.Server
     };
 
     private readonly IList<KeyValuePair<string, IEnumerable<string?>>> _headers;

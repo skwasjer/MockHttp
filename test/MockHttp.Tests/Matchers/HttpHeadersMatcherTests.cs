@@ -136,8 +136,8 @@ public class HttpHeadersMatcherTests
     [Fact]
     public void When_formatting_multiple_headers_should_return_human_readable_representation()
     {
-        string expectedText = $"Headers: Content-Type: text/plain{Environment.NewLine}Accept: text/plain, text/html";
-        var headers = new HttpHeadersCollection { { "Content-Type", "text/plain" }, { "Accept", new[] { "text/plain", "text/html" } } };
+        string expectedText = $"Headers: {HeaderNames.ContentType}: text/plain{Environment.NewLine}{HeaderNames.Accept}: text/plain, text/html";
+        var headers = new HttpHeadersCollection { { HeaderNames.ContentType, "text/plain" }, { HeaderNames.Accept, new[] { "text/plain", "text/html" } } };
         _sut = new HttpHeadersMatcher(headers);
 
         // Act
