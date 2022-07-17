@@ -6,7 +6,6 @@
     <IsTestProject>true</IsTestProject>
 
     <RootNamespace>MockHttp.Json</RootNamespace>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

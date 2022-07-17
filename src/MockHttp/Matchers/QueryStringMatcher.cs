@@ -43,7 +43,9 @@ public class QueryStringMatcher : HttpRequestMatcher
             throw new ArgumentNullException(nameof(requestContext));
         }
 
-        var query = QueryString.Parse(requestContext.Request.RequestUri.Query);
+        QueryString query = requestContext.Request.RequestUri is null
+            ? new QueryString()
+            : QueryString.Parse(requestContext.Request.RequestUri.Query);
 
         // When match collection is empty, behavior is flipped, and we expect no query string parameters on request.
         if (_matchQs.Count == 0 && query.Count > 0)

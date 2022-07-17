@@ -18,7 +18,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly Encoding _encoding;
+    private readonly Encoding? _encoding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentMatcher" /> class.
@@ -33,7 +33,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     /// </summary>
     /// <param name="content">The request content to match.</param>
     /// <param name="encoding">The content encoding.</param>
-    public ContentMatcher(string content, Encoding encoding)
+    public ContentMatcher(string content, Encoding? encoding)
         : this((encoding ?? DefaultEncoding).GetBytes(content ?? throw new ArgumentNullException(nameof(content))))
     {
         _encoding = encoding ?? DefaultEncoding;
@@ -66,7 +66,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
 
         async Task<bool> InternalIsMatchAsync(MockHttpRequestContext mockHttpRequestContext)
         {
-            byte[] requestContent = null;
+            byte[]? requestContent = null;
             if (mockHttpRequestContext.Request.Content is not null)
             {
                 // Use of ReadAsByteArray() will use internal buffer, so we can re-enter this method multiple times.

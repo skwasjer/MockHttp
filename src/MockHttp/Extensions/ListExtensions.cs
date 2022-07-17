@@ -16,7 +16,7 @@ internal static class ListExtensions
 
         for (int i = 0; i < list.Count; i++)
         {
-            if (list[i].GetType() == type)
+            if (list[i]?.GetType() == type)
             {
                 return i;
             }
@@ -37,7 +37,7 @@ internal static class ListExtensions
             throw new ArgumentNullException(nameof(instance));
         }
 
-        bool IsExact(Type thisType)
+        bool IsExact(Type? thisType)
         {
             return thisType == instance.GetType();
         }
@@ -46,7 +46,7 @@ internal static class ListExtensions
             .Select((item, index) => new { item, index })
             .Where(x =>
             {
-                Type thisType = x.item?.GetType();
+                Type? thisType = x.item?.GetType();
                 return IsExact(thisType);
             })
             .Select(x => x.index)

@@ -8,11 +8,10 @@ public class QueryStringTests
     [Fact]
     public void Given_null_queryString_when_creating_should_throw()
     {
-        IEnumerable<KeyValuePair<string, string>> values = null;
+        IEnumerable<KeyValuePair<string, string>>? values = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<QueryString> act = () => new QueryString(values);
+        Func<QueryString> act = () => new QueryString(values!);
 
         // Assert
         act.Should()
@@ -37,13 +36,15 @@ public class QueryStringTests
     [Fact]
     public void Given_null_queryString_when_parsing_should_throw()
     {
+        string? queryString = null;
+
         // Act
-        Action act = () => QueryString.Parse(null);
+        Action act = () => QueryString.Parse(queryString!);
 
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParameterName("queryString");
+            .WithParameterName(nameof(queryString));
     }
 
     [Fact]

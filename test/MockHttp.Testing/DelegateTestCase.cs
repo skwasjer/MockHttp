@@ -51,19 +51,44 @@ public class DelegateTestCase : List<object>
         return this.Skip(1).ToArray();
     }
 
+    public static DelegateTestCase Create(Action @delegate)
+    {
+        return new DelegateTestCase(@delegate);
+    }
+
     public static DelegateTestCase Create<TOut>(Func<TOut> @delegate)
     {
         return new DelegateTestCase(@delegate);
     }
 
+    public static DelegateTestCase Create<T1>(Action<T1> @delegate, T1 arg1)
+    {
+        return new DelegateTestCase(@delegate) { arg1! };
+    }
+
     public static DelegateTestCase Create<T1, TOut>(Func<T1, TOut> @delegate, T1 arg1)
     {
-        return new DelegateTestCase(@delegate) { arg1!, };
+        return new DelegateTestCase(@delegate) { arg1! };
+    }
+
+    public static DelegateTestCase Create<T1, T2>(Action<T1, T2> @delegate, T1 arg1, T2 arg2)
+    {
+        return new DelegateTestCase(@delegate) { arg1!, arg2! };
     }
 
     public static DelegateTestCase Create<T1, T2, TOut>(Func<T1, T2, TOut> @delegate, T1 arg1, T2 arg2)
     {
         return new DelegateTestCase(@delegate) { arg1!, arg2! };
+    }
+
+    public static DelegateTestCase Create<T1, T2, T3>(Action<T1, T2, T3> @delegate, T1 arg1, T2 arg2, T3 arg3)
+    {
+        return new DelegateTestCase(@delegate)
+        {
+            arg1!,
+            arg2!,
+            arg3!
+        };
     }
 
     public static DelegateTestCase Create<T1, T2, T3, TOut>(Func<T1, T2, T3, TOut> @delegate, T1 arg1, T2 arg2, T3 arg3)
@@ -76,6 +101,17 @@ public class DelegateTestCase : List<object>
         };
     }
 
+    public static DelegateTestCase Create<T1, T2, T3, T4>(Action<T1, T2, T3, T4> @delegate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        return new DelegateTestCase(@delegate)
+        {
+            arg1!,
+            arg2!,
+            arg3!,
+            arg4!
+        };
+    }
+
     public static DelegateTestCase Create<T1, T2, T3, T4, TOut>(Func<T1, T2, T3, T4, TOut> @delegate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
         return new DelegateTestCase(@delegate)
@@ -84,6 +120,18 @@ public class DelegateTestCase : List<object>
             arg2!,
             arg3!,
             arg4!
+        };
+    }
+
+    public static DelegateTestCase Create<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> @delegate, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+    {
+        return new DelegateTestCase(@delegate)
+        {
+            arg1!,
+            arg2!,
+            arg3!,
+            arg4!,
+            arg5!
         };
     }
 

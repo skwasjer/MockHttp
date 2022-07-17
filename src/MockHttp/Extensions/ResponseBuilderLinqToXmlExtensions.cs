@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Xml;
 using System.Xml.Linq;
 using MockHttp.Http;
@@ -69,4 +68,3 @@ public static class ResponseBuilderLinqToXmlExtensions
             });
     }
 }
-#nullable restore

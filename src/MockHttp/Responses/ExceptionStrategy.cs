@@ -2,7 +2,7 @@
 
 internal sealed class ExceptionStrategy : IResponseStrategy
 {
-    private readonly Func<Exception> _exceptionFactory;
+    private readonly Func<Exception?> _exceptionFactory;
 
     public ExceptionStrategy(Func<Exception> exceptionFactory)
     {

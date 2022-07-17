@@ -7,13 +7,13 @@ namespace MockHttp.Language.Flow.Response;
 
 public class LatencyBehaviorOrderSpec : ResponseSpec
 {
-    private Stopwatch _stopwatch;
+    private readonly Stopwatch _stopwatch = new();
 
     protected override void Given(IResponseBuilder with)
     {
         with.ServerTimeout(TimeSpan.FromMilliseconds(100))
             .Latency(NetworkLatency.Between(600, 601));
-        _stopwatch = Stopwatch.StartNew();
+        _stopwatch.Restart();
     }
 
     protected override Task Should(HttpResponseMessage response)

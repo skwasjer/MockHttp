@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Responses;
+﻿namespace MockHttp.Responses;
 
 internal sealed class TimeoutBehavior
     : IResponseBehavior
@@ -32,4 +31,3 @@ internal sealed class TimeoutBehavior
             .Unwrap();
     }
 }
-#nullable restore

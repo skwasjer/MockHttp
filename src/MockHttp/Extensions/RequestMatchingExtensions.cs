@@ -87,7 +87,7 @@ public static class RequestMatchingExtensions
     /// <param name="key">The query string parameter key.</param>
     /// <param name="value">The query string value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, string key, string value)
+    public static RequestMatching QueryString(this RequestMatching builder, string key, string? value)
     {
         return builder.QueryString(
             key,
@@ -122,7 +122,8 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching QueryString(this RequestMatching builder, string key, params string[] values)
     {
-        return builder.QueryString(key, values?.AsEnumerable());
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        return builder.QueryString(key, values?.AsEnumerable() ?? Array.Empty<string>());
     }
 
     /// <summary>
@@ -154,7 +155,12 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new QueryStringMatcher(parameters?.AsEnumerable()));
+        if (parameters is null)
+        {
+            throw new ArgumentNullException(nameof(parameters));
+        }
+
+        return builder.With(new QueryStringMatcher(parameters.AsEnumerable()!));
     }
 
     /// <summary>
@@ -254,7 +260,7 @@ public static class RequestMatchingExtensions
         where T : struct
     {
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-        return builder.Header(name, converter.ConvertToString(value));
+        return builder.Header(name, converter.ConvertToString(value)!);
     }
 
     /// <summary>
@@ -429,7 +435,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(encoding));
         }
 
-        var mediaType = new MediaTypeHeaderValue(contentType) { CharSet = encoding?.WebName };
+        var mediaType = new MediaTypeHeaderValue(contentType) { CharSet = encoding.WebName };
         return builder.ContentType(mediaType);
     }
 
@@ -474,10 +480,15 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
     {
-        return builder.FormData(formData?.Select(
+        if (formData is null)
+        {
+            throw new ArgumentNullException(nameof(formData));
+        }
+
+        return builder.FormData(formData.Select(
             d => new KeyValuePair<string, IEnumerable<string>>(
                 d.Key,
-                d.Value is null ? null : new[] { d.Value })
+                d.Value == null! ? Array.Empty<string>() : new[] { d.Value })
         ));
     }
 
@@ -489,7 +500,12 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching FormData(this RequestMatching builder, NameValueCollection formData)
     {
-        return builder.FormData(formData?.AsEnumerable());
+        if (formData is null)
+        {
+            throw new ArgumentNullException(nameof(formData));
+        }
+
+        return builder.FormData(formData.AsEnumerable()!);
     }
 
     /// <summary>
@@ -896,7 +912,12 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching Version(this RequestMatching builder, string version)
     {
-        return builder.Version(version is null ? null : System.Version.Parse(version));
+        if (version is null)
+        {
+            throw new ArgumentNullException(nameof(version));
+        }
+
+        return builder.Version(System.Version.Parse(version));
     }
 
     /// <summary>

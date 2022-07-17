@@ -61,7 +61,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage { RequestUri = new Uri("http://127.0.0.1?key") };
 
             // Act
-            _sut.QueryString("key", (string)null);
+            _sut.QueryString("key", (string?)null);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
@@ -108,7 +108,7 @@ public abstract class RequestMatchingExtensionsTests
         public void When_configuring_query_string_with_null_values_should_not_throw()
         {
             // Act
-            Action act = () => _sut.QueryString("key", (IEnumerable<string>)null);
+            Action act = () => _sut.QueryString("key", (IEnumerable<string>)null!);
 
             // Assert
             act.Should().NotThrow();
@@ -128,7 +128,7 @@ public abstract class RequestMatchingExtensionsTests
         public void When_configuring_null_query_string_should_throw()
         {
             // Act
-            Action act = () => _sut.QueryString((string)null);
+            Action act = () => _sut.QueryString((string)null!);
 
             // Assert
             act.Should().Throw<ArgumentException>().WithParameterName("queryString").WithMessage("Specify a query string*");
@@ -251,7 +251,7 @@ public abstract class RequestMatchingExtensionsTests
                 RequestUri = new Uri("http://127.0.0.1"),
                 Content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("key", null)
+                    new KeyValuePair<string, string>("key", null!)
                 })
             };
 
@@ -359,11 +359,10 @@ public abstract class RequestMatchingExtensionsTests
         [Fact]
         public void When_configuring_null_formData_should_throw()
         {
-            string urlEncodedFormData = null;
+            string? urlEncodedFormData = null;
 
             // Act
-            // ReSharper disable once ExpressionIsAlwaysNull
-            Action act = () => _sut.FormData(urlEncodedFormData);
+            Action act = () => _sut.FormData(urlEncodedFormData!);
 
             // Assert
             act.Should()
@@ -702,17 +701,17 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (string)null),
+                    (string?)null),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (IEnumerable<string>)null),
+                    (IEnumerable<string>?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (string[])null),
+                    (string[]?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
@@ -740,7 +739,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    (string)null,
+                    (string?)null!,
                     false),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
@@ -805,7 +804,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.FormData,
                     instance,
                     "key",
-                    (string)null),
+                    (string?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
@@ -830,7 +829,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.Content,
                     instance,
                     "content",
-                    (Encoding)null),
+                    (Encoding?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Content,
                     instance,
@@ -850,7 +849,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.PartialContent,
                     instance,
                     "partial content",
-                    (Encoding)null),
+                    (Encoding?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialContent,
                     instance,
@@ -867,7 +866,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.Body,
                     instance,
                     "content",
-                    (Encoding)null),
+                    (Encoding?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
@@ -887,7 +886,7 @@ public abstract class RequestMatchingExtensionsTests
                     RequestMatchingExtensions.PartialBody,
                     instance,
                     "partial content",
-                    (Encoding)null),
+                    (Encoding?)null!),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,

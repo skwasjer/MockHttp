@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using MockHttp.Json.Newtonsoft;
 using MockHttp.Json.SystemTextJson;
 using MockHttp.Responses;
 using Moq;

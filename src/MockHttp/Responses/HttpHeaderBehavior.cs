@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using MockHttp.Http;
 
 namespace MockHttp.Responses;
@@ -93,4 +92,3 @@ internal sealed class HttpHeaderBehavior
         }
     }
 }
-#nullable restore

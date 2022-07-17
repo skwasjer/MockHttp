@@ -8,10 +8,9 @@ public class ExceptionStrategyTests
     [Fact]
     public void Given_null_factory_when_creating_instance_should_throw()
     {
-        Func<Exception> exceptionFactory = null;
+        Func<Exception>? exceptionFactory = null;
 
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<ExceptionStrategy> act = () => new ExceptionStrategy(exceptionFactory);
+        Func<ExceptionStrategy> act = () => new ExceptionStrategy(exceptionFactory!);
 
         // Assert
         act.Should()
@@ -22,7 +21,7 @@ public class ExceptionStrategyTests
     [Fact]
     public async Task Given_factory_returns_null_exception_when_getting_response_should_throw()
     {
-        var sut = new ExceptionStrategy(() => null);
+        var sut = new ExceptionStrategy(() => null!);
 
         // Act
         Func<Task> act = () => sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);

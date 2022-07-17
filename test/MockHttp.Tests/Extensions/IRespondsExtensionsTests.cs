@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿#nullable disable
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using FluentAssertions;
@@ -496,3 +497,4 @@ public class IRespondsExtensionsTests
         }
     }
 }
+#nullable restore

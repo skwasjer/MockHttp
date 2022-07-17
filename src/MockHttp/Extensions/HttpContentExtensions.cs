@@ -1,4 +1,6 @@
-﻿namespace MockHttp;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MockHttp;
 
 internal static class HttpContentExtensions
 {
@@ -8,12 +10,12 @@ internal static class HttpContentExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="content"></param>
     /// <remarks>This does not create a true clone, because inherited content could have extra properties, and we're not using reflection.</remarks>
-    public static async Task<ByteArrayContent> CloneAsByteArrayContentAsync<T>(this T content)
+    public static async Task<ByteArrayContent?> CloneAsByteArrayContentAsync<T>(this T? content)
         where T : HttpContent
     {
         if (content == default)
         {
-            return default;
+            return default!;
         }
 
         await Task.Yield();
@@ -24,6 +26,7 @@ internal static class HttpContentExtensions
         await content.CopyToAsync(ms).ConfigureAwait(false);
         var clone = new ByteArrayContent(ms.ToArray());
 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (content.Headers is null)
         {
             return clone;

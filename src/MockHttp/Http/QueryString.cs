@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace MockHttp.Http;
@@ -16,7 +17,8 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
     }
 
     public QueryString(IEnumerable<KeyValuePair<string, string>> values)
-        : this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, new[] { v.Value })))
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        : this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, new[] { v.Value }))!)
     {
     }
 
@@ -30,16 +32,21 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 
         foreach (KeyValuePair<string, IEnumerable<string>> kvp in values)
         {
-            if (string.IsNullOrEmpty(kvp.Key))
-            {
-                throw new FormatException("Key can not be null or empty.");
-            }
-
-            // TODO: implement/override Add, because empty string for key is possible but not allowed. Even though we checked here, still possible to call Add externally.
-            // Accept null values enumerable, but then use empty list.
-            // Null values in values enumerable are filtered.
-            Add(kvp.Key, kvp.Value?.Where(v => v is not null).ToList() ?? new List<string>());
+            InternalAdd(kvp.Key, kvp.Value);
         }
+    }
+
+    // TODO: override Add, because empty string for key is possible but not allowed. Even though we checked here, still possible to call Add externally.
+    private void InternalAdd(string key, IEnumerable<string?>? values)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            throw new FormatException("Key can not be null or empty.");
+        }
+
+        // Accept null values enumerable, but then use empty list.
+        // Null values in values enumerable are filtered out.
+        Add(key, (values?.Where(v => v is not null).ToList() ?? new List<string?>())!);
     }
 
     public override string ToString()
@@ -54,7 +61,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
             throw new ArgumentNullException(nameof(queryString));
         }
 
-        if (!TryGetQueryFromUri(queryString, out string qs))
+        if (!TryGetQueryFromUri(queryString, out string? qs))
         {
             qs = queryString;
 
@@ -68,14 +75,14 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
         return new QueryString(DataEscapingHelper.Parse(qs));
     }
 
-    private static bool TryGetQueryFromUri(string uri, out string queryString)
+    private static bool TryGetQueryFromUri(string uri, [NotNullWhen(true)] out string? queryString)
     {
 #if NETSTANDARD2_1 || NET5_0
         if (uri.Contains(TokenQuestionMark, StringComparison.InvariantCultureIgnoreCase)
 #else
         if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))
 #endif
-         && Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri u))
+         && Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri? u))
         {
             if (!u.IsAbsoluteUri)
             {

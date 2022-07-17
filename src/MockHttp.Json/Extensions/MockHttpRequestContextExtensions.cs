@@ -12,7 +12,7 @@ internal static class MockHttpRequestContextExtensions
     /// <returns>The adapter.</returns>
     internal static IJsonAdapter GetAdapter(this MockHttpRequestContext context)
     {
-        context.TryGetService<IJsonAdapter>(out IJsonAdapter? adapter);
+        context.TryGetService(out IJsonAdapter? adapter);
         return adapter ?? Defaults.Adapter;
     }
 }

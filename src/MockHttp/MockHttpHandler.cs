@@ -51,21 +51,20 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
             throw new ArgumentNullException(nameof(request));
         }
 
-        var requestContext = new MockHttpRequestContext(request, _readOnlyItems);
-        return InternalSendAsync(cancellationToken, requestContext);
+        return InternalSendAsync(cancellationToken, new MockHttpRequestContext(request, _readOnlyItems));
 
-        async Task<HttpResponseMessage> InternalSendAsync(CancellationToken cancellationToken1, MockHttpRequestContext mockHttpRequestContext)
+        async Task<HttpResponseMessage> InternalSendAsync(CancellationToken ct, MockHttpRequestContext requestContext)
         {
-            await LoadIntoBufferAsync(mockHttpRequestContext.Request.Content).ConfigureAwait(false);
+            await LoadIntoBufferAsync(requestContext.Request.Content).ConfigureAwait(false);
             foreach (HttpCall setup in _setups.Reverse())
             {
-                if (await setup.Matchers.AllAsync(mockHttpRequestContext).ConfigureAwait(false))
+                if (await setup.Matchers.AllAsync(requestContext).ConfigureAwait(false))
                 {
-                    return await SendAsync(setup, mockHttpRequestContext, cancellationToken1).ConfigureAwait(false);
+                    return await SendAsync(setup, requestContext, ct).ConfigureAwait(false);
                 }
             }
 
-            return await SendAsync(_fallbackSetup, mockHttpRequestContext, cancellationToken1).ConfigureAwait(false);
+            return await SendAsync(_fallbackSetup, requestContext, ct).ConfigureAwait(false);
         }
     }
 
@@ -124,9 +123,14 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
+    public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string? because = null)
     {
-        Verify(matching, times?.Invoke(), because);
+        if (times is null)
+        {
+            throw new ArgumentNullException(nameof(times));
+        }
+
+        Verify(matching, times.Invoke(), because);
     }
 
     /// <summary>
@@ -136,9 +140,9 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
     /// <remarks>
-    /// When verifying <see cref="HttpContent" /> using a <see cref="ContentMatcher" /> use the <see cref="VerifyAsync(System.Action{MockHttp.RequestMatching},System.Func{MockHttp.IsSent},string)" /> overload to prevent potential deadlocks.
+    /// When verifying <see cref="HttpContent" /> using a <see cref="ContentMatcher" /> use the <see cref="VerifyAsync(Action{RequestMatching},Func{IsSent},string)" /> overload to prevent potential deadlocks.
     /// </remarks>
-    public void Verify(Action<RequestMatching> matching, IsSent times, string because = null)
+    public void Verify(Action<RequestMatching> matching, IsSent times, string? because = null)
     {
         TaskHelpers.RunSync(() => VerifyAsync(matching, times, because), TimeSpan.FromSeconds(30));
     }
@@ -149,9 +153,14 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string because = null)
+    public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string? because = null)
     {
-        return VerifyAsync(matching, times?.Invoke(), because);
+        if (times is null)
+        {
+            throw new ArgumentNullException(nameof(times));
+        }
+
+        return VerifyAsync(matching, times.Invoke(), because);
     }
 
     /// <summary>
@@ -160,14 +169,17 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string because = null)
+    public Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string? because = null)
     {
         if (matching is null)
         {
             throw new ArgumentNullException(nameof(matching));
         }
 
-        times ??= IsSent.AtLeastOnce();
+        if (times is null)
+        {
+            throw new ArgumentNullException(nameof(times));
+        }
 
         var rm = new RequestMatching();
         matching(rm);
@@ -244,6 +256,12 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 
     IMockConfiguration IMockConfiguration.Use<TService>(TService service)
     {
+        if (service is null)
+        {
+            _items.Remove(typeof(TService));
+            return this;
+        }
+
         _items[typeof(TService)] = service;
         return this;
     }
@@ -269,7 +287,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         throw new HttpMockException($"There are {expectedInvocations.Count} unfulfilled expectations:{Environment.NewLine}{string.Join(Environment.NewLine, expectedInvocations.Select(r => '\t' + r.ToString()))}{invokedRequestsStr}");
     }
 
-    private static async Task LoadIntoBufferAsync(HttpContent httpContent)
+    private static async Task LoadIntoBufferAsync(HttpContent? httpContent)
     {
         if (httpContent is not null)
         {
@@ -280,9 +298,9 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         }
     }
 
-    private static string BecauseMessage(string because)
+    private static string BecauseMessage(string? because)
     {
-        if (string.IsNullOrWhiteSpace(because))
+        if (because is null || string.IsNullOrWhiteSpace(because))
         {
             return string.Empty;
         }

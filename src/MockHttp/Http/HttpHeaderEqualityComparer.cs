@@ -21,7 +21,7 @@ internal enum HttpHeaderMatchType
 internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 {
     private readonly HttpHeaderMatchType? _matchType;
-    private readonly PatternMatcher _valuePatternMatcher;
+    private readonly PatternMatcher? _valuePatternMatcher;
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {

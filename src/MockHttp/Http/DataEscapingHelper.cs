@@ -35,15 +35,15 @@ internal static class DataEscapingHelper
                 }
 
                 string key = Uri.UnescapeDataString(kvp[0]);
-                string value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : null;
-                return new KeyValuePair<string, string>(key, value);
+                string? value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : null;
+                return new KeyValuePair<string, string?>(key, value);
             })
             // Group values for same key.
             .GroupBy(kvp => kvp.Key)
             .Select(g => new KeyValuePair<string, IEnumerable<string>>(
                 g.Key,
                 g.Select(v => v.Value)
-                    .Where(v => v is not null))
+                    .Where(v => v is not null)!)
             )
             .ToList();
     }
@@ -58,10 +58,11 @@ internal static class DataEscapingHelper
         var sb = new StringBuilder();
         foreach (KeyValuePair<string, IEnumerable<string>> item in items)
         {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             bool hasValues = item.Value is not null && item.Value.Any();
             if (hasValues)
             {
-                foreach (string v in item.Value)
+                foreach (string v in item.Value!)
                 {
                     sb.Append(CreateEscapedKeyValuePair(item.Key, v));
                 }
@@ -87,7 +88,7 @@ internal static class DataEscapingHelper
         return sb.ToString();
     }
 
-    private static string CreateEscapedKeyValuePair(string key, string value)
+    private static string CreateEscapedKeyValuePair(string key, string? value)
     {
         return Uri.EscapeDataString(key)
           + TokenEquals

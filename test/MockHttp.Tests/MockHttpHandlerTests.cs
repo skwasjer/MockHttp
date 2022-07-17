@@ -39,7 +39,7 @@ public class MockHttpHandlerTests : IDisposable
     [Fact]
     public async Task Given_request_is_configured_to_throw_when_sending_request_should_throw_exception()
     {
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Throws<TestableException>()
             .Verifiable();
 
@@ -48,7 +48,7 @@ public class MockHttpHandlerTests : IDisposable
 
         // Assert
         await act.Should().ThrowExactlyAsync<TestableException>();
-        _sut.Verify(m => { }, IsSent.Once);
+        _sut.Verify(_ => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
@@ -56,7 +56,7 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_request_is_configured_to_throw_specific_exception_when_sending_request_should_throw_exception()
     {
         var exception = new TestableException();
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Throws(exception)
             .Verifiable();
 
@@ -68,7 +68,7 @@ public class MockHttpHandlerTests : IDisposable
                 .ThrowAsync<TestableException>())
             .Which.Should()
             .Be(exception);
-        _sut.Verify(m => { }, IsSent.Once);
+        _sut.Verify(_ => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
@@ -76,7 +76,7 @@ public class MockHttpHandlerTests : IDisposable
     public async Task Given_request_is_configured_to_return_response_when_sending_request_should_return_response()
     {
         const string data = "data";
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Respond(HttpStatusCode.OK, new StringContent(data));
 
         // Act
@@ -86,7 +86,7 @@ public class MockHttpHandlerTests : IDisposable
         actualResponse.Should().NotBeNull();
         actualResponse.Content.Should().NotBeNull();
         await actualResponse.Should().HaveContentAsync(data);
-        _sut.Verify(m => { }, IsSent.Once);
+        _sut.Verify(_ => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
@@ -99,7 +99,7 @@ public class MockHttpHandlerTests : IDisposable
         // Assert
         actualResponse.Should().HaveStatusCode(HttpStatusCode.NotFound);
         actualResponse.ReasonPhrase.Should().Be("No request is configured, returning default response.");
-        _sut.Verify(m => { }, IsSent.Once);
+        _sut.Verify(_ => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
@@ -145,7 +145,7 @@ public class MockHttpHandlerTests : IDisposable
     {
         bool callbackCalled = false;
         const string expectedReason = "Callback is called = True";
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Callback(() => callbackCalled = true)
             .Respond(() => new HttpResponseMessage { ReasonPhrase = $"Callback is called = {callbackCalled}" });
 
@@ -154,14 +154,14 @@ public class MockHttpHandlerTests : IDisposable
 
         // Assert
         actualResponse.ReasonPhrase.Should().Be(expectedReason, "the callback should be called before we returned the response");
-        _sut.Verify(m => { }, IsSent.Once);
+        _sut.Verify(_ => { }, IsSent.Once);
         _sut.VerifyNoOtherRequests();
     }
 
     [Fact]
     public async Task Given_no_response_is_configured_when_sending_request_should_throw()
     {
-        _sut.When(matching => { });
+        _sut.When(_ => { });
 
         // Act
         Func<Task<HttpResponseMessage>> act = () => _httpClient.GetAsync("");
@@ -414,20 +414,21 @@ public class MockHttpHandlerTests : IDisposable
         const string data = "data";
         byte[] buffer = Encoding.UTF8.GetBytes(data);
         using Stream stream = new CanSeekMemoryStream(buffer, isSeekableStream);
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Respond(HttpStatusCode.OK, stream, MediaTypes.PlainText)
             .Verifiable();
 
         // Act
         HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
-        HttpResponseMessage secondResponse = null;
+        HttpResponseMessage? secondResponse = null;
         Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
         // Assert
         await act.Should().NotThrowAsync();
 
-        _sut.Verify(matching => { }, IsSent.Exactly(2));
-        firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+        _sut.Verify(_ => { }, IsSent.Exactly(2));
+        secondResponse.Should().NotBeNull();
+        firstResponse.Content.Should().NotBeSameAs(secondResponse!.Content);
         await (await firstResponse.Should()
                 .HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
             .And.HaveContentAsync(data);
@@ -440,21 +441,22 @@ public class MockHttpHandlerTests : IDisposable
     {
         const string data = "data";
         using HttpContent httpContent = new StringContent(data);
-        _sut.When(matching => { })
+        _sut.When(_ => { })
             .Respond(HttpStatusCode.OK, httpContent)
             .Verifiable();
 
         // Act
         HttpResponseMessage firstResponse = await _httpClient.GetAsync("url");
-        HttpResponseMessage secondResponse = null;
+        HttpResponseMessage? secondResponse = null;
         Func<Task<HttpResponseMessage>> act = async () => secondResponse = await _httpClient.GetAsync("url");
 
         // Assert
         await act.Should().NotThrowAsync();
 
-        _sut.Verify(matching => { }, IsSent.Exactly(2));
+        _sut.Verify(_ => { }, IsSent.Exactly(2));
         firstResponse.Content.Should().BeOfType<ByteArrayContent>("a buffered copy is created and returned for all responses");
-        firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+        secondResponse.Should().NotBeNull();
+        firstResponse.Content.Should().NotBeSameAs(secondResponse!.Content);
         await (await firstResponse.Should()
                 .HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
             .And.HaveContentAsync(data);
@@ -540,14 +542,16 @@ public class MockHttpHandlerTests : IDisposable
         // Act & assert
         Func<Task<HttpResponseMessage>> act1 = () => _httpClient.GetAsync("");
         Func<Task<HttpResponseMessage>> act2 = () => _httpClient.GetAsync("");
-        HttpResponseMessage response3 = null;
+        HttpResponseMessage? response3 = null;
         Func<Task<HttpResponseMessage>> act3 = async () => response3 = await _httpClient.GetAsync("");
 
         // Assert
         (await act1.Should().ThrowAsync<Exception>()).Which.Should().Be(ex);
         await act2.Should().ThrowAsync<TaskCanceledException>();
         await act3.Should().NotThrowAsync();
-        response3.Should().HaveStatusCode(HttpStatusCode.OK);
+        response3.Should()
+            .NotBeNull()
+            .And.HaveStatusCode(HttpStatusCode.OK);
 
         _sut.Verify(matching => matching.Method("GET"), IsSent.Exactly(3));
         _sut.VerifyNoOtherRequests();
@@ -600,7 +604,7 @@ public class MockHttpHandlerTests : IDisposable
     {
         HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
 
-        IResponds<IResponseResult> result = _sut.When(m => { });
+        IResponds<IResponseResult> result = _sut.When(_ => { });
         _ = statusCodeSequence.Aggregate(result, (current, next) => (IResponds<IResponseResult>)current.Respond(next));
 
         // Act
@@ -617,6 +621,52 @@ public class MockHttpHandlerTests : IDisposable
         {
             HttpResponseMessage response = await _httpClient.GetAsync("");
             response.Should().HaveStatusCode(expectedStatus);
+        }
+    }
+
+    public class VerifyNullArgTests
+    {
+        [Theory]
+        [MemberData(nameof(TestCases))]
+        public void Given_null_argument_when_executing_method_it_should_throw(params object[] args)
+        {
+            NullArgumentTest.Execute(args);
+        }
+
+        public static IEnumerable<object[]> TestCases()
+        {
+            var mockHttp = new MockHttpHandler();
+            // ReSharper disable once ConvertToLocalFunction
+            Action<RequestMatching> matching = _ => { };
+            Func<IsSent> isSentFunc = IsSent.Once;
+            string? because = null;
+
+            DelegateTestCase[] testCases =
+            {
+                DelegateTestCase.Create(
+                    mockHttp.Verify,
+                    matching,
+                    isSentFunc,
+                    because),
+                DelegateTestCase.Create(
+                    mockHttp.Verify,
+                    matching,
+                    isSentFunc(),
+                    because),
+                DelegateTestCase.Create(
+                    mockHttp.VerifyAsync,
+                    matching,
+                    isSentFunc,
+                    because),
+                DelegateTestCase.Create(
+                    mockHttp.VerifyAsync,
+                    matching,
+                    isSentFunc(),
+                    because)
+            };
+
+            return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
+
         }
     }
 }

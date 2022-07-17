@@ -23,7 +23,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
         }
 
         _equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameOnly);
-        Value.TryAddWithoutValidation(name, (string)null);
+        Value.TryAddWithoutValidation(name, (string?)null);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
             throw new ArgumentNullException(nameof(name));
         }
 
-        RegexPatternMatcher patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
+        RegexPatternMatcher? patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
         _equalityComparer = patternMatcher is null
             ? new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues)
             : new HttpHeaderEqualityComparer(patternMatcher);
@@ -91,7 +91,8 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
     /// </summary>
     /// <param name="headers">The headers to match.</param>
     public HttpHeadersMatcher(IEnumerable<KeyValuePair<string, string>> headers)
-        : this(headers?.ToDictionary(h => h.Key, h => Enumerable.Repeat(h.Value, 1)))
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        : this(headers?.ToDictionary(h => h.Key, h => Enumerable.Repeat(h.Value, 1))!)
     {
     }
 
@@ -115,10 +116,10 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
         return $"Headers: {value.TrimEnd('\r', '\n')}";
     }
 
-    private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders headers)
+    private bool IsMatch(KeyValuePair<string, IEnumerable<string>> expectedHeader, HttpHeaders? headers)
     {
         return headers is not null
-         && headers.TryGetValues(expectedHeader.Key, out IEnumerable<string> vls)
+         && headers.TryGetValues(expectedHeader.Key, out IEnumerable<string>? vls)
          && _equalityComparer.Equals(
                 expectedHeader,
                 new KeyValuePair<string, IEnumerable<string>>(expectedHeader.Key, vls)

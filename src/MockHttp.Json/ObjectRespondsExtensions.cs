@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿#nullable disable
+using System.Net;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using MockHttp.Language;
@@ -187,3 +188,4 @@ public static class ObjectRespondsExtensions
         return responds.RespondUsing(new MediaTypeFormatterObjectResponseStrategy<T>(statusCode, value, mediaType, formatter));
     }
 }
+#nullable restore

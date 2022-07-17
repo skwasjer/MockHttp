@@ -18,7 +18,7 @@ internal sealed class HttpCallSequence : HttpCall
         int nextRequestIndex = IncrementIfLessThan(ref _requestIndex, _responseSequence.Count - 1);
 
         // TODO: if Reset() has been called from other thread, this can result in IndexOutOfRangeException. Have to handle this is some way and make it thread safe.
-        IResponseStrategy responseStrategy = nextRequestIndex >= 0
+        IResponseStrategy? responseStrategy = nextRequestIndex >= 0
             ? _responseSequence[nextRequestIndex]
             : null;
 

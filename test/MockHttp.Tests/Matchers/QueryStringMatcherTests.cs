@@ -6,8 +6,6 @@ namespace MockHttp.Matchers;
 
 public class QueryStringMatcherTests
 {
-    private QueryStringMatcher _sut;
-
     [Theory]
     [InlineData("?key", "key", null)]
     [InlineData("?key=", "key", "")]
@@ -15,22 +13,22 @@ public class QueryStringMatcherTests
     [InlineData("?key1=value1&key2=value2", "key2", "value2")]
     [InlineData("?key=value1&key=value2", "key", "value1")]
     [InlineData("?key1=value1&%C3%A9%C3%B4x%C3%84=%24%25%5E%26*&key2=value", "éôxÄ", "$%^&*")]
-    public void Given_queryString_equals_expected_queryString_when_matching_should_match(string queryString, string expectedKey, string expectedValue)
+    public void Given_queryString_equals_expected_queryString_when_matching_should_match(string queryString, string expectedKey, string? expectedValue)
     {
         var request = new HttpRequestMessage { RequestUri = new Uri("http://localhost/" + queryString) };
 
-        _sut = new QueryStringMatcher(new[]
+        var sut = new QueryStringMatcher(new[]
         {
             new KeyValuePair<string, IEnumerable<string>>(
                 expectedKey,
                 expectedValue is null
-                    ? null
+                    ? null!
                     : new[] { expectedValue }
             )
         });
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Theory]
@@ -43,28 +41,28 @@ public class QueryStringMatcherTests
     {
         var request = new HttpRequestMessage { RequestUri = new Uri("http://localhost/" + queryString) };
 
-        _sut = new QueryStringMatcher(new[] { new KeyValuePair<string, IEnumerable<string>>("key_not_in_uri", null) });
+        var sut = new QueryStringMatcher(new[] { new KeyValuePair<string, IEnumerable<string>>("key_not_in_uri", null!) });
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
     }
 
     [Fact]
     public void Given_queryString_and_no_expected_queryString_when_matching_should_not_match()
     {
-        _sut = new QueryStringMatcher("");
+        var sut = new QueryStringMatcher("");
 
         var request = new HttpRequestMessage { RequestUri = new Uri("http://localhost/?unexpected=query") };
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse("no query string was expected");
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse("no query string was expected");
     }
 
     [Fact]
     public void Given_null_queryString_when_creating_matcher_should_throw()
     {
         // Act
-        Func<QueryStringMatcher> act = () => new QueryStringMatcher((string)null);
+        Func<QueryStringMatcher> act = () => new QueryStringMatcher((string)null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParameterName("queryString");
@@ -74,7 +72,7 @@ public class QueryStringMatcherTests
     public void Given_null_parameters_when_creating_matcher_should_throw()
     {
         // Act
-        Func<QueryStringMatcher> act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
+        Func<QueryStringMatcher> act = () => new QueryStringMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParameterName("parameters");
@@ -84,10 +82,10 @@ public class QueryStringMatcherTests
     public void When_formatting_should_return_human_readable_representation()
     {
         const string expectedText = "QueryString: '?key=value1'";
-        _sut = new QueryStringMatcher("?key=value1");
+        var sut = new QueryStringMatcher("?key=value1");
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -96,12 +94,11 @@ public class QueryStringMatcherTests
     [Fact]
     public void Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new QueryStringMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
-        MockHttpRequestContext requestContext = null;
+        var sut = new QueryStringMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Action act = () => _sut.IsMatch(requestContext);
+        Action act = () => sut.IsMatch(requestContext!);
 
         // Assert
         act.Should()

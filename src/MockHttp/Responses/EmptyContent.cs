@@ -1,5 +1,4 @@
-﻿#nullable enable
-#pragma warning disable S4136
+﻿#pragma warning disable S4136
 using System.Net;
 
 namespace MockHttp.Responses;
@@ -48,4 +47,3 @@ internal class EmptyContent : HttpContent
 #endif
 }
 #pragma warning restore S4136
-#nullable restore

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿#nullable disable
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
@@ -460,3 +461,4 @@ public static class IRespondsExtensions
         }
     }
 }
+#nullable restore

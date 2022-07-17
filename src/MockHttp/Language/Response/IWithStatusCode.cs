@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Net;
 using MockHttp.Language.Flow.Response;
 
@@ -22,4 +21,3 @@ public interface IWithStatusCode
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="statusCode" /> is less than 100.</exception>
     IWithStatusCodeResult StatusCode(HttpStatusCode statusCode, string? reasonPhrase = null);
 }
-#nullable restore

@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿#nullable enable
+using System.Collections.Specialized;
 using FluentAssertions;
 using Xunit;
 
@@ -9,10 +10,9 @@ public class NameValueCollectionExtensionsTests
     [Fact]
     public void Given_null_when_getting_as_enumerable_should_throw()
     {
-        NameValueCollection nameValueCollection = null;
+        NameValueCollection? nameValueCollection = null;
 
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<int> act = () => nameValueCollection.AsEnumerable().Count();
+        Func<object> act = () => nameValueCollection!.AsEnumerable();
 
         // Assert
         act.Should()
@@ -27,12 +27,14 @@ public class NameValueCollectionExtensionsTests
         {
             { "key1", "value1" },
             { "key1", "value2" },
-            { "key2", "value3" }
+            { "key2", "value3" },
+            { "key3", null }
         };
         var expectedKeyValuePairs = new Dictionary<string, IEnumerable<string>>
         {
             { "key1", new[] { "value1", "value2" } },
-            { "key2", new[] { "value3" } }
+            { "key2", new[] { "value3" } },
+            { "key3", Array.Empty<string>() }
         };
 
         // Act
@@ -42,3 +44,4 @@ public class NameValueCollectionExtensionsTests
         actual.Should().BeEquivalentTo(expectedKeyValuePairs);
     }
 }
+#nullable restore
