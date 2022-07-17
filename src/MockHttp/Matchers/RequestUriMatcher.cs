@@ -11,11 +11,11 @@ public class RequestUriMatcher : HttpRequestMatcher
     private const char UriSegmentDelimiter = '/';
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private Uri _requestUri;
+    private Uri _requestUri = default!;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string _formattedUri;
+    private string _formattedUri = default!;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly PatternMatcher _uriPatternMatcher;
+    private readonly PatternMatcher? _uriPatternMatcher;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestUriMatcher" /> class using specified <paramref name="uri" />.
@@ -76,7 +76,7 @@ public class RequestUriMatcher : HttpRequestMatcher
             throw new ArgumentNullException(nameof(requestContext));
         }
 
-        Uri requestUri = requestContext.Request.RequestUri;
+        Uri? requestUri = requestContext.Request.RequestUri;
         if (requestUri is null)
         {
             return false;

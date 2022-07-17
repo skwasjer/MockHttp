@@ -49,12 +49,15 @@ public class AnyMatcherTests
     [Fact]
     public void Given_null_matchers_when_creating_matcher_should_throw()
     {
+        IReadOnlyCollection<IAsyncHttpRequestMatcher>? matchers = null;
+
         // Act
-        // ReSharper disable once ObjectCreationAsStatement
-        Func<AnyMatcher> act = () => new AnyMatcher(null);
+        Func<AnyMatcher> act = () => new AnyMatcher(matchers!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("matchers");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(matchers));
     }
 
     [Fact]
@@ -79,11 +82,10 @@ public class AnyMatcherTests
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()
     {
-        MockHttpRequestContext requestContext = null;
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+        Func<Task> act = () => _sut.IsMatchAsync(requestContext!);
 
         // Assert
         await act.Should()

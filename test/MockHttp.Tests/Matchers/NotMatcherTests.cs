@@ -35,11 +35,15 @@ public class NotMatcherTests
     [Fact]
     public void Given_null_inner_matcher_when_creating_matcher_should_throw()
     {
+        IAsyncHttpRequestMatcher? matcher = null;
+
         // Act
-        Func<NotMatcher> act = () => new NotMatcher(null);
+        Func<NotMatcher> act = () => new NotMatcher(matcher!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("matcher");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(matcher));
     }
 
     [Fact]
@@ -59,11 +63,10 @@ public class NotMatcherTests
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()
     {
-        MockHttpRequestContext requestContext = null;
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+        Func<Task> act = () => _sut.IsMatchAsync(requestContext!);
 
         // Assert
         await act.Should()

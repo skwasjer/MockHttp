@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
@@ -474,4 +473,3 @@ public static class ResponseBuilderExtensions
     }
 
 }
-#nullable restore

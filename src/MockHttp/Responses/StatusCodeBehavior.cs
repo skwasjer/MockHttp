@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net;
+﻿using System.Net;
 
 namespace MockHttp.Responses;
 
@@ -31,4 +30,3 @@ internal sealed class StatusCodeBehavior
         return next(requestContext, responseMessage, cancellationToken);
     }
 }
-#nullable restore

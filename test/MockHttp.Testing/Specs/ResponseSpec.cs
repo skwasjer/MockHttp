@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net;
+﻿using System.Net;
 using FluentAssertions;
 using MockHttp.Language;
 using Xunit;
@@ -61,4 +60,3 @@ public abstract class ResponseSpec : IAsyncLifetime
         return Task.CompletedTask;
     }
 }
-#nullable restore

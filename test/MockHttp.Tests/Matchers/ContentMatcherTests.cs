@@ -7,8 +7,6 @@ namespace MockHttp.Matchers;
 
 public class ContentMatcherTests
 {
-    private ContentMatcher _sut;
-
     [Theory]
     [InlineData("request content", "utf-8")]
     [InlineData("", "utf-8")]
@@ -21,10 +19,10 @@ public class ContentMatcherTests
 
         var request = new HttpRequestMessage { Content = new StringContent(content, enc) };
 
-        _sut = new ContentMatcher(expectedContent, enc);
+        var sut = new ContentMatcher(expectedContent, enc);
 
         // Act & assert
-        (await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+        (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
     }
 
     [Fact]
@@ -35,10 +33,10 @@ public class ContentMatcherTests
 
         var request = new HttpRequestMessage { Content = new StringContent(content) };
 
-        _sut = new ContentMatcher(expectedContent, Encoding.UTF8);
+        var sut = new ContentMatcher(expectedContent, Encoding.UTF8);
 
         // Act & assert
-        (await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
+        (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
     }
 
     [Fact]
@@ -49,12 +47,12 @@ public class ContentMatcherTests
 
         var request = new HttpRequestMessage { Content = new StringContent(content) };
 
-        _sut = new ContentMatcher(expectedContent, Encoding.UTF8);
+        var sut = new ContentMatcher(expectedContent, Encoding.UTF8);
 
         // Act & assert
         var ctx = new MockHttpRequestContext(request);
-        (await _sut.IsMatchAsync(ctx)).Should().BeTrue();
-        (await _sut.IsMatchAsync(ctx)).Should().BeTrue("the content should be buffered and matchable more than once");
+        (await sut.IsMatchAsync(ctx)).Should().BeTrue();
+        (await sut.IsMatchAsync(ctx)).Should().BeTrue("the content should be buffered and matchable more than once");
     }
 
     [Fact]
@@ -62,10 +60,10 @@ public class ContentMatcherTests
     {
         var request = new HttpRequestMessage();
 
-        _sut = new ContentMatcher();
+        var sut = new ContentMatcher();
 
         // Act & assert
-        (await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+        (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
     }
 
     [Fact]
@@ -73,27 +71,33 @@ public class ContentMatcherTests
     {
         var request = new HttpRequestMessage();
 
-        _sut = new ContentMatcher("some data", Encoding.UTF8);
+        var sut = new ContentMatcher("some data", Encoding.UTF8);
 
         // Act & assert
-        (await _sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
+        (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
     }
 
     [Fact]
     public void Given_null_content_string_with_encoding_when_creating_matcher_should_throw()
     {
+        string? content = null;
+
         // Act
-        Func<ContentMatcher> act = () => new ContentMatcher(null, Encoding.UTF8);
+        Func<ContentMatcher> act = () => new ContentMatcher(content!, Encoding.UTF8);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(content));
     }
 
     [Fact]
     public void Given_content_string_with_null_encoding_when_creating_matcher_should_not_throw()
     {
+        Encoding? encoding = null;
+
         // Act
-        Func<ContentMatcher> act = () => new ContentMatcher("data", null);
+        Func<ContentMatcher> act = () => new ContentMatcher("data", encoding);
 
         // Assert
         act.Should().NotThrow("default encoding should be used instead");
@@ -102,11 +106,15 @@ public class ContentMatcherTests
     [Fact]
     public void Given_null_content_bytes_when_creating_matcher_should_throw()
     {
+        byte[]? content = null;
+
         // Act
-        Func<ContentMatcher> act = () => new ContentMatcher(null);
+        Func<ContentMatcher> act = () => new ContentMatcher(content!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("content");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(content));
     }
 
     [Theory]
@@ -118,12 +126,12 @@ public class ContentMatcherTests
     public void When_formatting_should_return_human_readable_representation(string content, string expectedText)
     {
         // If theory starts with ByteArray string, we will actually act as if the content was in binary form (thus no encoding)
-        _sut = content.StartsWith("ByteArray")
+        ContentMatcher sut = content.StartsWith("ByteArray")
             ? new ContentMatcher(Encoding.UTF8.GetBytes(content))
             : new ContentMatcher(content, Encoding.UTF8);
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -132,12 +140,11 @@ public class ContentMatcherTests
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new ContentMatcher("", null);
-        MockHttpRequestContext requestContext = null;
+        var sut = new ContentMatcher("", null);
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+        Func<Task> act = () => sut.IsMatchAsync(requestContext!);
 
         // Assert
         await act.Should()

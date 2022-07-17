@@ -9,13 +9,15 @@ public class HttpHeadersCollectionTests
     [Fact]
     public void Given_null_header_when_parsing_should_throw()
     {
+        string? headers = null;
+
         // Act
-        Action act = () => HttpHeadersCollection.Parse(null);
+        Action act = () => HttpHeadersCollection.Parse(headers!);
 
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParameterName("headers");
+            .WithParameterName(nameof(headers));
     }
 
     [Fact]
@@ -38,7 +40,7 @@ public class HttpHeadersCollectionTests
         HttpHeaders headers = HttpHeadersCollection.Parse(headerString);
 
         // Assert
-        headers.TryGetValues(expectedHeaderKey, out IEnumerable<string> values)
+        headers.TryGetValues(expectedHeaderKey, out IEnumerable<string>? values)
             .Should()
             .BeTrue();
         values

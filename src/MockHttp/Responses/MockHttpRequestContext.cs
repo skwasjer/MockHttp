@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MockHttp.Responses;
 
@@ -12,7 +13,7 @@ public class MockHttpRequestContext
     /// </summary>
     /// <param name="request">The request message.</param>
     /// <param name="services">Optional registered services for use by matchers and/or response strategies.</param>
-    public MockHttpRequestContext(HttpRequestMessage request, IReadOnlyDictionary<Type, object> services = null)
+    public MockHttpRequestContext(HttpRequestMessage request, IReadOnlyDictionary<Type, object>? services = null)
     {
         Request = request ?? throw new ArgumentNullException(nameof(request));
         Services = services ?? new ReadOnlyDictionary<Type, object>(new Dictionary<Type, object>());
@@ -34,9 +35,9 @@ public class MockHttpRequestContext
     /// <typeparam name="TService">The service type.</typeparam>
     /// <param name="service">Returns the service.</param>
     /// <returns>true if the service is resolved, false otherwise.</returns>
-    public bool TryGetService<TService>(out TService service)
+    public bool TryGetService<TService>([NotNullWhen(true)] out TService? service)
     {
-        if (Services.TryGetValue(typeof(TService), out object s))
+        if (Services.TryGetValue(typeof(TService), out object? s) && s != null!)
         {
             service = (TService)s;
             return true;

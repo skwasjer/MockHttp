@@ -10,9 +10,9 @@ namespace MockHttp;
 /// </summary>
 internal class HttpCall
 {
-    private IResponseStrategy _responseStrategy;
-    private string _verifiableBecause;
-    private IReadOnlyCollection<IAsyncHttpRequestMatcher> _matchers;
+    private IResponseStrategy? _responseStrategy;
+    private string? _verifiableBecause;
+    private IReadOnlyCollection<IAsyncHttpRequestMatcher>? _matchers;
 
     public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers
     {
@@ -23,7 +23,7 @@ internal class HttpCall
                 SetMatchers(new List<IAsyncHttpRequestMatcher>());
             }
 
-            return _matchers;
+            return _matchers!;
         }
     }
 
@@ -33,7 +33,7 @@ internal class HttpCall
 
     public virtual bool IsInvoked { get; protected set; }
 
-    public Action<HttpRequestMessage> Callback { get; private set; }
+    protected Action<HttpRequestMessage>? Callback { get; private set; }
 
     public virtual async Task<HttpResponseMessage> SendAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
     {
@@ -73,7 +73,7 @@ internal class HttpCall
         Callback = callback ?? throw new ArgumentNullException(nameof(callback));
     }
 
-    public virtual void SetVerifiable(string because)
+    public virtual void SetVerifiable(string? because)
     {
         IsVerifiable = true;
         _verifiableBecause = because;

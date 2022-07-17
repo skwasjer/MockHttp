@@ -17,11 +17,10 @@ public class HttpRequestMatcherTests
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()
     {
-        MockHttpRequestContext requestContext = null;
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+        Func<Task> act = () => _sut.IsMatchAsync(requestContext!);
 
         // Assert
         await act.Should()

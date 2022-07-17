@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using MockHttp.Language.Flow.Response;
 
 namespace MockHttp.Language.Response;
@@ -21,4 +20,3 @@ public interface IWithHeaders
     /// <exception cref="ArgumentException">Thrown when <paramref name="headers" /> is empty.</exception>
     IWithHeadersResult Headers(IEnumerable<KeyValuePair<string, IEnumerable<string?>>> headers);
 }
-#nullable restore

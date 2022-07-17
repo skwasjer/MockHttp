@@ -34,8 +34,7 @@ internal static class TaskHelpers
             AggregateException flattened = ex.Flatten();
             if (flattened.InnerExceptions.Count == 1)
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                ExceptionDispatchInfo.Capture(ex.InnerException!).Throw();
             }
             else
             {

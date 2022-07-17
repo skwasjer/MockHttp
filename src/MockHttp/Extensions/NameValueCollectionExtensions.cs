@@ -4,7 +4,7 @@ namespace MockHttp;
 
 internal static class NameValueCollectionExtensions
 {
-    public static IEnumerable<KeyValuePair<string, IEnumerable<string>>> AsEnumerable(this NameValueCollection nameValueCollection)
+    public static IEnumerable<KeyValuePair<string, IEnumerable<string?>>> AsEnumerable(this NameValueCollection nameValueCollection)
     {
         if (nameValueCollection is null)
         {
@@ -13,13 +13,13 @@ internal static class NameValueCollectionExtensions
 
         return Iterator(nameValueCollection);
 
-        static IEnumerable<KeyValuePair<string, IEnumerable<string>>> Iterator(NameValueCollection nvc)
+        static IEnumerable<KeyValuePair<string, IEnumerable<string?>>> Iterator(NameValueCollection nvc)
         {
             foreach (string key in nvc)
             {
-                yield return new KeyValuePair<string, IEnumerable<string>>(
+                yield return new KeyValuePair<string, IEnumerable<string?>>(
                     key,
-                    nvc.GetValues(key)
+                    nvc.GetValues(key) ?? Array.Empty<string?>()
                 );
             }
         }

@@ -12,7 +12,7 @@ public class PartialContentMatcher : ContentMatcher
     /// </summary>
     /// <param name="content">The request content to match.</param>
     /// <param name="encoding">The content encoding.</param>
-    public PartialContentMatcher(string content, Encoding encoding)
+    public PartialContentMatcher(string content, Encoding? encoding)
         : base(content, encoding)
     {
         if (ByteContent.Length == 0)

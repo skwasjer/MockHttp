@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -110,4 +109,3 @@ internal sealed class ResponseBuilder
     }
 }
 
-#nullable restore

@@ -8,10 +8,9 @@ public class ResponseFuncStrategyTests
     [Fact]
     public void Given_null_response_when_creating_instance_should_throw()
     {
-        Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc = null;
+        Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>? responseFunc = null;
 
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<ResponseFuncStrategy> act = () => new ResponseFuncStrategy(responseFunc);
+        Func<ResponseFuncStrategy> act = () => new ResponseFuncStrategy(responseFunc!);
 
         // Assert
         act.Should()
@@ -23,10 +22,10 @@ public class ResponseFuncStrategyTests
     [Fact]
     public async Task Given_response_factory_returns_null_should_not_throw()
     {
-        var sut = new ResponseFuncStrategy((_, __) => null);
+        var sut = new ResponseFuncStrategy((_, _) => null!);
 
         // Act
-        HttpResponseMessage responseMessage = null;
+        HttpResponseMessage? responseMessage = null;
         Func<Task> act = async () => responseMessage = await sut.ProduceResponseAsync(new MockHttpRequestContext(new HttpRequestMessage()), CancellationToken.None);
 
         // Assert
@@ -40,7 +39,7 @@ public class ResponseFuncStrategyTests
         using var cts = new CancellationTokenSource();
         using var responseMessage = new HttpResponseMessage();
         using var requestMessage = new HttpRequestMessage();
-        HttpRequestMessage arg1 = null;
+        HttpRequestMessage? arg1 = null;
         CancellationToken arg2 = CancellationToken.None;
 
         Task<HttpResponseMessage> ResponseFunc(HttpRequestMessage r, CancellationToken t)

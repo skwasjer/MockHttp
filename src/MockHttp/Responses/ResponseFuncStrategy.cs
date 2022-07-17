@@ -2,7 +2,7 @@
 
 internal sealed class ResponseFuncStrategy : IResponseStrategy
 {
-    private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _responseFunc;
+    private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>?> _responseFunc;
 
     public ResponseFuncStrategy(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFunc)
     {
@@ -11,6 +11,6 @@ internal sealed class ResponseFuncStrategy : IResponseStrategy
 
     public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
     {
-        return _responseFunc?.Invoke(requestContext.Request, cancellationToken) ?? Task.FromResult<HttpResponseMessage>(null);
+        return _responseFunc.Invoke(requestContext.Request, cancellationToken) ?? Task.FromResult<HttpResponseMessage>(null!);
     }
 }

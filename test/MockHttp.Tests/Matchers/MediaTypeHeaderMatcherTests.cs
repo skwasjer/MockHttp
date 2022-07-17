@@ -8,8 +8,6 @@ namespace MockHttp.Matchers;
 
 public class MediaTypeHeaderMatcherTests
 {
-    private MediaTypeHeaderMatcher _sut;
-
     [Theory]
     [InlineData($"{MediaTypes.PlainText}; charset=us-ascii")]
     [InlineData($"{MediaTypes.Json}; charset=utf-8")]
@@ -27,10 +25,10 @@ public class MediaTypeHeaderMatcherTests
             }
         };
 
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(headerValue));
+        var sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(headerValue));
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Fact]
@@ -50,20 +48,20 @@ public class MediaTypeHeaderMatcherTests
             }
         };
 
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(expectedHeaderValue));
+        var sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(expectedHeaderValue));
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();
     }
 
     [Fact]
     public void Given_content_is_null_when_matching_should_not_throw()
     {
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
+        var sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
 
         // Act
         bool? result = null;
-        Action act = () => result = _sut.IsMatch(new MockHttpRequestContext(new HttpRequestMessage()));
+        Action act = () => result = sut.IsMatch(new MockHttpRequestContext(new HttpRequestMessage()));
 
         // Assert
         act.Should().NotThrow();
@@ -74,11 +72,11 @@ public class MediaTypeHeaderMatcherTests
     public void Given_contentType_header_is_null_when_matching_should_not_throw()
     {
         var request = new HttpRequestMessage { Content = new StringContent("") };
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
+        var sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.PlainText));
 
         // Act
         bool? result = null;
-        Action act = () => result = _sut.IsMatch(new MockHttpRequestContext(request));
+        Action act = () => result = sut.IsMatch(new MockHttpRequestContext(request));
 
         // Assert
         act.Should().NotThrow();
@@ -88,21 +86,25 @@ public class MediaTypeHeaderMatcherTests
     [Fact]
     public void Given_null_headerValue_when_creating_matcher_should_throw()
     {
+        MediaTypeHeaderValue? headerValue = null;
+
         // Act
-        Func<MediaTypeHeaderMatcher> act = () => new MediaTypeHeaderMatcher(null);
+        Func<MediaTypeHeaderMatcher> act = () => new MediaTypeHeaderMatcher(headerValue!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("headerValue");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(headerValue));
     }
 
     [Fact]
     public void When_formatting_should_return_human_readable_representation()
     {
         const string expectedText = "MediaType: text/html";
-        _sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.Html));
+        var sut = new MediaTypeHeaderMatcher(MediaTypeHeaderValue.Parse(MediaTypes.Html));
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -111,12 +113,11 @@ public class MediaTypeHeaderMatcherTests
     [Fact]
     public void Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new MediaTypeHeaderMatcher(new MediaTypeHeaderValue(MediaTypes.PlainText));
-        MockHttpRequestContext requestContext = null;
+        var sut = new MediaTypeHeaderMatcher(new MediaTypeHeaderValue(MediaTypes.PlainText));
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Action act = () => _sut.IsMatch(requestContext);
+        Action act = () => sut.IsMatch(requestContext!);
 
         // Assert
         act.Should()

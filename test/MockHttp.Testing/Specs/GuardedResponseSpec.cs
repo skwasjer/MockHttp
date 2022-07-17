@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Specs;
+﻿namespace MockHttp.Specs;
 
 public abstract class GuardedResponseSpec : ResponseSpec
 {
@@ -16,4 +15,3 @@ public abstract class GuardedResponseSpec : ResponseSpec
 
     protected abstract Task ShouldThrow(Func<Task> act);
 }
-#nullable restore

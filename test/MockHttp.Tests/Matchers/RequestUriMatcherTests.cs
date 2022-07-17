@@ -6,8 +6,6 @@ namespace MockHttp.Matchers;
 
 public class RequestUriMatcherTests
 {
-    private RequestUriMatcher _sut;
-
     [Theory]
     [InlineData("", UriKind.Relative, "http://127.0.0.1/", true)]
     [InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", true)]
@@ -20,10 +18,10 @@ public class RequestUriMatcherTests
     public void Given_uri_when_matching_should_match(string matchUri, UriKind uriKind, string requestUri, bool isMatch)
     {
         var request = new HttpRequestMessage { RequestUri = new Uri(requestUri, UriKind.Absolute) };
-        _sut = new RequestUriMatcher(new Uri(matchUri, uriKind));
+        var sut = new RequestUriMatcher(new Uri(matchUri, uriKind));
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
     }
 
     [Theory]
@@ -49,40 +47,48 @@ public class RequestUriMatcherTests
     public void Given_uriString_when_matching_should_match(string uriString, bool hasWildcard, string requestUri, bool isMatch)
     {
         var request = new HttpRequestMessage { RequestUri = new Uri(requestUri, UriKind.Absolute) };
-        _sut = new RequestUriMatcher(uriString, hasWildcard);
+        var sut = new RequestUriMatcher(uriString, hasWildcard);
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().Be(isMatch);
     }
 
     [Fact]
     public void Given_null_uri_when_creating_matcher_should_throw()
     {
+        Uri? uri = null;
+
         // Act
-        Func<RequestUriMatcher> act = () => new RequestUriMatcher(null);
+        Func<RequestUriMatcher> act = () => new RequestUriMatcher(uri!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("uri");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(uri));
     }
 
     [Fact]
     public void Given_null_uriString_when_creating_matcher_should_throw()
     {
+        string? uriString = null;
+
         // Act
-        Func<RequestUriMatcher> act = () => new RequestUriMatcher(null, false);
+        Func<RequestUriMatcher> act = () => new RequestUriMatcher(uriString!, false);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("uriString");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(uriString));
     }
 
     [Fact]
     public void When_formatting_should_return_human_readable_representation()
     {
         const string expectedText = "RequestUri: '*/controller/*'";
-        _sut = new RequestUriMatcher("*/controller/*");
+        var sut = new RequestUriMatcher("*/controller/*");
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -91,12 +97,11 @@ public class RequestUriMatcherTests
     [Fact]
     public void Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new RequestUriMatcher("*/controller/*");
-        MockHttpRequestContext requestContext = null;
+        var sut = new RequestUriMatcher("*/controller/*");
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Action act = () => _sut.IsMatch(requestContext);
+        Action act = () => sut.IsMatch(requestContext!);
 
         // Assert
         act.Should()

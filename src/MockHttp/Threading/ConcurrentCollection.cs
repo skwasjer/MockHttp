@@ -9,7 +9,7 @@ internal class ConcurrentCollection<T> : IConcurrentReadOnlyCollection<T>
     private readonly object _syncLock = new();
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private List<T> _items;
+    private List<T>? _items;
 
     public void Add(T item)
     {

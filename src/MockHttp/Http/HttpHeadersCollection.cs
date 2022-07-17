@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 
 namespace MockHttp.Http;
 
@@ -68,4 +67,3 @@ internal sealed class HttpHeadersCollection : HttpHeaders
             .ToArray();
     }
 }
-#nullable restore

@@ -5,7 +5,6 @@
     <PackageId>skwas.MockHttp.Server</PackageId>
     <AssemblyName>skwas.MockHttp.Server</AssemblyName>
     <RootNamespace>MockHttp</RootNamespace>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -104,10 +104,14 @@ public class RequestMatchingTests
     [Fact]
     public void When_adding_null_instance_should_throw()
     {
-        Action act = () => _sut.With(null);
+        IAsyncHttpRequestMatcher? matcher = null;
+
+        Action act = () => _sut.With(matcher!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("matcher");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(matcher));
     }
 
     [Fact]

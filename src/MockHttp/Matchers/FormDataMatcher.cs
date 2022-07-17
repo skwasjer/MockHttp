@@ -27,6 +27,8 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
 
         _matchQs = formData.ToDictionary(
             kvp => kvp.Key,
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             kvp => kvp.Value?.Where(v => v is not null) ?? new List<string>()
         );
     }
@@ -54,7 +56,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
 
         async Task<bool> InternalIsMatchAsync(MockHttpRequestContext mockHttpRequestContext)
         {
-            IDictionary<string, IEnumerable<string>> formData = await GetFormDataAsync(mockHttpRequestContext.Request.Content).ConfigureAwait(false);
+            IDictionary<string, IEnumerable<string>> formData = await GetFormDataAsync(mockHttpRequestContext.Request.Content!).ConfigureAwait(false);
 
             // When match collection is empty, behavior is flipped, and we expect no form data parameters on request.
             if (_matchQs.Count == 0 && formData.Count > 0)
@@ -100,7 +102,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
                          .Where(c => c.Headers.ContentDisposition is not null && c.Headers.ContentDisposition.DispositionType == "form-data" && !string.IsNullOrEmpty(c.Headers.ContentDisposition.Name))
                     )
             {
-                string key = httpContent.Headers.ContentDisposition!.Name;
+                string key = httpContent.Headers.ContentDisposition!.Name!;
                 bool isFileUpload = httpContent.Headers.ContentType is not null && !string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName);
                 if (isFileUpload)
                 {
@@ -127,12 +129,12 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
         return DataEscapingHelper.Parse(rawFormData).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
-    private static bool CanProcessContent(HttpContent httpContent)
+    private static bool CanProcessContent(HttpContent? httpContent)
     {
-        return httpContent?.Headers.ContentType is not null && IsFormData(httpContent.Headers.ContentType.MediaType);
+        return IsFormData(httpContent?.Headers.ContentType?.MediaType);
     }
 
-    private static bool IsFormData(string mediaType)
+    private static bool IsFormData(string? mediaType)
     {
         return string.Equals(mediaType, MediaTypes.FormUrlEncoded, StringComparison.OrdinalIgnoreCase)
          || string.Equals(mediaType, MediaTypes.MultipartFormData, StringComparison.OrdinalIgnoreCase);

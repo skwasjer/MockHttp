@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Net.Http.Headers;
 using FluentAssertions;
-using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Responses;
 using Xunit;
@@ -10,15 +9,13 @@ namespace MockHttp.Matchers;
 
 public class HttpHeadersMatcherTests
 {
-    private HttpHeadersMatcher _sut;
-
     [Fact]
     public void Given_request_contains_expected_headers_when_matching_should_match()
     {
         DateTimeOffset lastModified = DateTimeOffset.UtcNow;
         HttpRequestMessage request = GetRequestWithHeaders(lastModified);
 
-        _sut = new HttpHeadersMatcher(new Dictionary<string, IEnumerable<string>>
+        var sut = new HttpHeadersMatcher(new Dictionary<string, IEnumerable<string>>
         {
             { "Cache-Control", new[] { "must-revalidate", "public", "max-age=31536000" } },
             { "Accept", new[] { MediaTypes.Json } },
@@ -27,7 +24,7 @@ public class HttpHeadersMatcherTests
         });
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Fact]
@@ -35,10 +32,10 @@ public class HttpHeadersMatcherTests
     {
         HttpRequestMessage request = GetRequestWithHeaders();
 
-        _sut = new HttpHeadersMatcher("Cache-Control", "must-revalidate");
+        var sut = new HttpHeadersMatcher("Cache-Control", "must-revalidate");
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Theory]
@@ -48,10 +45,10 @@ public class HttpHeadersMatcherTests
     {
         HttpRequestMessage request = GetRequestWithHeaders();
 
-        _sut = new HttpHeadersMatcher("Cache-Control", values);
+        var sut = new HttpHeadersMatcher("Cache-Control", values);
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Theory]
@@ -63,10 +60,10 @@ public class HttpHeadersMatcherTests
     {
         HttpRequestMessage request = GetRequestWithHeaders();
 
-        _sut = new HttpHeadersMatcher("Cache-Control", value, true);
+        var sut = new HttpHeadersMatcher("Cache-Control", value, true);
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Fact]
@@ -74,60 +71,76 @@ public class HttpHeadersMatcherTests
     {
         HttpRequestMessage request = GetRequestWithHeaders();
 
-        _sut = new HttpHeadersMatcher("Cache-Control");
+        var sut = new HttpHeadersMatcher("Cache-Control");
 
         // Act & assert
-        _sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
+        sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
     }
 
     [Fact]
     public void Given_null_header_name_when_creating_matcher_should_throw()
     {
+        string? name = null;
+
         // Act
-        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, (string)null);
+        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(name!, "value");
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("name");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(name));
     }
 
     [Fact]
     public void Given_null_header_name_for_multiple_values_when_creating_matcher_should_throw()
     {
+        string? name = null;
+
         // Act
-        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(null, null);
+        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(name!, Enumerable.Empty<string>());
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("name");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(name));
     }
 
     [Fact]
     public void Given_null_headers_when_creating_matcher_should_throw()
     {
+        IEnumerable<KeyValuePair<string, string>>? headers = null;
+
         // Act
-        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, string>>)null);
+        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(headers!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("headers");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(headers));
     }
 
     [Fact]
     public void Given_null_headers_for_multiple_values_when_creating_matcher_should_throw()
     {
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>>? headers = null;
+
         // Act
-        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher((IEnumerable<KeyValuePair<string, IEnumerable<string>>>)null);
+        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(headers!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("headers");
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .WithParameterName(nameof(headers));
     }
 
     [Fact]
     public void When_formatting_single_header_should_return_human_readable_representation()
     {
         const string expectedText = "Headers: header-name: header-value";
-        _sut = new HttpHeadersMatcher("header-name", "header-value");
+        var sut = new HttpHeadersMatcher("header-name", "header-value");
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -138,10 +151,10 @@ public class HttpHeadersMatcherTests
     {
         string expectedText = $"Headers: {HeaderNames.ContentType}: {MediaTypes.PlainText}{Environment.NewLine}{HeaderNames.Accept}: {MediaTypes.PlainText}, {MediaTypes.Html}";
         var headers = new HttpHeadersCollection { { HeaderNames.ContentType, MediaTypes.PlainText }, { HeaderNames.Accept, new[] { MediaTypes.PlainText, MediaTypes.Html } } };
-        _sut = new HttpHeadersMatcher(headers);
+        var sut = new HttpHeadersMatcher(headers);
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
@@ -175,12 +188,11 @@ public class HttpHeadersMatcherTests
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()
     {
-        _sut = new HttpHeadersMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
-        MockHttpRequestContext requestContext = null;
+        var sut = new HttpHeadersMatcher(new List<KeyValuePair<string, IEnumerable<string>>>());
+        MockHttpRequestContext? requestContext = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<Task> act = () => _sut.IsMatchAsync(requestContext);
+        Func<Task> act = () => sut.IsMatchAsync(requestContext!);
 
         // Assert
         await act.Should()

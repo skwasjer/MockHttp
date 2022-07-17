@@ -8,11 +8,10 @@ public class DataEscapingHelperTests
     [Fact]
     public void Given_null_escapedString_when_parsing_should_throw()
     {
-        string dataEscapedString = null;
+        string? dataEscapedString = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Action act = () => DataEscapingHelper.Parse(dataEscapedString);
+        Action act = () => DataEscapingHelper.Parse(dataEscapedString!);
 
         // Assert
         act.Should()

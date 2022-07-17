@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Responses;
+﻿namespace MockHttp.Responses;
 
 internal sealed class HttpContentBehavior
     : IResponseBehavior
@@ -17,4 +16,3 @@ internal sealed class HttpContentBehavior
         await next(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
     }
 }
-#nullable restore

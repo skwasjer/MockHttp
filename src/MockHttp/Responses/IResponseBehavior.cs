@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Responses;
+﻿namespace MockHttp.Responses;
 
 /// <summary>
 /// A delegate which when executed returns a configured HTTP response.
@@ -22,4 +21,3 @@ public interface IResponseBehavior
     /// <returns>An awaitable that upon completion returns the HTTP response message.</returns>
     Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken);
 }
-#nullable restore
