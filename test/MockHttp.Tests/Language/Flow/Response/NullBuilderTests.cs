@@ -37,11 +37,6 @@ public class NullBuilderTests
                     (string?)null
                 ),
                 DelegateTestCase.Create(
-                    ResponseBuilderExtensions.Body,
-                    withContent,
-                    () => Task.FromResult<HttpContent>(new StringContent(""))
-                ),
-                DelegateTestCase.Create(
                     responseBuilderImpl.Body,
                     (Func<CancellationToken, Task<HttpContent>>)(_ => Task.FromResult<HttpContent>(new StringContent("")))
                 ),
@@ -81,7 +76,7 @@ public class NullBuilderTests
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.Body,
                     withContent,
-                    (Func<CancellationToken, Stream>)(_ => Stream.Null)
+                    (Func<CancellationToken, Task<Stream>>)(_ => Task.FromResult(Stream.Null))
                 ),
                 DelegateTestCase.Create(
                     responseBuilderImpl.ContentType,

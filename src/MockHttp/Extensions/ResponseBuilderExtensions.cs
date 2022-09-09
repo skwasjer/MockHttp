@@ -36,28 +36,6 @@ public static class ResponseBuilderExtensions
     }
 
     /// <summary>
-    /// Sets the content for the response using a factory returning a new <see cref="HttpContent" /> on each invocation.
-    /// </summary>
-    /// <param name="builder">The builder.</param>
-    /// <param name="httpContentFactory">The factory returning a new instance of <see cref="HttpContent" /> on each invocation.</param>
-    /// <returns>The builder to continue chaining additional behaviors.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContentFactory" /> is <see langword="null" />.</exception>
-    public static IWithContentResult Body(this IWithContent builder, Func<Task<HttpContent>> httpContentFactory)
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (httpContentFactory is null)
-        {
-            throw new ArgumentNullException(nameof(httpContentFactory));
-        }
-
-        return builder.Body(_ => httpContentFactory());
-    }
-
-    /// <summary>
     /// Sets the <see cref="HttpContent" /> for the response.
     /// </summary>
     /// <param name="builder">The builder.</param>
@@ -66,12 +44,17 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="content" /> is <see langword="null" />.</exception>
     public static IWithContentResult Body(this IWithContent builder, HttpContent content)
     {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
         if (content is null)
         {
             throw new ArgumentNullException(nameof(content));
         }
 
-        return builder.Body(() => Task.FromResult(content));
+        return builder.Body(_ => Task.FromResult(content));
     }
 
     /// <summary>
@@ -94,7 +77,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(content));
         }
 
-        return builder.Body(() => Task.FromResult<HttpContent>(new StringContent(content, encoding)));
+        return builder.Body(_ => Task.FromResult<HttpContent>(new StringContent(content, encoding)));
     }
 
     /// <summary>
@@ -146,7 +129,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        return builder.Body(() => Task.FromResult<HttpContent>(
+        return builder.Body(_ => Task.FromResult<HttpContent>(
             new ByteArrayContent(content, offset, count) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } })
         );
     }
@@ -197,10 +180,10 @@ public static class ResponseBuilderExtensions
     /// Sets the stream content for the response using a factory returning a new <see cref="Stream" /> on each invocation.
     /// </summary>
     /// <param name="builder">The builder.</param>
-    /// <param name="contentFactory">The factory returning a new <see cref="Stream" /> on each invocation containing the binary content.</param>
+    /// <param name="contentFactory">The factory that on each invocation returns a task, which when awaited, returns a new <see cref="Stream" /> containing the binary content.</param>
     /// <returns>The builder to continue chaining additional behaviors.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="contentFactory" /> is <see langword="null" />.</exception>
-    public static IWithContentResult Body(this IWithContent builder, Func<CancellationToken, Stream> contentFactory)
+    public static IWithContentResult Body(this IWithContent builder, Func<CancellationToken, Task<Stream>> contentFactory)
     {
         if (builder is null)
         {
@@ -212,17 +195,15 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(contentFactory));
         }
 
-        return builder.Body(cts =>
+        return builder.Body(async token =>
         {
-            Stream stream = contentFactory(cts);
+            Stream stream = await contentFactory(token);
             if (!stream.CanRead)
             {
                 throw new InvalidOperationException("Cannot read from stream.");
             }
 
-            return Task.FromResult<HttpContent>(
-                new StreamContent(stream) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } }
-            );
+            return new StreamContent(stream) { Headers = { ContentType = new MediaTypeHeaderValue(MediaTypes.OctetStream) } };
         });
     }
 
@@ -240,7 +221,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(contentFactory));
         }
 
-        return builder.Body(_ => contentFactory());
+        return builder.Body(_ => Task.FromResult(contentFactory()));
     }
 
     private static IWithContentResult UnbufferedStreamBody(IWithContent builder, Stream content)
@@ -251,7 +232,7 @@ public static class ResponseBuilderExtensions
         return builder.Body(_ =>
         {
             content.Position = startPos;
-            return content;
+            return Task.FromResult(content);
         });
     }
 
