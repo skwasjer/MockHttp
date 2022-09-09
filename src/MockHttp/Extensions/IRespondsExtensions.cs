@@ -42,6 +42,7 @@ public static class IRespondsExtensions
     /// </summary>
     /// <param name="responds"></param>
     /// <param name="response">The function that provides the response message to return for given request.</param>
+    [Obsolete(DeprecationWarnings.RespondsExtensions, false)]
     public static TResult Respond<TResult>(this IResponds<TResult> responds, Func<HttpRequestMessage, HttpResponseMessage> response)
         where TResult : IResponseResult
     {
