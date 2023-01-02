@@ -51,6 +51,22 @@ public static class IRespondsExtensions
     }
 
     /// <summary>
+    /// Specifies a function that returns the response for a request.
+    /// </summary>
+    /// <param name="responds"></param>
+    /// <param name="with">The function that provides the response message to return for given request.</param>
+    public static TResult Respond<TResult>(this IResponds<TResult> responds, Action<MockHttpRequestContext, CancellationToken, IResponseBuilder> with)
+        where TResult : IResponseResult
+    {
+        if (responds is null)
+        {
+            throw new ArgumentNullException(nameof(responds));
+        }
+
+        return responds.RespondUsing(new RequestSpecificResponseBuilder(with));
+    }
+
+    /// <summary>
     /// Specifies a strategy that returns the response for a request.
     /// </summary>
     /// <param name="responds"></param>
@@ -98,19 +114,19 @@ public static class IRespondsExtensions
     public static TResult Respond<TResult>(this IResponds<TResult> responds, Action<MockHttpRequestContext, IResponseBuilder> with)
         where TResult : IResponseResult
     {
-        if (responds is null)
+        if (with is null)
         {
-            throw new ArgumentNullException(nameof(responds));
+            throw new ArgumentNullException(nameof(with));
         }
 
-        return responds.RespondUsing(new RequestSpecificResponseBuilder(with));
+        return responds.Respond((ctx, _, builder) => with(ctx, builder));
     }
 
     private sealed class RequestSpecificResponseBuilder : IResponseStrategy
     {
-        private readonly Action<MockHttpRequestContext, IResponseBuilder> _with;
+        private readonly Action<MockHttpRequestContext, CancellationToken, IResponseBuilder> _with;
 
-        public RequestSpecificResponseBuilder(Action<MockHttpRequestContext, IResponseBuilder> with)
+        public RequestSpecificResponseBuilder(Action<MockHttpRequestContext, CancellationToken, IResponseBuilder> with)
         {
             _with = with ?? throw new ArgumentNullException(nameof(with));
         }
@@ -118,7 +134,7 @@ public static class IRespondsExtensions
         public Task<HttpResponseMessage> ProduceResponseAsync(MockHttpRequestContext requestContext, CancellationToken cancellationToken)
         {
             var builder = new ResponseBuilder();
-            _with(requestContext, builder);
+            _with(requestContext, cancellationToken, builder);
             IResponseStrategy responseStrategy = builder.Build();
             return responseStrategy.ProduceResponseAsync(requestContext, cancellationToken);
         }
