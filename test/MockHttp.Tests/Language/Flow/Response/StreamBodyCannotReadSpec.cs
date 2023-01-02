@@ -23,7 +23,7 @@ public class StreamBodyCannotReadSpec : GuardedResponseSpec
     {
         await act.Should()
             .ThrowExactlyAsync<ArgumentException>()
-            .WithParameterName("content")
+            .WithParameterName("streamContent")
             .WithMessage("Cannot read from stream.*");
         _streamMock.Verify();
     }
