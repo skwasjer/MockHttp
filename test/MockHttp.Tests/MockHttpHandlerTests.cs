@@ -432,7 +432,7 @@ public class MockHttpHandlerTests : IDisposable
 
         _sut.Verify(_ => { }, IsSent.Exactly(2));
         secondResponse.Should().NotBeNull();
-        firstResponse.Content.Should().NotBeSameAs(secondResponse.Content);
+        firstResponse.Content.Should().NotBeSameAs(secondResponse!.Content);
         await (await firstResponse.Should()
                 .HaveContentAsync(await secondResponse.Content.ReadAsStringAsync()))
             .And.HaveContentAsync(data);
@@ -647,8 +647,10 @@ public class MockHttpHandlerTests : IDisposable
         public static IEnumerable<object[]> TestCases()
         {
             var mockHttp = new MockHttpHandler();
+#pragma warning disable IDE0039
             // ReSharper disable once ConvertToLocalFunction
             Action<RequestMatching> matching = _ => { };
+#pragma warning restore IDE0039
             Func<IsSent> isSentFunc = IsSent.Once;
             string? because = null;
 

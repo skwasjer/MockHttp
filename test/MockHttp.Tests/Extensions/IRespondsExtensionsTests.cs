@@ -46,7 +46,7 @@ public class IRespondsExtensionsTests
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
-            actualResponse.Should().HaveHeader("query", request.RequestUri.Query);
+            actualResponse.Should().HaveHeader("query", request.RequestUri!.Query);
         }
     }
 
