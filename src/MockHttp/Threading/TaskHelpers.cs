@@ -7,7 +7,7 @@ internal static class TaskHelpers
 {
     public static T RunSync<T>(Func<Task<T>> action, TimeSpan timeout)
     {
-        Task<T> task = null;
+        Task<T>? task = null;
 
         RunSync(() =>
             {
@@ -16,7 +16,7 @@ internal static class TaskHelpers
             },
             timeout);
 
-        return task.Result;
+        return task is null ? default! : task.Result;
     }
 
     public static void RunSync(Func<Task> action, TimeSpan timeout)
