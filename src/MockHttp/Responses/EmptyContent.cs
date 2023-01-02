@@ -21,7 +21,7 @@ internal class EmptyContent : HttpContent
         return Task.FromResult(Stream.Null);
     }
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
 
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context, CancellationToken cancellationToken)
     {

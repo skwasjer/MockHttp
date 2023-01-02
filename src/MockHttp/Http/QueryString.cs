@@ -77,7 +77,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 
     private static bool TryGetQueryFromUri(string uri, [NotNullWhen(true)] out string? queryString)
     {
-#if NETSTANDARD2_1 || NET5_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
         if (uri.Contains(TokenQuestionMark, StringComparison.InvariantCultureIgnoreCase)
 #else
         if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))

@@ -145,20 +145,21 @@ public static class HttpResponseMessageAssertionsExtensions
     (
         this HttpResponseMessageAssertions should,
         string key,
-        // ReSharper disable once UseNullableAnnotationInsteadOfAttribute
-        [AllowNull] string value,
+        string value,
         string because = "",
         params object[] becauseArgs)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+#pragma warning disable CS8604
         return should.HaveHeader(key, value is null ? null : new[] { value }, because, becauseArgs);
+#pragma warning restore CS8604
     }
 
     public static AndConstraint<HttpResponseMessageAssertions> HaveHeader
     (
         this HttpResponseMessageAssertions should,
         string key,
-        // ReSharper disable once UseNullableAnnotationInsteadOfAttribute
-        [AllowNull] IEnumerable<string> values,
+        IEnumerable<string> values,
         string because = "",
         params object[] becauseArgs)
     {
@@ -168,7 +169,7 @@ public static class HttpResponseMessageAssertionsExtensions
         }
 
         HttpResponseMessage subject = should.Subject;
-        var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values!);
+        var expectedHeader = new KeyValuePair<string, IEnumerable<string>>(key, values);
         var equalityComparer = new HttpHeaderEqualityComparer(HttpHeaderMatchType.Exact);
 
         static bool SafeContains(HttpHeaders? headers, string s) => headers?.TryGetValues(s, out _) ?? false;

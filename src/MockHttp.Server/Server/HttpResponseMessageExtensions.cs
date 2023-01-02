@@ -22,7 +22,7 @@ internal static class HttpResponseMessageExtensions
         if (response.Content is not null)
         {
             CopyHeaders(response.Content.Headers, responseFeature.Headers);
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
             await using Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 #else
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

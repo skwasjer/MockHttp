@@ -342,10 +342,10 @@ public class MockHttpHandlerTests : IDisposable
 
         // ReSharper disable once JoinDeclarationAndInitializer
         Version version;
-#if NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET6_0_OR_GREATER
         version = _httpClient.DefaultRequestVersion;
 #else
-#if NETCOREAPP2_1
+#if NET5_0_OR_GREATER
         version = new Version(2, 0);
 #else
         version = new Version(1, 1);

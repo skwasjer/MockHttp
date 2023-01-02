@@ -43,7 +43,7 @@ public static class ResponseBuilderLinqToXmlExtensions
             .Body(async ct =>
             {
                 var stream = new MemoryStream();
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
                 var xmlWriter = XmlWriter.Create(stream, settings);
                 await using (xmlWriter.ConfigureAwait(false))
                 {
@@ -56,7 +56,7 @@ public static class ResponseBuilderLinqToXmlExtensions
 
                 async Task<HttpContent> WriteAsync(XmlWriter writer)
                 {
-#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
                     await xmlContent.WriteToAsync(writer, ct).ConfigureAwait(false);
 #else
                     xmlContent.WriteTo(writer);
