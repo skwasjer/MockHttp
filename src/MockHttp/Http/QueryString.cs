@@ -7,6 +7,8 @@ namespace MockHttp.Http;
 [DebuggerDisplay("{ToString(),nq}")]
 internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 {
+    private static readonly UriKind DotNetRelativeOrAbsolute = Type.GetType("Mono.Runtime") == null ? UriKind.RelativeOrAbsolute : (UriKind)300;
+
     private static readonly Uri UnknownBaseUri = new("https://0.0.0.0");
 
     private const char TokenQuestionMark = '?';
@@ -82,7 +84,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 #else
         if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))
 #endif
-         && Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out Uri? u))
+         && Uri.TryCreate(uri, DotNetRelativeOrAbsolute, out Uri? u))
         {
             if (!u.IsAbsoluteUri)
             {

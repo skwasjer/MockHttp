@@ -8,6 +8,8 @@ namespace MockHttp.Matchers;
 /// </summary>
 public class RequestUriMatcher : HttpRequestMatcher
 {
+    private static readonly UriKind DotNetRelativeOrAbsolute = Type.GetType("Mono.Runtime") == null ? UriKind.RelativeOrAbsolute : (UriKind)300;
+
     private const char UriSegmentDelimiter = '/';
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -48,7 +50,7 @@ public class RequestUriMatcher : HttpRequestMatcher
         else
         {
             // If no wildcards, then must be actual uri.
-            SetRequestUri(new Uri(uriString, UriKind.RelativeOrAbsolute));
+            SetRequestUri(new Uri(uriString, DotNetRelativeOrAbsolute));
         }
     }
 
