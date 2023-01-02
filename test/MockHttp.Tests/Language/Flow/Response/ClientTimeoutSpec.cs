@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -33,4 +32,3 @@ public class ClientTimeoutSpec : GuardedResponseSpec
         _stopwatch.Elapsed.Should().BeGreaterThanOrEqualTo(TimeoutAfter ?? TimeSpan.Zero);
     }
 }
-#nullable restore

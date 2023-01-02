@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Globalization;
+﻿using System.Globalization;
 using MockHttp.FluentAssertions;
 using MockHttp.Specs;
 
@@ -46,4 +45,3 @@ public class HeaderSpec : ResponseSpec
         return Task.CompletedTask;
     }
 }
-#nullable restore

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Specs;
 
@@ -19,4 +18,3 @@ public class ContentTypeWithWebEncodingSpec : ResponseSpec
         return Task.CompletedTask;
     }
 }
-#nullable restore

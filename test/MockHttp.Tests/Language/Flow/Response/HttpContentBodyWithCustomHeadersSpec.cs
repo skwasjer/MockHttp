@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -17,4 +16,3 @@ public class HttpContentBodyWithCustomHeadersSpec : HttpContentBodySpec
         return base.Should(response);
     }
 }
-#nullable restore

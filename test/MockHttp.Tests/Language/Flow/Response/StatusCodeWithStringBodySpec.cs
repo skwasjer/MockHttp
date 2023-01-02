@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net;
+﻿using System.Net;
 using MockHttp.FluentAssertions;
 using MockHttp.Specs;
 
@@ -20,4 +19,3 @@ public class StatusCodeWithStringBodySpec : ResponseSpec
             .And.HaveContentAsync("my text");
     }
 }
-#nullable restore

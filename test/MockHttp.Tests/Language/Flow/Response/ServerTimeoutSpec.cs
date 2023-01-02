@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using MockHttp.Specs;
 
@@ -35,4 +34,3 @@ public class ServerTimeoutSpec : ResponseSpec
         return Task.CompletedTask;
     }
 }
-#nullable restore

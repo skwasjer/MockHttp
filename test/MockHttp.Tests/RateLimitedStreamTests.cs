@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using MockHttp.IO;
 using Xunit.Abstractions;
 
@@ -168,8 +167,9 @@ public class RateLimitedStreamTests : IDisposable
 
     public void Dispose()
     {
+        // ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _actualStream?.Dispose();
         _sut?.Dispose();
+        // ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
     }
 }
-#nullable restore

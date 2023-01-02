@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.Specs;
+﻿using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -26,4 +25,3 @@ public class StreamBodyCannotReadSpec : GuardedResponseSpec
         _streamMock.Verify();
     }
 }
-#nullable restore

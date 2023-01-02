@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net;
+﻿using System.Net;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -31,4 +30,3 @@ public class StatusCodeInt32Spec : ResponseSpec
         return Task.CompletedTask;
     }
 }
-#nullable restore

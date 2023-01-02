@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net;
+﻿using System.Net;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -33,4 +32,3 @@ public class StatusCodeInt32OutOfRangeSpec : GuardedResponseSpec
             .WithParameterName("statusCode");
     }
 }
-#nullable restore

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Text;
+﻿using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using MockHttp.FluentAssertions;
@@ -48,4 +47,3 @@ public class LinqToXmlBodySpec : ResponseSpec
             .And.HaveContentAsync(Encoding.GetString(Encoding.GetPreamble()) + GetExpectedXml(), Encoding);
     }
 }
-#nullable restore

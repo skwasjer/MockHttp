@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.IO;
+﻿using MockHttp.IO;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -32,4 +31,3 @@ public class TransferRateWithNonSeekableStreamSpec
             .WithMessage("Cannot use a rate limited stream that is not seekable.*");
     }
 }
-#nullable restore

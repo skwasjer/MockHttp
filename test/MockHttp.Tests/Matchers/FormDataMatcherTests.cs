@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
 using MockHttp.Responses;
@@ -213,4 +212,3 @@ public class FormDataMatcherTests
         yield return new object[] { new ByteArrayContent(Array.Empty<byte>()) };
     }
 }
-#nullable restore

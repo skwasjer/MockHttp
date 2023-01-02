@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.Specs;
+﻿using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -18,4 +17,3 @@ public class HeaderWithoutValueSpec : GuardedResponseSpec
             .WithMessage("At least one header must be specified.*");
     }
 }
-#nullable restore

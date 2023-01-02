@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,7 +16,7 @@ public class NullBuilderTests
             NullArgumentTest.Execute(args);
         }
 
-        public static IEnumerable<object[]> TestCases()
+        public static IEnumerable<object?[]> TestCases()
         {
             var responseBuilderImpl = new ResponseBuilder();
             IResponseBuilder responseBuilder = Mock.Of<IResponseBuilder>();
@@ -134,6 +133,7 @@ public class NullBuilderTests
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.Latency,
                     responseBuilder,
+                    // ReSharper disable once ConvertClosureToMethodGroup
                     () => NetworkLatency.FourG()
                 ),
                 DelegateTestCase.Create(
@@ -147,4 +147,3 @@ public class NullBuilderTests
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
         }
 }
-#nullable restore

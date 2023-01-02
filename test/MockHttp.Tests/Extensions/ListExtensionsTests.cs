@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Extensions;
+﻿namespace MockHttp.Extensions;
 
 public static class ListExtensionsTests
 {
@@ -162,4 +161,3 @@ public static class ListExtensionsTests
         }
     }
 }
-#nullable restore

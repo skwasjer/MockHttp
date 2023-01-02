@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Language.Flow.Response;
+﻿namespace MockHttp.Language.Flow.Response;
 
 public class StreamBodyCannotSeekSpec : StreamBodySpec
 {
@@ -26,4 +25,3 @@ public class StreamBodyCannotSeekSpec : StreamBodySpec
         return base.DisposeAsync();
     }
 }
-#nullable restore

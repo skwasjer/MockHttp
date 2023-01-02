@@ -677,7 +677,7 @@ public abstract class RequestMatchingExtensionsTests
             NullArgumentTest.Execute(args);
         }
 
-        public static IEnumerable<object[]> TestCases()
+        public static IEnumerable<object?[]> TestCases()
         {
             var streamMock = new Mock<Stream> { CallBase = true };
             streamMock.SetReturnsDefault(true);

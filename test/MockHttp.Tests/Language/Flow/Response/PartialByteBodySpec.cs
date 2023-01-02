@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 using MockHttp.Http;
 
 namespace MockHttp.Language.Flow.Response;
@@ -19,4 +18,3 @@ public class PartialByteBodySpec : ByteBodySpec
             .And.HaveContentAsync(new byte[] { 5, 4, 3, 2 });
     }
 }
-#nullable restore

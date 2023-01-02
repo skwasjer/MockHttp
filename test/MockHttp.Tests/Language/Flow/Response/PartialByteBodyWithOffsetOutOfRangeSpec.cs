@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.Specs;
+﻿using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -32,4 +31,3 @@ public class PartialByteBodyWithOffsetLessThanZeroSpec : GuardedResponseSpec
             .WithParameterName("offset");
     }
 }
-#nullable restore

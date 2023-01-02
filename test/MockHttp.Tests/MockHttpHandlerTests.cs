@@ -642,7 +642,7 @@ public class MockHttpHandlerTests : IDisposable
             NullArgumentTest.Execute(args);
 }
 
-        public static IEnumerable<object[]> TestCases()
+        public static IEnumerable<object?[]> TestCases()
         {
             var mockHttp = new MockHttpHandler();
 #pragma warning disable IDE0039

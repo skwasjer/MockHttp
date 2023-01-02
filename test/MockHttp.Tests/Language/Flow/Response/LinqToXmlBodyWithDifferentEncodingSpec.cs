@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Text;
+﻿using System.Text;
 using System.Xml;
 
 namespace MockHttp.Language.Flow.Response;
@@ -24,4 +23,3 @@ public class LinqToXmlBodyWithDifferentEncodingSpec : LinqToXmlBodySpec
         return $"<?xml version=\"1.0\" encoding=\"{Encoding.WebName}\"?><doc><title>Hello</title></doc>";
     }
 }
-#nullable restore

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using MockHttp.Specs;
 
@@ -23,4 +22,3 @@ public class LatencySpec : ResponseSpec
         return Task.CompletedTask;
     }
 }
-#nullable restore

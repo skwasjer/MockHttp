@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.Specs;
+﻿using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -17,4 +16,3 @@ public class HeaderWithoutNameSpec : GuardedResponseSpec
             .WithParameterName("name");
     }
 }
-#nullable restore

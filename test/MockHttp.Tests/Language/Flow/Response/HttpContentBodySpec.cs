@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
@@ -25,4 +24,3 @@ public class HttpContentBodySpec : ResponseSpec
         return base.DisposeAsync();
     }
 }
-#nullable restore

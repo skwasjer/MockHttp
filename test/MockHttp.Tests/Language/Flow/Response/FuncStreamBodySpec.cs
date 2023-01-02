@@ -1,5 +1,4 @@
-﻿#nullable enable
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 using MockHttp.Http;
 
 namespace MockHttp.Language.Flow.Response;
@@ -19,4 +18,3 @@ public class FuncStreamBodySpec : ByteBodySpec
             .And.HaveContentAsync(Content);
     }
 }
-#nullable restore

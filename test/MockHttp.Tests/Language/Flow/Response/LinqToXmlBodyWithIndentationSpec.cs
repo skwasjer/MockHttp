@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Xml;
+﻿using System.Xml;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -21,4 +20,3 @@ public class LinqToXmlBodyWithIndentationSpec : LinqToXmlBodySpec
           + "</doc>";
     }
 }
-#nullable restore

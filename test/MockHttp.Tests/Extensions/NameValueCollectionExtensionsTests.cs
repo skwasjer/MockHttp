@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 
 namespace MockHttp.Extensions;
 
@@ -42,4 +41,3 @@ public class NameValueCollectionExtensionsTests
         actual.Should().BeEquivalentTo(expectedKeyValuePairs);
     }
 }
-#nullable restore

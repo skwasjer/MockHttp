@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace MockHttp.Language.Flow.Response;
+﻿namespace MockHttp.Language.Flow.Response;
 
 public class ServerTimeoutWithZeroTimeSpanSpec : ServerTimeoutSpec
 {
@@ -8,4 +7,3 @@ public class ServerTimeoutWithZeroTimeSpanSpec : ServerTimeoutSpec
     {
     }
 }
-#nullable restore

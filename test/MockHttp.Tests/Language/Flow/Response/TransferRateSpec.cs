@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using MockHttp.IO;
 using MockHttp.Specs;
@@ -33,4 +32,3 @@ public class TransferRateSpec : ResponseSpec
         responseContent.Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 }
-#nullable restore

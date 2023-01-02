@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Text;
+﻿using System.Text;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Specs;
@@ -21,4 +20,3 @@ public class StringBodySpec : ResponseSpec
             .And.HaveContentAsync("my text");
     }
 }
-#nullable restore
