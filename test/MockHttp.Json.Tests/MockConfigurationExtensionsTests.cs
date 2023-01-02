@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using Xunit;
-
-namespace MockHttp.Json;
+﻿namespace MockHttp.Json;
 
 public class MockConfigurationExtensionsTests
 {

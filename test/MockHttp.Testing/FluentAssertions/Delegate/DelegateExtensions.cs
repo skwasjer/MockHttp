@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-
-namespace MockHttp.FluentAssertions.Delegate;
+﻿namespace MockHttp.FluentAssertions.Delegate;
 
 public static class DelegateExtensions
 {

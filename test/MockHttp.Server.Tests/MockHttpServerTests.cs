@@ -1,11 +1,9 @@
 ﻿using System.Net;
 using System.Text;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MockHttp.Fixtures;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace MockHttp;

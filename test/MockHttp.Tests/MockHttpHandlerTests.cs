@@ -1,14 +1,12 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
 using FluentAssertions.Extensions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using Newtonsoft.Json;
-using Xunit;
 
 namespace MockHttp;
 

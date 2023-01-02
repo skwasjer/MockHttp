@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
-using FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Json.Newtonsoft;
 using MockHttp.Json.SystemTextJson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Xunit;
 
 namespace MockHttp.Json;
 

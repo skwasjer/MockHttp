@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace MockHttp;
+﻿namespace MockHttp;
 
 public static class IsSentTests
 {

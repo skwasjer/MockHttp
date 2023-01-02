@@ -5,8 +5,6 @@ using System.Xml;
 using System.Xml.Linq;
 using MockHttp.Http;
 using MockHttp.Language.Response;
-using Moq;
-using Xunit;
 
 namespace MockHttp.Language.Flow.Response;
 

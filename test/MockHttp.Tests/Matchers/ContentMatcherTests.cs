@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using FluentAssertions;
 using MockHttp.Responses;
-using Xunit;
 
 namespace MockHttp.Matchers;
 

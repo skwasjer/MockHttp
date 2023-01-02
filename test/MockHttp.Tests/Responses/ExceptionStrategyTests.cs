@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace MockHttp.Responses;
+﻿namespace MockHttp.Responses;
 
 public class ExceptionStrategyTests
 {

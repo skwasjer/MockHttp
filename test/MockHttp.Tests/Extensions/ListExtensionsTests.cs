@@ -1,8 +1,4 @@
 ﻿#nullable enable
-using FluentAssertions;
-using Moq;
-using Xunit;
-
 namespace MockHttp.Extensions;
 
 public static class ListExtensionsTests

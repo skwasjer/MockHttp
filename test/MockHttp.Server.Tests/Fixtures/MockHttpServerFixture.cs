@@ -6,7 +6,6 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Sinks.TestCorrelator;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace MockHttp.Fixtures;

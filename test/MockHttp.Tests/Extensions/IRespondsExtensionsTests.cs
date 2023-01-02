@@ -1,12 +1,9 @@
 ﻿using System.Net;
 using System.Text;
-using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Responses;
-using Moq;
-using Xunit;
 
 namespace MockHttp.Extensions;
 

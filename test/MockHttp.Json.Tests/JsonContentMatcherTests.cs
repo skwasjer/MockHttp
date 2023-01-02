@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using MockHttp.Responses;
-using Moq;
-using Xunit;
+﻿using MockHttp.Responses;
 
 namespace MockHttp.Json;
 

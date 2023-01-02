@@ -1,7 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using MockHttp.Http;

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using MockHttp.FluentAssertions;
+﻿using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Specs;
 

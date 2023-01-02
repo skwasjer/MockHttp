@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using MockHttp.Responses;
-using Xunit;
+﻿using MockHttp.Responses;
 
 namespace MockHttp.Matchers;
 

@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using Newtonsoft.Json;
-using Xunit;
+﻿using Newtonsoft.Json;
 
 namespace MockHttp.Json.Newtonsoft;
 

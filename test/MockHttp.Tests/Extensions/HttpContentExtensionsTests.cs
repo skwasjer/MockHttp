@@ -1,9 +1,7 @@
 ﻿using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
 using MockHttp.Http;
-using Xunit;
 
 namespace MockHttp.Extensions;
 

@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace MockHttp.Http;
+﻿namespace MockHttp.Http;
 
 public class DataEscapingHelperTests
 {

@@ -1,10 +1,8 @@
 ﻿#nullable enable
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Responses;
-using Xunit;
 
 namespace MockHttp.Matchers;
 

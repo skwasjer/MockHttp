@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using FluentAssertions;
-using Xunit;
 using Xunit.Abstractions;
 using static MockHttp.NetworkLatency;
 

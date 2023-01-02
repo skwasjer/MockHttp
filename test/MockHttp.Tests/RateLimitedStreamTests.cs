@@ -1,9 +1,6 @@
 ﻿#nullable enable
 using System.Diagnostics;
-using FluentAssertions;
 using MockHttp.IO;
-using Moq;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace MockHttp;

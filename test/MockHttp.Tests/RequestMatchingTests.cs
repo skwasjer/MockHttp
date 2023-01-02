@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using MockHttp.Matchers;
-using Moq;
-using Xunit;
+﻿using MockHttp.Matchers;
 
 namespace MockHttp;
 

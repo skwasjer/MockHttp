@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using FluentAssertions;
-using Xunit;
 
 namespace MockHttp.Json.SystemTextJson;
 

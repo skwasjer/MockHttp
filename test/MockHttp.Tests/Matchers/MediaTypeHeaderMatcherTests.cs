@@ -1,8 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Responses;
-using Xunit;
 
 namespace MockHttp.Matchers;
 

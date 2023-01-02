@@ -3,12 +3,9 @@ using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
-using FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Matchers;
 using MockHttp.Responses;
-using Moq;
-using Xunit;
 
 namespace MockHttp.Extensions;
 

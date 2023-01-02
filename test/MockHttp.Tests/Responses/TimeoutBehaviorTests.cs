@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using FluentAssertions;
-using Moq;
-using Xunit;
 
 namespace MockHttp.Responses;
 

@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System.Text;
-using FluentAssertions;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Specs;

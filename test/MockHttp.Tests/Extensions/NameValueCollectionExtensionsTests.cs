@@ -1,7 +1,5 @@
 ﻿#nullable enable
 using System.Collections.Specialized;
-using FluentAssertions;
-using Xunit;
 
 namespace MockHttp.Extensions;
 

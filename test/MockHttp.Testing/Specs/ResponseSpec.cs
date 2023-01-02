@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using FluentAssertions;
 using MockHttp.Language;
-using Xunit;
 
 namespace MockHttp.Specs;
 

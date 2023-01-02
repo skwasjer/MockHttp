@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace MockHttp.Threading;
+﻿namespace MockHttp.Threading;
 
 public class ConcurrentCollectionTests
 {

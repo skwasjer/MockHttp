@@ -1,8 +1,5 @@
-﻿using FluentAssertions;
-using MockHttp.Json.SystemTextJson;
+﻿using MockHttp.Json.SystemTextJson;
 using MockHttp.Responses;
-using Moq;
-using Xunit;
 
 namespace MockHttp.Json.Extensions;
 

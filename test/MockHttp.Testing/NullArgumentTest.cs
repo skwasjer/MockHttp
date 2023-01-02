@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using FluentAssertions;
 using MockHttp.FluentAssertions.Delegate;
 
 namespace MockHttp;

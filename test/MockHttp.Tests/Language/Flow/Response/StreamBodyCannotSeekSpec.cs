@@ -1,6 +1,4 @@
 ﻿#nullable enable
-using Moq;
-
 namespace MockHttp.Language.Flow.Response;
 
 public class StreamBodyCannotSeekSpec : StreamBodySpec
