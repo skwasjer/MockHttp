@@ -133,13 +133,9 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 .When(matching => matching
                     .Header(headerKey, headerValue)
                 )
-                .Respond((req, _) => new HttpResponseMessage
-                {
-                    Headers =
-                    {
-                        { headerKey, req.Headers.GetValues(headerKey) }
-                    }
-                })
+                .Respond((ctx, with) => with
+                    .Header(headerKey, ctx.Request.Headers.GetValues(headerKey))
+                )
             ),
             new HttpRequestMessage
             {
