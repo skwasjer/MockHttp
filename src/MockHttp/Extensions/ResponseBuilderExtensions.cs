@@ -295,6 +295,20 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="name" /> is <see langword="null" />.</exception>
     public static IWithHeadersResult Header<T>(this IWithHeaders builder, string name, params T[] value)
     {
+        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+        return builder.Header(name, (IEnumerable<T>)(value ?? Array.Empty<T>()));
+    }
+
+    /// <summary>
+    /// Adds a HTTP header value.
+    /// </summary>
+    /// <param name="builder">The builder.</param>
+    /// <param name="name">The header name.</param>
+    /// <param name="value">The header value or values.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="name" /> is <see langword="null" />.</exception>
+    public static IWithHeadersResult Header<T>(this IWithHeaders builder, string name, IEnumerable<T> value)
+    {
         if (name is null)
         {
             throw new ArgumentNullException(nameof(name));

@@ -42,7 +42,7 @@ public class IRespondsExtensionsTests
             var request = new HttpRequestMessage(HttpMethod.Get, "http://0.0.0.0/controller/action?query=1");
 
             // Act
-            _sut.Respond((req, _) => new HttpResponseMessage { Headers = { { "query", req.RequestUri.Query } } });
+            _sut.Respond((ctx, _) => new HttpResponseMessage { Headers = { { "query", ctx.RequestUri!.Query } } });
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
             // Assert
@@ -217,6 +217,10 @@ public class IRespondsExtensionsTests
                     IRespondsExtensions.Respond,
                     responds,
                     (_, _) => new HttpResponseMessage()),
+                DelegateTestCase.Create(
+                    IRespondsExtensions.Respond,
+                    responds,
+                    (Action<MockHttpRequestContext, CancellationToken, IResponseBuilder>)((_, _, _) => { })),
                 DelegateTestCase.Create(
                     IRespondsExtensions.RespondUsing<FakeResponseStrategy, IResponseResult>,
                     responds),
