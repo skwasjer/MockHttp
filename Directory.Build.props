@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn Condition="'$(Configuration)'=='Release'">$(NoWarn);CS0618;NETSDK1138</NoWarn>
+    <ContinuousIntegrationBuild Condition="'$(Configuration)'=='Release'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
 </Project>
