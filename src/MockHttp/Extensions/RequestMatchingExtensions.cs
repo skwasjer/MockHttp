@@ -516,7 +516,7 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching Body(this RequestMatching builder, string body)
     {
-        return builder.Body(body, ContentMatcher.DefaultEncoding);
+        return builder.Body(body, MockHttpHandler.DefaultEncoding);
     }
 
     /// <summary>
@@ -603,7 +603,7 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching PartialBody(this RequestMatching builder, string partialBody)
     {
-        return builder.PartialBody(partialBody, ContentMatcher.DefaultEncoding);
+        return builder.PartialBody(partialBody, MockHttpHandler.DefaultEncoding);
     }
 
     /// <summary>

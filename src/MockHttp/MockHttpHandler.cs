@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
+using System.Text;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;
@@ -17,6 +18,11 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     private readonly HttpCall _fallbackSetup;
     private readonly IDictionary<Type, object> _items;
     private readonly ReadOnlyDictionary<Type, object> _readOnlyItems;
+
+    /// <summary>
+    /// Gets the default encoding (UTF-8) used by MockHttp.
+    /// </summary>
+    public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockHttpHandler" /> class.

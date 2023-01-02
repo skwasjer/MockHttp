@@ -80,7 +80,7 @@ public static class ResponseBuilderExtensions
             {
                 Headers =
                 {
-                    ContentType = new MediaTypeHeaderValue(MediaTypes.Json) { CharSet = (_encoding ?? Encoding.UTF8).WebName }
+                    ContentType = new MediaTypeHeaderValue(MediaTypes.Json) { CharSet = (_encoding ?? MockHttpHandler.DefaultEncoding).WebName }
                 }
             };
 

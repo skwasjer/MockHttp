@@ -12,11 +12,6 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
 {
     private const int MaxBytesDisplayed = 10;
 
-    /// <summary>
-    /// The default content encoding.
-    /// </summary>
-    public static readonly Encoding DefaultEncoding = Encoding.UTF8;
-
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Encoding? _encoding;
 
@@ -34,9 +29,9 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     /// <param name="content">The request content to match.</param>
     /// <param name="encoding">The content encoding.</param>
     public ContentMatcher(string content, Encoding? encoding)
-        : this((encoding ?? DefaultEncoding).GetBytes(content ?? throw new ArgumentNullException(nameof(content))))
+        : this((encoding ?? MockHttpHandler.DefaultEncoding).GetBytes(content ?? throw new ArgumentNullException(nameof(content))))
     {
-        _encoding = encoding ?? DefaultEncoding;
+        _encoding = encoding ?? MockHttpHandler.DefaultEncoding;
     }
 
     /// <summary>

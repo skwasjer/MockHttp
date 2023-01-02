@@ -45,7 +45,7 @@ internal class ServerRequestHandler : DelegatingHandler
             httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
             {
                 ReasonPhrase = Resources.Error_VerifyMockSetup,
-                Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, Encoding.UTF8, MediaTypes.PlainText)
+                Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, MockHttpHandler.DefaultEncoding, MediaTypes.PlainText)
             };
         }
         finally
