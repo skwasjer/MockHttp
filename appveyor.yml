@@ -4,7 +4,7 @@ configuration: Release
 environment:
   IGNORE_NORMALISATION_GIT_HEAD_MOVE: 1
 install:
-  - choco install gitversion.portable --pre -y
+  - choco install gitversion.portable -y
   - gitversion /l console /output buildserver
   - choco install opencover.portable -y
   - choco install codecov -y
