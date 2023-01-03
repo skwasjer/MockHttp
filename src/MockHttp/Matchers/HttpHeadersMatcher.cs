@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using MockHttp.Http;
+using MockHttp.Matchers.Patterns;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers;
@@ -40,7 +41,7 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
             throw new ArgumentNullException(nameof(name));
         }
 
-        RegexPatternMatcher? patternMatcher = allowWildcards ? new RegexPatternMatcher(value) : null;
+        WildcardPatternMatcher? patternMatcher = allowWildcards ? new WildcardPatternMatcher(value) : null;
         _equalityComparer = patternMatcher is null
             ? new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues)
             : new HttpHeaderEqualityComparer(patternMatcher);

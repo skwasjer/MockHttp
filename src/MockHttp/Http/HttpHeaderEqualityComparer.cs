@@ -1,4 +1,4 @@
-﻿using MockHttp.Matchers;
+﻿using MockHttp.Matchers.Patterns;
 
 namespace MockHttp.Http;
 

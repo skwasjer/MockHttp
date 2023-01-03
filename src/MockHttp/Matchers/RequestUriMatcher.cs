@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using MockHttp.Matchers.Patterns;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers;
@@ -45,7 +46,7 @@ public class RequestUriMatcher : HttpRequestMatcher
 #endif
            )
         {
-            _uriPatternMatcher = new RegexPatternMatcher(uriString);
+            _uriPatternMatcher = new WildcardPatternMatcher(uriString);
         }
         else
         {
