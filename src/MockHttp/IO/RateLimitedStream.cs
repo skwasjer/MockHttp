@@ -41,9 +41,9 @@ public class RateLimitedStream : Stream
             throw new ArgumentException("Cannot read from stream.", nameof(actualStream));
         }
 
-        if (bitRate <= MinBitRate)
+        if (bitRate < MinBitRate)
         {
-            throw new ArgumentOutOfRangeException(nameof(bitRate), $"Bit rate must be higher than {MinBitRate}.");
+            throw new ArgumentOutOfRangeException(nameof(bitRate), $"Bit rate must be higher than or equal to {MinBitRate}.");
         }
 
         _byteRate = bitRate / 8; // We are computing bytes transferred.

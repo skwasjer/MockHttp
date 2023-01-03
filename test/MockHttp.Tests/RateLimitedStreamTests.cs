@@ -107,7 +107,7 @@ public class RateLimitedStreamTests : IDisposable
         // Assert
         act.Should()
             .ThrowExactly<ArgumentOutOfRangeException>()
-            .WithMessage($"Bit rate must be higher than {RateLimitedStream.MinBitRate}.*")
+            .WithMessage($"Bit rate must be higher than or equal to {RateLimitedStream.MinBitRate}.*")
             .WithParameterName(nameof(bitRate));
     }
 
