@@ -43,8 +43,8 @@ public class RateLimitedStreamTests : IDisposable
             _testOutputHelper.WriteLine("Read: {0:000}, Time: {1}, Total bytes read: {2}/{3}", readCount, sw.Elapsed, totalBytesRead, DataSizeInBytes);
             ms.Write(buffer, 0, bytesRead);
         }
-
-        sw.Elapsed.Should().BeGreaterThanOrEqualTo(ExpectedTotalTime);
+        sw.Stop();
+        sw.Elapsed.Should().BeCloseTo(ExpectedTotalTime, TimeSpan.FromMilliseconds(100));
         ms.ToArray().Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 
