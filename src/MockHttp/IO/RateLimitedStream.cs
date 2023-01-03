@@ -66,6 +66,11 @@ public class RateLimitedStream : Stream
         int chokeByteCount = Math.Min(Math.Min(count, _byteRate), MaxBufferSize);
 
         int bytesRead = _actualStream.Read(buffer, offset, chokeByteCount);
+        if (bytesRead == 0)
+        {
+            return 0;
+        }
+
         // Add a new measurement to the queue.
         _samples.Enqueue(new Measurement(_stopwatch.Elapsed, bytesRead));
 

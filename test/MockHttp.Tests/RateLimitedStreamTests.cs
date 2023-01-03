@@ -47,6 +47,19 @@ public class RateLimitedStreamTests : IDisposable
         ms.ToArray().Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 
+    [Fact]
+    public void Given_that_next_block_read_is_0_when_reading_last_block_it_should_exit()
+    {
+        byte[] sourceBuffer = { 0, 1, 2, 3 };
+        using var actualStream = new MemoryStream(sourceBuffer);
+        using var sut = new RateLimitedStream(actualStream, 128);
+
+        byte[] buffer = new byte[4096];
+        sut.Read(buffer, 0, buffer.Length).Should().Be(sourceBuffer.Length);
+        buffer.Should().StartWith(sourceBuffer);
+        sut.Read(buffer, 0, buffer.Length).Should().Be(0);
+    }
+
     [Theory]
     [InlineData(100, 100)]
     [InlineData(1000, 1000 - 768)]
