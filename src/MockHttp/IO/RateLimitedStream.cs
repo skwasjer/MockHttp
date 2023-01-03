@@ -121,6 +121,19 @@ public class RateLimitedStream : Stream
         set => _actualStream.Position = value;
     }
 
+    /// <inheritdoc />
+    protected override void Dispose(bool disposing)
+    {
+        try
+        {
+            _actualStream.Dispose();
+        }
+        finally
+        {
+            base.Dispose(disposing);
+        }
+    }
+
     /// <summary>
     /// Gets the current average transfer rate per sec.
     /// </summary>

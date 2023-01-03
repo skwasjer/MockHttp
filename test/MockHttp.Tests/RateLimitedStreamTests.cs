@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using MockHttp.IO;
+using Moq.Protected;
 using Xunit.Abstractions;
 
 namespace MockHttp;
@@ -176,6 +177,22 @@ public class RateLimitedStreamTests : IDisposable
 
         // Assert
         streamMock.Verify(m => m.Flush(), Times.Once);
+    }
+
+    [Fact]
+    public void When_disposing_it_should_dispose_underlying()
+    {
+        var streamMock = new Mock<MemoryStream> { CallBase = true };
+        using MemoryStream? stream = streamMock.Object;
+        var sut = new RateLimitedStream(stream, 1024);
+
+        // Act
+        sut.Dispose();
+
+        // Assert
+        streamMock
+            .Protected()
+            .Verify("Dispose", Times.Once(), true, true);
     }
 
     public void Dispose()
