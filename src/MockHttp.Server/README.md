@@ -44,6 +44,10 @@ await server.StopAsync();
 server.Dispose()
 ```
 
+## Other info
+
+- [Changelog](https://github.com/skwasjer/MockHttp/blob/main/CHANGELOG.md)
+
 ### Contributions
 
 Please check out the [contribution guidelines](https://github.com/skwasjer/MockHttp/blob/main/CONTRIBUTING.md).
