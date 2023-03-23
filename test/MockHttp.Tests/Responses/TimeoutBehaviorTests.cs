@@ -21,7 +21,13 @@ public class TimeoutBehaviorTests
 
         // Assert
         sw.Start();
+
+#if NET5_0_OR_GREATER
+        await act.Should().ThrowAsync<TaskCanceledException>().WithInnerException(typeof(TimeoutException), "the timeout expired");
+#else
         await act.Should().ThrowAsync<TaskCanceledException>("the timeout expired");
+#endif
+
         sw.Elapsed.Should()
             // Allow 5% diff.
             .BeGreaterThan(timeout - TimeSpan.FromMilliseconds(timeoutInMilliseconds * 0.95));
@@ -41,7 +47,7 @@ public class TimeoutBehaviorTests
         Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), next.Object, ct);
 
         // Assert
-        await act.Should().ThrowAsync<TaskCanceledException>();
+        await act.Should().ThrowAsync<TaskCanceledException>().Where(ex => ex.InnerException == null);
         sw.Elapsed.Should().BeLessThan(timeout);
         next.VerifyNoOtherCalls();
     }
