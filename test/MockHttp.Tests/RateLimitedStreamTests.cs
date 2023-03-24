@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 
 namespace MockHttp;
 
-public class RateLimitedStreamTests : IDisposable
+public sealed class RateLimitedStreamTests : IDisposable
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private const int DataSizeInBytes = 512 * 1024; // 512 KB
@@ -40,11 +40,14 @@ public class RateLimitedStreamTests : IDisposable
         {
             totalBytesRead += bytesRead;
             readCount++;
+#if DEBUG
             _testOutputHelper.WriteLine("Read: {0:000}, Time: {1}, Total bytes read: {2}/{3}", readCount, sw.Elapsed, totalBytesRead, DataSizeInBytes);
+#endif
             ms.Write(buffer, 0, bytesRead);
         }
         sw.Stop();
-        sw.Elapsed.Should().BeCloseTo(ExpectedTotalTime, TimeSpan.FromMilliseconds(100));
+
+        sw.Elapsed.Should().BeCloseTo(ExpectedTotalTime, TimeSpan.FromMilliseconds(ExpectedTotalTime.TotalMilliseconds * 0.05), "it can be within 5% of the expected total time to read the rate limited stream");
         ms.ToArray().Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 
