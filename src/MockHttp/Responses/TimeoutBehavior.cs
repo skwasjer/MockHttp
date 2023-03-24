@@ -28,20 +28,21 @@ internal sealed class TimeoutBehavior
             .ContinueWith(_ =>
                 {
                     var tcs = new TaskCompletionSource<HttpResponseMessage>();
-#if (NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER)
-                    bool isNetCore3 = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core 3", StringComparison.OrdinalIgnoreCase); // Shim for .NET 5 being EOL and no longer producing an assembly for it.
+                    bool isNotNet5OrGreater = true;
 
-                    if (!cancellationToken.IsCancellationRequested && !isNetCore3)
-                    {
-                        tcs.TrySetException(new TaskCanceledException(null, new TimeoutException()));
-                    }
-                    else
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
+                    isNotNet5OrGreater = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core 3", StringComparison.OrdinalIgnoreCase); // Shim for .NET 5 being EOL and no longer producing an assembly for it.
+#endif
+
+                    if (cancellationToken.IsCancellationRequested || isNotNet5OrGreater)
                     {
                         tcs.TrySetCanceled();
                     }
-#else
-                    tcs.TrySetCanceled();
-#endif
+                    else
+                    {
+                        tcs.TrySetException(new TaskCanceledException(null, new TimeoutException()));
+                    }
+
                     return tcs.Task;
                 },
                 TaskScheduler.Current)
