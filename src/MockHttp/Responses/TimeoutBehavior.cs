@@ -1,4 +1,6 @@
-﻿namespace MockHttp.Responses;
+﻿using System.Runtime.InteropServices;
+
+namespace MockHttp.Responses;
 
 internal sealed class TimeoutBehavior
     : IResponseBehavior
@@ -26,8 +28,10 @@ internal sealed class TimeoutBehavior
             .ContinueWith(_ =>
                 {
                     var tcs = new TaskCompletionSource<HttpResponseMessage>();
-#if NET5_0_OR_GREATER
-                    if (!cancellationToken.IsCancellationRequested)
+#if (NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER)
+                    bool isNetCore3 = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core 3", StringComparison.OrdinalIgnoreCase); // Shim for .NET 5 being EOL and no longer producing an assembly for it.
+
+                    if (!cancellationToken.IsCancellationRequested && !isNetCore3)
                     {
                         tcs.TrySetException(new TaskCanceledException(null, new TimeoutException()));
                     }
