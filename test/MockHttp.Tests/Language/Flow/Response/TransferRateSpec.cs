@@ -5,7 +5,7 @@ using MockHttp.Specs;
 
 namespace MockHttp.Language.Flow.Response;
 
-public class TransferRateSpec : ResponseSpec
+public sealed class TransferRateSpec : ResponseSpec
 {
     private const int DataSizeInBytes = 256 * 1024; // 256 KB
     private const int BitRate = 512000; // 512 kbps = 64 KB/s

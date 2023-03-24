@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using MockHttp.Threading;
 
 namespace MockHttp.Responses;
 
@@ -24,7 +25,7 @@ internal sealed class TimeoutBehavior
         // https://github.com/dotnet/corefx/issues/20296
         // Beginning in .NET 5, the TaskCanceledException's inner exception is a TimeoutException to clarify client timeout.
 
-        return Task.Delay(_timeoutAfter, cancellationToken)
+        return HighResDelay.WaitAsync(_timeoutAfter, cancellationToken: cancellationToken)
             .ContinueWith(_ =>
                 {
                     var tcs = new TaskCompletionSource<HttpResponseMessage>();

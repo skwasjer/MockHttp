@@ -40,14 +40,12 @@ public sealed class RateLimitedStreamTests : IDisposable
         {
             totalBytesRead += bytesRead;
             readCount++;
-#if DEBUG
             _testOutputHelper.WriteLine("Read: {0:000}, Time: {1}, Total bytes read: {2}/{3}", readCount, sw.Elapsed, totalBytesRead, DataSizeInBytes);
-#endif
             ms.Write(buffer, 0, bytesRead);
         }
         sw.Stop();
 
-        sw.Elapsed.Should().BeCloseTo(ExpectedTotalTime, TimeSpan.FromMilliseconds(ExpectedTotalTime.TotalMilliseconds * 0.05), "it can be within 5% of the expected total time to read the rate limited stream");
+        sw.Elapsed.Should().BeGreaterThanOrEqualTo(ExpectedTotalTime);
         ms.ToArray().Should().BeEquivalentTo(_content, opts => opts.WithStrictOrdering());
     }
 

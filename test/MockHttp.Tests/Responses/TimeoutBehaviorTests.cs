@@ -9,7 +9,7 @@ public class TimeoutBehaviorTests
     [InlineData(50)]
     [InlineData(100)]
     [InlineData(1000)]
-    public async Task Given_timeout_when_sending_should_timeout_after_time_passed(int timeoutInMilliseconds)
+    public async Task Given_that_timeout_is_not_zero_when_sending_it_should_timeout_after_time_n_passed(int timeoutInMilliseconds)
     {
         var timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
         var sut = new TimeoutBehavior(timeout);
@@ -28,14 +28,12 @@ public class TimeoutBehaviorTests
         await act.Should().ThrowAsync<TaskCanceledException>("the timeout expired");
 #endif
 
-        sw.Elapsed.Should()
-            // Allow 5% diff.
-            .BeGreaterThan(timeout - TimeSpan.FromMilliseconds(timeoutInMilliseconds * 0.95));
+        sw.Elapsed.Should().BeGreaterThanOrEqualTo(timeout);
         next.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task Given_cancellation_token_is_cancelled_when_sending_should_throw()
+    public async Task Given_that_cancellation_token_is_cancelled_when_sending_it_should_throw()
     {
         var timeout = TimeSpan.FromSeconds(60);
         var sut = new TimeoutBehavior(timeout);
@@ -57,7 +55,7 @@ public class TimeoutBehaviorTests
     [InlineData(-60000)]
     [InlineData(-int.MaxValue)]
     [InlineData((double)int.MaxValue + 1)]
-    public void Given_invalid_timespan_when_sending_should_throw(double milliseconds)
+    public void Given_that_timeout_is_invalid_when_sending_it_should_throw(double milliseconds)
     {
         var invalidTimeout = TimeSpan.FromMilliseconds(milliseconds);
 
@@ -68,5 +66,21 @@ public class TimeoutBehaviorTests
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
             .WithParameterName("timeoutAfter");
+    }
+
+    [Fact]
+    public async Task Given_that_timeout_is_0_when_sending_it_should_throw_almost_immediately()
+    {
+        var sut = new TimeoutBehavior(TimeSpan.Zero);
+        var next = new Mock<ResponseHandlerDelegate>();
+
+        // Act
+        var sw = Stopwatch.StartNew();
+        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), next.Object, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<TaskCanceledException>();
+        sw.Elapsed.Should().BeCloseTo(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+        next.VerifyNoOtherCalls();
     }
 }

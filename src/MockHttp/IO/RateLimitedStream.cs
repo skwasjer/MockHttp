@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using MockHttp.Threading;
 
 namespace MockHttp.IO;
 
@@ -15,16 +16,16 @@ namespace MockHttp.IO;
 /// </remarks>
 public class RateLimitedStream : Stream
 {
-    private const int SampleRate = 30; // How often to take samples (per sec).
-    private const int MaxSampleCount = SampleRate * 5; // How many samples to keep track of to calculate average bit rate.
-    private const int Delay = 1000 / SampleRate;
+    private const int SampleRate = 100; // How often to take samples (per sec).
+    private static readonly TimeSpan ThrottleInterval = TimeSpan.FromMilliseconds(1000D / SampleRate);
     internal const int MinBitRate = 128;
     private const int MaxBufferSize = 2 << 15; // 128KB
+
+    private long _totalBytesRead;
 
     private readonly Stopwatch _stopwatch;
     private readonly Stream _actualStream;
     private readonly int _byteRate;
-    private readonly Queue<Measurement> _samples;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RateLimitedStream" />.
@@ -48,7 +49,6 @@ public class RateLimitedStream : Stream
 
         _byteRate = bitRate / 8; // We are computing bytes transferred.
         _stopwatch = new Stopwatch();
-        _samples = new Queue<Measurement>();
     }
 
     /// <inheritdoc />
@@ -71,15 +71,13 @@ public class RateLimitedStream : Stream
             return 0;
         }
 
-        // Add a new measurement to the queue.
-        _samples.Enqueue(new Measurement(_stopwatch.Elapsed, bytesRead));
-
-        // Throttle until average bit rate drops below threshold.
-        while (GetAverageTransferRateInBytesPerSec() > _byteRate)
+        _totalBytesRead += bytesRead;
+        double currentByteRate;
+        do
         {
-            _samples.Enqueue(new Measurement(_stopwatch.Elapsed, 0));
-            Thread.Sleep(Delay);
-        }
+            currentByteRate = _totalBytesRead / _stopwatch.Elapsed.TotalSeconds;
+            HighResDelay.Wait(ThrottleInterval);
+        } while (currentByteRate > _byteRate);
 
         return bytesRead;
     }
@@ -133,22 +131,4 @@ public class RateLimitedStream : Stream
             base.Dispose(disposing);
         }
     }
-
-    /// <summary>
-    /// Gets the current average transfer rate per sec.
-    /// </summary>
-    private double GetAverageTransferRateInBytesPerSec()
-    {
-        // Remove measurements if we have too many.
-        while (_samples.Count > MaxSampleCount)
-        {
-            _samples.Dequeue();
-        }
-
-        int bytesReadForAllSamples = _samples.Sum(m => m.BytesRead);
-        TimeSpan totalSampleTime = _stopwatch.Elapsed - _samples.First().Time;
-        return bytesReadForAllSamples / totalSampleTime.TotalSeconds;
-    }
-
-    private record struct Measurement(TimeSpan Time, int BytesRead);
 }
