@@ -5,6 +5,7 @@ namespace MockHttp.Responses;
 public class TimeoutBehaviorTests
 {
     [Theory]
+    [InlineData(0)]
     [InlineData(10)]
     [InlineData(50)]
     [InlineData(100)]
@@ -66,21 +67,5 @@ public class TimeoutBehaviorTests
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
             .WithParameterName("timeoutAfter");
-    }
-
-    [Fact]
-    public async Task Given_that_timeout_is_0_when_sending_it_should_throw_almost_immediately()
-    {
-        var sut = new TimeoutBehavior(TimeSpan.Zero);
-        var next = new Mock<ResponseHandlerDelegate>();
-
-        // Act
-        var sw = Stopwatch.StartNew();
-        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), next.Object, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<TaskCanceledException>();
-        sw.Elapsed.Should().BeCloseTo(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-        next.VerifyNoOtherCalls();
     }
 }
