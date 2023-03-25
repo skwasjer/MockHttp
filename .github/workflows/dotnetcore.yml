@@ -19,5 +19,6 @@ jobs:
             6.0.x
             5.0.x
             3.1.x
+            2.1.x
 
       - run: dotnet test -c Release

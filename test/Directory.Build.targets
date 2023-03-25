@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+
+    <NetTestSdkVersion>17.5.0</NetTestSdkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework)=='netcoreapp2.1'">
+    <NetTestSdkVersion>17.3.3</NetTestSdkVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.5.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NetTestSdkVersion)" />
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="$(NetTestSdkVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
