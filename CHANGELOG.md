@@ -1,15 +1,24 @@
 # Changelog
 
+##
+
+## v4.0.1
+
+- Add timeout exception for .NET 5 or greater targets. by @benjaminsampica in [#50](https://github.com/skwasjer/MockHttp/pull/50
+- Improve `RateLimitedStream` timing/bit rate calculation accuracy.
+- Fix guard/exception for the minimum allowed bit rate for `RateLimitedStream`.
+- Fix underlying stream not being disposed when calling `RateLimitedStream.Dispose()`
+
 ## v4.0.0
-- Add new Fluent response API by @skwasjer in #10 See also #9
+- Add new Fluent response API by @skwasjer in [#10](https://github.com/skwasjer/MockHttp/pull/10) See also [#9](https://github.com/skwasjer/MockHttp/issues/9)
   This is a complete replacement of the old response builder API's, and thus likely will require you to refactor your tests (I'm sorry but such is the price of improvement sometimes :( ). See wiki for new API docs/examples. The request matching API's have largely stayed the same, but some extension methods were renamed for consistency.
 - Added .NET 7 target framework
-- Add stream that rate limits response streams. by @skwasjer in #17
+- Add stream that rate limits response streams. by @skwasjer in [#17](https://github.com/skwasjer/MockHttp/pull/17)
 - Additional guards (Argument(Null)Exception) for certain extensions.
 - Fix static code analysis warnings.
-- Bump Microsoft.AspNet.WebApi.Client from 5.2.7 to 5.2.9 by @dependabot in #23
-- Enable nullable by @skwasjer in #27
-- Remove obsolete/deprecated code (+semver:major) by @skwasjer in #16
+- Bump Microsoft.AspNet.WebApi.Client from 5.2.7 to 5.2.9 by @dependabot in [#23](https://github.com/skwasjer/MockHttp/pull/23)
+- Enable nullable by @skwasjer in [#27](https://github.com/skwasjer/MockHttp/pull/27)
+- Remove obsolete/deprecated code (+semver:major) by @skwasjer in [#16](https://github.com/skwasjer/MockHttp/pull/16)
 - Removed obsolete `ObjectResponseStrategy` and its extensions.
 - Removed obsolete `MockHttpHandler.VerifyNoOtherCalls()`. Use the replacement `VerifyNoOtherRequests()`
 - Removed obsolete `UrlMatcher` and its extensions.
