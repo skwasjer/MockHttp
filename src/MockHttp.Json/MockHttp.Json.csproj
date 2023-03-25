@@ -10,16 +10,6 @@
     <Description>JSON and MediaTypeFormatter extensions for skwas.MockHttp.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
-    <PackageReleaseNotes>
-      v4.0.0
-      - Add new Fluent response API by @skwasjer in #10 See also #9
-        This is a complete replacement of the old response builder API's, and thus likely will require you to refactor your tests (I'm sorry but such is the price of improvement sometimes :( ). See wiki for new API docs/examples. The request matching API's have largely stayed the same, but some extension methods were renamed for consistency.
-      - Added .NET 7 target framework
-      - Fix static code analysis warnings.
-      - Enable nullable by @skwasjer in #27
-      - Remove obsolete/deprecated code (+semver:major) by @skwasjer in #16
-      - Removed obsolete `ObjectResponseStrategy` extensions.
-    </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   

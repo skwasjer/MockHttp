@@ -18,6 +18,7 @@
     <RepositoryUrl>https://github.com/skwasjer/MockHttp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>PackageIcon64.png</PackageIcon>
+    <PackageReleaseNotes>Release notes are at https://github.com/skwasjer/MockHttp/releases</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
