@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
 
-    <NetTestSdkVersion>17.6.2</NetTestSdkVersion>
+    <NetTestSdkVersion>17.6.3</NetTestSdkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(TargetFramework)=='netcoreapp2.1'">
