@@ -248,7 +248,7 @@ public abstract class RequestMatchingExtensionsTests
                 RequestUri = new Uri("http://127.0.0.1"),
                 Content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("key", null!)
+                    new KeyValuePair<string?, string?>("key", null!)
                 })
             };
 
@@ -269,7 +269,7 @@ public abstract class RequestMatchingExtensionsTests
                 RequestUri = new Uri("http://127.0.0.1"),
                 Content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("key", string.Empty)
+                    new KeyValuePair<string?, string?>("key", string.Empty)
                 })
             };
 
