@@ -27,6 +27,15 @@ jobs:
             3.1.x
             2.1.x
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'   
+          
       - name: Install Sonar scanner
         run: dotnet tool install --global dotnet-sonarscanner
 
