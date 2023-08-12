@@ -44,7 +44,25 @@ public class DataEscapingHelperTests
         var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^ &*", "another value" } } };
 
         // Act
-        IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse("key=value&key=%24%25%5E%20%26%2A&key=another%20value");
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse("key=value&key=%24%25%5E+%26%2A&key=another%20value");
+
+        // Assert
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Theory]
+    [InlineData("key", "key", "a%20b", "a b")]
+    [InlineData("key", "key", "a+b", "a b")]
+    [InlineData("key", "key", "a b", "a b")]
+    [InlineData("a%20b", "a b", "value", "value")]
+    [InlineData("a+b", "a b", "value", "value")]
+    [InlineData("a b", "a b", "value", "value")]
+    public void Given_escapedString_contains_space_when_parsing_it_should_return_expected(string key, string expectedKey, string value, string expectedValue)
+    {
+        var expected = new Dictionary<string, IEnumerable<string>> { { expectedKey, new[] { expectedValue } } };
+
+        // Act
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse($"{key}={value}");
 
         // Assert
         actual.Should().BeEquivalentTo(expected);

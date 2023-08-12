@@ -34,8 +34,8 @@ internal static class DataEscapingHelper
                     throw new FormatException("The escaped data string format is invalid.");
                 }
 
-                string key = Uri.UnescapeDataString(kvp[0]);
-                string? value = kvp.Length > 1 ? Uri.UnescapeDataString(kvp[1]) : null;
+                string key = UnescapeData(kvp[0]);
+                string? value = kvp.Length > 1 ? UnescapeData(kvp[1]) : null;
                 return new KeyValuePair<string, string?>(key, value);
             })
             // Group values for same key.
@@ -46,6 +46,11 @@ internal static class DataEscapingHelper
                     .Where(v => v is not null)!)
             )
             .ToList();
+    }
+
+    private static string UnescapeData(string v)
+    {
+        return Uri.UnescapeDataString(v).Replace('+', ' ');
     }
 
     internal static string Format(IEnumerable<KeyValuePair<string, string>> items)
