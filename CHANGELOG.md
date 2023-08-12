@@ -1,10 +1,26 @@
 # Changelog
 
-##
+## Unreleased
+
+-
+
+## v4.1.0
+
+* fix: data escaped space (+) was not parsing into space char, causing form data matcher to fail to match. by @skwasjer in [#68](https://github.com/skwasjer/MockHttp/pull/68)
+
+### Chores
+
+* fix: .NET Standard 2.0 was not covered.  by @skwasjer in [#52](https://github.com/skwasjer/MockHttp/pull/52)
+* chore(deps): bump NetTestSdkVersion from 17.5.0 to 17.6.0 by @dependabot in [#55](https://github.com/skwasjer/MockHttp/pull/55)
+* chore(deps): bump FluentAssertions from 6.10.0 to 6.11.0 by @dependabot in [#53](https://github.com/skwasjer/MockHttp/pull/53)
+* chore(deps): bump NetTestSdkVersion from 17.6.0 to 17.6.2 by @dependabot in [#57](https://github.com/skwasjer/MockHttp/pull/57)
+* ci: .NET Framework test builds fail with .NET 8 SDK preview by @skwasjer in [#65](https://github.com/skwasjer/MockHttp/pull/65)
+* ci(deps): bump SonarScanner dependencies by @skwasjer in [#66](https://github.com/skwasjer/MockHttp/pull/66)
+* chore(deps): bump NetTestSdkVersion from 17.6.2 to 17.7.0 by @dependabot in [#64](https://github.com/skwasjer/MockHttp/pull/64)
 
 ## v4.0.1
 
-- Add timeout exception for .NET 5 or greater targets. by @benjaminsampica in [#50](https://github.com/skwasjer/MockHttp/pull/50
+- Add timeout exception for .NET 5 or greater targets. by @benjaminsampica in [#50](https://github.com/skwasjer/MockHttp/pull/50)
 - Improve `RateLimitedStream` timing/bit rate calculation accuracy.
 - Fix guard/exception for the minimum allowed bit rate for `RateLimitedStream`.
 - Fix underlying stream not being disposed when calling `RateLimitedStream.Dispose()`
