@@ -6,17 +6,18 @@
 
 ## v4.1.0
 
-* fix: data escaped space (+) was not parsing into space char, causing form data matcher to fail to match. by @skwasjer in [#68](https://github.com/skwasjer/MockHttp/pull/68)
+- fix: data escaped space (+) was not parsing into space char, causing form data matcher to fail to match. by @skwasjer in [#68](https://github.com/skwasjer/MockHttp/pull/68)
+- chore(deps): replaced Microsoft.AspNet.WebApi.Client with explicit dependencies on Newtonsoft.Json and System.Net.Http to address a security concern regarding transitive dependency on NewtonSoft < 13.x. See  [GHSA-5crp-9r3c-p9vr](https://github.com/advisories/GHSA-5crp-9r3c-p9vr).
 
 ### Chores
 
-* fix: .NET Standard 2.0 was not covered.  by @skwasjer in [#52](https://github.com/skwasjer/MockHttp/pull/52)
-* chore(deps): bump NetTestSdkVersion from 17.5.0 to 17.6.0 by @dependabot in [#55](https://github.com/skwasjer/MockHttp/pull/55)
-* chore(deps): bump FluentAssertions from 6.10.0 to 6.11.0 by @dependabot in [#53](https://github.com/skwasjer/MockHttp/pull/53)
-* chore(deps): bump NetTestSdkVersion from 17.6.0 to 17.6.2 by @dependabot in [#57](https://github.com/skwasjer/MockHttp/pull/57)
-* ci: .NET Framework test builds fail with .NET 8 SDK preview by @skwasjer in [#65](https://github.com/skwasjer/MockHttp/pull/65)
-* ci(deps): bump SonarScanner dependencies by @skwasjer in [#66](https://github.com/skwasjer/MockHttp/pull/66)
-* chore(deps): bump NetTestSdkVersion from 17.6.2 to 17.7.0 by @dependabot in [#64](https://github.com/skwasjer/MockHttp/pull/64)
+- fix: .NET Standard 2.0 was not covered.  by @skwasjer in [#52](https://github.com/skwasjer/MockHttp/pull/52)
+- chore(deps): bump NetTestSdkVersion from 17.5.0 to 17.6.0 by @dependabot in [#55](https://github.com/skwasjer/MockHttp/pull/55)
+- chore(deps): bump FluentAssertions from 6.10.0 to 6.11.0 by @dependabot in [#53](https://github.com/skwasjer/MockHttp/pull/53)
+- chore(deps): bump NetTestSdkVersion from 17.6.0 to 17.6.2 by @dependabot in [#57](https://github.com/skwasjer/MockHttp/pull/57)
+- ci: .NET Framework test builds fail with .NET 8 SDK preview by @skwasjer in [#65](https://github.com/skwasjer/MockHttp/pull/65)
+- ci(deps): bump SonarScanner dependencies by @skwasjer in [#66](https://github.com/skwasjer/MockHttp/pull/66)
+- chore(deps): bump NetTestSdkVersion from 17.6.2 to 17.7.0 by @dependabot in [#64](https://github.com/skwasjer/MockHttp/pull/64)
 
 ## v4.0.1
 
