@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 4.1.1
 
--
+- fix: data escaped + (plus) was not parsed correctly, caused by [#68](https://github.com/skwasjer/MockHttp/pull/68). My apologies... :)
 
 ## v4.1.0
 

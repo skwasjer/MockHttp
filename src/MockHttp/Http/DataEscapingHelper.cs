@@ -50,7 +50,7 @@ internal static class DataEscapingHelper
 
     private static string UnescapeData(string v)
     {
-        return Uri.UnescapeDataString(v).Replace('+', ' ');
+        return Uri.UnescapeDataString(v?.Replace("+", "%20")!);
     }
 
     internal static string Format(IEnumerable<KeyValuePair<string, string>> items)

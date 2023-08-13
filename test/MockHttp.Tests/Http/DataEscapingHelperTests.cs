@@ -54,9 +54,11 @@ public class DataEscapingHelperTests
     [InlineData("key", "key", "a%20b", "a b")]
     [InlineData("key", "key", "a+b", "a b")]
     [InlineData("key", "key", "a b", "a b")]
+    [InlineData("key", "key", "a%2Bb", "a+b")]
     [InlineData("a%20b", "a b", "value", "value")]
     [InlineData("a+b", "a b", "value", "value")]
     [InlineData("a b", "a b", "value", "value")]
+    [InlineData("a%2Bb", "a+b", "value", "value")]
     public void Given_escapedString_contains_space_when_parsing_it_should_return_expected(string key, string expectedKey, string value, string expectedValue)
     {
         var expected = new Dictionary<string, IEnumerable<string>> { { expectedKey, new[] { expectedValue } } };
