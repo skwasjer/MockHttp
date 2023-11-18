@@ -14,18 +14,22 @@ namespace MockHttp;
 /// <summary>
 /// A mock HTTP server that listens on a specific URL and responds according to a configured <see cref="MockHttpHandler" />.
 /// </summary>
-public sealed class MockHttpServer : IDisposable
+public sealed class MockHttpServer
+    : IDisposable,
+      IAsyncDisposable
 {
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly Uri _hostUri;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly SemaphoreSlim _lock = new(1);
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly IWebHostBuilder _webHostBuilder;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private IWebHost? _host;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly Uri _hostUri;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private Action<IApplicationBuilder>? _configureAppBuilder;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private bool _disposed;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private IWebHost? _host;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockHttpServer" /> using specified <paramref name="mockHttpHandler" /> and configures it to listen on specified <paramref name="hostUrl" />.
@@ -77,10 +81,20 @@ public sealed class MockHttpServer : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
-        _lock.Dispose();
+        DisposeAsync().AsTask().GetAwaiter().GetResult();
+    }
 
-        _host?.Dispose();
-        _host = null;
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        await StopAsync().ConfigureAwait(false);
+        _lock.Dispose();
+        _disposed = true;
     }
 
     /// <summary>
@@ -103,6 +117,8 @@ public sealed class MockHttpServer : IDisposable
     {
         get
         {
+            CheckDisposed();
+
             _lock.Wait();
             try
             {
@@ -121,13 +137,15 @@ public sealed class MockHttpServer : IDisposable
     /// <summary>
     /// Gets whether the host is started.
     /// </summary>
-    public bool IsStarted => _host is not null;
+    public bool IsStarted => !_disposed && _host is not null;
 
     /// <summary>
     /// Starts listening on the configured addresses.
     /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
+        CheckDisposed();
+
         await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
@@ -150,6 +168,8 @@ public sealed class MockHttpServer : IDisposable
     /// </summary>
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
+        CheckDisposed();
+
         await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
@@ -158,16 +178,20 @@ public sealed class MockHttpServer : IDisposable
                 return;
             }
 
-            // Make local copy, so we can null it before disposing.
-            IWebHost host = _host;
-            _host = null;
-            using (host)
-            {
-                await host.StopAsync(cancellationToken).ConfigureAwait(false);
-            }
+            await _host.StopAsync(cancellationToken).ConfigureAwait(false);
         }
         finally
         {
+            if (_host is IAsyncDisposable asyncDisposable)
+            {
+                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                _host?.Dispose();
+            }
+
+            _host = null;
             _lock.Release();
         }
     }
@@ -177,6 +201,7 @@ public sealed class MockHttpServer : IDisposable
     /// </summary>
     public HttpClient CreateClient()
     {
+        CheckDisposed();
         return new HttpClient { BaseAddress = HostUri };
     }
 
@@ -237,5 +262,13 @@ public sealed class MockHttpServer : IDisposable
             });
             await next().ConfigureAwait(false);
         });
+    }
+
+    private void CheckDisposed()
+    {
+        if (_disposed)
+        {
+            throw new ObjectDisposedException(GetType().FullName);
+        }
     }
 }

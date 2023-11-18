@@ -68,7 +68,7 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 
     public Task DisposeAsync()
     {
-        return Server.StopAsync();
+        return Server.DisposeAsync().AsTask();
     }
 
     private static bool SupportsIpv6()
