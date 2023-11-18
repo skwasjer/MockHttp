@@ -6,14 +6,8 @@ namespace MockHttp.Language.Flow.Response;
 
 public class HeaderSpec : ResponseSpec
 {
-    private readonly DateTimeOffset _utcNow;
-    private readonly DateTime _now;
-
-    public HeaderSpec()
-    {
-        _utcNow = DateTimeOffset.UtcNow;
-        _now = DateTime.Now;
-    }
+    private readonly DateTimeOffset _utcNow = DateTimeOffset.UtcNow;
+    private readonly DateTime _now = DateTime.Now;
 
     protected override void Given(IResponseBuilder with)
     {
@@ -42,6 +36,8 @@ public class HeaderSpec : ResponseSpec
             .And.HaveHeader("X-Date", new[] { _now.AddYears(-1).ToString("R"), _now.ToString("R") })
             .And.HaveHeader("X-Empty", string.Empty)
             .And.HaveHeader("X-Null", string.Empty);
+        response.Headers.Count().Should().Be(5);
+        response.Content.Headers.Count().Should().Be(2);
         return Task.CompletedTask;
     }
 }

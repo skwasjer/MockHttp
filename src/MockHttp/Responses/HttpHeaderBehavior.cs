@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using MockHttp.Http;
+﻿using MockHttp.Http;
 
 namespace MockHttp.Responses;
 
@@ -57,10 +56,12 @@ internal sealed class HttpHeaderBehavior
         // Special case handling of headers which only allow single values.
         if (HeadersWithSingleValueOnly.Contains(header.Key))
         {
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (responseMessage.Content?.Headers.TryGetValues(header.Key, out _) == true)
             {
                 responseMessage.Content.Headers.Remove(header.Key);
             }
+
             if (responseMessage.Headers.TryGetValues(header.Key, out _))
             {
                 responseMessage.Headers.Remove(header.Key);
@@ -68,27 +69,10 @@ internal sealed class HttpHeaderBehavior
         }
 
         // Try to add as message header first, if that fails, add as content header.
-        if (!TryAdd(responseMessage.Headers, header.Key, header.Value))
+        // Let it throw if not supported.
+        if (!responseMessage.Headers.TryAddWithoutValidation(header.Key, header.Value))
         {
             responseMessage.Content?.Headers.Add(header.Key, header.Value);
-        }
-    }
-
-    private static bool TryAdd(HttpHeaders? headers, string name, IEnumerable<string?> values)
-    {
-        if (headers is null)
-        {
-            return false;
-        }
-
-        try
-        {
-            headers.Add(name, values);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
         }
     }
 }

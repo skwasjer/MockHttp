@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Primitives;
@@ -22,11 +23,12 @@ internal static class HttpResponseMessageExtensions
         if (response.Content is not null)
         {
             CopyHeaders(response.Content.Headers, responseFeature.Headers);
+            Stream contentStream = await response.Content.ReadAsStreamAsync(
 #if NET6_0_OR_GREATER
-            await using Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-#else
-            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                cancellationToken
 #endif
+            ).ConfigureAwait(false);
+            await using ConfiguredAsyncDisposable _ = contentStream.ConfigureAwait(false);
             await contentStream.CopyToAsync(responseBodyFeature.Writer.AsStream(), 4096, cancellationToken).ConfigureAwait(false);
         }
     }
