@@ -42,7 +42,9 @@ internal class ServerRequestHandler : DelegatingHandler
         {
             LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
             httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+#pragma warning restore CA2000 // Dispose objects before losing scope
             {
                 ReasonPhrase = Resources.Error_VerifyMockSetup,
                 Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, MockHttpHandler.DefaultEncoding, MediaTypes.PlainText)

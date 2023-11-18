@@ -201,7 +201,7 @@ public static class ResponseBuilderExtensions
 
         return builder.Body(async token =>
         {
-            Stream stream = await streamContentFactory(token);
+            Stream stream = await streamContentFactory(token).ConfigureAwait(false);
             if (!stream.CanRead)
             {
                 throw new InvalidOperationException("Cannot read from stream.");

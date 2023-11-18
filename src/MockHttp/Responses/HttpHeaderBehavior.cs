@@ -7,7 +7,7 @@ internal sealed class HttpHeaderBehavior
     : IResponseBehavior
 {
     //https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-    private static readonly ISet<string> HeadersWithSingleValueOnly = new HashSet<string>
+    private static readonly HashSet<string> HeadersWithSingleValueOnly = new()
     {
         // TODO: expand this list.
         HeaderNames.Age,

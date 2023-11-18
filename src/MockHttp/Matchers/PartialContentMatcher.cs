@@ -15,7 +15,7 @@ public class PartialContentMatcher : ContentMatcher
     public PartialContentMatcher(string content, Encoding? encoding)
         : base(content, encoding)
     {
-        if (ByteContent.Length == 0)
+        if (ByteContent.Count == 0)
         {
             throw new ArgumentException("Content can not be empty.", nameof(content));
         }
@@ -28,7 +28,7 @@ public class PartialContentMatcher : ContentMatcher
     public PartialContentMatcher(byte[] content)
         : base(content)
     {
-        if (ByteContent.Length == 0)
+        if (ByteContent.Count == 0)
         {
             throw new ArgumentException("Content can not be empty.", nameof(content));
         }

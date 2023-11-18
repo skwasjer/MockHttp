@@ -23,7 +23,7 @@ public sealed class MockHttpServer : IDisposable
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private IWebHost? _host;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly string _hostUrl;
+    private readonly Uri _hostUri;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private Action<IApplicationBuilder>? _configureAppBuilder;
 
@@ -32,8 +32,19 @@ public sealed class MockHttpServer : IDisposable
     /// </summary>
     /// <param name="mockHttpHandler">The mock http handler.</param>
     /// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
+    [Obsolete("Use the overload accepting an System.Uri.")]
     public MockHttpServer(MockHttpHandler mockHttpHandler, string hostUrl)
-        : this(mockHttpHandler, null, hostUrl)
+        : this(mockHttpHandler, GetHostUrl(hostUrl))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MockHttpServer" /> using specified <paramref name="mockHttpHandler" /> and configures it to listen on specified <paramref name="hostUri" />.
+    /// </summary>
+    /// <param name="mockHttpHandler">The mock http handler.</param>
+    /// <param name="hostUri">The host URI the mock HTTP server will listen on.</param>
+    public MockHttpServer(MockHttpHandler mockHttpHandler, Uri hostUri)
+        : this(mockHttpHandler, null, hostUri)
     {
     }
 
@@ -43,12 +54,24 @@ public sealed class MockHttpServer : IDisposable
     /// <param name="mockHttpHandler">The mock http handler.</param>
     /// <param name="loggerFactory">The logger factory to use to log pipeline requests to.</param>
     /// <param name="hostUrl">The host URL the mock HTTP server will listen on.</param>
+    [Obsolete("Use the overload accepting an System.Uri.")]
     public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory? loggerFactory, string hostUrl)
+        : this(mockHttpHandler, loggerFactory, GetHostUrl(hostUrl))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MockHttpServer" /> using specified <paramref name="mockHttpHandler" /> and configures it to listen on specified <paramref name="hostUri" />.
+    /// </summary>
+    /// <param name="mockHttpHandler">The mock http handler.</param>
+    /// <param name="loggerFactory">The logger factory to use to log pipeline requests to.</param>
+    /// <param name="hostUri">The host URI the mock HTTP server will listen on.</param>
+    public MockHttpServer(MockHttpHandler mockHttpHandler, ILoggerFactory? loggerFactory, Uri hostUri)
     {
         Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
         _webHostBuilder = CreateWebHostBuilder(loggerFactory);
-        _hostUrl = GetHostUrl(hostUrl);
-        _webHostBuilder.UseUrls(_hostUrl);
+        _hostUri = new Uri(hostUri, "/"); // Ensure base URL.
+        _webHostBuilder.UseUrls(_hostUri.ToString());
     }
 
     /// <inheritdoc />
@@ -66,13 +89,24 @@ public sealed class MockHttpServer : IDisposable
     /// <summary>
     /// Gets the host URL the mock HTTP server will listen on.
     /// </summary>
-    public string HostUrl
+    [Obsolete("Use the HostUri instead.")]
+#pragma warning disable CA1056 // URI-like properties should not be strings
+    public string HostUrl => HostUri.ToString().TrimEnd('/');
+#pragma warning restore CA1056 // URI-like properties should not be strings
+
+    /// <summary>
+    /// Gets the host URI the mock HTTP server will listen on.
+    /// </summary>
+    public Uri HostUri
     {
         get
         {
             lock (_syncLock)
             {
-                return _host?.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses.First() ?? _hostUrl;
+                string? url = _host?.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses.First();
+                return url is null
+                    ? _hostUri
+                    : new Uri(url);
             }
         }
     }
@@ -140,7 +174,7 @@ public sealed class MockHttpServer : IDisposable
     /// </summary>
     public HttpClient CreateClient()
     {
-        return new HttpClient { BaseAddress = new Uri(HostUrl) };
+        return new HttpClient { BaseAddress = HostUri };
     }
 
     private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory? loggerFactory)
@@ -173,20 +207,16 @@ public sealed class MockHttpServer : IDisposable
         _configureAppBuilder = configureAppBuilder;
     }
 
-    private static string GetHostUrl(string hostUrl)
+    private static Uri GetHostUrl(string hostUrl)
     {
         if (hostUrl is null)
         {
             throw new ArgumentNullException(nameof(hostUrl));
         }
 
-        if (!Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri? uri))
-        {
-            throw new ArgumentException(Resources.Error_HostUrlIsNotValid, nameof(hostUrl));
-        }
-
-        // Ensure we have a proper host URL without path/query.
-        return $"{uri.Scheme}://{uri.Host}:{uri.Port}";
+        return Uri.TryCreate(hostUrl, UriKind.Absolute, out Uri? uri)
+            ? uri
+            : throw new ArgumentException(Resources.Error_HostUrlIsNotValid, nameof(hostUrl));
     }
 
     private void AddMockHttpServerHeader(IApplicationBuilder applicationBuilder)

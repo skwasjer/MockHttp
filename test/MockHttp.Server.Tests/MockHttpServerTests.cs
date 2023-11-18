@@ -11,6 +11,8 @@ namespace MockHttp;
 [Collection(nameof(DisableParallelization))]
 public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, IDisposable
 {
+    private static readonly Uri BaseUri = new("http://127.0.0.1:0");
+
     private readonly MockHttpServerFixture _fixture;
     private readonly ITestOutputHelper _testOutputHelper;
 
@@ -247,7 +249,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
         // Act
 #pragma warning disable CS8604
-        Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, "");
+        Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, BaseUri);
 #pragma warning restore CS8604
 
         // Assert
@@ -261,7 +263,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
         // Act
         // ReSharper disable once ExpressionIsAlwaysNull
-        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, "http://127.0.0.1:0");
+        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, BaseUri);
 
         // Assert
         using MockHttpServer server = act.Should().NotThrow().Which;
@@ -270,6 +272,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
+    [Obsolete("Removed in next major version.")]
     public void When_creating_server_with_null_host_it_should_throw()
     {
         string? hostUrl = null;
@@ -284,6 +287,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
+    [Obsolete("Removed in next major version.")]
     public void When_creating_server_with_invalid_host_it_should_throw()
     {
         const string hostUrl = "relative/uri/is/invalid";
@@ -297,9 +301,10 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
-    public void When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_uri()
+    [Obsolete("Removed in next major version.")]
+    public void When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_url()
     {
-        const string hostUrl = "https://relative:789/uri/is/invalid";
+        var hostUrl = new Uri("https://relative:789/uri/is/invalid");
         const string expectedHostUrl = "https://relative:789";
 
         // Act
@@ -311,9 +316,23 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
+    public void When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_uri()
+    {
+        var hostUrl = new Uri("https://relative:789/uri/is/invalid");
+        var expectedHostUrl = new Uri("https://relative:789");
+
+        // Act
+        // ReSharper disable once ExpressionIsAlwaysNull
+        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+
+        // Assert
+        act.Should().NotThrow().Which.HostUri.Should().Be(expectedHostUrl);
+    }
+
+    [Fact]
     public async Task Given_server_is_started_when_starting_again_it_should_throw()
     {
-        using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
+        using var server = new MockHttpServer(_fixture.Handler, BaseUri);
         await server.StartAsync();
         server.IsStarted.Should().BeTrue();
 
@@ -327,7 +346,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     [Fact]
     public async Task Given_server_is_not_started_when_stopped_it_should_throw()
     {
-        using var server = new MockHttpServer(_fixture.Handler, "http://127.0.0.1:0");
+        using var server = new MockHttpServer(_fixture.Handler, BaseUri);
         server.IsStarted.Should().BeFalse();
 
         // Act
@@ -343,7 +362,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         var handler = new MockHttpHandler();
 
         // Act
-        var server = new MockHttpServer(handler, "http://127.0.0.1:0");
+        var server = new MockHttpServer(handler, BaseUri);
 
         // Assert
         server.Handler.Should().Be(handler);

@@ -16,7 +16,7 @@ public static class NullArgumentTest
         string testCase = (string)testArgs[0];
         var func = (Delegate)testArgs[1];
         string expectedParamName = (string)testArgs[2];
-        ParameterInfo param = func.GetMethodInfo().GetParameters().Single(p => p.Name == expectedParamName);
+        ParameterInfo param = func.GetMethodInfo()!.GetParameters().Single(p => p.Name == expectedParamName);
         object[] args = testArgs.Skip(3).ToArray();
         if (args.Length == 0)
         {

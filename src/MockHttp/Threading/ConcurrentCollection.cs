@@ -76,7 +76,9 @@ internal class ConcurrentCollection<T> : IConcurrentReadOnlyCollection<T>
                 if (_items is null)
                 {
 #pragma warning disable S112
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new IndexOutOfRangeException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
 #pragma warning restore S112
                 }
 

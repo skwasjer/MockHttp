@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using MockHttp.Threading;
 
 namespace MockHttp;
@@ -17,7 +16,9 @@ public class NetworkLatency
     static NetworkLatency()
     {
         // Warmup so that actual simulated latency is more accurate.
+#pragma warning disable CA5394 // Do not use insecure randomness - justification: not used in secure context
         Random.Next();
+#pragma warning restore CA5394 // Do not use insecure randomness
     }
 
     private NetworkLatency(Func<TimeSpan> factory, string name)
@@ -111,7 +112,9 @@ public class NetworkLatency
 
         return new NetworkLatency(() =>
             {
+#pragma warning disable CA5394 // Do not use insecure randomness - justification: not used in secure context
                 double randomLatency = Random.Next(minMs, maxMs);
+#pragma warning restore CA5394
                 return TimeSpan.FromMilliseconds(randomLatency);
             },
             name);
