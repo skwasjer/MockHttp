@@ -330,30 +330,44 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
-    public async Task Given_server_is_started_when_starting_again_it_should_throw()
+    public async Task Given_server_is_started_when_starting_again_it_should_not_throw()
     {
-        using var server = new MockHttpServer(_fixture.Handler, BaseUri);
-        await server.StartAsync();
-        server.IsStarted.Should().BeTrue();
-
         // Act
-        Func<Task> act = () => server.StartAsync();
+        Func<Task<MockHttpServer>> act = async () =>
+        {
+            var server = new MockHttpServer(_fixture.Handler, BaseUri);
+            await server.StartAsync();
+            server.IsStarted.Should().BeTrue();
+            await server.StartAsync();
+            return server;
+        };
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        MockHttpServer? server = (await act.Should().NotThrowAsync()).Which;
+        using (server)
+        {
+            server?.IsStarted.Should().BeTrue();
+        }
     }
 
     [Fact]
-    public async Task Given_server_is_not_started_when_stopped_it_should_throw()
+    public async Task Given_server_is_not_started_when_stopped_it_should_not_throw()
     {
-        using var server = new MockHttpServer(_fixture.Handler, BaseUri);
-        server.IsStarted.Should().BeFalse();
-
         // Act
-        Func<Task> act = () => server.StopAsync();
+        Func<Task<MockHttpServer>> act = async () =>
+        {
+            var server = new MockHttpServer(_fixture.Handler, BaseUri);
+            server.IsStarted.Should().BeFalse();
+            await server.StopAsync();
+            return server;
+        };
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        MockHttpServer? server = (await act.Should().NotThrowAsync()).Which;
+        using (server)
+        {
+            server?.IsStarted.Should().BeFalse();
+        }
     }
 
     [Fact]

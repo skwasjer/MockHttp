@@ -17,7 +17,7 @@ namespace MockHttp;
 public sealed class MockHttpServer : IDisposable
 {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly object _syncLock = new();
+    private readonly SemaphoreSlim _lock = new(1);
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly IWebHostBuilder _webHostBuilder;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -77,6 +77,8 @@ public sealed class MockHttpServer : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
+        _lock.Dispose();
+
         _host?.Dispose();
         _host = null;
     }
@@ -101,12 +103,17 @@ public sealed class MockHttpServer : IDisposable
     {
         get
         {
-            lock (_syncLock)
+            _lock.Wait();
+            try
             {
                 string? url = _host?.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses.First();
                 return url is null
                     ? _hostUri
                     : new Uri(url);
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
     }
@@ -114,58 +121,54 @@ public sealed class MockHttpServer : IDisposable
     /// <summary>
     /// Gets whether the host is started.
     /// </summary>
-    public bool IsStarted => _host != null;
+    public bool IsStarted => _host is not null;
 
     /// <summary>
     /// Starts listening on the configured addresses.
     /// </summary>
-    public Task StartAsync(CancellationToken cancellationToken = default)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        if (_host != null)
+        await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            throw new InvalidOperationException($"{nameof(MockHttpServer)} already running.");
-        }
-
-        lock (_syncLock)
-        {
-            if (_host != null)
+            if (_host is not null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             _host = _webHostBuilder.Build();
-            return _host.StartAsync(cancellationToken);
+            await _host.StartAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _lock.Release();
         }
     }
 
     /// <summary>
     /// Attempt to gracefully stop the mock HTTP server.
     /// </summary>
-    public Task StopAsync(CancellationToken cancellationToken = default)
+    public async Task StopAsync(CancellationToken cancellationToken = default)
     {
-        if (_host == null)
+        await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            throw new InvalidOperationException($"{nameof(MockHttpServer)} not running.");
-        }
-
-        lock (_syncLock)
-        {
-            if (_host == null)
+            if (_host is null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             // Make local copy, so we can null it before disposing.
             IWebHost host = _host;
             _host = null;
-            try
+            using (host)
             {
-                return host.StopAsync(cancellationToken);
+                await host.StopAsync(cancellationToken).ConfigureAwait(false);
             }
-            finally
-            {
-                host.Dispose();
-            }
+        }
+        finally
+        {
+            _lock.Release();
         }
     }
 
