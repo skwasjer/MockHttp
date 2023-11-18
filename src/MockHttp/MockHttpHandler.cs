@@ -241,7 +241,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
             .Cast<InvokedHttpRequest>()
             .Where(r => !r.IsVerified)
             .ToList();
-        if (!unverifiedRequests.Any())
+        if (unverifiedRequests.Count == 0)
         {
             return;
         }
@@ -270,7 +270,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
         var expectedInvocations = verifiableSetups
             .Where(setup => !setup.VerifyIfInvoked())
             .ToList();
-        if (!expectedInvocations.Any())
+        if (expectedInvocations.Count == 0)
         {
             return;
         }

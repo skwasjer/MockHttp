@@ -70,7 +70,7 @@ public class RequestMatching : IFluentInterface
             .Where(m => m.GetType() == matcher.GetType())
             .ToList();
 
-        if ((matcher.IsExclusive && sameTypeMatchers.Any()) || (!matcher.IsExclusive && sameTypeMatchers.Any(m => m.IsExclusive)))
+        if ((matcher.IsExclusive && sameTypeMatchers.Count > 0) || (!matcher.IsExclusive && sameTypeMatchers.Any(m => m.IsExclusive)))
         {
             throw new InvalidOperationException($"Cannot add matcher, another matcher of type '{matcher.GetType().FullName}' already is configured.");
         }
