@@ -52,14 +52,9 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             .Verifiable();
 
         // Act
-        using var request = new HttpRequestMessage(HttpMethod.Post, "test/wtf/")
-        {
-            Content = new StringContent("request-content", Encoding.ASCII, MediaTypes.PlainText),
-            Headers =
-            {
-                { "test", "value" }
-            }
-        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, "test/wtf/");
+        request.Content = new StringContent("request-content", Encoding.ASCII, MediaTypes.PlainText);
+        request.Headers.Add("test", "value");
 
         HttpResponseMessage response = await client.SendAsync(request);
 
@@ -248,9 +243,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         MockHttpHandler? mockHttpHandler = null;
 
         // Act
-#pragma warning disable CS8604
-        Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler, BaseUri);
-#pragma warning restore CS8604
+        Func<MockHttpServer> act = () => new MockHttpServer(mockHttpHandler!, BaseUri);
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(mockHttpHandler));
@@ -262,13 +255,15 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         ILoggerFactory? loggerFactory = null;
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
         Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), loggerFactory, BaseUri);
 
         // Assert
-        using MockHttpServer server = act.Should().NotThrow().Which;
-        Func<Task> act2 = () => server.StartAsync();
-        await act2.Should().NotThrowAsync();
+        MockHttpServer server = act.Should().NotThrow().Which;
+        await using (server)
+        {
+            Func<Task> act2 = () => server.StartAsync();
+            await act2.Should().NotThrowAsync();
+        }
     }
 
     [Fact]
@@ -302,7 +297,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
     [Fact]
     [Obsolete("Removed in next major version.")]
-    public void When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_url()
+    public async Task When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_url()
     {
         var hostUrl = new Uri("https://relative:789/uri/is/invalid");
         const string expectedHostUrl = "https://relative:789";
@@ -312,11 +307,15 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
         // Assert
-        act.Should().NotThrow().Which.HostUrl.Should().Be(expectedHostUrl);
+        MockHttpServer server = act.Should().NotThrow().Which;
+        await using (server)
+        {
+            act.Should().NotThrow().Which.HostUrl.Should().Be(expectedHostUrl);
+        }
     }
 
     [Fact]
-    public void When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_uri()
+    public async Task When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_uri()
     {
         var hostUrl = new Uri("https://relative:789/uri/is/invalid");
         var expectedHostUrl = new Uri("https://relative:789");
@@ -326,47 +325,162 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
 
         // Assert
-        act.Should().NotThrow().Which.HostUri.Should().Be(expectedHostUrl);
-    }
-
-    [Fact]
-    public async Task Given_server_is_started_when_starting_again_it_should_not_throw()
-    {
-        // Act
-        Func<Task<MockHttpServer>> act = async () =>
+        MockHttpServer server = act.Should().NotThrow().Which;
+        await using (server)
         {
-            var server = new MockHttpServer(_fixture.Handler, BaseUri);
-            await server.StartAsync();
-            server.IsStarted.Should().BeTrue();
-            await server.StartAsync();
-            return server;
-        };
-
-        // Assert
-        MockHttpServer? server = (await act.Should().NotThrowAsync()).Which;
-        using (server)
-        {
-            server?.IsStarted.Should().BeTrue();
+            act.Should().NotThrow().Which.HostUri.Should().Be(expectedHostUrl);
         }
     }
 
     [Fact]
-    public async Task Given_server_is_not_started_when_stopped_it_should_not_throw()
+    public async Task Given_that_server_is_started_when_starting_again_it_should_not_throw()
     {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.StartAsync();
+        server.IsStarted.Should().BeTrue();
+
         // Act
-        Func<Task<MockHttpServer>> act = async () =>
-        {
-            var server = new MockHttpServer(_fixture.Handler, BaseUri);
-            server.IsStarted.Should().BeFalse();
-            await server.StopAsync();
-            return server;
-        };
+        Func<Task> act = () => server.StartAsync();
 
         // Assert
-        MockHttpServer? server = (await act.Should().NotThrowAsync()).Which;
-        using (server)
+        await using (server)
         {
-            server?.IsStarted.Should().BeFalse();
+            await act.Should().NotThrowAsync();
+            server.IsStarted.Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_started_when_disposing_it_should_stop()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.StartAsync();
+        server.IsStarted.Should().BeTrue();
+
+        // Act
+        Func<Task> act = () => server.DisposeAsync().AsTask();
+
+        // Assert
+        await using (server)
+        {
+            await act.Should().NotThrowAsync();
+            server.IsStarted.Should().BeFalse();
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_stopped_when_stopping_again_it_should_not_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.StopAsync();
+
+        // Act
+        Func<Task> act = () => server.StopAsync();
+
+        // Assert
+        await using (server)
+        {
+            await act.Should().NotThrowAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_disposed_when_disposing_again_it_should_not_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.DisposeAsync();
+
+        // Act
+        Func<Task> act = () => server.DisposeAsync().AsTask();
+
+        // Assert
+        await using (server)
+        {
+            await act.Should().NotThrowAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_stopped_when_disposing_it_should_not_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.StopAsync();
+
+        // Act
+        Func<Task> act = () => server.DisposeAsync().AsTask();
+
+        // Assert
+        await using (server)
+        {
+            await act.Should().NotThrowAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_disposed_when_stopping_it_should_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.DisposeAsync();
+
+        // Act
+        Func<Task> act = () => server.StopAsync();
+
+        // Assert
+        await using (server)
+        {
+            (await act.Should().ThrowAsync<ObjectDisposedException>())
+                .Which.ObjectName.Should().Be(typeof(MockHttpServer).FullName);
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_disposed_when_starting_it_should_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.DisposeAsync();
+
+        // Act
+        Func<Task> act = () => server.StartAsync();
+
+        // Assert
+        await using (server)
+        {
+            (await act.Should().ThrowAsync<ObjectDisposedException>())
+                .Which.ObjectName.Should().Be(typeof(MockHttpServer).FullName);
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_disposed_when_creating_client_it_should_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.DisposeAsync();
+
+        // Act
+        Func<HttpClient> act = () => server.CreateClient();
+
+        // Assert
+        await using (server)
+        {
+            act.Should().Throw<ObjectDisposedException>()
+                .Which.ObjectName.Should().Be(typeof(MockHttpServer).FullName);
+        }
+    }
+
+    [Fact]
+    public async Task Given_that_server_is_disposed_when_getting_hostUri_it_should_throw()
+    {
+        var server = new MockHttpServer(_fixture.Handler, BaseUri);
+        await server.DisposeAsync();
+
+        // Act
+        Func<Uri> act = () => server.HostUri;
+
+        // Assert
+        await using (server)
+        {
+            act.Should().Throw<ObjectDisposedException>()
+                .Which.ObjectName.Should().Be(typeof(MockHttpServer).FullName);
         }
     }
 
