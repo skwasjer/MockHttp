@@ -1,4 +1,5 @@
-﻿using MockHttp.Matchers.Patterns;
+﻿using System.ComponentModel;
+using MockHttp.Matchers.Patterns;
 
 namespace MockHttp.Http;
 
@@ -25,6 +26,11 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {
+        if (!Enum.IsDefined(typeof(HttpHeaderMatchType), matchType))
+        {
+            throw new InvalidEnumArgumentException(nameof(matchType), (int)matchType, typeof(HttpHeaderMatchType));
+        }
+
         _matchType = matchType;
     }
 
@@ -67,7 +73,7 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
                 return !x.Value.Any();
             }
             default:
-                throw new ArgumentOutOfRangeException();
+                return false;
         }
     }
 
