@@ -51,7 +51,7 @@ internal sealed class JsonDocumentEqualityComparer
             JsonValueKind.False => true,
             JsonValueKind.True => true,
             JsonValueKind.String => left.ValueEquals(right.GetString()),
-            JsonValueKind.Number => left.GetRawText().Equals(right.GetRawText()),
+            JsonValueKind.Number => string.Equals(left.GetRawText(), right.GetRawText(), StringComparison.Ordinal),
             JsonValueKind.Array => ArrayEquals(left, right, serializerOptions),
             JsonValueKind.Object => ObjectEquals(left, right, serializerOptions),
             _ => false

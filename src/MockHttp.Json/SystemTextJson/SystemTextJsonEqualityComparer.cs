@@ -51,6 +51,10 @@ internal sealed class SystemTextJsonEqualityComparer
 
     public int GetHashCode(string obj)
     {
+#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        return obj.GetHashCode(StringComparison.Ordinal);
+#else
         return obj.GetHashCode();
+#endif
     }
 }
