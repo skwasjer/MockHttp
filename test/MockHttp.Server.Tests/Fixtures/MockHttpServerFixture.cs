@@ -29,7 +29,15 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
             .CreateLogger();
         LoggerFactory = new SerilogLoggerFactory(logger);
         Handler = new MockHttpHandler();
-        Server = new MockHttpServer(Handler, LoggerFactory, SupportsIpv6() ? $"{scheme}://[::1]:0" : $"{scheme}://127.0.0.1:0");
+        Server = new MockHttpServer(
+            Handler,
+            LoggerFactory,
+            new Uri(
+                SupportsIpv6()
+                    ? $"{scheme}://[::1]:0"
+                    : $"{scheme}://127.0.0.1:0"
+            )
+        );
         Server
             .Configure(builder => builder
                 .Use((_, next) =>
