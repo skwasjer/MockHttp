@@ -47,7 +47,7 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     /// Gets the expected content in bytes.
     /// </summary>
     // ReSharper disable once MemberCanBeProtected.Global
-    protected internal byte[] ByteContent { get; }
+    protected internal IReadOnlyList<byte> ByteContent { get; }
 
     /// <inheritdoc />
     public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
@@ -71,10 +71,10 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
 
             if (requestContent is null)
             {
-                return ByteContent.Length == 0;
+                return ByteContent.Count == 0;
             }
 
-            if (requestContent.Length == 0 && ByteContent.Length == 0)
+            if (requestContent.Length == 0 && ByteContent.Count == 0)
             {
                 return true;
             }
@@ -99,17 +99,17 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     /// <inheritdoc />
     public override string ToString()
     {
-        if (ByteContent.Length == 0)
+        if (ByteContent.Count == 0)
         {
             return "Content: <empty>";
         }
 
         if (_encoding is not null)
         {
-            return $"Content: {_encoding.GetString(ByteContent, 0, ByteContent.Length)}";
+            return $"Content: {_encoding.GetString((byte[])ByteContent, 0, ByteContent.Count)}";
         }
 
-        int charsToOutput = Math.Min(MaxBytesDisplayed, ByteContent.Length);
+        int charsToOutput = Math.Min(MaxBytesDisplayed, ByteContent.Count);
         var sb = new StringBuilder();
         sb.Append("Content: [");
         for (int i = 0; i < charsToOutput; i++)
@@ -121,9 +121,9 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
             }
         }
 
-        if (charsToOutput < ByteContent.Length)
+        if (charsToOutput < ByteContent.Count)
         {
-            sb.AppendFormat(CultureInfo.InvariantCulture, ",...](Size = {0})", ByteContent.Length);
+            sb.AppendFormat(CultureInfo.InvariantCulture, ",...](Size = {0})", ByteContent.Count);
         }
         else
         {
