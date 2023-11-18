@@ -48,9 +48,17 @@ public class HttpHeadersCollectionTests
 
     [Theory]
     [InlineData("no-separator", "The value cannot be null or empty.*")]
+#if NET8_0_OR_GREATER
+    [InlineData(":value", "The value cannot be an empty string or composed entirely of whitespace.*")]
+#else
     [InlineData(":value", "The value cannot be null or empty.*")]
+#endif
 #if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
+    [InlineData(" :value", "The value cannot be an empty string or composed entirely of whitespace.*")]
+#else
     [InlineData(" :value", "The header name ' ' has an invalid format.")]
+#endif
     [InlineData(" leading-whitespace-not-allowed:value", "The header name ' leading-whitespace-not-allowed' has an invalid format.")]
     [InlineData("\tleading-whitespace-not-allowed:value", "The header name '\tleading-whitespace-not-allowed' has an invalid format.")]
     [InlineData("trailing-whitespace-not-allowed :value", "The header name 'trailing-whitespace-not-allowed ' has an invalid format.")]
