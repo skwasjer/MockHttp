@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using MockHttp.IO;
-using Moq.Protected;
 using Xunit.Abstractions;
 
 namespace MockHttp;
@@ -93,21 +92,19 @@ public sealed class RateLimitedStreamTests : IDisposable
     [Fact]
     public void Given_that_actual_stream_is_not_readable_when_creating_instance_it_should_throw()
     {
-        var actualStream = new Mock<Stream>();
-        actualStream
-            .Setup(m => m.CanRead)
-            .Returns(false)
-            .Verifiable();
+        using Stream actualStream = Substitute.For<Stream>();
+        actualStream.CanRead.Returns(false);
 
         // Act
-        Func<RateLimitedStream> act = () => new RateLimitedStream(actualStream.Object, 1024);
+        // ReSharper disable once AccessToDisposedClosure
+        Func<RateLimitedStream> act = () => new RateLimitedStream(actualStream, 1024);
 
         // Assert
         act.Should()
             .ThrowExactly<ArgumentException>()
             .WithMessage("Cannot read from stream.*")
             .WithParameterName(nameof(actualStream));
-        actualStream.Verify();
+        _ = actualStream.Received(1).CanRead;
     }
 
     [Theory]
@@ -169,31 +166,28 @@ public sealed class RateLimitedStreamTests : IDisposable
     [Fact]
     public void When_flushing_it_should_flush_underlying()
     {
-        var streamMock = new Mock<MemoryStream> { CallBase = true };
-        using MemoryStream? stream = streamMock.Object;
-        var sut = new RateLimitedStream(stream, 1024);
+        using MemoryStream streamStub = Substitute.ForPartsOf<MemoryStream>();
+        var sut = new RateLimitedStream(streamStub, 1024);
 
         // Act
         sut.Flush();
 
         // Assert
-        streamMock.Verify(m => m.Flush(), Times.Once);
+        streamStub.Received(1).Flush();
     }
 
     [Fact]
     public void When_disposing_it_should_dispose_underlying()
     {
-        var streamMock = new Mock<MemoryStream> { CallBase = true };
-        using MemoryStream? stream = streamMock.Object;
-        var sut = new RateLimitedStream(stream, 1024);
+        using MemoryStream streamStub = Substitute.For<MemoryStream>();
+        streamStub.CanRead.Returns(true);
+        var sut = new RateLimitedStream(streamStub, 1024);
 
         // Act
         sut.Dispose();
 
         // Assert
-        streamMock
-            .Protected()
-            .Verify("Dispose", Times.Once(), true, true);
+        streamStub.Received(1).Close();
     }
 
     public void Dispose()

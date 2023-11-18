@@ -16,15 +16,13 @@ public class FormDataMatcherTests
     [InlineData("key1=value1&%C3%A9%C3%B4x%C3%84=%24%25%5E%26*&key2=value", "éôxÄ", "$%^&*")]
     public async Task Given_formData_equals_expected_formData_when_matching_should_match(string formData, string expectedKey, string? expectedValue)
     {
-        using var request = new HttpRequestMessage
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/" + formData);
+        request.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(formData)))
         {
-            RequestUri = new Uri("http://localhost/" + formData),
-            Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(formData)))
+            Headers =
             {
-                Headers =
-                {
-                    ContentType = new MediaTypeHeaderValue(MediaTypes.FormUrlEncoded)
-                }
+                ContentType = new MediaTypeHeaderValue(MediaTypes.FormUrlEncoded)
             }
         };
 
@@ -48,15 +46,13 @@ public class FormDataMatcherTests
     [InlineData("key=value1&key=value2")]
     public async Task Given_formData_does_not_equal_expected_formData_when_matching_should_not_match(string formData)
     {
-        using var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("http://localhost/"),
-            Content = new StringContent(
-                formData,
-                Encoding.UTF8,
-                MediaTypes.FormUrlEncoded
-            )
-        };
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/");
+        request.Content = new StringContent(
+            formData,
+            Encoding.UTF8,
+            MediaTypes.FormUrlEncoded
+        );
 
         var sut = new FormDataMatcher(new[] { new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null!) });
 
@@ -69,15 +65,13 @@ public class FormDataMatcherTests
     {
         var sut = new FormDataMatcher("");
 
-        using var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("http://localhost/"),
-            Content = new StringContent(
-                "unexpected=formdata",
-                Encoding.UTF8,
-                MediaTypes.FormUrlEncoded
-            )
-        };
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/");
+        request.Content = new StringContent(
+            "unexpected=formdata",
+            Encoding.UTF8,
+            MediaTypes.FormUrlEncoded
+        );
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse("no form data was expected");
@@ -123,18 +117,14 @@ public class FormDataMatcherTests
     [Fact]
     public async Task Given_multiPart_formData_equals_expected_formData_when_matching_should_match()
     {
-        using var content = new MultipartFormDataContent
-        {
-            { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
-            { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
-            { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
-        };
+        using var content = new MultipartFormDataContent();
+        content.Add(new ByteArrayContent("value1"u8.ToArray()), "key1");
+        content.Add(new ByteArrayContent("éôxÄ"u8.ToArray()), "key2");
+        content.Add(new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt");
 
-        using var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("http://localhost/"),
-            Content = content
-        };
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/");
+        request.Content = content;
 
         var sut = new FormDataMatcher(new[]
         {
@@ -149,18 +139,14 @@ public class FormDataMatcherTests
     [Fact]
     public async Task Given_multiPart_formData_does_not_equal_expected_formData_when_matching_should_not_match()
     {
-        using var content = new MultipartFormDataContent
-        {
-            { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
-            { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
-            { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
-        };
+        using var content = new MultipartFormDataContent();
+        content.Add(new ByteArrayContent("value1"u8.ToArray()), "key1");
+        content.Add(new ByteArrayContent("éôxÄ"u8.ToArray()), "key2");
+        content.Add(new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt");
 
-        using var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("http://localhost/"),
-            Content = content
-        };
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/");
+        request.Content = content;
 
         var sut = new FormDataMatcher(new[]
         {
@@ -190,11 +176,9 @@ public class FormDataMatcherTests
     [MemberData(nameof(NonFormDataContentTestCases))]
     public async Task Given_that_content_is_not_formData_when_matching_it_should_return_false(HttpContent content)
     {
-        using var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("http://localhost/"),
-            Content = content
-        };
+        using var request = new HttpRequestMessage();
+        request.RequestUri = new Uri("http://localhost/");
+        request.Content = content;
 
         var sut = new FormDataMatcher(new[]
         {

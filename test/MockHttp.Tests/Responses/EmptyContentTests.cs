@@ -4,12 +4,7 @@ namespace MockHttp.Responses;
 
 public class EmptyContentTests
 {
-    private readonly EmptyContent _sut;
-
-    public EmptyContentTests()
-    {
-        _sut = new EmptyContent();
-    }
+    private readonly EmptyContent _sut = new();
 
     [Fact]
     public async Task When_reading_string_it_should_return_empty()
@@ -70,7 +65,7 @@ public class EmptyContentTests
         {
             using var ms = new MemoryStream();
             // ReSharper disable once MethodHasAsyncOverload
-            _sut.CopyTo(ms, Mock.Of<TransportContext>(), CancellationToken.None);
+            _sut.CopyTo(ms, Substitute.For<TransportContext>(), CancellationToken.None);
             ms.Length.Should().Be(0);
         };
 

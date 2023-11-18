@@ -4,22 +4,21 @@ namespace MockHttp.Json;
 
 public sealed class JsonContentMatcherTests : IDisposable
 {
-    private readonly Mock<IJsonAdapter> _adapterMock;
-    private readonly Mock<IEqualityComparer<string>> _equalityComparerMock;
-    private readonly Dictionary<Type, object> _services;
+    private readonly IJsonAdapter _adapterMock;
+    private readonly IEqualityComparer<string> _equalityComparerMock;
+    private readonly Dictionary<Type, object> _services = new();
     private readonly HttpRequestMessage _requestMessage;
     private readonly MockHttpRequestContext _requestContext;
 
     public JsonContentMatcherTests()
     {
-        _adapterMock = new Mock<IJsonAdapter>();
+        _adapterMock = Substitute.For<IJsonAdapter>();
 
-        _equalityComparerMock = new Mock<IEqualityComparer<string>>();
+        _equalityComparerMock = Substitute.For<IEqualityComparer<string>>();
         _equalityComparerMock
-            .Setup(m => m.Equals(It.IsAny<string?>()!, It.IsAny<string?>()!))
+            .Equals(Arg.Any<string?>(), Arg.Any<string?>())
             .Returns(true);
 
-        _services = new Dictionary<Type, object>();
         _requestMessage = new HttpRequestMessage();
         _requestContext = new MockHttpRequestContext(_requestMessage, _services);
     }
@@ -30,25 +29,21 @@ public sealed class JsonContentMatcherTests : IDisposable
         var jsonContentAsObject = new { PropertyName = "value" };
         const string serializedJson = "{\"modifiedPropertyName\":\"modifiedValue\"}";
         _adapterMock
-            .Setup(m => m.Serialize(jsonContentAsObject))
-            .Returns(serializedJson)
-            .Verifiable();
+            .Serialize(Arg.Any<object?>())
+            .Returns(serializedJson);
 
-        var globalAdapterMock = new Mock<IJsonAdapter>();
-        _services.Add(typeof(IJsonAdapter), globalAdapterMock.Object);
+        IJsonAdapter globalAdapterMock = Substitute.For<IJsonAdapter>();
+        _services.Add(typeof(IJsonAdapter), globalAdapterMock);
 
-        var sut = new JsonContentMatcher(jsonContentAsObject, _adapterMock.Object, _equalityComparerMock.Object);
+        var sut = new JsonContentMatcher(jsonContentAsObject, _adapterMock, _equalityComparerMock);
 
         // Act
         await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _adapterMock.Verify();
-        globalAdapterMock.Verify(m => m.Serialize(It.IsAny<object?>()), Times.Never);
-        _equalityComparerMock
-            .Verify(m => m.Equals(It.IsAny<string>(), serializedJson),
-                Times.Once
-            );
+        _adapterMock.Received(1).Serialize(jsonContentAsObject);
+        globalAdapterMock.DidNotReceiveWithAnyArgs().Serialize(Arg.Any<object?>());
+        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
     }
 
     [Fact]
@@ -57,24 +52,20 @@ public sealed class JsonContentMatcherTests : IDisposable
         var jsonContentAsObject = new { PropertyName = "value" };
         const string serializedJson = "{\"modifiedPropertyName\":\"modifiedValue\"}";
 
-        var globalAdapterMock = new Mock<IJsonAdapter>();
+        IJsonAdapter globalAdapterMock = Substitute.For<IJsonAdapter>();
         globalAdapterMock
-            .Setup(m => m.Serialize(jsonContentAsObject))
-            .Returns(serializedJson)
-            .Verifiable();
+            .Serialize(Arg.Any<object?>())
+            .Returns(serializedJson);
 
-        var sut = new JsonContentMatcher(jsonContentAsObject, null, _equalityComparerMock.Object);
+        var sut = new JsonContentMatcher(jsonContentAsObject, null, _equalityComparerMock);
 
         // Act
-        _services.Add(typeof(IJsonAdapter), globalAdapterMock.Object);
+        _services.Add(typeof(IJsonAdapter), globalAdapterMock);
         await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        globalAdapterMock.Verify();
-        _equalityComparerMock
-            .Verify(m => m.Equals(It.IsAny<string>(), serializedJson),
-                Times.Once
-            );
+        globalAdapterMock.Received(1).Serialize(jsonContentAsObject);
+        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
     }
 
     [Fact]
@@ -82,30 +73,27 @@ public sealed class JsonContentMatcherTests : IDisposable
     {
         var jsonContentAsObject = new { PropertyName = "value" };
         const string serializedJson = "{\"PropertyName\":\"value\"}";
-        var sut = new JsonContentMatcher(jsonContentAsObject, null, _equalityComparerMock.Object);
+        var sut = new JsonContentMatcher(jsonContentAsObject, null, _equalityComparerMock);
 
         // Act
         _services.Should().NotContainKey(typeof(IJsonAdapter));
         await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _equalityComparerMock
-            .Verify(m => m.Equals(It.IsAny<string>(), serializedJson),
-                Times.Once
-            );
+        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
     }
 
     [Fact]
     public async Task Given_that_adapter_is_not_provided_to_ctor_when_matching_it_should_use_the_adapter()
     {
         const string jsonContentAsObject = "text";
-        var sut = new JsonContentMatcher(jsonContentAsObject, _adapterMock.Object, _equalityComparerMock.Object);
+        var sut = new JsonContentMatcher(jsonContentAsObject, _adapterMock, _equalityComparerMock);
 
         // Act
         await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _adapterMock.Verify(m => m.Serialize(jsonContentAsObject), Times.Once);
+        _adapterMock.Received(1).Serialize(jsonContentAsObject);
     }
 
     [Theory]
@@ -113,18 +101,17 @@ public sealed class JsonContentMatcherTests : IDisposable
     [InlineData(false)]
     public async Task When_matching_it_should_return_the_results_of_the_comparer(bool equals)
     {
-        var sut = new JsonContentMatcher("something to compare with", _adapterMock.Object, _equalityComparerMock.Object);
+        var sut = new JsonContentMatcher("something to compare with", _adapterMock, _equalityComparerMock);
 
         _equalityComparerMock
-            .Setup(m => m.Equals(It.IsAny<string?>()!, It.IsAny<string?>()!))
-            .Returns(equals)
-            .Verifiable();
+            .Equals(Arg.Any<string?>(), Arg.Any<string?>())
+            .Returns(equals);
 
         // Act
         bool actual = await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _equalityComparerMock.Verify();
+        _ =_equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), Arg.Any<string?>());
         actual.Should().Be(equals);
     }
 
@@ -137,17 +124,14 @@ public sealed class JsonContentMatcherTests : IDisposable
     {
         using (content)
         {
-            var sut = new JsonContentMatcher("something to compare with", _adapterMock.Object, _equalityComparerMock.Object);
+            var sut = new JsonContentMatcher("something to compare with", _adapterMock, _equalityComparerMock);
             _requestMessage.Content = content;
 
             // Act
             await sut.IsMatchAsync(_requestContext);
 
             // Assert
-            _equalityComparerMock
-                .Verify(m => m.Equals(string.Empty, It.IsAny<string>()),
-                    Times.Once
-                );
+            _ = _equalityComparerMock.Received(1).Equals(string.Empty, Arg.Any<string?>());
         }
     }
 

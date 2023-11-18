@@ -4,13 +4,13 @@ namespace MockHttp.Matchers;
 
 public class NotMatcherTests
 {
-    private readonly Mock<IAsyncHttpRequestMatcher> _innerMatcherMock;
+    private readonly IAsyncHttpRequestMatcher _innerMatcherMock;
     private readonly NotMatcher _sut;
 
     public NotMatcherTests()
     {
-        _innerMatcherMock = new Mock<IAsyncHttpRequestMatcher>();
-        _sut = new NotMatcher(_innerMatcherMock.Object);
+        _innerMatcherMock = Substitute.For<IAsyncHttpRequestMatcher>();
+        _sut = new NotMatcher(_innerMatcherMock);
     }
 
     [Theory]
@@ -20,13 +20,14 @@ public class NotMatcherTests
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "http://0.0.0.0/url");
         _innerMatcherMock
-            .Setup(m => m.IsMatchAsync(It.IsAny<MockHttpRequestContext>()))
-            .ReturnsAsync(innerMatchResult);
+            .IsMatchAsync(Arg.Any<MockHttpRequestContext>())
+            .Returns(Task.FromResult(innerMatchResult));
 
         // Act & assert
         (await _sut.IsMatchAsync(new MockHttpRequestContext(request)))
             .Should()
             .Be(!innerMatchResult);
+        await _innerMatcherMock.Received(1).IsMatchAsync(Arg.Any<MockHttpRequestContext>());
     }
 
     [Fact]
@@ -47,11 +48,11 @@ public class NotMatcherTests
     public void When_formatting_should_return_human_readable_representation()
     {
         const string innerMatcherText = "Type: text";
-        string expectedText = $"Not {innerMatcherText}";
-        _innerMatcherMock.Setup(m => m.ToString()).Returns(innerMatcherText);
+        const string expectedText = $"Not {innerMatcherText}";
+        var sut = new NotMatcher(new FakeToStringTestMatcher(innerMatcherText));
 
         // Act
-        string displayText = _sut.ToString();
+        string displayText = sut.ToString();
 
         // Assert
         displayText.Should().Be(expectedText);
