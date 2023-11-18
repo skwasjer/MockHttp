@@ -50,7 +50,11 @@ internal static class DataEscapingHelper
 
     private static string UnescapeData(string v)
     {
-        return Uri.UnescapeDataString(v?.Replace("+", "%20")!);
+        return Uri.UnescapeDataString(v?.Replace("+", "%20"
+#if NET7_0_OR_GREATER || NETSTANDARD2_1
+                , StringComparison.Ordinal
+#endif
+            )!);
     }
 
     internal static string Format(IEnumerable<KeyValuePair<string, string>> items)
