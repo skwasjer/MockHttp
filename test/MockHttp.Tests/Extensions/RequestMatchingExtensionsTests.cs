@@ -292,7 +292,7 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri("http://127.0.0.1"),
-                Content = new ByteArrayContent(Encoding.UTF8.GetBytes("key1=value1&key2=value2"))
+                Content = new ByteArrayContent("key1=value1&key2=value2"u8.ToArray())
                 {
                     Headers =
                     {
@@ -319,8 +319,8 @@ public abstract class RequestMatchingExtensionsTests
         {
             var content = new MultipartFormDataContent
             {
-                { new ByteArrayContent(Encoding.UTF8.GetBytes("value1")), "key1" },
-                { new ByteArrayContent(Encoding.UTF8.GetBytes("éôxÄ")), "key2" },
+                { new ByteArrayContent("value1"u8.ToArray()), "key1" },
+                { new ByteArrayContent("éôxÄ"u8.ToArray()), "key2" },
                 { new StringContent("file content 1", Encoding.UTF8, MediaTypes.PlainText), "file1", "file1.txt" }
             };
             var request = new HttpRequestMessage
@@ -679,8 +679,11 @@ public abstract class RequestMatchingExtensionsTests
 
         public static IEnumerable<object?[]> TestCases()
         {
-            var streamMock = new Mock<Stream> { CallBase = true };
-            streamMock.SetReturnsDefault(true);
+            Stream streamMock = Substitute.For<Stream>();
+            streamMock.CanRead.Returns(true);
+            streamMock.CanWrite.Returns(true);
+            streamMock.CanSeek.Returns(true);
+            streamMock.CanTimeout.Returns(true);
             var uri = new Uri("http://0.0.0.0");
             var instance = new RequestMatching();
 
@@ -830,11 +833,11 @@ public abstract class RequestMatchingExtensionsTests
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
-                    Encoding.UTF8.GetBytes("content")),
+                    "content"u8.ToArray()),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
-                    streamMock.Object),
+                    streamMock),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.WithoutBody,
                     instance),
@@ -850,11 +853,11 @@ public abstract class RequestMatchingExtensionsTests
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
-                    Encoding.UTF8.GetBytes("partial content")),
+                    "partial content"u8.ToArray()),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
-                    streamMock.Object),
+                    streamMock),
                 DelegateTestCase.Create<RequestMatching, Action<RequestMatching>, RequestMatching>(
                     RequestMatchingExtensions.Any,
                     instance,

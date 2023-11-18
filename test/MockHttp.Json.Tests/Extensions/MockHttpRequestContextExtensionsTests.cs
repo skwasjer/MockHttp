@@ -26,7 +26,7 @@ public class MockHttpRequestContextExtensionsTests
     public void Given_that_adapter_is_registered_when_getting_adapter_it_should_return_same_instance()
     {
         using var msg = new HttpRequestMessage();
-        IJsonAdapter adapter = Mock.Of<IJsonAdapter>();
+        IJsonAdapter adapter = Substitute.For<IJsonAdapter>();
         var items = new Dictionary<Type, object> { { typeof(IJsonAdapter), adapter } };
         var sut = new MockHttpRequestContext(msg, items);
         sut.Services.Should().NotBeEmpty();

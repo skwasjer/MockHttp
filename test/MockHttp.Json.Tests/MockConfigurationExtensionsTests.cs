@@ -2,12 +2,7 @@
 
 public class MockConfigurationExtensionsTests
 {
-    private readonly MockHttpHandler _sut;
-
-    public MockConfigurationExtensionsTests()
-    {
-        _sut = new MockHttpHandler();
-    }
+    private readonly MockHttpHandler _sut = new();
 
     [Theory]
     [MemberData(nameof(UseJsonAdapterNullTestCases))]
@@ -29,8 +24,8 @@ public class MockConfigurationExtensionsTests
 
     public static IEnumerable<object?[]> UseJsonAdapterNullTestCases()
     {
-        IMockConfiguration mockConfig = Mock.Of<IMockConfiguration>();
-        IJsonAdapter jsonAdapter = Mock.Of<IJsonAdapter>();
+        IMockConfiguration mockConfig = Substitute.For<IMockConfiguration>();
+        IJsonAdapter jsonAdapter = Substitute.For<IJsonAdapter>();
 
         yield return new object?[] { null, jsonAdapter, nameof(mockConfig) };
         yield return new object?[] { mockConfig, null, nameof(jsonAdapter) };
@@ -39,7 +34,7 @@ public class MockConfigurationExtensionsTests
     [Fact]
     public void When_using_it_should_register_adapter()
     {
-        IJsonAdapter adapter = Mock.Of<IJsonAdapter>();
+        IJsonAdapter adapter = Substitute.For<IJsonAdapter>();
 
         // Act
         _sut.UseJsonAdapter(adapter);

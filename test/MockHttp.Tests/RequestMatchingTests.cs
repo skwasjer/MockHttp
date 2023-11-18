@@ -12,19 +12,18 @@ public class RequestMatchingTests
 
     public RequestMatchingTests()
     {
-        static HttpRequestMatcher CreateMatcherStub(Func<bool> returns)
-        {
-            var matcherMock = new Mock<HttpRequestMatcher>();
-            matcherMock
-                .Setup(m => m.IsExclusive)
-                .Returns(returns);
-            return matcherMock.Object;
-        }
-
         _sut = new RequestMatching();
 
         _matcher1 = CreateMatcherStub(() => _isExclusive1);
         _matcher2 = CreateMatcherStub(() => _isExclusive2);
+        return;
+
+        static HttpRequestMatcher CreateMatcherStub(Func<bool> returns)
+        {
+            HttpRequestMatcher matcherMock = Substitute.For<HttpRequestMatcher>();
+            matcherMock.IsExclusive.Returns(_ => returns());
+            return matcherMock;
+        }
     }
 
     [Fact]

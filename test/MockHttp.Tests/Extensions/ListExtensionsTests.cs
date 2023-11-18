@@ -45,11 +45,11 @@ public static class ListExtensionsTests
         {
             var list = new List<IFoo?>
             {
-                Mock.Of<IFoo>(),
+                Substitute.For<IFoo>(),
                 null,
                 new Foo(),
                 new Foo(),
-                Mock.Of<IFoo>(),
+                Substitute.For<IFoo>(),
                 new FooBar(),
                 new Foo(),
                 new FooBar()

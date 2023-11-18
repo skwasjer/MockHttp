@@ -15,10 +15,10 @@ public class TimeoutBehaviorTests
         var timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
         var sut = new TimeoutBehavior(timeout);
         var sw = new Stopwatch();
-        var next = new Mock<ResponseHandlerDelegate>();
+        ResponseHandlerDelegate nextStub = Substitute.For<ResponseHandlerDelegate>();
 
         // Act
-        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), next.Object, CancellationToken.None);
+        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), nextStub, CancellationToken.None);
 
         // Assert
         sw.Start();
@@ -30,7 +30,7 @@ public class TimeoutBehaviorTests
 #endif
 
         sw.Elapsed.Should().BeGreaterThanOrEqualTo(timeout);
-        next.VerifyNoOtherCalls();
+        nextStub.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -39,16 +39,16 @@ public class TimeoutBehaviorTests
         var timeout = TimeSpan.FromSeconds(60);
         var sut = new TimeoutBehavior(timeout);
         var ct = new CancellationToken(true);
-        var next = new Mock<ResponseHandlerDelegate>();
+        ResponseHandlerDelegate nextStub = Substitute.For<ResponseHandlerDelegate>();
 
         // Act
         var sw = Stopwatch.StartNew();
-        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), next.Object, ct);
+        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), nextStub, ct);
 
         // Assert
         await act.Should().ThrowAsync<TaskCanceledException>().Where(ex => ex.InnerException == null);
         sw.Elapsed.Should().BeLessThan(timeout);
-        next.VerifyNoOtherCalls();
+        nextStub.ReceivedCalls().Should().BeEmpty();
     }
 
     [Theory]

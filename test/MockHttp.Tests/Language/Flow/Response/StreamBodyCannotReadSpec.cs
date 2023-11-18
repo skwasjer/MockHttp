@@ -4,16 +4,13 @@ namespace MockHttp.Language.Flow.Response;
 
 public class StreamBodyCannotReadSpec : GuardedResponseSpec
 {
-    private readonly Mock<Stream> _streamMock = new();
+    private readonly Stream _streamMock = Substitute.For<Stream>();
 
     protected override void Given(IResponseBuilder with)
     {
-        _streamMock
-            .Setup(m => m.CanRead)
-            .Returns(false)
-            .Verifiable();
+        _streamMock.CanRead.Returns(false);
 
-        with.Body(_streamMock.Object);
+        with.Body(_streamMock);
     }
 
     protected override async Task ShouldThrow(Func<Task> act)
@@ -22,6 +19,6 @@ public class StreamBodyCannotReadSpec : GuardedResponseSpec
             .ThrowExactlyAsync<ArgumentException>()
             .WithParameterName("streamContent")
             .WithMessage("Cannot read from stream.*");
-        _streamMock.Verify();
+        _ = _streamMock.Received(1).CanRead;
     }
 }

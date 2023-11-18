@@ -2,26 +2,23 @@
 
 public class StreamBodyCannotSeekSpec : StreamBodySpec
 {
-    private Mock<MemoryStream>? _streamMock;
+    private MemoryStream? _streamMock;
 
     protected override Stream CreateStream()
     {
-        _streamMock = new Mock<MemoryStream>(Content) { CallBase = true };
-        _streamMock
-            .Setup(s => s.CanSeek)
-            .Returns(false);
-        return _streamMock.Object;
+        _streamMock = Substitute.ForPartsOf<CanSeekMemoryStream>(Content, false);
+        return _streamMock;
     }
 
     protected override Task Should(HttpResponseMessage response)
     {
-        _streamMock?.Verify();
+        _ = _streamMock!.Received().CanSeek;
         return base.Should(response);
     }
 
     public override Task DisposeAsync()
     {
-        _streamMock?.Object.Dispose();
+        _streamMock?.Dispose();
         return base.DisposeAsync();
     }
 }

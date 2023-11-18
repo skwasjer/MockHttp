@@ -62,12 +62,10 @@ public class AnyMatcherTests
     {
         const string innerMatcherText = "Type: text";
         string expectedText = string.Format(@"Any:{1}{{{1}	{0}1{1}	{0}2{1}}}", innerMatcherText, Environment.NewLine);
-        var matcherMock1 = new Mock<HttpRequestMatcher>();
-        var matcherMock2 = new Mock<HttpRequestMatcher>();
-        matcherMock1.Setup(m => m.ToString()).Returns(innerMatcherText + "1");
-        matcherMock2.Setup(m => m.ToString()).Returns(innerMatcherText + "2");
-        _matchers.Add(matcherMock1.Object);
-        _matchers.Add(matcherMock2.Object);
+        var matcherMock1 = new FakeToStringTestMatcher(innerMatcherText + "1");
+        var matcherMock2 = new FakeToStringTestMatcher(innerMatcherText + "2");
+        _matchers.Add(matcherMock1);
+        _matchers.Add(matcherMock2);
 
         // Act
         string displayText = _sut.ToString();

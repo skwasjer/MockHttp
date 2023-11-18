@@ -54,11 +54,12 @@ public class IRespondsExtensionsTests
         [InlineData(false)]
         public async Task When_responding_with_stream_it_should_return_response(bool isSeekable)
         {
-            using var ms = new CanSeekMemoryStream(Encoding.UTF8.GetBytes("content"), isSeekable);
+            using var ms = new CanSeekMemoryStream("content"u8.ToArray(), isSeekable);
             var request = new HttpRequestMessage();
-            var expectedContent = new ByteArrayContent(Encoding.UTF8.GetBytes("content"));
+            var expectedContent = new ByteArrayContent("content"u8.ToArray());
 
             // Act
+            // ReSharper disable once AccessToDisposedClosure
             _sut.Respond(with => with.Body(ms));
             HttpResponseMessage actualResponse = await _httpCall.SendAsync(new MockHttpRequestContext(request), CancellationToken.None);
 
@@ -90,9 +91,8 @@ public class IRespondsExtensionsTests
         [Fact]
         public void When_responding_with_not_readable_stream_it_should_throw()
         {
-            var streamMock = new Mock<Stream>();
-            streamMock.Setup(m => m.CanRead).Returns(false);
-            Stream? streamContent = streamMock.Object;
+            Stream streamContent = Substitute.For<Stream>();
+            streamContent.CanRead.Returns(false);
 
             // Act
             Action act = () => _sut.Respond(with => with.Body(streamContent));
@@ -199,10 +199,8 @@ public class IRespondsExtensionsTests
 
         public static IEnumerable<object?[]> TestCases()
         {
-            var streamMock = new Mock<Stream> { CallBase = true };
-            streamMock.SetReturnsDefault(true);
             using var content = new StringContent("");
-            IResponds<IResponseResult> responds = Mock.Of<IResponds<IResponseResult>>();
+            IResponds<IResponseResult> responds = Substitute.For<IResponds<IResponseResult>>();
 
             DelegateTestCase[] testCases =
             {

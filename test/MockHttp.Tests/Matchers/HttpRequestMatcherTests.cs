@@ -4,12 +4,7 @@ namespace MockHttp.Matchers;
 
 public class HttpRequestMatcherTests
 {
-    private readonly HttpRequestMatcher _sut;
-
-    public HttpRequestMatcherTests()
-    {
-        _sut = new Mock<HttpRequestMatcher> { CallBase = true }.Object;
-    }
+    private readonly HttpRequestMatcher _sut = Substitute.For<HttpRequestMatcher>();
 
     [Fact]
     public async Task Given_null_context_when_matching_it_should_throw()

@@ -19,11 +19,11 @@ public class NullBuilderTests
         public static IEnumerable<object?[]> TestCases()
         {
             var responseBuilderImpl = new ResponseBuilder();
-            IResponseBuilder responseBuilder = Mock.Of<IResponseBuilder>();
-            IWithContent withContent = Mock.Of<IWithContent>();
-            IWithStatusCode withStatusCode = Mock.Of<IWithStatusCode>();
-            IWithContentType withContentType = Mock.Of<IWithContentType>();
-            IWithHeaders withHeaders = Mock.Of<IWithHeaders>();
+            IResponseBuilder responseBuilder = Substitute.For<IResponseBuilder>();
+            IWithContent withContent = Substitute.For<IWithContent>();
+            IWithStatusCode withStatusCode = Substitute.For<IWithStatusCode>();
+            IWithContentType withContentType = Substitute.For<IWithContentType>();
+            IWithHeaders withHeaders = Substitute.For<IWithHeaders>();
 
             DelegateTestCase[] testCases =
             {
