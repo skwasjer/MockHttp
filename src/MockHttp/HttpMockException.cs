@@ -35,6 +35,9 @@ public class HttpMockException : Exception
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
+#if NET8_0_OR_GREATER
+    [Obsolete(DiagnosticId = "SYSLIB0051")]
+#endif
     protected HttpMockException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
