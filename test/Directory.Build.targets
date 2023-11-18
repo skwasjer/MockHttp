@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
     <NetTestSdkVersion>17.8.0</NetTestSdkVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework)=='netcoreapp2.1'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
     <NetTestSdkVersion>17.3.3</NetTestSdkVersion>
   </PropertyGroup>
 
@@ -22,7 +23,7 @@
     <PackageReference Include="xunit" Version="2.6.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+  <ItemGroup Condition="'$(IsTestProject)'=='true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NetTestSdkVersion)" />
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="$(NetTestSdkVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -30,5 +31,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <!--https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019#use-case-multi-level-merging -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
 
 </Project>
