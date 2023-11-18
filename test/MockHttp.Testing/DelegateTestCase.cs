@@ -9,7 +9,12 @@ public class DelegateTestCase : List<object?>
 
     private DelegateTestCase(Delegate @delegate)
     {
-        Name = @delegate.GetMethodInfo().Name;
+        if (@delegate is null)
+        {
+            throw new ArgumentNullException(nameof(@delegate));
+        }
+
+        Name = @delegate.GetMethodInfo()!.Name;
         Delegate = @delegate;
         Add(Name);
         Add(@delegate);
@@ -18,7 +23,7 @@ public class DelegateTestCase : List<object?>
     public IEnumerable<object?[]> GetNullArgumentTestCases(bool withoutName = false)
     {
         const int paramOffset = 2;
-        MethodInfo methodInfo = Delegate.GetMethodInfo();
+        MethodInfo methodInfo = Delegate.GetMethodInfo()!;
         ParameterInfo[] parameters = methodInfo.GetParameters();
         for (int i = paramOffset; i < Count; i++)
         {
