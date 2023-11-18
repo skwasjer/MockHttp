@@ -16,7 +16,7 @@ public sealed class JsonContentMatcherTests : IDisposable
 
         _equalityComparerMock = Substitute.For<IEqualityComparer<string>>();
         _equalityComparerMock
-            .Equals(Arg.Any<string?>(), Arg.Any<string?>())
+            .Equals(ArgAny.String(), ArgAny.String())
             .Returns(true);
 
         _requestMessage = new HttpRequestMessage();
@@ -43,7 +43,7 @@ public sealed class JsonContentMatcherTests : IDisposable
         // Assert
         _adapterMock.Received(1).Serialize(jsonContentAsObject);
         globalAdapterMock.DidNotReceiveWithAnyArgs().Serialize(Arg.Any<object?>());
-        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
+        _ = _equalityComparerMock.Received(1).Equals(ArgAny.String(), serializedJson);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class JsonContentMatcherTests : IDisposable
 
         // Assert
         globalAdapterMock.Received(1).Serialize(jsonContentAsObject);
-        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
+        _ = _equalityComparerMock.Received(1).Equals(ArgAny.String(), serializedJson);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public sealed class JsonContentMatcherTests : IDisposable
         await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _ = _equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), serializedJson);
+        _ = _equalityComparerMock.Received(1).Equals(ArgAny.String(), serializedJson);
     }
 
     [Fact]
@@ -104,14 +104,14 @@ public sealed class JsonContentMatcherTests : IDisposable
         var sut = new JsonContentMatcher("something to compare with", _adapterMock, _equalityComparerMock);
 
         _equalityComparerMock
-            .Equals(Arg.Any<string?>(), Arg.Any<string?>())
+            .Equals(ArgAny.String(), ArgAny.String())
             .Returns(equals);
 
         // Act
         bool actual = await sut.IsMatchAsync(_requestContext);
 
         // Assert
-        _ =_equalityComparerMock.Received(1).Equals(Arg.Any<string?>(), Arg.Any<string?>());
+        _ =_equalityComparerMock.Received(1).Equals(ArgAny.String(), ArgAny.String());
         actual.Should().Be(equals);
     }
 
@@ -131,7 +131,7 @@ public sealed class JsonContentMatcherTests : IDisposable
             await sut.IsMatchAsync(_requestContext);
 
             // Assert
-            _ = _equalityComparerMock.Received(1).Equals(string.Empty, Arg.Any<string?>());
+            _ = _equalityComparerMock.Received(1).Equals(string.Empty, ArgAny.String());
         }
     }
 
@@ -169,6 +169,7 @@ public sealed class JsonContentMatcherTests : IDisposable
 
     public void Dispose()
     {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _requestMessage?.Dispose();
     }
 }
