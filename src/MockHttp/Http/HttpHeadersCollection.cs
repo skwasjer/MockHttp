@@ -4,6 +4,9 @@ namespace MockHttp.Http;
 
 internal sealed class HttpHeadersCollection : HttpHeaders
 {
+    private static readonly char[] HeaderKeyValueSeparator = new[] { ':' };
+    private static readonly char[] HeaderValueSeparator = new[] { ',' };
+
     public HttpHeadersCollection()
     {
     }
@@ -43,7 +46,7 @@ internal sealed class HttpHeadersCollection : HttpHeaders
                 continue;
             }
 
-            string[] hvp = header.Split(new[] { ':' }, 2, StringSplitOptions.None);
+            string[] hvp = header.Split(HeaderKeyValueSeparator, 2, StringSplitOptions.None);
 
             string fieldName = hvp.Length > 0 ? hvp[0] : string.Empty;
             string? fieldValue = hvp.Length > 1 ? hvp[1] : null;
@@ -61,7 +64,7 @@ internal sealed class HttpHeadersCollection : HttpHeaders
         }
 
         return headerValue
-            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            .Split(HeaderValueSeparator, StringSplitOptions.RemoveEmptyEntries)
             .Select(v => v.Trim())
             .Where(v => v.Length > 0)
             .ToArray();
