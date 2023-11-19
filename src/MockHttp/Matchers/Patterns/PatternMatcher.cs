@@ -1,6 +1,6 @@
 ﻿namespace MockHttp.Matchers.Patterns;
 
-internal abstract class PatternMatcher
+internal abstract class PatternMatcher : IPatternMatcher<string>
 {
     /// <summary>
     /// Tests if the specified <paramref name="value" /> matches the pattern.
