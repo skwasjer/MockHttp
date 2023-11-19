@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using MockHttp.Http;
 using MockHttp.Matchers.Patterns;
 using MockHttp.Responses;
+using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp.Matchers;
 
@@ -9,14 +11,10 @@ namespace MockHttp.Matchers;
 /// </summary>
 public class RequestUriMatcher : HttpRequestMatcher
 {
-    private static readonly UriKind DotNetRelativeOrAbsolute = Type.GetType("Mono.Runtime") == null ? UriKind.RelativeOrAbsolute : (UriKind)300;
-
-    private const char UriSegmentDelimiter = '/';
-
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private Uri _requestUri = default!;
+    private readonly Uri _requestUri = default!;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string _formattedUri = default!;
+    private readonly string _formattedUri;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly PatternMatcher? _uriPatternMatcher;
 
@@ -26,7 +24,8 @@ public class RequestUriMatcher : HttpRequestMatcher
     /// <param name="uri">The request URI.</param>
     public RequestUriMatcher(Uri uri)
     {
-        SetRequestUri(uri);
+        _requestUri = uri.EnsureIsRooted();
+        _formattedUri = _requestUri.ToString();
     }
 
     /// <summary>
@@ -51,24 +50,9 @@ public class RequestUriMatcher : HttpRequestMatcher
         else
         {
             // If no wildcards, then must be actual uri.
-            SetRequestUri(new Uri(uriString, DotNetRelativeOrAbsolute));
+            _requestUri = new Uri(uriString, DotNetRelativeOrAbsolute).EnsureIsRooted();
+            _formattedUri = _requestUri.ToString();
         }
-    }
-
-    private void SetRequestUri(Uri uri)
-    {
-        _requestUri = uri ?? throw new ArgumentNullException(nameof(uri));
-
-        if (!_requestUri.IsAbsoluteUri)
-        {
-            string relUri = _requestUri.ToString();
-            if (relUri.Length > 0 && _requestUri.ToString()[0] != UriSegmentDelimiter)
-            {
-                _requestUri = new Uri($"{UriSegmentDelimiter}{_requestUri}", UriKind.Relative);
-            }
-        }
-
-        _formattedUri = _requestUri.ToString();
     }
 
     /// <inheritdoc />
