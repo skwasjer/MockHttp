@@ -33,7 +33,7 @@ public static class ResponseBuilderLinqToXmlExtensions
             throw new ArgumentNullException(nameof(xmlContent));
         }
 
-        settings ??= new XmlWriterSettings();
+        settings = settings?.Clone() ?? new XmlWriterSettings();
         // Ensure the stream is not closed/disposed on disposal of the XML writer.
         // It will be disposed by HttpClient instead.
         settings.CloseOutput = false;
