@@ -22,7 +22,7 @@ internal enum HttpHeaderMatchType
 internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 {
     private readonly HttpHeaderMatchType? _matchType;
-    private readonly PatternMatcher? _valuePatternMatcher;
+    private readonly IPatternMatcher<string>? _valuePatternMatcher;
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {
@@ -34,7 +34,7 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
         _matchType = matchType;
     }
 
-    public HttpHeaderEqualityComparer(PatternMatcher valuePatternMatcher)
+    public HttpHeaderEqualityComparer(IPatternMatcher<string> valuePatternMatcher)
     {
         _valuePatternMatcher = valuePatternMatcher ?? throw new ArgumentNullException(nameof(valuePatternMatcher));
     }
