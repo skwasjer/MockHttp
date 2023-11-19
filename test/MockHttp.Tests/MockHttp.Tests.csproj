@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\MockHttp.Testing\XunitAppDomainUnloadHook.cs" Link="XunitAppDomainUnloadHook.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
   </ItemGroup>
 
