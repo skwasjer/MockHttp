@@ -190,6 +190,20 @@ public sealed class RateLimitedStreamTests : IDisposable
         streamStub.Received(1).Close();
     }
 
+    [Fact]
+    public void Keeps_actual_stream_open_if_desired()
+    {
+        using MemoryStream streamStub = Substitute.For<MemoryStream>();
+        streamStub.CanRead.Returns(true);
+        var sut = new RateLimitedStream(streamStub, 1024, true);
+
+        // Act
+        sut.Dispose();
+
+        // Assert
+        streamStub.DidNotReceive().Close();
+    }
+
     public void Dispose()
     {
         // ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
