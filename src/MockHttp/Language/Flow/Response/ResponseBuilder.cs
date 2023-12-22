@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using MockHttp.Http;
 using MockHttp.Responses;
 
@@ -80,6 +79,7 @@ internal sealed class ResponseBuilder
         {
             _invertedBehaviors = new ReadOnlyCollection<IResponseBehavior>(
                 behaviors
+                    .OrderBy(behavior => behavior, new PreferredBehaviorComparer())
                     .Reverse()
                     .ToList()
             );
@@ -104,6 +104,37 @@ internal sealed class ResponseBuilder
                 .ConfigureAwait(false);
 
             return response;
+        }
+
+        /// <summary>
+        /// Some behaviors must be sorted at the top of the list, but may have been added out of order using the Fluent API.
+        /// This comparer shifts those preferred behaviors back to the top.
+        /// </summary>
+        private sealed class PreferredBehaviorComparer : IComparer<IResponseBehavior>
+        {
+            public int Compare(IResponseBehavior? x, IResponseBehavior? y)
+            {
+                return Compare(x, y, false);
+            }
+
+            private static int Compare(IResponseBehavior? x, IResponseBehavior? y, bool flipped)
+            {
+                return x switch
+                {
+                    // The network latency behavior must always come first.
+                    NetworkLatencyBehavior => -1,
+                    _ => CompareOtherWayAround()
+                };
+
+                int CompareOtherWayAround()
+                {
+                    return flipped
+                        ? 0
+#pragma warning disable S2234 // Parameters to 'Compare' have the same names but not the same order as the method arguments. - justification: intentional.
+                        : -Compare(y, x, true);
+#pragma warning restore S2234
+                }
+            }
         }
     }
 }

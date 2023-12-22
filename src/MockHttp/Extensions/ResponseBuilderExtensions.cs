@@ -418,15 +418,7 @@ public static class ResponseBuilderExtensions
             throw new ArgumentNullException(nameof(latency));
         }
 
-        int existingIndex = builder.Behaviors.IndexOf(typeof(NetworkLatencyBehavior));
-        if (existingIndex == -1)
-        {
-            builder.Behaviors.Insert(0, new NetworkLatencyBehavior(latency));
-        }
-        else
-        {
-            builder.Behaviors[existingIndex] = new NetworkLatencyBehavior(latency);
-        }
+        builder.Behaviors.Replace(new NetworkLatencyBehavior(latency));
         return builder;
     }
 
