@@ -1,5 +1,52 @@
 # Changelog
 
+## v4.3.0
+
+* feat(net8): add .NET 8 target framework by @skwasjer in https://github.com/skwasjer/MockHttp/pull/86
+* feat(server): implement `IAsyncDisposable` on `HttpMockServer` by @skwasjer in https://github.com/skwasjer/MockHttp/pull/89
+* fix(server): `MockHttpServer.StopAsync` disposes the host before it has a chance to actually stop by @skwasjer in https://github.com/skwasjer/MockHttp/pull/88
+* fix(xml): do not modify `XmlSettings` supplied to `XmlBody` response builder extension by @skwasjer in https://github.com/skwasjer/MockHttp/pull/90
+* feat: added ctor parameter to `RateLimitedStream` to keep the underlying stream open on disposal by @skwasjer in https://github.com/skwasjer/MockHttp/pull/95
+* feat: added `TransferRate` extension to simulate a slow network transport by @skwasjer in https://github.com/skwasjer/MockHttp/pull/96
+
+### Chores
+* fix: address some static code analysis issues, exposed by the latest analyzer (in .NET 8 SDK) by @skwasjer in https://github.com/skwasjer/MockHttp/pull/87
+* fix: force GC collect (in unit test) and finalize on appdomain unload by @skwasjer in https://github.com/skwasjer/MockHttp/pull/91
+* chore(deps): bump xunit from 2.6.1 to 2.6.2 by @dependabot in https://github.com/skwasjer/MockHttp/pull/92
+
+**Full Changelog**: [v4.2.0...v4.3.0](https://github.com/skwasjer/MockHttp/compare/v4.2.0...v4.3.0)
+
+## v4.2.0
+
+* Address several static code analysis warnings by @skwasjer in https://github.com/skwasjer/MockHttp/pull/84
+  * fix(CA2007): `ConfigureAwait(false)` a task
+  * style(CA1819): properties should not return arrays (refactored private/internal use only)
+  * style(CA1307,CA1309): Use ordinal string comparison overload
+  * style(CA8602): suppress dereference possible null in test
+  * style(CA2000): suppress false positive because it is registered for dispose
+  * style(CA2201): suppress
+  * style(CA1859): change interface type to concrete type for perf.
+  * style(CA1054,CA1056): change type of parameter from string to Uri.
+    * The `MockHttpServer.HostUrl` is deprecated. Use `MockHttpServer.HostUri` instead.
+    * The `MockHttpServer` ctors accepting `string` URL's are deprecated. Use the overloads accepting `System.Uri`.
+  * style(CA1861): prefer 'static readonly' fields over constant array args.
+  * style(CA1860): prefer comparing count to 0 rather using Any()
+  * style(CA5394): do not use insecure randomness, suppressed false positive
+
+### Chores
+* ci: refactored CI, fixing SonarCloud/CodeCov integration, added CodeQL by @skwasjer in https://github.com/skwasjer/MockHttp/pull/71
+* chore(deps): bump FluentAssertions from 6.11.0 to 6.12.0 by @dependabot in https://github.com/skwasjer/MockHttp/pull/70
+* chore(deps): bump NetTestSdkVersion from 17.7.0 to 17.7.1 by @dependabot in https://github.com/skwasjer/MockHttp/pull/69
+* chore(deps): bump NetTestSdkVersion from 17.7.1 to 17.7.2 by @dependabot in https://github.com/skwasjer/MockHttp/pull/72
+* chore(deps): bump Microsoft.AspNet.WebApi.Client from 5.2.9 to 6.0.0 by @dependabot in https://github.com/skwasjer/MockHttp/pull/74
+* chore(deps): bump NetTestSdkVersion from 17.7.2 to 17.8.0 by @dependabot in https://github.com/skwasjer/MockHttp/pull/77
+* chore(deps): bump xunit from 2.4.2 to 2.6.1 by @dependabot in https://github.com/skwasjer/MockHttp/pull/76
+* chore(deps): bump Serilog from 3.0.1 to 3.1.1 by @dependabot in https://github.com/skwasjer/MockHttp/pull/79
+* test(deps): replace Moq with NSubstitute by @skwasjer in https://github.com/skwasjer/MockHttp/pull/85
+* ci: switch fully to GitHub actions instead of AppVeyor by @skwasjer in https://github.com/skwasjer/MockHttp/pull/83
+
+**Full Changelog**: [v4.1.1...v4.2.0](https://github.com/skwasjer/MockHttp/compare/v4.1.1...v4.2.0)
+
 ## 4.1.1
 
 - fix: data escaped + (plus) was not parsed correctly, caused by [#68](https://github.com/skwasjer/MockHttp/pull/68). My apologies... :)
