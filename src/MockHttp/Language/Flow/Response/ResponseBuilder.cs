@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using MockHttp.Http;
 using MockHttp.Responses;
 
@@ -80,6 +79,7 @@ internal sealed class ResponseBuilder
         {
             _invertedBehaviors = new ReadOnlyCollection<IResponseBehavior>(
                 behaviors
+                    .OrderBy(behavior => behavior, new PreferredBehaviorComparer())
                     .Reverse()
                     .ToList()
             );
@@ -104,6 +104,56 @@ internal sealed class ResponseBuilder
                 .ConfigureAwait(false);
 
             return response;
+        }
+
+        /// <summary>
+        /// Some behaviors must be sorted at the top of the list, but may have been added out of order using the Fluent API.
+        /// This comparer shifts those preferred behaviors back to the top.
+        /// </summary>
+        private sealed class PreferredBehaviorComparer : IComparer<IResponseBehavior>
+        {
+            public int Compare(IResponseBehavior? x, IResponseBehavior? y)
+            {
+                return Compare(x, y, false);
+            }
+
+            private static int Compare(IResponseBehavior? x, IResponseBehavior? y, bool flipped)
+            {
+                if (ReferenceEquals(x, null))
+                {
+                    return 1;
+                }
+
+                if (ReferenceEquals(y, null))
+                {
+                    return -1;
+                }
+
+                if (ReferenceEquals(x, y))
+                {
+                    return 0;
+                }
+
+                return x switch
+                {
+                    // The network latency behavior must always come first.
+                    NetworkLatencyBehavior => -1,
+                    // The rate limit behavior must always come first except when the latency behavior is also present.
+                    TransferRateBehavior => y is NetworkLatencyBehavior
+                        ? 1
+                        : CompareOtherWayAround(-1),
+                    _ => CompareOtherWayAround(0)
+                };
+
+                int CompareOtherWayAround(int result)
+                {
+                    return flipped
+                        ? result
+#pragma warning disable S2234 // Parameters to 'Compare' have the same names but not the same order as the method arguments. - justification: intentional.
+                        : -Compare(y, x, true);
+#pragma warning restore S2234
+                }
+            }
         }
     }
 }
