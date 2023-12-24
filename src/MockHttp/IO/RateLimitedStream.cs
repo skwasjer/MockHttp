@@ -16,25 +16,28 @@ namespace MockHttp.IO;
 /// </remarks>
 public class RateLimitedStream : Stream
 {
-    private const int SampleRate = 100; // How often to take samples (per sec).
-    private static readonly TimeSpan ThrottleInterval = TimeSpan.FromMilliseconds(1000D / SampleRate);
     internal const int MinBitRate = 128;
+    private const int SampleRate = 100; // How often to take samples (per sec).
     private const int MaxBufferSize = 2 << 15; // 128KB
+    private static readonly TimeSpan ThrottleInterval = TimeSpan.FromMilliseconds(1000D / SampleRate);
 
-    private long _totalBytesRead;
-
-    private readonly Stopwatch _stopwatch;
     private readonly Stream _actualStream;
     private readonly int _byteRate;
+    private readonly bool _leaveOpen;
+    private readonly Stopwatch _stopwatch;
+
+    private long _totalBytesRead;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RateLimitedStream" />.
     /// </summary>
     /// <param name="actualStream">The actual stream to wrap.</param>
     /// <param name="bitRate">The bit rate to simulate.</param>
+    /// <param name="leaveOpen"><see langword="true" /> to leave the <paramref name="actualStream" /> open on close/disposal.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="actualStream" /> is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when the stream is not readable or the bit rate is less than 128.</exception>
-    public RateLimitedStream(Stream actualStream, int bitRate)
+    /// <exception cref="ArgumentException">Thrown when the stream is not readable.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the bit rate is less than 128.</exception>
+    public RateLimitedStream(Stream actualStream, int bitRate, bool leaveOpen = false)
     {
         _actualStream = actualStream ?? throw new ArgumentNullException(nameof(actualStream));
         if (!_actualStream.CanRead)
@@ -47,8 +50,28 @@ public class RateLimitedStream : Stream
             throw new ArgumentOutOfRangeException(nameof(bitRate), $"Bit rate must be higher than or equal to {MinBitRate}.");
         }
 
+        _leaveOpen = leaveOpen;
         _byteRate = bitRate / 8; // We are computing bytes transferred.
         _stopwatch = new Stopwatch();
+    }
+
+    /// <inheritdoc />
+    public override bool CanRead => _actualStream.CanRead;
+
+    /// <inheritdoc />
+    public override bool CanSeek => _actualStream.CanSeek;
+
+    /// <inheritdoc />
+    public override bool CanWrite => false;
+
+    /// <inheritdoc />
+    public override long Length => _actualStream.Length;
+
+    /// <inheritdoc />
+    public override long Position
+    {
+        get => _actualStream.Position;
+        set => _actualStream.Position = value;
     }
 
     /// <inheritdoc />
@@ -101,30 +124,14 @@ public class RateLimitedStream : Stream
     }
 
     /// <inheritdoc />
-    public override bool CanRead => _actualStream.CanRead;
-
-    /// <inheritdoc />
-    public override bool CanSeek => _actualStream.CanSeek;
-
-    /// <inheritdoc />
-    public override bool CanWrite => false;
-
-    /// <inheritdoc />
-    public override long Length => _actualStream.Length;
-
-    /// <inheritdoc />
-    public override long Position
-    {
-        get => _actualStream.Position;
-        set => _actualStream.Position = value;
-    }
-
-    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         try
         {
-            _actualStream.Dispose();
+            if (!_leaveOpen)
+            {
+                _actualStream.Dispose();
+            }
         }
         finally
         {
