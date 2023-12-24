@@ -119,17 +119,36 @@ internal sealed class ResponseBuilder
 
             private static int Compare(IResponseBehavior? x, IResponseBehavior? y, bool flipped)
             {
+                if (ReferenceEquals(x, null))
+                {
+                    return 1;
+                }
+
+                if (ReferenceEquals(y, null))
+                {
+                    return -1;
+                }
+
+                if (ReferenceEquals(x, y))
+                {
+                    return 0;
+                }
+
                 return x switch
                 {
                     // The network latency behavior must always come first.
                     NetworkLatencyBehavior => -1,
-                    _ => CompareOtherWayAround()
+                    // The rate limit behavior must always come first except when the latency behavior is also present.
+                    TransferRateBehavior => y is NetworkLatencyBehavior
+                        ? 1
+                        : CompareOtherWayAround(-1),
+                    _ => CompareOtherWayAround(0)
                 };
 
-                int CompareOtherWayAround()
+                int CompareOtherWayAround(int result)
                 {
                     return flipped
-                        ? 0
+                        ? result
 #pragma warning disable S2234 // Parameters to 'Compare' have the same names but not the same order as the method arguments. - justification: intentional.
                         : -Compare(y, x, true);
 #pragma warning restore S2234

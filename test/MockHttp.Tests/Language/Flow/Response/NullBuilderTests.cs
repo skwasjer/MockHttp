@@ -141,6 +141,21 @@ public class NullBuilderTests
                     responseBuilder,
                     new XDocument(),
                     (XmlWriterSettings?)null
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.TransferRate,
+                    responseBuilder,
+                    BitRate.FourG()
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.TransferRate,
+                    responseBuilder,
+                    BitRate.FourG
+                ),
+                DelegateTestCase.Create(
+                    ResponseBuilderExtensions.TransferRate,
+                    responseBuilder,
+                    (int)BitRate.FourG()
                 )
             };
 

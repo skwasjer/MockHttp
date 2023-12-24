@@ -439,6 +439,79 @@ public static class ResponseBuilderExtensions
         return builder.Latency(latency());
     }
 
+    /// <summary>
+    /// Limits the response to a specific bit rate to simulate slow(er) network transfer rates.
+    /// <para>
+    /// The content stream returned in the response is throttled to match the requested bit rate.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// - Not 100% accurate (just like real world :p).
+    /// </remarks>
+    /// <param name="builder">The builder.</param>
+    /// <param name="bitRate">The bit rate to simulate.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="bitRate" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the bit rate is less than 128.</exception>
+    public static IWithResponse TransferRate(this IWithResponse builder, Func<BitRate> bitRate)
+    {
+        if (bitRate is null)
+        {
+            throw new ArgumentNullException(nameof(bitRate));
+        }
+
+        return builder.TransferRate(bitRate());
+    }
+
+    /// <summary>
+    /// Limits the response to a specific bit rate to simulate slow(er) network transfer rates.
+    /// <para>
+    /// The content stream returned in the response is throttled to match the requested bit rate.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// - Not 100% accurate (just like real world :p).
+    /// </remarks>
+    /// <param name="builder">The builder.</param>
+    /// <param name="bitRate">The bit rate to simulate.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the bit rate is less than 128.</exception>
+    public static IWithResponse TransferRate(this IWithResponse builder, BitRate bitRate)
+    {
+        if (bitRate is null)
+        {
+            throw new ArgumentNullException(nameof(bitRate));
+        }
+
+        return builder.TransferRate((int)bitRate);
+    }
+
+    /// <summary>
+    /// Limits the response to a specific bit rate to simulate slow(er) network transfer rates.
+    /// <para>
+    /// The content stream returned in the response is throttled to match the requested bit rate.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// - Not 100% accurate (just like real world :p).
+    /// </remarks>
+    /// <param name="builder">The builder.</param>
+    /// <param name="bitRate">The bit rate to simulate.</param>
+    /// <returns>The builder to continue chaining additional behaviors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> or <paramref name="bitRate" /> is <see langword="null" />.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the bit rate is less than 128.</exception>
+    public static IWithResponse TransferRate(this IWithResponse builder, int bitRate)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        builder.Behaviors.Replace(new TransferRateBehavior(bitRate));
+        return builder;
+    }
+
     private static string? ConvertToString<T>(T v)
     {
         switch (v)
