@@ -31,13 +31,13 @@ public class Issue98
             BaseAddress = new Uri("http://localhost")
         };
         // Act
-        HttpResponseMessage? response = await client.PostAsJsonAsync("api/login", new { username = @"corp\user", password = @"Super.Mari0.Bro$$" });
+        HttpResponseMessage? response = await client.PostAsJsonAsync("api/login", new { username = @"corp\user", password = "Super.Mari0.Bro$$" });
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.OK);
         response.Headers.Should()
-            .ContainKey("Set-Cookie",
-                "session=abcdefghi==; Expires=Tue, 01 Feb 2024 01:01:01 GMT; Secure; HttpOnly; Path=/");
+            .ContainKey("Set-Cookie")
+            .WhoseValue.Should().Contain("session=abcdefghi==; Expires=Tue, 01 Feb 2024 01:01:01 GMT; Secure; HttpOnly; Path=/");
         response.Should().HaveContentType("application/json; charset=utf-8");
         await response.Should().HaveContentAsync(JsonConvert.SerializeObject(new { username = "user@corp" }), Encoding.UTF8);
         mockHttp.Verify();
