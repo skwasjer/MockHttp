@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.3.1
+
+* fix: setting any content header (specifically) after setting JSON body resets `HttpContent` to empty by @skwasjer in https://github.com/skwasjer/MockHttp/pull/99
+
+**Full Changelog**: [v4.3.0...v4.3.1](https://github.com/skwasjer/MockHttp/compare/v4.3.0...v4.3.1)
+
 ## v4.3.0
 
 * feat(net8): add .NET 8 target framework by @skwasjer in https://github.com/skwasjer/MockHttp/pull/86
