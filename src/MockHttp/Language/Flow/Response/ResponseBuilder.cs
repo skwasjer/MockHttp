@@ -12,10 +12,12 @@ internal sealed class ResponseBuilder
       IWithContentResult,
       IWithHeadersResult
 {
-    private static readonly Func<CancellationToken, Task<HttpContent>> EmptyHttpContentFactory = _ => Task.FromResult<HttpContent>(new EmptyContent());
-
     /// <inheritdoc />
-    public IList<IResponseBehavior> Behaviors { get; } = new List<IResponseBehavior>();
+    public IList<IResponseBehavior> Behaviors { get; } = new List<IResponseBehavior>
+    {
+        // We're adding this default behavior as the first step, to ensure HttpContent is not null initially.
+        new EnsureHttpContentBehavior()
+    };
 
     /// <inheritdoc />
     public IWithStatusCodeResult StatusCode(HttpStatusCode statusCode, string? reasonPhrase = null)
@@ -54,12 +56,6 @@ internal sealed class ResponseBuilder
         if (headerList.Count == 0)
         {
             throw new ArgumentException("At least one header must be specified.", nameof(headers));
-        }
-
-        // If no content when adding headers, we force empty content so that content headers can still be set.
-        if (!Behaviors.OfType<HttpContentBehavior>().Any())
-        {
-            Body(EmptyHttpContentFactory);
         }
 
         Behaviors.Add(new HttpHeaderBehavior(headerList));
@@ -157,4 +153,3 @@ internal sealed class ResponseBuilder
         }
     }
 }
-
