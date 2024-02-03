@@ -10,7 +10,6 @@
     <Description>JSON and MediaTypeFormatter extensions for skwas.MockHttp.</Description>
     <PackageProjectUrl>https://github.com/skwasjer/MockHttp</PackageProjectUrl>
     <PackageTags>json mediatypeformatter httpclient test mock fake stub httpmock mockhttp httpmessagehandler moq</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <ItemGroup>

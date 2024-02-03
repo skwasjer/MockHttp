@@ -17,6 +17,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageIcon>PackageIcon64.png</PackageIcon>
     <PackageReleaseNotes>Release notes are at https://github.com/skwasjer/MockHttp/releases</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AnalysisLevel>latest-All</AnalysisLevel>
   </PropertyGroup>
