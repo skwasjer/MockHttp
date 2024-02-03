@@ -50,8 +50,9 @@ internal static class DataEscapingHelper
 
     private static string UnescapeData(string v)
     {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         return Uri.UnescapeDataString(v?.Replace("+", "%20"
-#if NET7_0_OR_GREATER || NETSTANDARD2_1
+#if NET6_0_OR_GREATER || NETSTANDARD2_1
                 , StringComparison.Ordinal
 #endif
             )!);

@@ -111,7 +111,13 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
     {
         string value = Value.ToString();
 #if !NET6_0_OR_GREATER
-        value = value.Replace("\r\n", Environment.NewLine);
+        value = value.Replace(
+            "\r\n",
+            Environment.NewLine
+#if NETSTANDARD2_1
+            , StringComparison.OrdinalIgnoreCase
+#endif
+        );
 #endif
 
         return $"Headers: {value.TrimEnd('\r', '\n')}";
