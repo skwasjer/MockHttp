@@ -232,8 +232,27 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
 
         // Assert
         response.Should().HaveStatusCode(HttpStatusCode.InternalServerError);
+        response.Should().HaveContentType(MediaTypes.PlainText, Encoding.UTF8);
         await response.Should().HaveContentAsync(expectedErrorMessage + Environment.NewLine + ex);
         response.ReasonPhrase.Should().Be(expectedErrorMessage);
+        _fixture.Handler.Verify();
+    }
+
+    [Fact]
+    public async Task Given_that_request_is_configured_with_server_timeout_when_sending_it_should_respond_with_request_timed_out()
+    {
+        _fixture.Handler
+            .When(matching => matching.Method(HttpMethod.Get))
+            .Respond(with => with.ServerTimeout())
+            .Verifiable();
+
+        using HttpClient client = _fixture.Server.CreateClient();
+
+        // Act
+        HttpResponseMessage response = await client.GetAsync("");
+
+        // Assert
+        response.Should().HaveStatusCode(HttpStatusCode.RequestTimeout);
         _fixture.Handler.Verify();
     }
 

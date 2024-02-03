@@ -1,9 +1,6 @@
-﻿using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
-using MockHttp.Http;
 
 namespace MockHttp.Server;
 
@@ -38,18 +35,6 @@ internal class ServerRequestHandler : DelegatingHandler
         {
             httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
         }
-        catch (Exception ex)
-        {
-            _logger.LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
-#pragma warning restore CA2000 // Dispose objects before losing scope
-            {
-                ReasonPhrase = Resources.Error_VerifyMockSetup,
-                Content = new StringContent(Resources.Error_VerifyMockSetup + Environment.NewLine + ex, MockHttpHandler.DefaultEncoding, MediaTypes.PlainText)
-            };
-        }
         finally
         {
             _logger.LogRequestMessage(httpContext, Resources.Debug_RequestHandled);
@@ -65,6 +50,7 @@ internal class ServerRequestHandler : DelegatingHandler
         {
             throw new InvalidOperationException(Resources.MissingHttpResponseFeature);
         }
+
         await httpResponseMessage.MapToFeatureAsync(responseFeature, responseBodyFeature, cancellationToken).ConfigureAwait(false);
     }
 }

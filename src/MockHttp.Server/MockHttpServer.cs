@@ -225,6 +225,8 @@ public sealed class MockHttpServer
 
                 AddMockHttpServerHeader(applicationBuilder);
 
+                applicationBuilder.UseMockHttpExceptionHandler();
+
                 ServerRequestHandler serverRequestHandler = applicationBuilder.ApplicationServices.GetRequiredService<ServerRequestHandler>();
                 applicationBuilder.Use(serverRequestHandler.HandleAsync);
             });
