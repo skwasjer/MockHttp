@@ -25,7 +25,7 @@ internal class ServerRequestHandler : DelegatingHandler
             throw new ArgumentNullException(nameof(httpContext));
         }
 
-        LogRequestMessage(httpContext, Resources.Debug_HandlingRequest);
+        _logger.LogRequestMessage(httpContext, Resources.Debug_HandlingRequest);
 
         CancellationToken cancellationToken = httpContext.RequestAborted;
         HttpResponse response = httpContext.Response;
@@ -40,7 +40,7 @@ internal class ServerRequestHandler : DelegatingHandler
         }
         catch (Exception ex)
         {
-            LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
+            _logger.LogRequestMessage(httpContext, Resources.Error_VerifyMockSetup);
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
             httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
@@ -52,7 +52,7 @@ internal class ServerRequestHandler : DelegatingHandler
         }
         finally
         {
-            LogRequestMessage(httpContext, Resources.Debug_RequestHandled);
+            _logger.LogRequestMessage(httpContext, Resources.Debug_RequestHandled);
         }
 
         // Dispose message when response is done.
@@ -66,13 +66,5 @@ internal class ServerRequestHandler : DelegatingHandler
             throw new InvalidOperationException(Resources.MissingHttpResponseFeature);
         }
         await httpResponseMessage.MapToFeatureAsync(responseFeature, responseBodyFeature, cancellationToken).ConfigureAwait(false);
-    }
-
-    private void LogRequestMessage(HttpContext httpContext, string message, LogLevel logLevel = LogLevel.Debug, Exception? ex = null)
-    {
-        string formattedMessage = Resources.RequestLogMessage + message;
-#pragma warning disable CA2254 // Template should be a static expression
-        _logger.Log(logLevel, ex, formattedMessage, httpContext.Connection.Id, httpContext.TraceIdentifier);
-#pragma warning restore CA2254 // Template should be a static expression
     }
 }
