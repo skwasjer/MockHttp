@@ -19,10 +19,10 @@ public class QueryStringTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string key)
+    public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string? key)
     {
         // Act
-        Func<QueryString> act = () => new QueryString(new[] { new KeyValuePair<string, IEnumerable<string>>(key, new List<string>()) });
+        Func<QueryString> act = () => new QueryString(new[] { new KeyValuePair<string, IEnumerable<string>>(key!, new List<string>()) });
 
         // Assert
         act.Should()
