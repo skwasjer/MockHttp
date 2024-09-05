@@ -5,8 +5,6 @@ namespace MockHttp.Matchers.Patterns;
 
 internal class RegexPatternMatcher : PatternMatcher
 {
-    private readonly Regex _regex;
-
     public RegexPatternMatcher
     (
 #if NET7_0_OR_GREATER
@@ -20,18 +18,20 @@ internal class RegexPatternMatcher : PatternMatcher
 
     public RegexPatternMatcher(Regex regex)
     {
-        _regex = regex ?? throw new ArgumentNullException(nameof(regex));
+        Regex = regex ?? throw new ArgumentNullException(nameof(regex));
     }
+
+    internal Regex Regex { get; }
 
     /// <inheritdoc />
     public override bool IsMatch(string value)
     {
-        return _regex.IsMatch(value);
+        return Regex.IsMatch(value);
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return _regex.ToString();
+        return Regex.ToString();
     }
 }
