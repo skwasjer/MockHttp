@@ -7,7 +7,7 @@ internal class RegexPatternMatcher : PatternMatcher
 {
     public RegexPatternMatcher
     (
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
         [StringSyntax(StringSyntaxAttribute.Regex)]
 #endif
         string regex
