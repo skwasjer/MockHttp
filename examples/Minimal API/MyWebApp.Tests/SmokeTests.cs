@@ -21,7 +21,7 @@ public sealed class SmokeTests // aka. with a server stub for the HttpClient.
         // Configure HTTP mock.
         using MockHttpHandler mockHttpHandler = HttpMocks.CreateMyClientMock();
         // We create a server with automatic port binding (0) on localhost, but you may also define a static port. Note that the port must be free!
-        using var mockHttpServer = new MockHttpServer(mockHttpHandler, "http://127.0.0.1:0");
+        await using var mockHttpServer = new MockHttpServer(mockHttpHandler, new Uri("http://127.0.0.1:0"));
 
         await mockHttpServer.StartAsync();
 
@@ -33,7 +33,7 @@ public sealed class SmokeTests // aka. with a server stub for the HttpClient.
                     // Here we override the base URL configured for the API client with the one from the server stub.
                     builder.ConfigureServices(services => services
                         // ReSharper disable once AccessToDisposedClosure
-                        .Configure<MyClientOptions>(opts => opts.BaseUrl = new Uri(mockHttpServer.HostUrl))
+                        .Configure<MyClientOptions>(opts => opts.BaseUrl = mockHttpServer.HostUri)
                     );
                 });
 
