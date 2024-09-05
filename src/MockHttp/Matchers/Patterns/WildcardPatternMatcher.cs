@@ -4,6 +4,8 @@ namespace MockHttp.Matchers.Patterns;
 
 internal sealed class WildcardPatternMatcher : RegexPatternMatcher
 {
+    private static readonly char[] SpecialRegexChars = ['.', '+', '*', '?', '^', '$', '(', ')', '[', ']', '{', '}', '|', '\\'];
+
     private readonly string _pattern;
 
     public WildcardPatternMatcher(string pattern)
@@ -47,11 +49,27 @@ internal sealed class WildcardPatternMatcher : RegexPatternMatcher
         IEnumerable<string> matchGroups = pattern
             .Split('*')
             .Where(s => !string.IsNullOrEmpty(s))
-            .Select(s => $"({s})");
+            .Select(s => $"({RegexUriEscape(s)})");
 
         sb.Append(string.Join(".+", matchGroups));
 
         sb.Append(endsWithWildcard ? ".*" : "$");
+
+        return sb.ToString();
+    }
+
+    private static string RegexUriEscape(string s)
+    {
+        var sb = new StringBuilder();
+        foreach (char ch in s)
+        {
+            if (SpecialRegexChars.Contains(ch))
+            {
+                sb.Append('\\');
+            }
+
+            sb.Append(ch);
+        }
 
         return sb.ToString();
     }
