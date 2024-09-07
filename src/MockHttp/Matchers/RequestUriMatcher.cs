@@ -16,7 +16,7 @@ public class RequestUriMatcher : HttpRequestMatcher
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly string _formattedUri;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly PatternMatcher? _uriPatternMatcher;
+    private readonly WildcardPatternMatcher? _uriPatternMatcher;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestUriMatcher" /> class using specified <paramref name="uri" />.
