@@ -18,8 +18,8 @@ public class AnyMatcherTests
     [InlineData("url2")]
     public async Task Given_request_uri_equals_one_of_the_matchers_when_matching_should_match(string requestUrl)
     {
-        _matchers.Add(new RequestUriMatcher("*url1"));
-        _matchers.Add(new RequestUriMatcher("*url2"));
+        _matchers.Add(new BoolMatcher(requestUrl == "url1"));
+        _matchers.Add(new BoolMatcher(requestUrl == "url2"));
 
         var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
@@ -32,8 +32,8 @@ public class AnyMatcherTests
     [Fact]
     public async Task Given_request_uri_matches_none_of_the_matchers_when_matching_should_not_match()
     {
-        _matchers.Add(new RequestUriMatcher("http://127.0.0.1/"));
-        _matchers.Add(new RequestUriMatcher("http://127.0.0.2/"));
+        _matchers.Add(new BoolMatcher(false));
+        _matchers.Add(new BoolMatcher(false));
 
         var request = new HttpRequestMessage(HttpMethod.Get, "http://127.0.0.3/");
 
