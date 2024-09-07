@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace MockHttp.Matchers.Patterns;
 
-internal class RegexPatternMatcher : PatternMatcher
+internal class RegexPatternMatcher : IPatternMatcher<string>
 {
     public RegexPatternMatcher
     (
@@ -24,7 +24,7 @@ internal class RegexPatternMatcher : PatternMatcher
     internal Regex Regex { get; }
 
     /// <inheritdoc />
-    public override bool IsMatch(string value)
+    public virtual bool IsMatch(string value)
     {
         return Regex.IsMatch(value);
     }
