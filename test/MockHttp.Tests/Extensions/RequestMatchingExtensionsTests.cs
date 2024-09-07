@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Xml;
 using MockHttp.Http;
 using MockHttp.Matchers;
 using MockHttp.Responses;
+using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp.Extensions;
 
@@ -20,33 +22,184 @@ public abstract class RequestMatchingExtensionsTests
 
     public class RequestUri : RequestMatchingExtensionsTests
     {
-        [Fact]
-        public async Task When_configuring_requestUri_as_string_should_match()
+        [Theory]
+        [InlineData("relative.htm", true, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("relative.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("relative.htm", false, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("relative.htm", false, "http://127.0.0.1/relative.htm?query=string", false)]
+
+        [InlineData("/relative.htm", true, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("/relative.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("/relative.htm", false, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("/relative.htm", false, "http://127.0.0.1/relative.htm?query=string", false)]
+
+        [InlineData("relative.htm?query=string", true, "http://127.0.0.1/relative.htm?query=string", true)]
+        [InlineData("relative.htm?query=string", false, "http://127.0.0.1/relative.htm?query=string", true)]
+        [InlineData("http://127.0.0.1/absolute.htm?query=string", true, "http://127.0.0.1/absolute.htm?query=string", true)]
+        [InlineData("http://127.0.0.1/absolute.htm?query=string", false, "http://127.0.0.1/absolute.htm?query=string", true)]
+
+        [InlineData("/folder/relative.htm", true, "http://127.0.0.1/relative.htm", false)]
+        [InlineData("/folder/relative.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("/folder/relative.htm", false, "http://127.0.0.1/relative.htm", false)]
+        [InlineData("/folder/relative.htm", false, "http://127.0.0.1/relative.htm?query=string", false)]
+
+        [InlineData("relative.htm", true, "http://127.0.0.1/folder/relative.htm", false)]
+        [InlineData("relative.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("relative.htm", false, "http://127.0.0.1/folder/relative.htm", false)]
+        [InlineData("relative.htm", false, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+
+        [InlineData("folder/relative.htm", true, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("folder/relative.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("folder/relative.htm", false, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("folder/relative.htm", false, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+
+        [InlineData("/folder/relative.htm", true, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("/folder/relative.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("/folder/relative.htm", false, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("/folder/relative.htm", false, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+
+        [InlineData("http://127.0.0.1/absolute.htm", true, "http://127.0.0.1/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/absolute.htm", true, "http://127.0.0.1/absolute.htm?query=string", false)]
+        [InlineData("http://127.0.0.1/absolute.htm", false, "http://127.0.0.1/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/absolute.htm", false, "http://127.0.0.1/absolute.htm?query=string", false)]
+
+        [InlineData("http://127.0.0.1/absolute.htm", true, "http://127.0.0.1/folder/absolute.htm", false)]
+        [InlineData("http://127.0.0.1/absolute.htm", true, "http://127.0.0.1/folder/absolute.htm?query=string", false)]
+        [InlineData("http://127.0.0.1/absolute.htm", false, "http://127.0.0.1/folder/absolute.htm", false)]
+        [InlineData("http://127.0.0.1/absolute.htm", false, "http://127.0.0.1/folder/absolute.htm?query=string", false)]
+
+        [InlineData("http://127.0.0.1/folder/absolute.htm", true, "http://127.0.0.1/folder/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/folder/absolute.htm", true, "http://127.0.0.1/folder/absolute.htm?query=string", false)]
+        [InlineData("http://127.0.0.1/folder/absolute.htm", false, "http://127.0.0.1/folder/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/folder/absolute.htm", false, "http://127.0.0.1/folder/absolute.htm?query=string", false)]
+
+        [InlineData("*.htm", true, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("*.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("*.htm", false, "http://127.0.0.1/relative.htm", false)]
+
+        [InlineData("*/relative.htm", true, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("*/relative.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("*/relative.htm", false, "http://127.0.0.1/relative.htm", false)]
+
+        [InlineData("/*/relative.htm", true, "http://127.0.0.1/folder/relative.htm", false)]
+        [InlineData("/*/relative.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("/*/relative.htm", false, "http://127.0.0.1/folder/relative.htm", false)]
+
+        [InlineData("/*/relative.htm", true, "http://127.0.0.1/relative.htm", false)]
+        [InlineData("/*/relative.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("/*/relative.htm", false, "http://127.0.0.1/relative.htm", false)]
+
+        [InlineData("/folder/*.htm", true, "http://127.0.0.1/folder/relative.htm", false)]
+        [InlineData("/folder/*.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("/folder/*.htm", false, "http://127.0.0.1/folder/relative.htm", false)]
+
+        [InlineData("*/folder/*.htm", true, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("*/folder/*.htm", true, "http://127.0.0.1/folder/relative.htm?query=string", false)]
+        [InlineData("*/folder/*.htm", false, "http://127.0.0.1/folder/relative.htm", false)]
+
+        [InlineData("/folder/*.htm", true, "http://127.0.0.1/relative.htm", false)]
+        [InlineData("/folder/*.htm", true, "http://127.0.0.1/relative.htm?query=string", false)]
+        [InlineData("/folder/*.htm", false, "http://127.0.0.1/relative.htm", false)]
+
+        [InlineData("/*/*/relative.*", true, "http://127.0.0.1/folder1/folder2/relative.htm", false)]
+        [InlineData("/*/*/relative.*", true, "http://127.0.0.1/folder1/folder2/relative.htm?query=string", false)]
+        [InlineData("/*/*/relative.*", false, "http://127.0.0.1/folder1/folder2/relative.htm", false)]
+
+        [InlineData("*/folder1/*/relative.*", true, "http://127.0.0.1/folder1/folder2/relative.htm", true)]
+        [InlineData("*/folder1/*/relative.*", true, "http://127.0.0.1/folder1/folder2/relative.htm?query=string", true)]
+        [InlineData("*/folder1/*/relative.*", false, "http://127.0.0.1/folder1/folder2/relative.htm", false)]
+
+        [InlineData("/*/*/relative.*", true, "http://127.0.0.1/folder1/relative.htm", false)]
+        [InlineData("/*/*/relative.*", true, "http://127.0.0.1/folder1/relative.htm?query=string", false)]
+        [InlineData("/*/*/relative.*", false, "http://127.0.0.1/folder1/relative.htm", false)]
+
+        [InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/absolute.htm?query=string", false)]
+        [InlineData("http://127.0.0.1/*.htm", false, "http://127.0.0.1/absolute.htm", false)]
+
+        [InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/folder/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/*.htm", true, "http://127.0.0.1/folder/absolute.htm?query=string", false)]
+        [InlineData("http://127.0.0.1/*.htm", false, "http://127.0.0.1/folder/absolute.htm", false)]
+        public async Task When_configuring_requestUri_as_string_it_should_match(string uriString, bool allowWildcards, string requestUri, bool isMatch)
         {
-            var request = new HttpRequestMessage { RequestUri = new Uri("http://127.0.0.1/") };
+            var request = new HttpRequestMessage { RequestUri = new Uri(requestUri, UriKind.Absolute) };
 
             // Act
-            _sut.RequestUri("http://127.0.0.1/");
+            _sut.RequestUri(uriString, allowWildcards);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
-            matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
-            (await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+            matchers.Should().HaveCount(1).And.AllBeAssignableTo<UriMatcher>();
+            (await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(isMatch);
         }
 
-        [Fact]
-        public async Task When_configuring_requestUri_as_uri_should_match()
+        [Theory]
+        [InlineData("", UriKind.Relative, "http://127.0.0.1/", true)]
+        [InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", true)]
+        [InlineData("/folder/relative.htm", UriKind.Relative, "http://127.0.0.1/relative.htm", false)]
+        [InlineData("relative.htm", UriKind.Relative, "http://127.0.0.1/folder/relative.htm", false)]
+        [InlineData("folder/relative.htm", UriKind.Relative, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("/folder/relative.htm", UriKind.Relative, "http://127.0.0.1/folder/relative.htm", true)]
+        [InlineData("http://127.0.0.1/absolute.htm", UriKind.Absolute, "http://127.0.0.1/absolute.htm", true)]
+        [InlineData("http://127.0.0.1/absolute.htm", UriKind.Absolute, "http://127.0.0.1/folder/absolute.htm", false)]
+        public async Task When_configuring_requestUri_as_uri_it_should_match(string matchUri, UriKind uriKind, string requestUri, bool isMatch)
         {
-            var uri = new Uri("http://127.0.0.1/");
-            var request = new HttpRequestMessage { RequestUri = new Uri("http://127.0.0.1/") };
+            var uri = new Uri(matchUri, uriKind);
+            var request = new HttpRequestMessage { RequestUri = new Uri(requestUri, UriKind.Absolute) };
 
             // Act
             _sut.RequestUri(uri);
             IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
 
             // Assert
-            matchers.Should().HaveCount(1).And.AllBeOfType<RequestUriMatcher>();
-            (await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().BeTrue();
+            matchers.Should().HaveCount(1).And.AllBeAssignableTo<UriMatcher>();
+            (await matchers.AnyAsync(new MockHttpRequestContext(request))).Should().Be(isMatch);
+        }
+
+        [Theory]
+        [InlineData("*/controller/*", false)]
+        [InlineData("*/controller/*", true)]
+        [InlineData("file.jpg", true)]
+        [InlineData("file.jpg", false)]
+        [InlineData("http://0.0.0.0/path/file.jpg", true)]
+        [InlineData("http://0.0.0.0/path/file.jpg", false)]
+        public void When_formatting_uriString_matcher_it_should_return_human_readable_representation(string uriString, bool allowWildcards)
+        {
+            string expectedText = $"RequestUri: '{uriString}'";
+
+            // Act
+            _sut.RequestUri(uriString, allowWildcards);
+            IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+            string displayText = matchers.Should()
+                .ContainSingle()
+                .Which.Should()
+                .BeAssignableTo<UriMatcher>()
+                .Which.ToString();
+
+            // Assert
+            displayText.Should().Be(expectedText);
+        }
+
+        [Theory]
+        [InlineData("*/controller/*")]
+        [InlineData("file.jpg")]
+        [InlineData("http://0.0.0.0/path/file.jpg")]
+        public void When_formatting_uri_matcher_it_should_return_human_readable_representation(string uriString)
+        {
+            string expectedText = $"RequestUri: '{uriString}'";
+            var uri = new Uri(uriString, DotNetRelativeOrAbsolute);
+
+            // Act
+            _sut.RequestUri(uri);
+            IReadOnlyCollection<IAsyncHttpRequestMatcher> matchers = _sut.Build();
+            string displayText = matchers.Should()
+                .ContainSingle()
+                .Which.Should()
+                .BeAssignableTo<UriMatcher>()
+                .Which.ToString();
+
+            // Assert
+            displayText.Should().Be(expectedText);
         }
     }
 
@@ -692,7 +845,8 @@ public abstract class RequestMatchingExtensionsTests
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.RequestUri,
                     instance,
-                    uri.ToString()),
+                    uri.ToString(),
+                    true),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.RequestUri,
                     instance,

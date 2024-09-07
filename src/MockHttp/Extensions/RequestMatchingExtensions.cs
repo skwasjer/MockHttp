@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
 using MockHttp.Matchers;
+using MockHttp.Matchers.Patterns;
+using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp;
 
@@ -14,13 +16,30 @@ namespace MockHttp;
 /// </summary>
 public static class RequestMatchingExtensions
 {
+    private static bool ContainsWildcard(this string value)
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+#if NETSTANDARD2_0 || NETFRAMEWORK
+        return value.Contains("*");
+#else
+        return value.Contains('*', StringComparison.InvariantCultureIgnoreCase);
+#endif
+    }
+
     /// <summary>
     /// Matches a request by specified <paramref name="requestUri" />.
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="requestUri">The request URI or a URI wildcard.</param>
+    /// <param name="allowWildcards"><see langword="true" /> to allow wildcards, or <see langword="false" /> if exact matching.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
+#pragma warning disable CA1054
+    public static RequestMatching RequestUri(this RequestMatching builder, string requestUri, bool allowWildcards = true)
+#pragma warning restore CA1054
     {
         if (builder is null)
         {
@@ -32,7 +51,9 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(requestUri));
         }
 
-        return builder.With(new RequestUriMatcher(requestUri, true));
+        return allowWildcards && requestUri.ContainsWildcard()
+            ? builder.With(new UriMatcher(new UriStringPatternMatcher(uri => uri.ToString(), new WildcardPatternMatcher(requestUri)), requestUri))
+            : builder.RequestUri(new Uri(requestUri, DotNetRelativeOrAbsolute));
     }
 
     /// <summary>
@@ -53,7 +74,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(requestUri));
         }
 
-        return builder.With(new RequestUriMatcher(requestUri));
+        return builder.With(new UriMatcher(new RelativeOrAbsoluteUriPatternMatcher(requestUri), requestUri.ToString()));
     }
 
     /// <summary>
