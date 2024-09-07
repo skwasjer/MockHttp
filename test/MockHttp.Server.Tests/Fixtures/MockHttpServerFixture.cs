@@ -1,18 +1,13 @@
 ﻿using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Extensions.Logging;
-using Serilog.Sinks.TestCorrelator;
 using Xunit.Abstractions;
 
 namespace MockHttp.Fixtures;
 
 public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 {
-    private ITestCorrelatorContext? _testCorrelatorContext;
+    private readonly CapturingLoggerFactoryFixture _loggerFactoryFixture;
+    private CapturingLoggerFactoryFixture.LogContext? _loggerCtx;
 
     public MockHttpServerFixture()
         : this("http")
@@ -21,17 +16,11 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 
     protected MockHttpServerFixture(string scheme)
     {
-        Logger logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .Enrich.FromLogContext()
-            .WriteTo.TestCorrelator()
-            .WriteTo.Debug()
-            .CreateLogger();
-        LoggerFactory = new SerilogLoggerFactory(logger);
+        _loggerFactoryFixture = new CapturingLoggerFactoryFixture();
         Handler = new MockHttpHandler();
         Server = new MockHttpServer(
             Handler,
-            LoggerFactory,
+            _loggerFactoryFixture.Factory,
             new Uri(
                 SupportsIpv6()
                     ? $"{scheme}://[::1]:0"
@@ -42,33 +31,33 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
             .Configure(builder => builder
                 .Use((_, next) =>
                 {
-                    _testCorrelatorContext ??= TestCorrelator.CreateContext();
+                    _loggerCtx ??= CapturingLoggerFactoryFixture.CreateContext();
                     return next();
                 })
             );
     }
 
-    public ILoggerFactory LoggerFactory { get; }
-
     public MockHttpHandler Handler { get; }
 
     public MockHttpServer Server { get; }
-
-    public void Dispose()
-    {
-        Server.Dispose();
-        Handler.Dispose();
-        GC.SuppressFinalize(this);
-    }
 
     public Task InitializeAsync()
     {
         return Server.StartAsync();
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
-        return Server.DisposeAsync().AsTask();
+        await _loggerFactoryFixture.DisposeAsync();
+        await Server.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _loggerCtx?.Dispose();
+        Server.Dispose();
+        Handler.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private static bool SupportsIpv6()
@@ -80,21 +69,20 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
     // ReSharper disable once MemberCanBeMadeStatic.Global
     public void LogServerTrace(ITestOutputHelper testOutputHelper)
     {
-        if (_testCorrelatorContext is null)
+        if (_loggerCtx is null)
         {
             return;
         }
 
-        var logEvents = TestCorrelator.GetLogEventsFromContextGuid(_testCorrelatorContext.Guid).ToList();
-        foreach (LogEvent logEvent in logEvents)
+        foreach (string msg in _loggerCtx.Events)
         {
-            testOutputHelper.WriteLine(logEvent.RenderMessage());
+            testOutputHelper.WriteLine(msg);
         }
     }
 
     public void Reset()
     {
         Handler.Reset();
-        _testCorrelatorContext = null;
+        _loggerCtx = null;
     }
 }
