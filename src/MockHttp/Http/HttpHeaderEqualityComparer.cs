@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using MockHttp.Matchers.Patterns;
+using MockHttp.Patterns;
 
 namespace MockHttp.Http;
 
@@ -22,7 +22,7 @@ internal enum HttpHeaderMatchType
 internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 {
     private readonly HttpHeaderMatchType? _matchType;
-    private readonly IPatternMatcher<string>? _valuePatternMatcher;
+    private readonly Pattern? _valuePatternMatcher;
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {
@@ -34,9 +34,9 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
         _matchType = matchType;
     }
 
-    public HttpHeaderEqualityComparer(IPatternMatcher<string> valuePatternMatcher)
+    public HttpHeaderEqualityComparer(Pattern valuePatternMatcher)
     {
-        _valuePatternMatcher = valuePatternMatcher ?? throw new ArgumentNullException(nameof(valuePatternMatcher));
+        _valuePatternMatcher = valuePatternMatcher;
     }
 
     public bool Equals(KeyValuePair<string, IEnumerable<string>> x, KeyValuePair<string, IEnumerable<string>> y)
@@ -62,8 +62,8 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
                             .All(xValue =>
                             {
                                 string[] headerValues = HttpHeadersCollection.ParseHttpHeaderValue(yValue).ToArray();
-                                return _valuePatternMatcher is null && headerValues.Contains(xValue)
-                                 || (_valuePatternMatcher is not null && headerValues.Any(_valuePatternMatcher.IsMatch));
+                                return !_valuePatternMatcher.HasValue && headerValues.Contains(xValue)
+                                 || (_valuePatternMatcher.HasValue && headerValues.Any(_valuePatternMatcher.Value.IsMatch));
                             })
                     ))
                 {

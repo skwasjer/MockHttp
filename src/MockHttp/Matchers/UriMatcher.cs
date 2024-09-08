@@ -1,5 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using MockHttp.Matchers.Patterns;
+﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using MockHttp.Patterns;
 using MockHttp.Responses;
 
 namespace MockHttp.Matchers;
@@ -9,26 +10,28 @@ namespace MockHttp.Matchers;
 /// </summary>
 internal class UriMatcher : HttpRequestMatcher
 {
-    private readonly IPatternMatcher<Uri> _patternMatcher;
     private readonly string _name;
+    private readonly Pattern _pattern;
     private readonly string _patternDescription;
+    private readonly Func<Uri, string>? _selectorFn;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UriMatcher" /> class.
     /// </summary>
-    /// <param name="patternMatcher">A matcher implementation that validates the URI.</param>
-    /// <param name="patternDescription">A description of the pattern.</param>
+    /// <param name="pattern">The pattern to match.</param>
+    /// <param name="selector">An expression to extract the part of the URI to match against. If <see langword="null" />, uses the complete URI.</param>
     /// <param name="name">The name of this matcher.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required argument is <see langword="null" />.</exception>
     internal UriMatcher
     (
-        IPatternMatcher<Uri> patternMatcher,
-        string patternDescription,
+        Pattern pattern,
+        Expression<Func<Uri, string>>? selector = null,
         [CallerMemberName] string? name = null
     )
     {
-        _patternMatcher = patternMatcher ?? throw new ArgumentNullException(nameof(patternMatcher));
-        _patternDescription = patternDescription ?? throw new ArgumentNullException(nameof(patternDescription));
+        _pattern = pattern;
+        _selectorFn = selector?.Compile();
+        _patternDescription = pattern.Value;
 
         name ??= GetType().Name;
         if (name.EndsWith("Matcher", StringComparison.Ordinal))
@@ -48,7 +51,13 @@ internal class UriMatcher : HttpRequestMatcher
         }
 
         Uri? uri = requestContext.Request.RequestUri;
-        return uri is not null && _patternMatcher.IsMatch(uri);
+        if (uri is null)
+        {
+            return false;
+        }
+
+        string value = _selectorFn?.Invoke(uri) ?? uri.ToString();
+        return _pattern.IsMatch(value);
     }
 
     /// <inheritdoc />
