@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
 using MockHttp.Matchers;
-using MockHttp.Matchers.Patterns;
+using MockHttp.Patterns;
 using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp;
@@ -41,18 +41,13 @@ public static class RequestMatchingExtensions
     public static RequestMatching RequestUri(this RequestMatching builder, string requestUri, bool allowWildcards = true)
 #pragma warning restore CA1054
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         if (requestUri is null)
         {
             throw new ArgumentNullException(nameof(requestUri));
         }
 
         return allowWildcards && requestUri.ContainsWildcard()
-            ? builder.With(new UriMatcher(new UriStringPatternMatcher(uri => uri.ToString(), new WildcardPatternMatcher(requestUri)), requestUri))
+            ? builder.RequestUri(WildcardPattern.Create(requestUri))
             : builder.RequestUri(new Uri(requestUri, DotNetRelativeOrAbsolute));
     }
 
@@ -64,17 +59,54 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching RequestUri(this RequestMatching builder, Uri requestUri)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         if (requestUri is null)
         {
             throw new ArgumentNullException(nameof(requestUri));
         }
 
-        return builder.With(new UriMatcher(new RelativeOrAbsoluteUriPatternMatcher(requestUri), requestUri.ToString()));
+        return builder.RequestUri(GetAbsoluteOrRelativePattern(requestUri));
+
+        static Pattern GetAbsoluteOrRelativePattern(Uri pattern)
+        {
+            Uri patternRooted = pattern.EnsureIsRooted();
+            return new Pattern
+            {
+                Value = pattern.ToString(),
+                IsMatch = input =>
+                {
+                    var uri = new Uri(input, DotNetRelativeOrAbsolute);
+                    return IsAbsoluteUriMatch(patternRooted, uri) || IsRelativeUriMatch(patternRooted, uri);
+                }
+            };
+
+            static bool IsAbsoluteUriMatch(Uri pattern, Uri uri)
+            {
+                return pattern.IsAbsoluteUri && uri.Equals(pattern);
+            }
+
+            static bool IsRelativeUriMatch(Uri pattern, Uri uri)
+            {
+                return !pattern.IsAbsoluteUri
+                 && uri.IsBaseOf(pattern)
+                 && uri.ToString().EndsWith(pattern.ToString(), StringComparison.Ordinal);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Matches a request by specified <paramref name="pattern" />.
+    /// </summary>
+    /// <param name="builder">The request matching builder instance.</param>
+    /// <param name="pattern">The pattern that must match the request URI.</param>
+    /// <returns>The request matching builder instance.</returns>
+    private static RequestMatching RequestUri(this RequestMatching builder, Pattern pattern)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        return builder.With(new UriMatcher(pattern));
     }
 
     /// <summary>
