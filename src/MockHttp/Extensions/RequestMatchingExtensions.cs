@@ -35,10 +35,24 @@ public static class RequestMatchingExtensions
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="requestUri">The request URI or a URI wildcard.</param>
+    /// <returns>The request matching builder instance.</returns>
+#pragma warning disable CA1054
+    public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
+#pragma warning restore CA1054
+    {
+        return builder.RequestUri(requestUri, true);
+    }
+
+    /// <summary>
+    /// Matches a request by specified <paramref name="requestUri" />.
+    /// </summary>
+    /// <param name="builder">The request matching builder instance.</param>
+    /// <param name="requestUri">The request URI or a URI wildcard.</param>
     /// <param name="allowWildcards"><see langword="true" /> to allow wildcards, or <see langword="false" /> if exact matching.</param>
     /// <returns>The request matching builder instance.</returns>
 #pragma warning disable CA1054
-    public static RequestMatching RequestUri(this RequestMatching builder, string requestUri, bool allowWildcards = true)
+    // For now, keep this internal. For coverage, and most likely, the API will change so then we'd have more to deprecate (using patterns).
+    internal static RequestMatching RequestUri(this RequestMatching builder, string requestUri, bool allowWildcards)
 #pragma warning restore CA1054
     {
         if (requestUri is null)
