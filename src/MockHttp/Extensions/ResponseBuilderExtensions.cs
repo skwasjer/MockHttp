@@ -54,7 +54,7 @@ public static class ResponseBuilderExtensions
 #if NET6_0_OR_GREATER
             using Stream stream = httpContent.ReadAsStream();
 #else
-            using Stream stream = Threading.TaskHelpers.RunSync(httpContent.ReadAsStreamAsync, TimeSpan.FromMinutes(1));
+            using Stream stream = Threading.AsyncHelpers.RunSync(httpContent.ReadAsStreamAsync);
 #endif
             return (IWithContentResult)BufferedStreamBody(builder, stream)
                 .Headers(httpContent.Headers.Select(kvp => new KeyValuePair<string, IEnumerable<string?>>(kvp.Key, kvp.Value)));

@@ -147,7 +147,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// </remarks>
     public void Verify(Action<RequestMatching> matching, IsSent times, string? because = null)
     {
-        TaskHelpers.RunSync(() => VerifyAsync(matching, times, because), TimeSpan.FromSeconds(30));
+        AsyncHelpers.RunSync(() => VerifyAsync(matching, times, because));
     }
 
     /// <summary>
