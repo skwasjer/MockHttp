@@ -1,7 +1,7 @@
 root = true
 
 # Editor config         : https://editorconfig.org/
-# VS reference:         : https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference?view=vs-2017
+# VS reference:         : https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/
 # Resharper properties  : https://www.jetbrains.com/help/resharper/EditorConfig_Index.html
 # VSCode                : https://github.com/editorconfig/editorconfig-vscode
 
@@ -34,6 +34,15 @@ charset = utf-8
 indent_size = 2
 end_of_line = lf
 trim_trailing_whitespace = false
+
+# Verify settings
+[*.{received,verified}.{txt,xml,json}]
+charset = utf-8-bom
+end_of_line = lf
+indent_size = unset
+indent_style = unset
+insert_final_newline = false
+tab_width = unset
 
 ###############################
 # .NET Coding Conventions     #
@@ -77,6 +86,15 @@ dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
 csharp_style_prefer_index_operator = false:suggestion
 csharp_style_prefer_range_operator = false:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+
+# Wrapping
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+
+# Other styling
+dotnet_style_prefer_compound_assignment = true:error
+dotnet_style_prefer_simplified_interpolation = true:suggestion
+dotnet_style_namespace_match_folder = true:suggestion
 
 ###############################
 # Naming Conventions          #
@@ -84,7 +102,6 @@ csharp_style_prefer_range_operator = false:suggestion
 
 # Style Definitions
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
-
 dotnet_naming_style.underscore_lower_camel_case_style.capitalization = camel_case
 dotnet_naming_style.underscore_lower_camel_case_style.required_prefix = _
 
@@ -113,83 +130,16 @@ dotnet_naming_symbols.static_readonly_fields.applicable_kinds            = field
 dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities  = *
 dotnet_naming_symbols.static_readonly_fields.required_modifiers          = static,readonly
 
+dotnet_style_allow_multiple_blank_lines_experimental = true:silent
+dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
+dotnet_code_quality_unused_parameters = all:suggestion
+
+
 ###############################
-# C# Code Style Rules         #
+# Resharper/Rider C#          #
 ###############################
 
 [*.cs]
-# var preferences
-csharp_style_var_for_built_in_types = false:suggestion
-csharp_style_var_when_type_is_apparent = true:suggestion
-csharp_style_var_elsewhere = false:suggestion
-
-# Expression-bodied members
-csharp_style_expression_bodied_methods = false:none
-csharp_style_expression_bodied_constructors = false:none
-csharp_style_expression_bodied_operators = false:none
-csharp_style_expression_bodied_properties = true:none
-csharp_style_expression_bodied_indexers = true:none
-csharp_style_expression_bodied_accessors = true:none
-
-# Pattern-matching preferences
-csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
-csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
-
-# Null-checking preferences
-csharp_style_throw_expression = true:suggestion
-csharp_style_conditional_delegate_call = true:suggestion
-
-# Modifier preferences
-csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
-
-# Expression-level preferences
-csharp_prefer_braces = true:suggestion
-csharp_style_deconstructed_variable_declaration = true:suggestion
-csharp_prefer_simple_default_expression = true:suggestion
-csharp_style_pattern_local_over_anonymous_function = true:suggestion
-csharp_style_inlined_variable_declaration = true:suggestion
-
-# File scoped ns
-csharp_style_namespace_declarations = file_scoped:error
-
-###############################
-# C# Formatting Rules         #
-###############################
-
-# New line preferences
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
-csharp_new_line_between_query_expression_clauses = true
-
-# Indentation preferences
-csharp_indent_case_contents = true
-csharp_indent_switch_labels = true
-csharp_indent_labels = flush_left
-
-# Space preferences
-csharp_space_after_cast = false
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_between_method_call_parameter_list_parentheses = false
-csharp_space_between_method_declaration_parameter_list_parentheses = false
-csharp_space_between_parentheses = false
-csharp_space_before_colon_in_inheritance_clause = true
-csharp_space_after_colon_in_inheritance_clause = true
-csharp_space_around_binary_operators = before_and_after
-csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
-csharp_space_between_method_call_name_and_opening_parenthesis = false
-csharp_space_between_method_call_empty_parameter_list_parentheses = false
-
-# Wrapping preferences
-csharp_preserve_single_line_statements = true
-csharp_preserve_single_line_blocks = true
-
-###############################
-# Resharper custom rules      #
-###############################
 
 # Preserve Existing Formatting
 keep_blank_lines_in_declarations = 1
@@ -202,30 +152,44 @@ blank_lines_around_namespace = 1
 blank_lines_inside_namespace = 0
 blank_lines_around_type = 1
 blank_lines_inside_type = 0
-blank_lines_around_field = 0
+blank_lines_around_field = 1
 blank_lines_around_single_line_field = 0
-blank_lines_around_property = 0
-blank_lines_around_single_line_property = 0
-blank_lines_around_auto_property = 0
-blank_lines_around_single_line_auto_property = 0
+blank_lines_around_property = 1
+blank_lines_around_single_line_property = 1
+blank_lines_around_auto_property = 1
+blank_lines_around_single_line_auto_property = 1
 blank_lines_around_invocable = 1
-blank_lines_around_single_line_invocable = 0
+blank_lines_around_single_line_invocable = 1
 blank_lines_around_local_method = 1
-blank_lines_around_single_line_local_method = 0
+blank_lines_around_single_line_local_method = 1
 blank_lines_around_region = 1
 blank_lines_inside_region = 1
 blank_lines_between_using_groups = 0
 blank_lines_after_using_list = 1
 blank_lines_after_start_comment = 1
 blank_lines_before_single_line_comment = 0
-blank_lines_after_control_transfer_statements = 1  #check for block or each
+blank_lines_after_control_transfer_statements = 1 #check for block or each
+blank_lines_around_accessor = 0
+blank_lines_around_single_line_accessor = 0
+blank_lines_after_file_scoped_namespace_directive = 1
+blank_lines_around_single_line_type = 1
+blank_lines_after_block_statements = 1
+blank_lines_after_case = 0
+blank_lines_after_multiline_statements = 0
+blank_lines_around_block_case_section = 0
+blank_lines_around_multiline_case_section = 0
+blank_lines_before_block_statements = 0
+blank_lines_before_case = 0
+blank_lines_before_control_transfer_statements = 0
+blank_lines_before_multiline_statements = 0
 
-# _Braces Layout_
+# Braces Layout
 brace_style = next_line
 anonymous_method_declaration_braces = next_line
 empty_block_style = multiline
+indent_inside_namespace = true
+use_continuous_indent_inside_initializer_braces = true
 
-# _Line Breaks_
 # Preserve Existing Formatting
 simple_embedded_statement_style = do_not_change
 simple_case_statement_style = do_not_change
@@ -239,40 +203,49 @@ new_line_before_finally = true
 
 # Line Wrapping
 wrap_parameters_style = chop_if_long
-wrap_before_declaration_lpar = true
+wrap_before_declaration_lpar = false
+wrap_before_declaration_rpar = true
 wrap_after_declaration_lpar = true
 wrap_arguments_style = chop_if_long
 wrap_before_invocation_lpar = false
-wrap_after_invocation_lpar = false
+wrap_before_invocation_rpar = true
+wrap_after_invocation_lpar = true
 wrap_before_comma = false
-wrap_before_arrow_with_expressions = false
+wrap_before_arrow_with_expressions = true
 wrap_after_dot_in_method_calls = false
 wrap_chained_method_calls = chop_if_long
 wrap_before_extends_colon = true
-wrap_extends_list_style = wrap_if_long
+wrap_extends_list_style = chop_if_long
 wrap_for_stmt_header_style = chop_if_long
 wrap_before_ternary_opsigns = true
 wrap_ternary_expr_style = chop_if_long
 wrap_linq_expressions = chop_if_long
 wrap_before_binary_opsign = true
-wrap_chained_binary_expressions = true
+wrap_chained_binary_expressions = chop_if_long
+wrap_before_binary_pattern_op = true
+wrap_chained_binary_patterns = chop_if_long
 force_chop_compound_if_expression = false
 force_chop_compound_while_expression = false
 force_chop_compound_do_expression = false
 wrap_multiple_type_parameer_constraints_style = chop_if_long
-wrap_object_and_collection_initializer_style = chop_if_long #check
+max_initializer_elements_on_line = 0
+wrap_object_and_collection_initializer_style = chop_always #check
 wrap_array_initializer_style = chop_if_long #check
 wrap_before_first_type_parameter_constraint = true
 wrap_before_type_parameter_langle = false
+wrap_before_eq = false
+wrap_lines = true
+max_line_length = 140
 
 # Other
+max_attribute_length_for_same_line = 38
 place_abstract_accessorholder_on_single_line = true
 place_simple_accessorholder_on_single_line = true
 place_accessor_with_attrs_holder_on_single_line = true #check
 place_simple_accessor_on_single_line = true
 place_simple_method_on_single_line = false
 place_simple_anonymousmethod_on_single_line = true
-place_simple_initializer_on_single_line = true
+place_simple_initializer_on_single_line = false
 place_type_attribute_on_same_line = false
 place_method_attribute_on_same_line = false
 place_accessorholder_attribute_on_same_line = false
@@ -282,25 +255,36 @@ place_field_attribute_on_same_line = false
 place_constructor_initializer_on_same_line = true
 place_type_constraints_on_same_line = false
 allow_comment_after_lbrace = false
+place_attribute_on_same_line = false
+place_simple_list_pattern_on_single_line = true
+keep_existing_linebreaks = true
+keep_existing_attribute_arrangement = false
 
-# _Indentation_
+# Indentation
+continuous_indent_multiplier = 1
+use_continuous_indent_inside_parens = true
 indent_switch_labels = true
 indent_nested_usings_stmt = false
 indent_nested_fixed_stmt = false
 indent_nested_lock_stmt = false
-indent_nested_for_stmt = true
-indent_nested_foreach_stmt = true
-indent_nested_while_stmt = true
+indent_nested_for_stmt = false
+indent_nested_foreach_stmt = false
+indent_nested_while_stmt = false
 indent_type_constraints = true
 stick_comment = false
 indent_method_decl_pars = inside
 indent_invocation_pars = inside
 indent_statement_pars = outside
-indent_pars = outside
-
+indent_pars = inside
+indent_typearg_angles = inside
+indent_typeparam_angles = inside
+indent_preprocessor_if = no_indent
+indent_preprocessor_region = usual_indent
+indent_preprocessor_other = no_indent
+indent_braces_inside_statement_conditions = true
 
 # Alignments
-align_multiline_parameter = true
+align_multiline_parameter = false
 align_first_arg_by_paren = false
 align_multiline_argument = false
 align_multiline_extends_list = true
@@ -310,11 +294,18 @@ align_multiline_calls_chain = false
 align_multiline_array_and_object_initializer = false
 indent_anonymous_method_block = false
 align_multiline_for_stmt = true
-align_multiple_declaration = true
-align_multline_type_parameter_list = true
-align_multline_type_parameter_constrains = true
-align_linq_query = true
+align_multiple_declaration = false
+align_multline_type_parameter_list = false
+align_multline_type_parameter_constrains = false
+align_linq_query = false
+align_multiline_binary_patterns = false
+align_multiline_list_pattern = false
+align_multiline_property_pattern = false
+align_multiline_statement_conditions = false
+align_multiline_switch_expression = false
+align_tuple_components = false
 
+int_align_fix_in_adjacent = true
 int_align_fields = false
 int_align_properties = false
 int_align_methods = false
@@ -325,12 +316,22 @@ int_align_nested_ternary = false
 int_align_invocations = false
 int_align_binary_expressions = false
 int_align_comments = false
+int_align_property_patterns = false
+int_align_switch_expressions = false
+int_align_switch_sections = false
 
-outdent_binary_ops = true
+outdent_binary_ops = false
 outdent_dots = false
+outdent_binary_pattern_ops = false
+outdent_statement_labels = false
+outdent_commas = false
 special_else_if_treatment = true
+alignment_tab_fill_style = use_spaces
+allow_far_alignment = false
+use_indent_from_previous_element = true
 
-# _Spaces_
+# Spaces
+extra_spaces = remove_all
 space_before_method_call_parentheses = false
 space_before_empty_method_call_parentheses = false
 space_before_method_parentheses = false
@@ -411,3 +412,246 @@ space_after_type_parameter_constraint_colon = true
 space_around_alias_eq = true
 space_before_trailing_comment = true
 space_after_operator_keyword = true
+space_before_new_parentheses = false
+space_between_keyword_and_expression = true
+space_between_keyword_and_type = true
+space_within_new_parentheses = false
+space_after_attributes = true
+space_after_colon_in_case = true
+space_within_slice_pattern = true
+space_within_empty_braces = true
+
+###############################
+# Resharper/Rider C# Syntax   #
+###############################
+
+keep_existing_invocation_parens_arrangement = false
+max_invocation_arguments_on_line = 3
+
+# Instance members qualification
+instance_members_qualify_declared_in = this_class, base_class
+resharper_arrange_this_qualifier_highlighting = suggestion
+
+# Static members qualification
+static_members_qualify_members = none
+static_members_qualify_with = declared_type
+resharper_arrange_static_member_qualifier_highlighting = hint
+
+# 'var' usage in declarations
+prefer_explicit_discard_declaration = false
+prefer_separate_deconstructed_variables_declaration = false
+resharper_arrange_var_keywords_in_deconstructing_declaration_highlighting = suggestion
+resharper_suggest_discard_declaration_var_style_highlighting = hint
+
+# Usings
+qualified_using_at_nested_scope = true
+allow_alias = true
+
+# Arguments
+arguments_anonymous_function = positional
+arguments_literal = positional
+arguments_named = positional
+arguments_other = positional
+arguments_string_literal = positional
+resharper_arguments_style_anonymous_function_highlighting = none
+resharper_arguments_style_literal_highlighting = none
+resharper_arguments_style_named_expression_highlighting = none
+resharper_arguments_style_other_highlighting = none
+resharper_arguments_style_string_literal_highlighting = none
+
+# Parentheses
+parentheses_redundancy_style = remove_if_not_clarifies_precedence
+parentheses_non_obvious_operations = none, shift, bitwise_and, bitwise_exclusive_or, bitwise_inclusive_or, bitwise
+parentheses_same_type_operations = false
+resharper_arrange_missing_parentheses_highlighting = none
+resharper_arrange_redundant_parentheses_highlighting = none
+
+# Code body
+local_function_body = block_body
+
+# Attributes
+force_attribute_style = separate
+resharper_arrange_attributes_highlighting = none
+
+# Trailing comma
+trailing_comma_in_multiline_lists = false
+trailing_comma_in_singleline_lists = false
+resharper_arrange_trailing_comma_in_multiline_lists_highlighting = none
+resharper_arrange_trailing_comma_in_singleline_lists_highlighting = none
+
+# Object creation
+object_creation_when_type_evident = target_typed
+object_creation_when_type_not_evident = explicitly_typed
+resharper_arrange_object_creation_when_type_evident_highlighting = suggestion
+resharper_arrange_object_creation_when_type_not_evident_highlighting = hint
+
+# Default value
+default_value_when_type_evident = default_literal
+default_value_when_type_not_evident = default_expression
+resharper_arrange_default_value_when_type_evident_highlighting = suggestion
+resharper_arrange_default_value_when_type_not_evident_highlighting = none
+
+# Patterns
+null_checking_pattern_style = not_null_pattern
+resharper_arrange_null_checking_pattern_highlighting = hint
+
+###############################
+# MS C# Code Style Rules      #
+###############################
+
+[*.cs]
+# var preferences
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = false:none
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = when_on_single_line:none
+csharp_style_expression_bodied_properties = when_on_single_line:none
+csharp_style_expression_bodied_indexers = when_on_single_line:none
+csharp_style_expression_bodied_accessors = false:none
+
+# Pattern-matching preferences
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
+
+# Null-checking preferences
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:suggestion
+
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
+
+# Expression-level preferences
+csharp_prefer_braces = true:suggestion
+csharp_style_deconstructed_variable_declaration = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+csharp_style_pattern_local_over_anonymous_function = true:suggestion
+csharp_style_inlined_variable_declaration = true:suggestion
+
+###############################
+# MS C# Formatting Rules      #
+###############################
+
+# Namespace
+csharp_style_namespace_declarations = file_scoped:error
+csharp_using_directive_placement = outside_namespace:error
+
+# New line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Indentation preferences
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = flush_left
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents_when_block = true
+
+# Space preferences
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_around_declaration_statements = false
+csharp_space_before_open_square_brackets = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_square_brackets = false
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_before_comma = false
+csharp_space_before_dot = false
+csharp_space_before_semicolon_in_for_statement = false
+
+# Wrapping preferences
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+
+# Styling
+csharp_style_prefer_index_operator = false:suggestion
+csharp_style_prefer_range_operator = false:suggestion
+csharp_prefer_simple_using_statement = true:suggestion
+csharp_style_prefer_method_group_conversion = true:suggestion
+csharp_style_prefer_top_level_statements = true:silent
+csharp_style_expression_bodied_lambdas = when_on_single_line:silent
+csharp_style_expression_bodied_local_functions = when_on_single_line:silent
+csharp_style_prefer_null_check_over_type_check = true:error
+csharp_style_prefer_local_over_anonymous_function = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_tuple_swap = true:suggestion
+csharp_style_prefer_utf8_string_literals = true:suggestion
+csharp_style_prefer_primary_constructors = false:suggestion
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
+
+csharp_style_unused_value_assignment_preference = discard_variable:suggestion
+csharp_style_unused_value_expression_statement_preference = discard_variable:silent
+csharp_prefer_static_local_function = true:suggestion
+csharp_style_prefer_readonly_struct = true:suggestion
+csharp_style_allow_embedded_statements_on_same_line_experimental = true:silent
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true:silent
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true:silent
+csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
+csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
+csharp_style_prefer_pattern_matching = true:silent
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_not_pattern = true:suggestion
+csharp_style_prefer_extended_property_pattern = true:suggestion
+
+
+###############################
+# Resharper/Rider XML doc     #
+###############################
+
+# XML documentation
+
+# Line wrapping
+xmldoc_max_line_length = 140
+xmldoc_wrap_lines = false
+xmldoc_wrap_tags_and_pi = false
+
+# Processing instructions
+xmldoc_blank_line_after_pi = false
+xmldoc_pi_attributes_indent = single_indent
+xmldoc_pi_attribute_style = do_not_touch
+xmldoc_spaces_around_eq_in_pi_attribute = false
+xmldoc_space_after_last_pi_attribute = true
+
+# Inside of tag header
+xmldoc_attribute_indent = single_indent
+xmldoc_attribute_style = do_not_touch
+xmldoc_spaces_around_eq_in_attribute = false
+xmldoc_space_after_last_attribute = false
+xmldoc_space_before_self_closing = true
+
+# Tag content
+wrap_text = true
+xmldoc_indent_text = zero_indent
+xmldoc_indent_child_elements = do_not_touch
+xmldoc_keep_user_linebreaks = true
+xmldoc_linebreaks_inside_tags_for_elements_with_child_elements = true
+xmldoc_linebreaks_inside_tags_for_multiline_elements = true
+xmldoc_spaces_inside_tags = false
+xmldoc_wrap_around_elements = true
+
+# Around tags
+xmldoc_linebreak_before_elements = summary,remarks,example,returns,param,typeparam,value,para
+xmldoc_linebreak_before_multiline_elements = true
+xmldoc_linebreak_before_singleline_elements = false
+xmldoc_max_blank_lines_between_tags = 0
