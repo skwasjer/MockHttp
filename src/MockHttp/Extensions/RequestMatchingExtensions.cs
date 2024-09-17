@@ -1,5 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
@@ -37,7 +38,13 @@ public static class RequestMatchingExtensions
     /// <param name="requestUri">The request URI or a URI wildcard.</param>
     /// <returns>The request matching builder instance.</returns>
 #pragma warning disable CA1054
-    public static RequestMatching RequestUri(this RequestMatching builder, string requestUri)
+    public static RequestMatching RequestUri(
+        this RequestMatching builder,
+#if NET8_0_OR_GREATER
+        [StringSyntax(StringSyntaxAttribute.Uri)]
+#endif
+        string requestUri
+    )
 #pragma warning restore CA1054
     {
         return builder.RequestUri(requestUri, true);
