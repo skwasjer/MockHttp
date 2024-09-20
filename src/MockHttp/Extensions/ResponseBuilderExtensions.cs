@@ -3,11 +3,12 @@ using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using MockHttp.Extensions;
 using MockHttp.Http;
 using MockHttp.IO;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
-using MockHttp.Responses;
+using MockHttp.Response.Behaviors;
 
 namespace MockHttp;
 

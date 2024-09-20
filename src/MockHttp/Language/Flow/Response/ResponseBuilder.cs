@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
+using MockHttp.Extensions;
 using MockHttp.Http;
+using MockHttp.Response.Behaviors;
 using MockHttp.Responses;
 
 namespace MockHttp.Language.Flow.Response;

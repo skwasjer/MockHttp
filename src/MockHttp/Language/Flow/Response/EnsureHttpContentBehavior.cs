@@ -1,4 +1,5 @@
-﻿using MockHttp.Responses;
+﻿using MockHttp.Http;
+using MockHttp.Responses;
 
 namespace MockHttp.Language.Flow.Response;
 

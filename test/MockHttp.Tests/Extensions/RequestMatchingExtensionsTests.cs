@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
+using MockHttp.Extensions;
 using MockHttp.Http;
 using MockHttp.Matchers;
 using MockHttp.Responses;
 using static MockHttp.Http.UriExtensions;
 
-namespace MockHttp.Extensions;
+namespace MockHttp;
 
 public abstract class RequestMatchingExtensionsTests
 {

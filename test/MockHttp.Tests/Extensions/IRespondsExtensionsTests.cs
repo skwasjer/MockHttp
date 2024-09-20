@@ -5,7 +5,7 @@ using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Responses;
 
-namespace MockHttp.Extensions;
+namespace MockHttp;
 
 public class IRespondsExtensionsTests
 {
