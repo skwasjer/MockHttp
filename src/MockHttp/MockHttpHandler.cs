@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
 using System.Text;
+using MockHttp.Extensions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;

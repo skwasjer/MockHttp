@@ -5,9 +5,11 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
+using MockHttp.Extensions;
 using MockHttp.Http;
 using MockHttp.Matchers;
 using MockHttp.Patterns;
+using MockHttp.Request;
 using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using MockHttp.Matchers;
+using MockHttp.Request;
 
 namespace MockHttp;
 

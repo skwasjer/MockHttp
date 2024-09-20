@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MockHttp.Extensions;
 
 namespace MockHttp.Matchers;
 

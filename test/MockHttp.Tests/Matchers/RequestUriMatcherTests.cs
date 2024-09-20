@@ -2,6 +2,7 @@
 
 namespace MockHttp.Matchers;
 
+[Obsolete($"Replaced with {nameof(UriMatcher)}. Will be removed in next major release.")]
 public class RequestUriMatcherTests
 {
     [Theory]
