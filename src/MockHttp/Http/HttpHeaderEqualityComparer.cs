@@ -3,22 +3,6 @@ using MockHttp.Patterns;
 
 namespace MockHttp.Http;
 
-internal enum HttpHeaderMatchType
-{
-    /// <summary>
-    /// Header and value(s) match exactly.
-    /// </summary>
-    Exact,
-    /// <summary>
-    /// Header name matches, values are ignored.
-    /// </summary>
-    HeaderNameOnly,
-    /// <summary>
-    /// Header name matches and all values of left comparand must be in right.
-    /// </summary>
-    HeaderNameAndPartialValues
-}
-
 internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 {
     private readonly HttpHeaderMatchType? _matchType;
@@ -62,8 +46,8 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
                             .All(xValue =>
                             {
                                 string[] headerValues = HttpHeadersCollection.ParseHttpHeaderValue(yValue).ToArray();
-                                return !_valuePatternMatcher.HasValue && headerValues.Contains(xValue)
-                                 || (_valuePatternMatcher.HasValue && headerValues.Any(_valuePatternMatcher.Value.IsMatch));
+                                return (!_valuePatternMatcher.HasValue && headerValues.Contains(xValue))
+                                    || (_valuePatternMatcher.HasValue && headerValues.Any(_valuePatternMatcher.Value.IsMatch));
                             })
                     ))
                 {
