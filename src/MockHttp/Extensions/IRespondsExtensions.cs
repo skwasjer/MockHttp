@@ -66,22 +66,6 @@ public static class IRespondsExtensions
     }
 
     /// <summary>
-    /// Specifies a strategy that returns the response for a request.
-    /// </summary>
-    /// <param name="responds"></param>
-    internal static TResult RespondUsing<TStrategy, TResult>(this IResponds<TResult> responds)
-        where TStrategy : IResponseStrategy, new()
-        where TResult : IResponseResult
-    {
-        if (responds is null)
-        {
-            throw new ArgumentNullException(nameof(responds));
-        }
-
-        return responds.RespondUsing(new TStrategy());
-    }
-
-    /// <summary>
     /// Configures a response via the response builder API.
     /// </summary>
     /// <param name="responds"></param>
@@ -119,6 +103,22 @@ public static class IRespondsExtensions
         }
 
         return responds.Respond((ctx, _, builder) => with(ctx, builder));
+    }
+
+    /// <summary>
+    /// Specifies a strategy that returns the response for a request.
+    /// </summary>
+    /// <param name="responds"></param>
+    internal static TResult RespondUsing<TStrategy, TResult>(this IResponds<TResult> responds)
+        where TStrategy : IResponseStrategy, new()
+        where TResult : IResponseResult
+    {
+        if (responds is null)
+        {
+            throw new ArgumentNullException(nameof(responds));
+        }
+
+        return responds.RespondUsing(new TStrategy());
     }
 
     private sealed class RequestSpecificResponseBuilder : IResponseStrategy
