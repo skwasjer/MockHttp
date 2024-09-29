@@ -1,0 +1,504 @@
+﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/skwasjer/MockHttp")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.1", FrameworkDisplayName=".NET Standard 2.1")]
+namespace MockHttp
+{
+    public static class AuthenticationRequestMatchingExtensions
+    {
+        public static MockHttp.RequestMatching BearerToken(this MockHttp.RequestMatching builder) { }
+        public static MockHttp.RequestMatching BearerToken(this MockHttp.RequestMatching builder, string token) { }
+    }
+    public sealed class BitRate
+    {
+        public override string ToString() { }
+        public static MockHttp.BitRate FiveG() { }
+        public static MockHttp.BitRate FourG() { }
+        public static MockHttp.BitRate FromInt32(int bitRate) { }
+        public static MockHttp.BitRate OneGigabit() { }
+        public static MockHttp.BitRate OneHundredMegabit() { }
+        public static MockHttp.BitRate TenMegabit() { }
+        public static MockHttp.BitRate ThreeG() { }
+        public static int ToInt32(MockHttp.BitRate bitRate) { }
+        public static MockHttp.BitRate TwoG() { }
+        public static int op_Explicit(MockHttp.BitRate bitRate) { }
+        public static MockHttp.BitRate op_Explicit(int bitRate) { }
+    }
+    [System.Serializable]
+    public class HttpMockException : System.Exception
+    {
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+        protected HttpMockException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+    }
+    public interface IFluentInterface
+    {
+        bool Equals(object obj);
+        int GetHashCode();
+        System.Type GetType();
+        string ToString();
+    }
+    public interface IInvokedHttpRequest
+    {
+        System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> Matchers { get; }
+        System.Net.Http.HttpRequestMessage Request { get; }
+    }
+    public interface IInvokedHttpRequestCollection : MockHttp.Threading.IConcurrentReadOnlyCollection<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IEnumerable<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyCollection<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyList<MockHttp.IInvokedHttpRequest>, System.Collections.IEnumerable
+    {
+        void Clear();
+    }
+    public interface IMockConfiguration
+    {
+        System.Collections.Generic.IReadOnlyDictionary<System.Type, object> Items { get; }
+        MockHttp.IMockConfiguration Use<TService>(TService service);
+    }
+    public static class IRespondsExtensions
+    {
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.IResponseBuilder> with)
+            where TResult : MockHttp.Language.Flow.IResponseResult { }
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Responses.MockHttpRequestContext, MockHttp.IResponseBuilder> with)
+            where TResult : MockHttp.Language.Flow.IResponseResult { }
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Responses.MockHttpRequestContext, System.Threading.CancellationToken, MockHttp.IResponseBuilder> with)
+            where TResult : MockHttp.Language.Flow.IResponseResult { }
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Func<System.Net.Http.HttpResponseMessage> response)
+            where TResult : MockHttp.Language.Flow.IResponseResult { }
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Func<System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken, System.Net.Http.HttpResponseMessage> response)
+            where TResult : MockHttp.Language.Flow.IResponseResult { }
+    }
+    public interface IResponseBuilder : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithContent, MockHttp.Language.Response.IWithHeaders, MockHttp.Language.Response.IWithResponse, MockHttp.Language.Response.IWithStatusCode { }
+    public sealed class IsSent
+    {
+        public override string ToString() { }
+        public static MockHttp.IsSent AtLeast(int callCount) { }
+        public static MockHttp.IsSent AtLeastOnce() { }
+        public static MockHttp.IsSent AtMost(int callCount) { }
+        public static MockHttp.IsSent AtMostOnce() { }
+        public static MockHttp.IsSent Exactly(int callCount) { }
+        public static MockHttp.IsSent Never() { }
+        public static MockHttp.IsSent Once() { }
+    }
+    public sealed class MockHttpHandler : System.Net.Http.HttpMessageHandler, MockHttp.IMockConfiguration
+    {
+        public static readonly System.Text.Encoding DefaultEncoding;
+        public MockHttpHandler() { }
+        public MockHttp.Language.IRespondsThrows Fallback { get; }
+        public MockHttp.IInvokedHttpRequestCollection InvokedRequests { get; }
+        public void Reset() { }
+        protected override System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) { }
+        public void Verify() { }
+        public void Verify(System.Action<MockHttp.RequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
+        public void Verify(System.Action<MockHttp.RequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
+        public void VerifyAll() { }
+        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.RequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
+        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.RequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
+        public void VerifyNoOtherRequests() { }
+        public MockHttp.Language.IConfiguredRequest When(System.Action<MockHttp.RequestMatching> matching) { }
+    }
+    public class NetworkLatency
+    {
+        public override string ToString() { }
+        public static MockHttp.NetworkLatency Around(int latencyInMs) { }
+        public static MockHttp.NetworkLatency Around(System.TimeSpan latency) { }
+        public static MockHttp.NetworkLatency Between(int minMs, int maxMs) { }
+        public static MockHttp.NetworkLatency Between(System.TimeSpan min, System.TimeSpan max) { }
+        public static MockHttp.NetworkLatency FiveG() { }
+        public static MockHttp.NetworkLatency FourG() { }
+        public static MockHttp.NetworkLatency ThreeG() { }
+        public static MockHttp.NetworkLatency TwoG() { }
+    }
+    public class RequestMatching : MockHttp.IFluentInterface
+    {
+        public MockHttp.RequestMatching Not { get; }
+        protected virtual MockHttp.RequestMatching RegisterMatcher(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
+        protected virtual void ValidateMatcher(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
+        public MockHttp.RequestMatching With(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
+    }
+    public static class RequestMatchingExtensions
+    {
+        public static MockHttp.RequestMatching Any(this MockHttp.RequestMatching builder, System.Action<MockHttp.RequestMatching> anyBuilder) { }
+        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, byte[] body) { }
+        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, System.IO.Stream body) { }
+        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body) { }
+        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body, System.Text.Encoding encoding) { }
+        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, System.Net.Http.Headers.MediaTypeHeaderValue mediaType) { }
+        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, string mediaType) { }
+        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, string contentType, System.Text.Encoding encoding) { }
+        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> formData) { }
+        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> formData) { }
+        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Specialized.NameValueCollection formData) { }
+        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, string urlEncodedFormData) { }
+        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, string key, string value) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.Collections.Generic.IEnumerable<string> values) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.DateTime date) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.DateTimeOffset date) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, params string[] values) { }
+        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, string value, bool allowWildcards) { }
+        public static MockHttp.RequestMatching Header<T>(this MockHttp.RequestMatching builder, string name, T value)
+            where T :  struct { }
+        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> headers) { }
+        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> headers) { }
+        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, string headers) { }
+        public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, System.Net.Http.HttpMethod method) { }
+        public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, string httpMethod) { }
+        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, byte[] partialBody) { }
+        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, System.IO.Stream partialBody) { }
+        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody) { }
+        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody, System.Text.Encoding encoding) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, System.Collections.Specialized.NameValueCollection parameters) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string queryString) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, System.Collections.Generic.IEnumerable<string> values) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, params string[] values) { }
+        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, string? value) { }
+        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, string requestUri) { }
+        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, System.Uri requestUri) { }
+        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, string version) { }
+        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, System.Version version) { }
+        public static MockHttp.RequestMatching Where(this MockHttp.RequestMatching builder, System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
+        public static MockHttp.RequestMatching WithoutBody(this MockHttp.RequestMatching builder) { }
+        public static MockHttp.RequestMatching WithoutQueryString(this MockHttp.RequestMatching builder) { }
+    }
+    public static class ResponseBuilderExtensions
+    {
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, byte[] binaryContent) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Func<System.IO.Stream> streamContentFactory) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<System.IO.Stream>> streamContentFactory) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.IO.Stream streamContent) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Net.Http.HttpContent httpContent) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, string textContent, System.Text.Encoding? encoding = null) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, byte[] binaryContent, int offset, int count) { }
+        public static MockHttp.Language.Response.IWithResponse ClientTimeout(this MockHttp.IResponseBuilder builder, System.TimeSpan? timeoutAfter = default) { }
+        public static MockHttp.Language.Flow.Response.IWithHeadersResult ContentType(this MockHttp.Language.Response.IWithContentType builder, string mediaType, System.Text.Encoding? encoding = null) { }
+        public static MockHttp.Language.Flow.Response.IWithHeadersResult Header<T>(this MockHttp.Language.Response.IWithHeaders builder, System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<T>> header) { }
+        public static MockHttp.Language.Flow.Response.IWithHeadersResult Header<T>(this MockHttp.Language.Response.IWithHeaders builder, System.Collections.Generic.KeyValuePair<string, T> header) { }
+        public static MockHttp.Language.Flow.Response.IWithHeadersResult Header<T>(this MockHttp.Language.Response.IWithHeaders builder, string name, System.Collections.Generic.IEnumerable<T> value) { }
+        public static MockHttp.Language.Flow.Response.IWithHeadersResult Header<T>(this MockHttp.Language.Response.IWithHeaders builder, string name, params T[] value) { }
+        public static MockHttp.Language.Response.IWithResponse Latency(this MockHttp.Language.Response.IWithResponse builder, MockHttp.NetworkLatency latency) { }
+        public static MockHttp.Language.Response.IWithResponse Latency(this MockHttp.Language.Response.IWithResponse builder, System.Func<MockHttp.NetworkLatency> latency) { }
+        public static MockHttp.Language.Flow.Response.IWithStatusCodeResult ServerTimeout(this MockHttp.IResponseBuilder builder, System.TimeSpan? timeoutAfter = default) { }
+        public static MockHttp.Language.Flow.Response.IWithStatusCodeResult StatusCode(this MockHttp.Language.Response.IWithStatusCode builder, int statusCode, string? reasonPhrase = null) { }
+        public static MockHttp.Language.Response.IWithResponse TransferRate(this MockHttp.Language.Response.IWithResponse builder, MockHttp.BitRate bitRate) { }
+        public static MockHttp.Language.Response.IWithResponse TransferRate(this MockHttp.Language.Response.IWithResponse builder, System.Func<MockHttp.BitRate> bitRate) { }
+        public static MockHttp.Language.Response.IWithResponse TransferRate(this MockHttp.Language.Response.IWithResponse builder, int bitRate) { }
+    }
+    public static class ResponseBuilderLinqToXmlExtensions
+    {
+        public static MockHttp.Language.Flow.Response.IWithContentResult XmlBody(this MockHttp.Language.Response.IWithContent builder, System.Xml.Linq.XContainer xmlContent, System.Xml.XmlWriterSettings? settings = null) { }
+    }
+}
+namespace MockHttp.Http
+{
+    public static class HeaderNames
+    {
+        public const string Accept = "Accept";
+        public const string AcceptCharset = "Accept-Charset";
+        public const string AcceptEncoding = "Accept-Encoding";
+        public const string AcceptLanguage = "Accept-Language";
+        public const string AcceptRanges = "Accept-Ranges";
+        public const string AccessControlAllowCredentials = "Access-Control-Allow-Credentials";
+        public const string AccessControlAllowHeaders = "Access-Control-Allow-Headers";
+        public const string AccessControlAllowMethods = "Access-Control-Allow-Methods";
+        public const string AccessControlAllowOrigin = "Access-Control-Allow-Origin";
+        public const string AccessControlExposeHeaders = "Access-Control-Expose-Headers";
+        public const string AccessControlMaxAge = "Access-Control-Max-Age";
+        public const string AccessControlRequestHeaders = "Access-Control-Request-Headers";
+        public const string AccessControlRequestMethod = "Access-Control-Request-Method";
+        public const string Age = "Age";
+        public const string Allow = "Allow";
+        public const string Authority = ":authority";
+        public const string Authorization = "Authorization";
+        public const string CacheControl = "Cache-Control";
+        public const string Connection = "Connection";
+        public const string ContentDisposition = "Content-Disposition";
+        public const string ContentEncoding = "Content-Encoding";
+        public const string ContentLanguage = "Content-Language";
+        public const string ContentLength = "Content-Length";
+        public const string ContentLocation = "Content-Location";
+        public const string ContentMD5 = "Content-MD5";
+        public const string ContentRange = "Content-Range";
+        public const string ContentSecurityPolicy = "Content-Security-Policy";
+        public const string ContentSecurityPolicyReportOnly = "Content-Security-Policy-Report-Only";
+        public const string ContentType = "Content-Type";
+        public const string Cookie = "Cookie";
+        public const string CorrelationContext = "Correlation-Context";
+        public const string DNT = "DNT";
+        public const string Date = "Date";
+        public const string ETag = "ETag";
+        public const string Expect = "Expect";
+        public const string Expires = "Expires";
+        public const string From = "From";
+        public const string Host = "Host";
+        public const string IfMatch = "If-Match";
+        public const string IfModifiedSince = "If-Modified-Since";
+        public const string IfNoneMatch = "If-None-Match";
+        public const string IfRange = "If-Range";
+        public const string IfUnmodifiedSince = "If-Unmodified-Since";
+        public const string KeepAlive = "Keep-Alive";
+        public const string LastModified = "Last-Modified";
+        public const string Location = "Location";
+        public const string MaxForwards = "Max-Forwards";
+        public const string Method = ":method";
+        public const string Origin = "Origin";
+        public const string Path = ":path";
+        public const string Pragma = "Pragma";
+        public const string ProxyAuthenticate = "Proxy-Authenticate";
+        public const string ProxyAuthorization = "Proxy-Authorization";
+        public const string Range = "Range";
+        public const string Referer = "Referer";
+        public const string RequestId = "Request-Id";
+        public const string RetryAfter = "Retry-After";
+        public const string Scheme = ":scheme";
+        public const string SecWebSocketAccept = "Sec-WebSocket-Accept";
+        public const string SecWebSocketKey = "Sec-WebSocket-Key";
+        public const string SecWebSocketProtocol = "Sec-WebSocket-Protocol";
+        public const string SecWebSocketVersion = "Sec-WebSocket-Version";
+        public const string Server = "Server";
+        public const string SetCookie = "Set-Cookie";
+        public const string Status = ":status";
+        public const string StrictTransportSecurity = "Strict-Transport-Security";
+        public const string TE = "TE";
+        public const string TraceParent = "traceparent";
+        public const string TraceState = "tracestate";
+        public const string Trailer = "Trailer";
+        public const string TransferEncoding = "Transfer-Encoding";
+        public const string Translate = "Translate";
+        public const string Upgrade = "Upgrade";
+        public const string UpgradeInsecureRequests = "Upgrade-Insecure-Requests";
+        public const string UserAgent = "User-Agent";
+        public const string Vary = "Vary";
+        public const string Via = "Via";
+        public const string WWWAuthenticate = "WWW-Authenticate";
+        public const string Warning = "Warning";
+        public const string WebSocketSubProtocols = "Sec-WebSocket-Protocol";
+        public const string XFrameOptions = "X-Frame-Options";
+    }
+    public static class MediaTypes
+    {
+        public const string FormUrlEncoded = "application/x-www-form-urlencoded";
+        public const string Html = "text/html";
+        public const string Json = "application/json";
+        public const string JsonProblemDetails = "application/problem+json";
+        public const string MultipartFormData = "multipart/form-data";
+        public const string OctetStream = "application/octet-stream";
+        public const string PlainText = "text/plain";
+        public const string Xml = "application/xml";
+        public const string XmlProblemDetails = "application/problem+xml";
+    }
+}
+namespace MockHttp.IO
+{
+    public class RateLimitedStream : System.IO.Stream
+    {
+        public RateLimitedStream(System.IO.Stream actualStream, int bitRate, bool leaveOpen = false) { }
+        public override bool CanRead { get; }
+        public override bool CanSeek { get; }
+        public override bool CanWrite { get; }
+        public override long Length { get; }
+        public override long Position { get; set; }
+        protected override void Dispose(bool disposing) { }
+        public override void Flush() { }
+        public override int Read(byte[] buffer, int offset, int count) { }
+        public override long Seek(long offset, System.IO.SeekOrigin origin) { }
+        public override void SetLength(long value) { }
+        public override void Write(byte[] buffer, int offset, int count) { }
+    }
+}
+namespace MockHttp.Language.Flow
+{
+    public interface ICallbackResult<out TResponseResult, out TThrowsResult> : MockHttp.IFluentInterface, MockHttp.Language.IResponds<TResponseResult>, MockHttp.Language.IThrows<TThrowsResult>
+        where out TResponseResult : MockHttp.Language.Flow.IResponseResult
+        where out TThrowsResult : MockHttp.Language.Flow.IThrowsResult { }
+    public interface IResponseResult : MockHttp.IFluentInterface { }
+    public interface ISequenceResponseResult : MockHttp.IFluentInterface, MockHttp.Language.Flow.IResponseResult, MockHttp.Language.IResponds<MockHttp.Language.Flow.ISequenceResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IVerifies { }
+    public interface ISequenceThrowsResult : MockHttp.IFluentInterface, MockHttp.Language.Flow.IThrowsResult, MockHttp.Language.IResponds<MockHttp.Language.Flow.ISequenceResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IVerifies { }
+    public interface IThrowsResult : MockHttp.IFluentInterface { }
+}
+namespace MockHttp.Language.Flow.Response
+{
+    public interface IWithContentResult : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithContentType, MockHttp.Language.Response.IWithHeaders, MockHttp.Language.Response.IWithResponse { }
+    public interface IWithHeadersResult : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithHeaders, MockHttp.Language.Response.IWithResponse { }
+    public interface IWithStatusCodeResult : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithContent, MockHttp.Language.Response.IWithHeaders, MockHttp.Language.Response.IWithResponse { }
+}
+namespace MockHttp.Language
+{
+    public interface ICallback<out TResponseResult, out TThrowsResult> : MockHttp.IFluentInterface
+        where out TResponseResult : MockHttp.Language.Flow.IResponseResult
+        where out TThrowsResult : MockHttp.Language.Flow.IThrowsResult
+    {
+        MockHttp.Language.Flow.ICallbackResult<TResponseResult, TThrowsResult> Callback(System.Action callback);
+        MockHttp.Language.Flow.ICallbackResult<TResponseResult, TThrowsResult> Callback(System.Action<System.Net.Http.HttpRequestMessage> callback);
+    }
+    public interface IConfiguredRequest : MockHttp.IFluentInterface, MockHttp.Language.Flow.ICallbackResult<MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.Flow.IResponseResult, MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult, MockHttp.Language.Flow.IThrowsResult, MockHttp.Language.ICallback<MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IResponds<MockHttp.Language.Flow.ISequenceResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IVerifies { }
+    public interface IRespondsThrows : MockHttp.IFluentInterface, MockHttp.Language.IResponds<MockHttp.Language.Flow.IResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.IThrowsResult> { }
+    public interface IResponds<out TResult> : MockHttp.IFluentInterface
+        where out TResult : MockHttp.Language.Flow.IResponseResult
+    {
+        TResult RespondUsing(MockHttp.Responses.IResponseStrategy responseStrategy);
+    }
+    public interface IThrows<out TResult> : MockHttp.IFluentInterface
+        where out TResult : MockHttp.Language.Flow.IThrowsResult
+    {
+        TResult Throws(System.Exception exception);
+        TResult Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IVerifies : MockHttp.IFluentInterface
+    {
+        void Verifiable();
+        void Verifiable(string because);
+    }
+}
+namespace MockHttp.Language.Response
+{
+    public interface IWithContent : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithResponse
+    {
+        MockHttp.Language.Flow.Response.IWithContentResult Body(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Net.Http.HttpContent>> httpContentFactory);
+    }
+    public interface IWithContentType : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithResponse
+    {
+        MockHttp.Language.Flow.Response.IWithHeadersResult ContentType(System.Net.Http.Headers.MediaTypeHeaderValue mediaType);
+    }
+    public interface IWithHeaders : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithResponse
+    {
+        MockHttp.Language.Flow.Response.IWithHeadersResult Headers(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string?>>> headers);
+    }
+    public interface IWithResponse : MockHttp.IFluentInterface
+    {
+        System.Collections.Generic.IList<MockHttp.Responses.IResponseBehavior> Behaviors { get; }
+    }
+    public interface IWithStatusCode : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithContent, MockHttp.Language.Response.IWithResponse
+    {
+        MockHttp.Language.Flow.Response.IWithStatusCodeResult StatusCode(System.Net.HttpStatusCode statusCode, string? reasonPhrase = null);
+    }
+}
+namespace MockHttp.Matchers
+{
+    public class AnyMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
+    {
+        public AnyMatcher(System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> matchers) { }
+        public bool IsExclusive { get; }
+        public System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> Matchers { get; }
+        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class ContentMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
+    {
+        public ContentMatcher() { }
+        public ContentMatcher(byte[] content) { }
+        public ContentMatcher(string content, System.Text.Encoding? encoding) { }
+        protected System.Collections.Generic.IReadOnlyList<byte> ByteContent { get; }
+        public virtual bool IsExclusive { get; }
+        protected virtual bool IsMatch(byte[] requestContent) { }
+        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class ExpressionMatcher : MockHttp.Matchers.HttpRequestMatcher
+    {
+        public ExpressionMatcher(System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class FormDataMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
+    {
+        public FormDataMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> formData) { }
+        public FormDataMatcher(string urlEncodedFormData) { }
+        public virtual bool IsExclusive { get; }
+        public virtual System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class HttpHeadersMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.Headers.HttpHeaders>
+    {
+        public HttpHeadersMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> headers) { }
+        public HttpHeadersMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> headers) { }
+        public HttpHeadersMatcher(string name) { }
+        public HttpHeadersMatcher(string name, System.Collections.Generic.IEnumerable<string> values) { }
+        public HttpHeadersMatcher(string name, string value, bool allowWildcards = false) { }
+        public override bool IsExclusive { get; }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class HttpMethodMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.HttpMethod>
+    {
+        public HttpMethodMatcher(System.Net.Http.HttpMethod method) { }
+        public override bool IsExclusive { get; }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public abstract class HttpRequestMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
+    {
+        protected HttpRequestMatcher() { }
+        public virtual bool IsExclusive { get; }
+        public abstract bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext);
+        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public abstract override string ToString() { }
+    }
+    public interface IAsyncHttpRequestMatcher
+    {
+        bool IsExclusive { get; }
+        System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext);
+    }
+    public class MediaTypeHeaderMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.Headers.MediaTypeHeaderValue>
+    {
+        public MediaTypeHeaderMatcher(System.Net.Http.Headers.MediaTypeHeaderValue headerValue) { }
+        public override bool IsExclusive { get; }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public class PartialContentMatcher : MockHttp.Matchers.ContentMatcher
+    {
+        public PartialContentMatcher(byte[] content) { }
+        public PartialContentMatcher(string content, System.Text.Encoding? encoding) { }
+        public override bool IsExclusive { get; }
+        protected override bool IsMatch(byte[] requestContent) { }
+        public override string ToString() { }
+    }
+    public class QueryStringMatcher : MockHttp.Matchers.HttpRequestMatcher
+    {
+        public QueryStringMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
+        public QueryStringMatcher(string queryString) { }
+        public override bool IsExclusive { get; }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    [System.Obsolete("Replaced with UriMatcher. Will be removed in next major release.")]
+    public class RequestUriMatcher : MockHttp.Matchers.HttpRequestMatcher
+    {
+        public RequestUriMatcher(System.Uri uri) { }
+        public RequestUriMatcher(string uriString, bool allowWildcards = true) { }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+    public abstract class ValueMatcher<T> : MockHttp.Matchers.HttpRequestMatcher
+    {
+        protected ValueMatcher(T value) { }
+        protected T Value { get; }
+    }
+    public class VersionMatcher : MockHttp.Matchers.ValueMatcher<System.Version>
+    {
+        public VersionMatcher(System.Version version) { }
+        public override bool IsExclusive { get; }
+        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
+        public override string ToString() { }
+    }
+}
+namespace MockHttp.Responses
+{
+    public interface IResponseBehavior
+    {
+        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandlerDelegate next, System.Threading.CancellationToken cancellationToken);
+    }
+    public interface IResponseStrategy
+    {
+        System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> ProduceResponseAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Threading.CancellationToken cancellationToken);
+    }
+    public class MockHttpRequestContext
+    {
+        public MockHttpRequestContext(System.Net.Http.HttpRequestMessage request, System.Collections.Generic.IReadOnlyDictionary<System.Type, object>? services = null) { }
+        public System.Net.Http.HttpRequestMessage Request { get; }
+        public System.Collections.Generic.IReadOnlyDictionary<System.Type, object> Services { get; }
+        public bool TryGetService<TService>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TService? service) { }
+    }
+    public delegate System.Threading.Tasks.Task ResponseHandlerDelegate(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
+}
+namespace MockHttp.Threading
+{
+    public interface IConcurrentReadOnlyCollection<out T> : System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.IEnumerable { }
+}
