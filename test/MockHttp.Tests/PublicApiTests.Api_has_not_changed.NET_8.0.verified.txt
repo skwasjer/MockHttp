@@ -41,7 +41,7 @@ namespace MockHttp
         System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> Matchers { get; }
         System.Net.Http.HttpRequestMessage Request { get; }
     }
-    public interface IInvokedHttpRequestCollection : MockHttp.Threading.IConcurrentReadOnlyCollection<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IEnumerable<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyCollection<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyList<MockHttp.IInvokedHttpRequest>, System.Collections.IEnumerable
+    public interface IInvokedHttpRequestCollection : System.Collections.Generic.IEnumerable<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyCollection<MockHttp.IInvokedHttpRequest>, System.Collections.Generic.IReadOnlyList<MockHttp.IInvokedHttpRequest>, System.Collections.IEnumerable
     {
         void Clear();
     }
@@ -498,9 +498,4 @@ namespace MockHttp.Responses
         public bool TryGetService<TService>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TService? service) { }
     }
     public delegate System.Threading.Tasks.Task ResponseHandlerDelegate(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
-}
-namespace MockHttp.Threading
-{
-    [System.Obsolete("Will be removed in next version.")]
-    public interface IConcurrentReadOnlyCollection<out T> : System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.IEnumerable { }
 }
