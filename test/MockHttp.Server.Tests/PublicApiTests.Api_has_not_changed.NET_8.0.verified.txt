@@ -5,16 +5,10 @@ namespace MockHttp
 {
     public sealed class MockHttpServer : System.IAsyncDisposable, System.IDisposable
     {
-        [System.Obsolete("Use the overload accepting an System.Uri.")]
-        public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, string hostUrl) { }
         public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, System.Uri hostUri) { }
-        [System.Obsolete("Use the overload accepting an System.Uri.")]
-        public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, Microsoft.Extensions.Logging.ILoggerFactory? loggerFactory, string hostUrl) { }
         public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, Microsoft.Extensions.Logging.ILoggerFactory? loggerFactory, System.Uri hostUri) { }
         public MockHttp.MockHttpHandler Handler { get; }
         public System.Uri HostUri { get; }
-        [System.Obsolete("Use the HostUri instead.")]
-        public string HostUrl { get; }
         public bool IsStarted { get; }
         public System.Net.Http.HttpClient CreateClient() { }
         public void Dispose() { }
