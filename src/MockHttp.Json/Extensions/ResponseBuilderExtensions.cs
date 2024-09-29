@@ -4,7 +4,7 @@ using MockHttp.Http;
 using MockHttp.Json.Extensions;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Json;
 

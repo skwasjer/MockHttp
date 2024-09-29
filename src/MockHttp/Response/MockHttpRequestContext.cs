@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MockHttp.Responses;
+namespace MockHttp.Response;
 
 /// <summary>
 /// Represents the mocked request context.

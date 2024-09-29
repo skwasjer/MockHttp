@@ -1,7 +1,7 @@
 ﻿using MockHttp.Json.Extensions;
 using MockHttp.Json.SystemTextJson;
 using MockHttp.Matchers;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Json;
 

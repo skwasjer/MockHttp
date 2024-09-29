@@ -54,9 +54,9 @@ namespace MockHttp
     {
         public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.IResponseBuilder> with)
             where TResult : MockHttp.Language.Flow.IResponseResult { }
-        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Responses.MockHttpRequestContext, MockHttp.IResponseBuilder> with)
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Response.MockHttpRequestContext, MockHttp.IResponseBuilder> with)
             where TResult : MockHttp.Language.Flow.IResponseResult { }
-        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Responses.MockHttpRequestContext, System.Threading.CancellationToken, MockHttp.IResponseBuilder> with)
+        public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Action<MockHttp.Response.MockHttpRequestContext, System.Threading.CancellationToken, MockHttp.IResponseBuilder> with)
             where TResult : MockHttp.Language.Flow.IResponseResult { }
         public static TResult Respond<TResult>(this MockHttp.Language.IResponds<TResult> responds, System.Func<System.Net.Http.HttpResponseMessage> response)
             where TResult : MockHttp.Language.Flow.IResponseResult { }
@@ -332,7 +332,7 @@ namespace MockHttp.Language
     public interface IResponds<out TResult> : MockHttp.IFluentInterface
         where out TResult : MockHttp.Language.Flow.IResponseResult
     {
-        TResult RespondUsing(MockHttp.Responses.IResponseStrategy responseStrategy);
+        TResult RespondUsing(MockHttp.Response.IResponseStrategy responseStrategy);
     }
     public interface IThrows<out TResult> : MockHttp.IFluentInterface
         where out TResult : MockHttp.Language.Flow.IThrowsResult
@@ -363,7 +363,7 @@ namespace MockHttp.Language.Response
     }
     public interface IWithResponse : MockHttp.IFluentInterface
     {
-        System.Collections.Generic.IList<MockHttp.Responses.IResponseBehavior> Behaviors { get; }
+        System.Collections.Generic.IList<MockHttp.Response.IResponseBehavior> Behaviors { get; }
     }
     public interface IWithStatusCode : MockHttp.IFluentInterface, MockHttp.Language.Response.IWithContent, MockHttp.Language.Response.IWithResponse
     {
@@ -375,18 +375,18 @@ namespace MockHttp.Matchers
     public interface IAsyncHttpRequestMatcher
     {
         bool IsExclusive { get; }
-        System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext);
+        System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Response.MockHttpRequestContext requestContext);
     }
 }
-namespace MockHttp.Responses
+namespace MockHttp.Response
 {
     public interface IResponseBehavior
     {
-        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandler nextHandler, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task HandleAsync(MockHttp.Response.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Response.ResponseHandler nextHandler, System.Threading.CancellationToken cancellationToken);
     }
     public interface IResponseStrategy
     {
-        System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> ProduceResponseAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> ProduceResponseAsync(MockHttp.Response.MockHttpRequestContext requestContext, System.Threading.CancellationToken cancellationToken);
     }
     public class MockHttpRequestContext
     {
@@ -395,5 +395,5 @@ namespace MockHttp.Responses
         public System.Collections.Generic.IReadOnlyDictionary<System.Type, object> Services { get; }
         public bool TryGetService<TService>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TService? service) { }
     }
-    public delegate System.Threading.Tasks.Task ResponseHandler(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
+    public delegate System.Threading.Tasks.Task ResponseHandler(MockHttp.Response.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
 }

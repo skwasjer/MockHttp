@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 
