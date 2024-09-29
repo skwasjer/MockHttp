@@ -21,7 +21,7 @@ internal sealed class TransferRateBehavior : IResponseBehavior
     public async Task HandleAsync(
         MockHttpRequestContext requestContext,
         HttpResponseMessage responseMessage,
-        ResponseHandlerDelegate nextHandler,
+        ResponseHandler nextHandler,
         CancellationToken cancellationToken
     )
     {

@@ -483,7 +483,7 @@ namespace MockHttp.Responses
 {
     public interface IResponseBehavior
     {
-        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandlerDelegate nextHandler, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandler nextHandler, System.Threading.CancellationToken cancellationToken);
     }
     public interface IResponseStrategy
     {
@@ -496,5 +496,5 @@ namespace MockHttp.Responses
         public System.Collections.Generic.IReadOnlyDictionary<System.Type, object> Services { get; }
         public bool TryGetService<TService>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TService? service) { }
     }
-    public delegate System.Threading.Tasks.Task ResponseHandlerDelegate(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
+    public delegate System.Threading.Tasks.Task ResponseHandler(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, System.Threading.CancellationToken cancellationToken);
 }
