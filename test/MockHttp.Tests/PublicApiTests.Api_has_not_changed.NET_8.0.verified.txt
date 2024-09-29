@@ -501,5 +501,6 @@ namespace MockHttp.Responses
 }
 namespace MockHttp.Threading
 {
+    [System.Obsolete("Will be removed in next version.")]
     public interface IConcurrentReadOnlyCollection<out T> : System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.IEnumerable { }
 }
