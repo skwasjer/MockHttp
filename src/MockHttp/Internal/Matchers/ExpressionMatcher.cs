@@ -6,7 +6,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request using a custom expression.
 /// </summary>
-public class ExpressionMatcher : HttpRequestMatcher
+internal sealed class ExpressionMatcher : HttpRequestMatcher
 {
     private readonly string _funcDisplay;
     private readonly Func<HttpRequestMessage, bool> _func;

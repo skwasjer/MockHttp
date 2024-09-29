@@ -8,7 +8,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by the request content.
 /// </summary>
-public class ContentMatcher : IAsyncHttpRequestMatcher
+internal class ContentMatcher : IAsyncHttpRequestMatcher
 {
     private const int MaxBytesDisplayed = 10;
 

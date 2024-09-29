@@ -5,7 +5,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Represents a condition for matching a <see cref="HttpRequestMessage" />.
 /// </summary>
-public abstract class HttpRequestMatcher : IAsyncHttpRequestMatcher
+internal abstract class HttpRequestMatcher : IAsyncHttpRequestMatcher
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="HttpRequestMatcher" /> class.

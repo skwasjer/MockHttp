@@ -5,7 +5,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by HTTP method.
 /// </summary>
-public class HttpMethodMatcher : ValueMatcher<HttpMethod>
+internal sealed class HttpMethodMatcher : ValueMatcher<HttpMethod>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="HttpMethodMatcher" /> class using specified <paramref name="method" />.
