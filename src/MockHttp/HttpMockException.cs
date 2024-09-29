@@ -36,7 +36,9 @@ public class HttpMockException : Exception
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
 #if NET8_0_OR_GREATER
+#pragma warning disable CA1041
     [Obsolete(DiagnosticId = "SYSLIB0051")]
+#pragma warning restore CA1041
 #endif
     protected HttpMockException(SerializationInfo info, StreamingContext context)
         : base(info, context)
