@@ -8,7 +8,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by the URI.
 /// </summary>
-internal class UriMatcher : HttpRequestMatcher
+internal sealed class UriMatcher : HttpRequestMatcher
 {
     private readonly string _name;
     private readonly Pattern _pattern;
