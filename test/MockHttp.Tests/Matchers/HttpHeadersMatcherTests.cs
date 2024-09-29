@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Net.Http.Headers;
 using MockHttp.Http;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

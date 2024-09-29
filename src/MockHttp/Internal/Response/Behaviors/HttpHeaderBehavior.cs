@@ -1,5 +1,4 @@
 ﻿using MockHttp.Http;
-using MockHttp.Responses;
 
 namespace MockHttp.Response.Behaviors;
 

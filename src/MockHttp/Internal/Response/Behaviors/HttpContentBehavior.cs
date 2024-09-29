@@ -1,6 +1,4 @@
-﻿using MockHttp.Responses;
-
-namespace MockHttp.Response.Behaviors;
+﻿namespace MockHttp.Response.Behaviors;
 
 internal sealed class HttpContentBehavior
     : IResponseBehavior

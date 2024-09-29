@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using MockHttp.Language.Flow;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Language;
 
