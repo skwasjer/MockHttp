@@ -169,7 +169,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         // Act
 #pragma warning disable CS0618
 #pragma warning disable SYSLIB0014 // Type or member is obsolete - justification: testing other API's
-        var request = WebRequest.Create($"{_fixture.Server.HostUrl}/web-request");
+        var request = WebRequest.Create($"{_fixture.Server.HostUri}web-request");
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
 #pragma warning restore CS0618
         request.Method = "POST";
@@ -286,50 +286,31 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     }
 
     [Fact]
-    [Obsolete("Removed in next major version.")]
     public void When_creating_server_with_null_host_it_should_throw()
     {
-        string? hostUrl = null;
+        Uri? hostUri = null;
 
         // Act
-#pragma warning disable CS8604
-        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
-#pragma warning restore CS8604
+        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUri!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(hostUrl));
+        act.Should().Throw<ArgumentNullException>().WithParameterName(nameof(hostUri));
     }
 
     [Fact]
-    [Obsolete("Removed in next major version.")]
-    public void When_creating_server_with_invalid_host_it_should_throw()
-    {
-        const string hostUrl = "relative/uri/is/invalid";
-
-        // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
-
-        // Assert
-        act.Should().Throw<ArgumentException>().WithParameterName(nameof(hostUrl));
-    }
-
-    [Fact]
-    [Obsolete("Removed in next major version.")]
     public async Task When_creating_server_with_absolute_uri_it_should_not_throw_and_take_host_from_url()
     {
-        var hostUrl = new Uri("https://relative:789/uri/is/invalid");
+        var hostUri = new Uri("https://relative:789/uri/is/invalid");
         const string expectedHostUrl = "https://relative:789";
 
         // Act
-        // ReSharper disable once ExpressionIsAlwaysNull
-        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUrl);
+        Func<MockHttpServer> act = () => new MockHttpServer(new MockHttpHandler(), hostUri);
 
         // Assert
         MockHttpServer server = act.Should().NotThrow().Which;
         await using (server)
         {
-            act.Should().NotThrow().Which.HostUrl.Should().Be(expectedHostUrl);
+            act.Should().NotThrow().Which.HostUri.Should().Be(expectedHostUrl);
         }
     }
 
