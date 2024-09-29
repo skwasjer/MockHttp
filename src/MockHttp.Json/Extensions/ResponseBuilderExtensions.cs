@@ -71,7 +71,12 @@ public static class ResponseBuilderExtensions
             _adapter = adapter;
         }
 
-        public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+        public Task HandleAsync(
+            MockHttpRequestContext requestContext,
+            HttpResponseMessage responseMessage,
+            ResponseHandlerDelegate nextHandler,
+            CancellationToken cancellationToken
+        )
         {
             IJsonAdapter jsonSerializerAdapter = _adapter ?? requestContext.GetAdapter();
             object? value = _jsonContentFactory();
@@ -84,7 +89,7 @@ public static class ResponseBuilderExtensions
                 }
             };
 
-            return next(requestContext, responseMessage, cancellationToken);
+            return nextHandler(requestContext, responseMessage, cancellationToken);
         }
     }
 }

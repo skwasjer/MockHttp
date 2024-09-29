@@ -12,9 +12,14 @@ internal sealed class HttpContentBehavior
         _httpContentFactory = httpContentFactory ?? throw new ArgumentNullException(nameof(httpContentFactory));
     }
 
-    public async Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public async Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    )
     {
         responseMessage.Content = await _httpContentFactory(cancellationToken).ConfigureAwait(false);
-        await next(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
+        await nextHandler(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
     }
 }
