@@ -483,7 +483,7 @@ namespace MockHttp.Responses
 {
     public interface IResponseBehavior
     {
-        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandlerDelegate next, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task HandleAsync(MockHttp.Responses.MockHttpRequestContext requestContext, System.Net.Http.HttpResponseMessage responseMessage, MockHttp.Responses.ResponseHandlerDelegate nextHandler, System.Threading.CancellationToken cancellationToken);
     }
     public interface IResponseStrategy
     {
