@@ -1,6 +1,4 @@
-﻿using MockHttp.Responses;
-
-namespace MockHttp.Response;
+﻿namespace MockHttp.Response;
 
 public class ExceptionStrategyTests
 {

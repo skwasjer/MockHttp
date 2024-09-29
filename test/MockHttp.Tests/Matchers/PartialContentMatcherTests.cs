@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

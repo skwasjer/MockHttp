@@ -1,6 +1,4 @@
-﻿using MockHttp.Responses;
-
-namespace MockHttp.Response;
+﻿namespace MockHttp.Response;
 
 internal sealed class ExceptionStrategy : IResponseStrategy
 {

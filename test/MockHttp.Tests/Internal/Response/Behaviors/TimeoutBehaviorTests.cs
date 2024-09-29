@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using MockHttp.Responses;
 
 namespace MockHttp.Response.Behaviors;
 

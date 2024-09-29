@@ -1,4 +1,4 @@
-﻿namespace MockHttp.Responses;
+﻿namespace MockHttp.Response;
 
 /// <summary>
 /// A delegate which when executed returns a configured HTTP response.

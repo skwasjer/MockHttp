@@ -3,7 +3,7 @@ using System.Text;
 using MockHttp.FluentAssertions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp;
 

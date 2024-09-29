@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using MockHttp.Http;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

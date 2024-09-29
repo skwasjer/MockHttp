@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using MockHttp.Responses;
 using MockHttp.Threading;
 
 namespace MockHttp.Response.Behaviors;

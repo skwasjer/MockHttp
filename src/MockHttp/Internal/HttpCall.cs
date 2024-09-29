@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
 using MockHttp.Matchers;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp;
 
