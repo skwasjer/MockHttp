@@ -74,7 +74,7 @@ public static class ResponseBuilderExtensions
         public Task HandleAsync(
             MockHttpRequestContext requestContext,
             HttpResponseMessage responseMessage,
-            ResponseHandlerDelegate nextHandler,
+            ResponseHandler nextHandler,
             CancellationToken cancellationToken
         )
         {
