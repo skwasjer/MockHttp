@@ -6,7 +6,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by partially matching the request content.
 /// </summary>
-public class PartialContentMatcher : ContentMatcher
+internal sealed class PartialContentMatcher : ContentMatcher
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PartialContentMatcher" /> class using specified <paramref name="content" />.

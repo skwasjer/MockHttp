@@ -7,7 +7,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by verifying it against a list of constraints, for which at least one has to match the request.
 /// </summary>
-public class AnyMatcher : IAsyncHttpRequestMatcher
+internal sealed class AnyMatcher : IAsyncHttpRequestMatcher
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AnyMatcher" /> class using specified list of <paramref name="matchers" />.

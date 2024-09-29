@@ -7,7 +7,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by the posted form data.
 /// </summary>
-public class FormDataMatcher : IAsyncHttpRequestMatcher
+internal sealed class FormDataMatcher : IAsyncHttpRequestMatcher
 {
     internal const string MultipartFormDataMediaType = "multipart/form-data";
 
@@ -43,7 +43,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
     }
 
     /// <inheritdoc />
-    public virtual Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
+    public Task<bool> IsMatchAsync(MockHttpRequestContext requestContext)
     {
         if (requestContext is null)
         {
@@ -85,7 +85,7 @@ public class FormDataMatcher : IAsyncHttpRequestMatcher
     }
 
     /// <inheritdoc />
-    public virtual bool IsExclusive => _matchQs.Count == 0;
+    public bool IsExclusive => _matchQs.Count == 0;
 
     /// <inheritdoc />
     public override string ToString()

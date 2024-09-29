@@ -372,104 +372,10 @@ namespace MockHttp.Language.Response
 }
 namespace MockHttp.Matchers
 {
-    public class AnyMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
-    {
-        public AnyMatcher(System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> matchers) { }
-        public bool IsExclusive { get; }
-        public System.Collections.Generic.IReadOnlyCollection<MockHttp.Matchers.IAsyncHttpRequestMatcher> Matchers { get; }
-        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class ContentMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
-    {
-        public ContentMatcher() { }
-        public ContentMatcher(byte[] content) { }
-        public ContentMatcher(string content, System.Text.Encoding? encoding) { }
-        protected System.Collections.Generic.IReadOnlyList<byte> ByteContent { get; }
-        public virtual bool IsExclusive { get; }
-        protected virtual bool IsMatch(byte[] requestContent) { }
-        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class ExpressionMatcher : MockHttp.Matchers.HttpRequestMatcher
-    {
-        public ExpressionMatcher(System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class FormDataMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
-    {
-        public FormDataMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> formData) { }
-        public FormDataMatcher(string urlEncodedFormData) { }
-        public virtual bool IsExclusive { get; }
-        public virtual System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class HttpHeadersMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.Headers.HttpHeaders>
-    {
-        public HttpHeadersMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> headers) { }
-        public HttpHeadersMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> headers) { }
-        public HttpHeadersMatcher(string name) { }
-        public HttpHeadersMatcher(string name, System.Collections.Generic.IEnumerable<string> values) { }
-        public HttpHeadersMatcher(string name, string value, bool allowWildcards = false) { }
-        public override bool IsExclusive { get; }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class HttpMethodMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.HttpMethod>
-    {
-        public HttpMethodMatcher(System.Net.Http.HttpMethod method) { }
-        public override bool IsExclusive { get; }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public abstract class HttpRequestMatcher : MockHttp.Matchers.IAsyncHttpRequestMatcher
-    {
-        protected HttpRequestMatcher() { }
-        public virtual bool IsExclusive { get; }
-        public abstract bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext);
-        public System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public abstract override string ToString() { }
-    }
     public interface IAsyncHttpRequestMatcher
     {
         bool IsExclusive { get; }
         System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.Responses.MockHttpRequestContext requestContext);
-    }
-    public class MediaTypeHeaderMatcher : MockHttp.Matchers.ValueMatcher<System.Net.Http.Headers.MediaTypeHeaderValue>
-    {
-        public MediaTypeHeaderMatcher(System.Net.Http.Headers.MediaTypeHeaderValue headerValue) { }
-        public override bool IsExclusive { get; }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public class PartialContentMatcher : MockHttp.Matchers.ContentMatcher
-    {
-        public PartialContentMatcher(byte[] content) { }
-        public PartialContentMatcher(string content, System.Text.Encoding? encoding) { }
-        public override bool IsExclusive { get; }
-        protected override bool IsMatch(byte[] requestContent) { }
-        public override string ToString() { }
-    }
-    public class QueryStringMatcher : MockHttp.Matchers.HttpRequestMatcher
-    {
-        public QueryStringMatcher(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
-        public QueryStringMatcher(string queryString) { }
-        public override bool IsExclusive { get; }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
-    public abstract class ValueMatcher<T> : MockHttp.Matchers.HttpRequestMatcher
-    {
-        protected ValueMatcher(T value) { }
-        protected T Value { get; }
-    }
-    public class VersionMatcher : MockHttp.Matchers.ValueMatcher<System.Version>
-    {
-        public VersionMatcher(System.Version version) { }
-        public override bool IsExclusive { get; }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
     }
 }
 namespace MockHttp.Responses

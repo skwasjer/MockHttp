@@ -5,7 +5,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// Matches a request by the HTTP message version.
 /// </summary>
-public class VersionMatcher : ValueMatcher<Version>
+internal sealed class VersionMatcher : ValueMatcher<Version>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="VersionMatcher" /> class using specified <paramref name="version" />.
