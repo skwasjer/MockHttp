@@ -61,8 +61,10 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
         }
     }
 
+#pragma warning disable CA1065 // Justification: not used with dictionaries/hash sets.
     public int GetHashCode(KeyValuePair<string, IEnumerable<string>> obj)
     {
         throw new NotImplementedException();
     }
+#pragma warning restore CA1065
 }
