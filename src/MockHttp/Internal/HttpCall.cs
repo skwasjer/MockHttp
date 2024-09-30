@@ -12,7 +12,7 @@ internal class HttpCall
 {
     private IResponseStrategy? _responseStrategy;
     private string? _verifiableBecause;
-    private IReadOnlyCollection<IAsyncHttpRequestMatcher>? _matchers;
+    private ReadOnlyCollection<IAsyncHttpRequestMatcher>? _matchers;
 
     public IReadOnlyCollection<IAsyncHttpRequestMatcher> Matchers
     {
@@ -65,7 +65,7 @@ internal class HttpCall
             throw new ArgumentNullException(nameof(matchers));
         }
 
-        _matchers = new ReadOnlyCollection<IAsyncHttpRequestMatcher>(matchers.ToList());
+        _matchers = matchers.ToList().AsReadOnly();
     }
 
     public virtual void SetCallback(Action<HttpRequestMessage> callback)
