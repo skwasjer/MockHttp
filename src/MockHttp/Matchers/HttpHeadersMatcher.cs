@@ -1,14 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using MockHttp.Http;
 using MockHttp.Patterns;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 
 /// <summary>
 /// Matches a request by the request headers.
 /// </summary>
-public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
+internal sealed class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
 {
     private readonly HttpHeaderEqualityComparer _equalityComparer;
 

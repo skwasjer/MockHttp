@@ -1,6 +1,4 @@
-﻿using MockHttp.Responses;
-
-namespace MockHttp.Response.Behaviors;
+﻿namespace MockHttp.Response.Behaviors;
 
 internal sealed class NetworkLatencyBehavior
     : IResponseBehavior
@@ -12,8 +10,13 @@ internal sealed class NetworkLatencyBehavior
         _networkLatency = networkLatency ?? throw new ArgumentNullException(nameof(networkLatency));
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandler nextHandler,
+        CancellationToken cancellationToken
+    )
     {
-        return _networkLatency.SimulateAsync(() => next(requestContext, responseMessage, cancellationToken), cancellationToken);
+        return _networkLatency.SimulateAsync(() => nextHandler(requestContext, responseMessage, cancellationToken), cancellationToken);
     }
 }

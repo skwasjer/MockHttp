@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Language.Response;
 

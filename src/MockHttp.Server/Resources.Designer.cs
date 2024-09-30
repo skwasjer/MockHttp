@@ -79,15 +79,6 @@ namespace MockHttp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specify a host URL..
-        /// </summary>
-        internal static string Error_HostUrlIsNotValid {
-            get {
-                return ResourceManager.GetString("Error_HostUrlIsNotValid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MockHttpServer failed to handle request. Please verify your mock setup is correct..
         /// </summary>
         internal static string Error_VerifyMockSetup {

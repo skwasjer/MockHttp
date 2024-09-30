@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 using MockHttp.Http;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 
 /// <summary>
 /// Matches a request by the request URI query string.
 /// </summary>
-public class QueryStringMatcher : HttpRequestMatcher
+internal sealed class QueryStringMatcher : HttpRequestMatcher
 {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly QueryString _matchQs;

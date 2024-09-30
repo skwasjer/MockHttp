@@ -1,12 +1,12 @@
 ﻿using System.Net.Http.Headers;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 
 /// <summary>
 /// Matches a request by the media type header.
 /// </summary>
-public class MediaTypeHeaderMatcher : ValueMatcher<MediaTypeHeaderValue>
+internal sealed class MediaTypeHeaderMatcher : ValueMatcher<MediaTypeHeaderValue>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MediaTypeHeaderMatcher" /> class.

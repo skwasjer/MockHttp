@@ -1,11 +1,9 @@
-﻿using MockHttp.Threading;
-
-namespace MockHttp;
+﻿namespace MockHttp;
 
 /// <summary>
 /// Represents a collection of invoked HTTP requests.
 /// </summary>
-public interface IInvokedHttpRequestCollection : IConcurrentReadOnlyCollection<IInvokedHttpRequest>
+public interface IInvokedHttpRequestCollection : IReadOnlyList<IInvokedHttpRequest>
 {
     /// <summary>
     /// Clears the invoked requests collection.

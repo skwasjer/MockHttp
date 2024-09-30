@@ -1,5 +1,4 @@
 ﻿using MockHttp.Http;
-using MockHttp.Responses;
 
 namespace MockHttp.Response.Behaviors;
 
@@ -37,7 +36,12 @@ internal sealed class HttpHeaderBehavior
         _headers = headers?.ToList() ?? throw new ArgumentNullException(nameof(headers));
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandler nextHandler,
+        CancellationToken cancellationToken
+    )
     {
         // ReSharper disable once UseDeconstruction
         foreach (KeyValuePair<string, IEnumerable<string?>> header in _headers)
@@ -45,7 +49,7 @@ internal sealed class HttpHeaderBehavior
             Add(header, responseMessage);
         }
 
-        return next(requestContext, responseMessage, cancellationToken);
+        return nextHandler(requestContext, responseMessage, cancellationToken);
     }
 
     /// <summary>

@@ -129,9 +129,6 @@
   <data name="Debug_HandlingRequest" xml:space="preserve">
     <value>MockHttpServer received request.</value>
   </data>
-  <data name="Error_HostUrlIsNotValid" xml:space="preserve">
-    <value>Specify a host URL.</value>
-  </data>
   <data name="MissingHttpResponseFeature" xml:space="preserve">
     <value>HTTP response feature missing.</value>
   </data>

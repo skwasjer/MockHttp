@@ -3,8 +3,8 @@ using System.Net;
 using System.Net.Http.Headers;
 using MockHttp.Extensions;
 using MockHttp.Http;
+using MockHttp.Response;
 using MockHttp.Response.Behaviors;
-using MockHttp.Responses;
 
 namespace MockHttp.Language.Flow.Response;
 
@@ -96,8 +96,14 @@ internal sealed class ResponseBuilder
             };
 
             await _invertedBehaviors
-                .Aggregate((ResponseHandlerDelegate)Seed,
-                    (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(context, message, next, ct)
+                .Aggregate(
+                    (ResponseHandler)Seed,
+                    (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(
+                        context,
+                        message,
+                        next,
+                        ct
+                    )
                 )(requestContext, response, cancellationToken)
                 .ConfigureAwait(false);
 

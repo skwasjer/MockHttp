@@ -4,7 +4,7 @@ using MockHttp.Http;
 using MockHttp.Json.Extensions;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Json;
 
@@ -71,7 +71,12 @@ public static class ResponseBuilderExtensions
             _adapter = adapter;
         }
 
-        public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+        public Task HandleAsync(
+            MockHttpRequestContext requestContext,
+            HttpResponseMessage responseMessage,
+            ResponseHandler nextHandler,
+            CancellationToken cancellationToken
+        )
         {
             IJsonAdapter jsonSerializerAdapter = _adapter ?? requestContext.GetAdapter();
             object? value = _jsonContentFactory();
@@ -84,7 +89,7 @@ public static class ResponseBuilderExtensions
                 }
             };
 
-            return next(requestContext, responseMessage, cancellationToken);
+            return nextHandler(requestContext, responseMessage, cancellationToken);
         }
     }
 }

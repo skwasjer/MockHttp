@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace MockHttp.Threading;
 
-internal class ConcurrentCollection<T> : IConcurrentReadOnlyCollection<T>
+internal class ConcurrentCollection<T> : IReadOnlyList<T>
 {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly object _syncLock = new();

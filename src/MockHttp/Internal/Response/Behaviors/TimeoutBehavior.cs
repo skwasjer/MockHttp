@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using MockHttp.Responses;
 using MockHttp.Threading;
 
 namespace MockHttp.Response.Behaviors;
@@ -19,7 +18,12 @@ internal sealed class TimeoutBehavior
         _timeoutAfter = timeoutAfter;
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandler nextHandler,
+        CancellationToken cancellationToken
+    )
     {
         // It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does,
         // so we simulate same behavior.

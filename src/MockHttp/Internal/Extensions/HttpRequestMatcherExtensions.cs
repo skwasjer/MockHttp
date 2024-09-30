@@ -1,5 +1,5 @@
 ﻿using MockHttp.Matchers;
-using MockHttp.Responses;
+using MockHttp.Response;
 
 namespace MockHttp.Extensions;
 
