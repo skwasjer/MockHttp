@@ -19,15 +19,11 @@ internal static class HttpResponseMessageExtensions
         responseFeature.ReasonPhrase = response.ReasonPhrase;
 
         CopyHeaders(response.Headers, responseFeature.Headers);
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (response.Content is not null)
         {
             CopyHeaders(response.Content.Headers, responseFeature.Headers);
-            Stream contentStream = await response.Content.ReadAsStreamAsync(
-#if NET6_0_OR_GREATER
-                cancellationToken
-#endif
-            ).ConfigureAwait(false);
+            Stream contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             await using ConfiguredAsyncDisposable _ = contentStream.ConfigureAwait(false);
             await contentStream.CopyToAsync(responseBodyFeature.Writer.AsStream(), 4096, cancellationToken).ConfigureAwait(false);
         }

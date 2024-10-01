@@ -16,9 +16,7 @@ public abstract class LoggerFactoryFixture : IAsyncLifetime, IAsyncDisposable
 
                 builder
                     .AddDebug()
-#if NET6_0_OR_GREATER
                     .AddSimpleConsole(opts => opts.IncludeScopes = true)
-#endif
                     ;
 
                 configure?.Invoke(builder);
