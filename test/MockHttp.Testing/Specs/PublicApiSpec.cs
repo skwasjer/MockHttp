@@ -42,9 +42,13 @@ public abstract class PublicApiSpec
         Assembly sut = _assemblyMarkerType.Assembly;
         var settings = new VerifySettings();
 
-        string targetFramework = sut.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkDisplayName?.Replace(' ', '_')
-            ?? throw new InvalidOperationException("Framework display name is required.");
-        settings.UseFileName(targetFramework);
+        string sutTargetFramework = GetTargetFramework(sut);
+        string testTargetFramework = GetTargetFramework(GetType().Assembly);
+        settings.UseFileName(
+            sutTargetFramework == testTargetFramework
+                ? sutTargetFramework
+                : $"{sutTargetFramework}_via_{testTargetFramework}"
+        );
         settings.UseDirectory("PublicApi");
 
         // Act
@@ -55,6 +59,12 @@ public abstract class PublicApiSpec
 #pragma warning disable S3236
         return Verify(publicApi, settings, _sourceFile!);
 #pragma warning restore S3236
+    }
+
+    private static string GetTargetFramework(Assembly asm)
+    {
+        return asm.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkDisplayName?.Replace(' ', '_')
+            ?? throw new InvalidOperationException("Framework display name is required.");
     }
 }
 #else
