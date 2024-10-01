@@ -42,18 +42,23 @@ public abstract class PublicApiSpec
 
         string targetFramework = sut.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkDisplayName?.Replace(' ', '_')
             ?? throw new InvalidOperationException("Framework display name is required.");
-        settings.UseMethodName(nameof(Api_has_not_changed) + targetFramework);
+        settings.UseFileName(targetFramework);
+        settings.UseDirectory("PublicApi");
 
         // Act
         string publicApi = sut.GeneratePublicApi(_options);
 
         // Assert
         // ReSharper disable once ExplicitCallerInfoArgument
+#pragma warning disable S3236
         return Verify(publicApi, settings, _sourceFile!);
+#pragma warning restore S3236
     }
 }
 #else
-// Stub for unsupported frameworks
+namespace MockHttp.Specs;
+
+// Empty shim for when verification is disabled.
 public abstract class PublicApiSpec
 {
     // ReSharper disable once UnusedParameter.Local
