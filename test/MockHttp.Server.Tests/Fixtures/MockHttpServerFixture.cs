@@ -1,13 +1,15 @@
 ﻿using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace MockHttp.Fixtures;
 
 public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 {
-    private readonly CapturingLoggerFactoryFixture _loggerFactoryFixture;
-    private CapturingLoggerFactoryFixture.LogContext? _loggerCtx;
+    private readonly Guid _logRequestScope = Guid.NewGuid();
+    private readonly LoggerFactoryFixture _loggerFactoryFixture;
 
     public MockHttpServerFixture()
         : this("http")
@@ -16,7 +18,7 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 
     protected MockHttpServerFixture(string scheme)
     {
-        _loggerFactoryFixture = new CapturingLoggerFactoryFixture();
+        _loggerFactoryFixture = new LoggerFactoryFixture();
         Handler = new MockHttpHandler();
         Server = new MockHttpServer(
             Handler,
@@ -28,12 +30,16 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
             )
         );
         Server
-            .Configure(builder => builder
-                .Use((_, next) =>
-                {
-                    _loggerCtx ??= CapturingLoggerFactoryFixture.CreateContext();
-                    return next();
-                })
+            .Configure(
+                builder => builder.Use(
+                    async (context, func) =>
+                    {
+                        ILogger<MockHttpServerFixture>
+                            logger = context.RequestServices.GetRequiredService<ILogger<MockHttpServerFixture>>();
+                        using IDisposable? scope = logger.BeginScope(_logRequestScope);
+                        await func(context);
+                    }
+                )
             );
     }
 
@@ -48,16 +54,25 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _loggerFactoryFixture.DisposeAsync();
         await Server.DisposeAsync();
+        Handler.Dispose();
+        await _loggerFactoryFixture.DisposeAsync();
     }
 
     public void Dispose()
     {
-        _loggerCtx?.Dispose();
-        Server.Dispose();
-        Handler.Dispose();
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Server.Dispose();
+            Handler.Dispose();
+            _loggerFactoryFixture.Dispose();
+        }
     }
 
     private static bool SupportsIpv6()
@@ -66,15 +81,11 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
         return networkInterfaces.Any(ni => ni.Supports(NetworkInterfaceComponent.IPv6));
     }
 
-    // ReSharper disable once MemberCanBeMadeStatic.Global
     public void LogServerTrace(ITestOutputHelper testOutputHelper)
     {
-        if (_loggerCtx is null)
-        {
-            return;
-        }
-
-        foreach (string msg in _loggerCtx.Events)
+        foreach (string msg in _loggerFactoryFixture.FakeLogCollector.GetSnapshot()
+            .Where(e => e.Scopes.Contains(_logRequestScope))
+            .Select(FakeLogRecordSerialization.Serialize))
         {
             testOutputHelper.WriteLine(msg);
         }
@@ -83,6 +94,6 @@ public class MockHttpServerFixture : IDisposable, IAsyncLifetime
     public void Reset()
     {
         Handler.Reset();
-        _loggerCtx = null;
+        _loggerFactoryFixture.FakeLogCollector.Clear();
     }
 }

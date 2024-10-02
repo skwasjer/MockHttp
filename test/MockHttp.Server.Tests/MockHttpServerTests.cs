@@ -177,7 +177,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         request.ContentType = MediaTypes.PlainText;
         await using (Stream requestStream = await request.GetRequestStreamAsync())
         {
-            requestStream.Write(Encoding.ASCII.GetBytes("request-content"));
+            await requestStream.WriteAsync(Encoding.ASCII.GetBytes("request-content"));
         }
 
         // Assert

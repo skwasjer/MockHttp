@@ -21,7 +21,7 @@ internal class WrappedHttpRequest : HttpRequestMessage
 
         RequestUri = uriBuilder.Uri;
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (request.Body is not null)
         {
             Content = new StreamContent(request.Body)
