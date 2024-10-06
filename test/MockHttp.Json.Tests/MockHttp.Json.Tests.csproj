@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netcoreapp2.1;net48;net472;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;net481;net48;net472;net462</TargetFrameworks>
 
     <IsTestProject>true</IsTestProject>
 
@@ -15,9 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
     <!-- For coverage purposes, override default dependency resolution and instead target specific frameworks. -->
-    <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" Condition="'$(TestNetStandard21)'==''" />
+    <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" Condition="'$(TestNetStandard20)'=='' And '$(TestNetStandard21)'==''" />
+    <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" Condition="'$(TestNetStandard20)'=='true'" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" Condition="'$(TestNetStandard21)'=='true'" AdditionalProperties="TargetFramework=netstandard2.1" />
-
   </ItemGroup>
 
 </Project>
