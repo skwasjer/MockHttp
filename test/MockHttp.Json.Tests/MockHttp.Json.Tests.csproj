@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MockHttp.Testing\XunitAppDomainUnloadHook.cs" Link="XunitAppDomainUnloadHook.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MockHttp.Testing\MockHttp.Testing.csproj" />
     <!-- For coverage purposes, override default dependency resolution and instead target specific frameworks. -->
     <ProjectReference Include="..\..\src\MockHttp.Json\MockHttp.Json.csproj" Condition="'$(TestNetStandard20)'=='' And '$(TestNetStandard21)'==''" />
