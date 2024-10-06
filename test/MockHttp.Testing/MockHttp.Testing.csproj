@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net6.0;net5.0;netcoreapp3.1;netcoreapp2.1;net48;net472;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netcoreapp2.1;net48;net472;net462</TargetFrameworks>
 
     <IsTestProject>false</IsTestProject>
 
     <RootNamespace>MockHttp</RootNamespace>
 
     <VerifyVersion>26.6.0</VerifyVersion>
-    <VerifyVersion Condition="'$(TargetFramework)'=='net5.0' Or '$(TargetFramework)'=='netcoreapp3.1' Or '$(TargetFramework)'=='net462'">20.8.2</VerifyVersion>
+    <VerifyVersion Condition="'$(TargetFramework)'=='net5.0' Or '$(TargetFramework)'=='net462'">20.8.2</VerifyVersion>
     <VerifyVersion Condition="'$(TargetFramework)'=='netcoreapp2.1'">18.1.0</VerifyVersion>
     <VerifyPublicApi Condition="'$(VerifyPublicApi)'==''">true</VerifyPublicApi>
     <DefineConstants Condition="'$(VerifyPublicApi)'=='true'">$(DefineConstants);VERIFY_PUBLIC_API</DefineConstants>
@@ -25,7 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" />
+    <!-- For coverage purposes, override default dependency resolution and instead target specific frameworks. -->
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" Condition="'$(TestNetStandard21)'==''" />
+    <ProjectReference Include="..\..\src\MockHttp\MockHttp.csproj" Condition="'$(TestNetStandard21)'=='true'" AdditionalProperties="TargetFramework=netstandard2.1" />
   </ItemGroup>
 
 </Project>
