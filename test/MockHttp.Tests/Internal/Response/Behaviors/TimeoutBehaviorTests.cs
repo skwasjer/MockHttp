@@ -19,12 +19,17 @@ public class TimeoutBehaviorTests
         ResponseHandlerDelegate nextStub = Substitute.For<ResponseHandlerDelegate>();
 
         // Act
-        Func<Task> act = () => sut.HandleAsync(new MockHttpRequestContext(new HttpRequestMessage()), new HttpResponseMessage(), nextStub, CancellationToken.None);
+        Func<Task> act = () => sut.HandleAsync(
+            new MockHttpRequestContext(new HttpRequestMessage()),
+            new HttpResponseMessage(),
+            nextStub,
+            CancellationToken.None
+        );
 
         // Assert
         sw.Start();
 
-#if NET5_0_OR_GREATER
+#if TEST_NETSTANDARD2_1 || NET6_0_OR_GREATER
         await act.Should().ThrowAsync<TaskCanceledException>().WithInnerException(typeof(TimeoutException), "the timeout expired");
 #else
         await act.Should().ThrowAsync<TaskCanceledException>("the timeout expired");

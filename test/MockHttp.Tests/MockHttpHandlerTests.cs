@@ -336,15 +336,29 @@ public class MockHttpHandlerTests : IDisposable
             Field3 = DateTime.UtcNow
         };
         string jsonPostContent = JsonConvert.SerializeObject(postObject);
-        var lastModified = new DateTime(2018, 4, 12, 7, 22, 43, DateTimeKind.Local);
-        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, MediaTypes.Json) { Headers = { LastModified = lastModified } };
+        var lastModified = new DateTime(
+            2018,
+            4,
+            12,
+            7,
+            22,
+            43,
+            DateTimeKind.Local
+        );
+        var postContent = new StringContent(jsonPostContent, Encoding.UTF8, MediaTypes.Json)
+        {
+            Headers =
+            {
+                LastModified = lastModified
+            }
+        };
 
         // ReSharper disable once JoinDeclarationAndInitializer
         Version version;
-#if NETCOREAPP3_1 || NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         version = _httpClient.DefaultRequestVersion;
 #else
-#if NET5_0_OR_GREATER
+#if TEST_NETSTANDARD2_1 || NET6_0_OR_GREATER
         version = new Version(2, 0);
 #else
         version = new Version(1, 1);
@@ -352,32 +366,45 @@ public class MockHttpHandlerTests : IDisposable
 #endif
 
         _sut
-            .When(matching => matching
-                .RequestUri("http://0.0.0.1/*/action*")
-                .QueryString("test", "$%^&*")
-                .QueryString("test2=value")
-                .Method("POST")
-                .Body(jsonPostContent)
-                .PartialBody(jsonPostContent.Substring(10))
-                .ContentType($"{MediaTypes.Json}; charset=utf-8")
-                .BearerToken()
-                .Header("Content-Length", jsonPostContent.Length)
-                .Header("Last-Modified", lastModified)
-                .Version(version)
-                .Any(any => any
-                    .RequestUri("not-matching")
-                    .RequestUri("**controller**")
-                )
-                .Where(r => 0 < r.Version.Major)
+            .When(
+                matching => matching
+                    .RequestUri("http://0.0.0.1/*/action*")
+                    .QueryString("test", "$%^&*")
+                    .QueryString("test2=value")
+                    .Method("POST")
+                    .Body(jsonPostContent)
+                    .PartialBody(jsonPostContent.Substring(10))
+                    .ContentType($"{MediaTypes.Json}; charset=utf-8")
+                    .BearerToken()
+                    .Header("Content-Length", jsonPostContent.Length)
+                    .Header("Last-Modified", lastModified)
+                    .Version(version)
+                    .Any(
+                        any => any
+                            .RequestUri("not-matching")
+                            .RequestUri("**controller**")
+                    )
+                    .Where(r => 0 < r.Version.Major)
             )
-            .Callback(() =>
-            {
-            })
-            .Respond(with => with
-                .StatusCode(HttpStatusCode.Accepted)
-                .Body(JsonConvert.SerializeObject(new { firstName = "John", lastName = "Doe" }))
-                .TransferRate(BitRate.TwoG)
-                .Latency(NetworkLatency.TwoG)
+            .Callback(
+                () =>
+                {
+                }
+            )
+            .Respond(
+                with => with
+                    .StatusCode(HttpStatusCode.Accepted)
+                    .Body(
+                        JsonConvert.SerializeObject(
+                            new
+                            {
+                                firstName = "John",
+                                lastName = "Doe"
+                            }
+                        )
+                    )
+                    .TransferRate(BitRate.TwoG)
+                    .Latency(NetworkLatency.TwoG)
             )
             .Verifiable();
 
@@ -385,7 +412,10 @@ public class MockHttpHandlerTests : IDisposable
         await _httpClient.GetAsync("http://0.0.0.1/controller/action?test=1");
         var req = new HttpRequestMessage(HttpMethod.Post, "http://0.0.0.1/controller/action?test=%24%25^%26*&test2=value")
         {
-            Headers = { Authorization = new AuthenticationHeaderValue("Bearer", "some-token") },
+            Headers =
+            {
+                Authorization = new AuthenticationHeaderValue("Bearer", "some-token")
+            },
             Content = postContent,
             Version = version
         };
@@ -401,8 +431,14 @@ public class MockHttpHandlerTests : IDisposable
 
         await response.Should()
             .HaveStatusCode(HttpStatusCode.Accepted)
-            .And.HaveContentAsync(JsonConvert.SerializeObject(
-                new { firstName = "John", lastName = "Doe" })
+            .And.HaveContentAsync(
+                JsonConvert.SerializeObject(
+                    new
+                    {
+                        firstName = "John",
+                        lastName = "Doe"
+                    }
+                )
             );
     }
 
