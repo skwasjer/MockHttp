@@ -122,9 +122,9 @@ jobs:
           name: build
 
       # Run all tests
-      - run: dotnet test --no-restore --no-build -c Release
+      - run: dotnet test --no-restore --no-build -c Release -- xUnit.AppDomain=denied
         if: matrix.os == 'ubuntu-latest'
-      - run: dotnet test --no-restore --no-build -c Release --filter Category!=PublicApi
+      - run: dotnet test --no-restore --no-build -c Release --filter Category!=PublicApi -- xUnit.AppDomain=denied
         if: matrix.os != 'ubuntu-latest'
 
   pack:
