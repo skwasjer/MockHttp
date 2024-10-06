@@ -45,7 +45,7 @@ public abstract class PublicApiSpec
         string sutTargetFramework = GetTargetFramework(sut);
         string testTargetFramework = GetTargetFramework(GetType().Assembly);
         settings.UseFileName(
-            sutTargetFramework == testTargetFramework
+            sutTargetFramework == testTargetFramework || string.IsNullOrEmpty(testTargetFramework)
                 ? sutTargetFramework
                 : $"{sutTargetFramework}_via_{testTargetFramework}"
         );

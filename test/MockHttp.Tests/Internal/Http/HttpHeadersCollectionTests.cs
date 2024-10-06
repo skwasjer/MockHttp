@@ -56,12 +56,21 @@ public class HttpHeadersCollectionTests
     [InlineData("trailing-whitespace-not-allowed :value", "The header name 'trailing-whitespace-not-allowed ' has an invalid format.")]
     [InlineData("trailing-whitespace-not-allowed\t:value", "The header name 'trailing-whitespace-not-allowed\t' has an invalid format.")]
 #else
+#if TEST_NETSTANDARD2_1
+    [InlineData(":value", "The value cannot be null or empty.*")]
+    [InlineData(" :value", "The header name ' ' has an invalid format.")]
+    [InlineData(" leading-whitespace-not-allowed:value", "The header name ' leading-whitespace-not-allowed' has an invalid format.")]
+    [InlineData("\tleading-whitespace-not-allowed:value", "The header name '\tleading-whitespace-not-allowed' has an invalid format.")]
+    [InlineData("trailing-whitespace-not-allowed :value", "The header name 'trailing-whitespace-not-allowed ' has an invalid format.")]
+    [InlineData("trailing-whitespace-not-allowed\t:value", "The header name 'trailing-whitespace-not-allowed\t' has an invalid format.")]
+#else
     [InlineData(":value", "The value cannot be null or empty.*")]
     [InlineData(" :value", "The header name format is invalid.")]
     [InlineData(" leading-whitespace-not-allowed:value", "The header name format is invalid.")]
     [InlineData("\tleading-whitespace-not-allowed:value", "The header name format is invalid.")]
     [InlineData("trailing-whitespace-not-allowed :value", "The header name format is invalid.")]
     [InlineData("trailing-whitespace-not-allowed\t:value", "The header name format is invalid.")]
+#endif
 #endif
     public void Given_single_invalid_header_string_with_when_parsing_should_throw(string invalidHeaderString, string exceptionMessage)
     {

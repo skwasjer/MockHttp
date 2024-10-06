@@ -28,8 +28,7 @@ public class EmptyContentTests
         stream.Length.Should().Be(0);
     }
 
-#if NET6_0_OR_GREATER
-
+#if NET6_0_OR_GREATER && !TEST_NETSTANDARD2_1
     [Fact]
     public async Task When_reading_stream_sync_it_should_return_empty()
     {
