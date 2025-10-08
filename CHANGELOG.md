@@ -1,5 +1,69 @@
 # Changelog
 
+## v4.6.0
+
+### MockHttp.Json
+
+* chore(deps): bump System.Text.Json from 5.0.2 to 6.0.11 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/145
+
+### Test dependencies and CI changes
+
+* refactor: replace .NET Core 3.1 with .NET 7 to test .NET Standard 2.1. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/123
+* chore: Removes .NET Core 2.1 and .NET 5.0 from test libraries by @skwasjer in https://github.com/skwasjer/MockHttp/pull/124
+* chore(deps): bump xunit to 2.9.2. xunit.runners.visualstudio to 2.8.2 and FluentAssertions to 6.12.1. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/125
+* test: disable xunit's AppDomain by @skwasjer in https://github.com/skwasjer/MockHttp/pull/126
+* ci(deps): bump GitVersion to v6 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/127
+* ci: use pinned Ubuntu 22.04 image for tests by @skwasjer in https://github.com/skwasjer/MockHttp/pull/128
+* ci: update CodeQL to v3 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/133
+* ci: fixes 2 CI hotspots and skips JRE provisioning by @skwasjer in https://github.com/skwasjer/MockHttp/pull/137
+* chore(deps): Bump NSubstitute from 5.1.0 to 5.3.0 by @dependabot[bot] in https://github.com/skwasjer/MockHttp/pull/134
+* chore(deps): bump verify.xunit from 26.6.0 to 30.20.1 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/138
+* chore(deps): Bump PublicApiGenerator from 11.1.0 to 11.4.6 by @dependabot[bot] in https://github.com/skwasjer/MockHttp/pull/135
+* chore(deps): bump FluentAssertions from 6.12.1 to 7.2.0 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/139
+* chore(deps): bump Microsoft.Extensions.Diagnostics.Testing from 8.9.1 to 9.9.0 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/140
+* chore(deps): bump Newtonsoft.Json from 13.0.3 to 13.0.4 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/144
+
+
+**Full Changelog**: https://github.com/skwasjer/MockHttp/compare/v4.5.0...v4.6.0
+
+
+## v4.5.0
+
+* chore: replace TaskHelpers with a more robust impl. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/114
+* feat: add `StringSyntaxAttribute` to `RequestUri` extension by @skwasjer in https://github.com/skwasjer/MockHttp/pull/116
+* feat: remove .NET Core 3.1 from `skwas.MockHttp.Server` (EOL) by @skwasjer in https://github.com/skwasjer/MockHttp/pull/122
+
+### Chores / others
+* test: verify public API by @skwasjer in https://github.com/skwasjer/MockHttp/pull/117
+* chore: reorganize internals by @skwasjer in https://github.com/skwasjer/MockHttp/pull/118
+* fix: address some STA warnings by @skwasjer in https://github.com/skwasjer/MockHttp/pull/119
+* test: public API verification improvements by @skwasjer in https://github.com/skwasjer/MockHttp/pull/121
+
+**Full Changelog**: https://github.com/skwasjer/MockHttp/compare/v4.4.0...v4.5.0
+
+## v4.4.0
+
+* fix: The package skwas.MockHttp.Server.4.3.0 is missing a readme. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/101
+* fix(CA1307): 'string.Replace(string, string)' has a method overload that takes a 'StringComparison' parameter. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/102
+* fix(xUnit1012): Null should not be used for value type parameters by @skwasjer in https://github.com/skwasjer/MockHttp/pull/103
+* perf(CA1848): Use the LoggerMessage delegates by @skwasjer in https://github.com/skwasjer/MockHttp/pull/104
+* fix(CA1031): use exception handler middleware instead of catching all exceptions in ServerRequestHandler by @skwasjer in https://github.com/skwasjer/MockHttp/pull/105
+* fix: wildcard match does not escape special regex characters by @skwasjer in https://github.com/skwasjer/MockHttp/pull/106
+* chore: remove .NET 7 since this is now EOL by @skwasjer in https://github.com/skwasjer/MockHttp/pull/108
+* refactor: replaced RequestUriMatcher with UriMatcher by @skwasjer in https://github.com/skwasjer/MockHttp/pull/110
+* refactor: add new Pattern type that replaces IPatternMatcher<> to simplify API. by @skwasjer in https://github.com/skwasjer/MockHttp/pull/111
+* fix: restore public API compatibility.  by @skwasjer in https://github.com/skwasjer/MockHttp/pull/113
+
+### Chores
+
+* ci: change to v4 actions / upgrade to NodeJS 20 by @skwasjer in https://github.com/skwasjer/MockHttp/pull/100
+* ci: macos-latest has updated to ARM-based MacOS 14 which causes pipeline fail by @skwasjer in https://github.com/skwasjer/MockHttp/pull/107
+* chore(deps): bump test dependencies by @skwasjer in https://github.com/skwasjer/MockHttp/pull/109
+
+
+**Full Changelog**: https://github.com/skwasjer/MockHttp/compare/v4.3.1...v4.4.0
+
+
 ## v4.3.1
 
 * fix: setting any content header (specifically) after setting JSON body resets `HttpContent` to empty by @skwasjer in https://github.com/skwasjer/MockHttp/pull/99
