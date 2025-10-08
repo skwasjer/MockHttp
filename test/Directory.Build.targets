@@ -4,7 +4,7 @@
     <IsPackable>false</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <NoWarn>$(NoWarn);NU1902;NU1903;xUnit1042</NoWarn>
-    <NetTestSdkVersion>17.13.0</NetTestSdkVersion>
+    <NetTestSdkVersion>18.0.0</NetTestSdkVersion>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 
     <TestNetStandard20 Condition="'$(TargetFramework)'=='net481'">true</TestNetStandard20>
