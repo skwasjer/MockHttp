@@ -67,11 +67,14 @@ jobs:
 
       - name: SonarCloud PR config
         if: github.event_name == 'pull_request_target'
+        env:
+          BRANCH_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           echo "SONAR_PR_ARGS=\
           /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} \
-          /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
-          /d:sonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \
+          /d:sonar.pullrequest.branch=\"$BRANCH_REF\" \
+          /d:sonar.pullrequest.base=\"$BASE_REF\" \
           /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
 
       - name: Analyze with SonarCloud
@@ -81,6 +84,6 @@ jobs:
         run: |
           dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /o:"$SONAR_ORG_KEY" /d:sonar.host.url=https://sonarcloud.io /d:sonar.token="$SONAR_TOKEN" /d:sonar.cs.opencover.reportsPaths="**/*opencover.xml" /d:sonar.scanner.skipJreProvisioning=true $SONAR_PR_ARGS
 
-          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs" /p:VerifyPublicApi=false -- xUnit.AppDomain=denied
+          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs" /p:VerifyPublicApi=false
 
           dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
