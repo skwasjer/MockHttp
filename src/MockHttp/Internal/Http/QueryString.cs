@@ -79,12 +79,12 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 
     private static bool TryGetQueryFromUri(string uri, [NotNullWhen(true)] out string? queryString)
     {
-#if NETSTANDARD2_1 || NET6_0_OR_GREATER
+#if NETSTANDARD2_1 || NET8_0_OR_GREATER
         if (uri.Contains(TokenQuestionMark, StringComparison.InvariantCultureIgnoreCase)
 #else
         if (uri.Contains(TokenQuestionMark.ToString(CultureInfo.InvariantCulture))
 #endif
-         && Uri.TryCreate(uri, DotNetRelativeOrAbsolute, out Uri? u))
+            && Uri.TryCreate(uri, DotNetRelativeOrAbsolute, out Uri? u))
         {
             if (!u.IsAbsoluteUri)
             {

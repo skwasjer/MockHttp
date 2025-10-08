@@ -9,7 +9,7 @@
 
     <TestNetStandard20 Condition="'$(TargetFramework)'=='net481'">true</TestNetStandard20>
     <DefineConstants Condition="'$(TestNetStandard20)'=='true'">$(DefineConstants);TEST_NETSTANDARD2_0</DefineConstants>
-    <TestNetStandard21 Condition="'$(TargetFramework)'=='net7.0'">true</TestNetStandard21>
+    <TestNetStandard21 Condition="'$(TargetFramework)'=='net6.0'">true</TestNetStandard21>
     <DefineConstants Condition="'$(TestNetStandard21)'=='true'">$(DefineConstants);TEST_NETSTANDARD2_1</DefineConstants>
   </PropertyGroup>
 

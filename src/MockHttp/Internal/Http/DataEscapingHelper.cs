@@ -51,11 +51,16 @@ internal static class DataEscapingHelper
     private static string UnescapeData(string v)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        return Uri.UnescapeDataString(v?.Replace("+", "%20"
-#if NET6_0_OR_GREATER || NETSTANDARD2_1
-                , StringComparison.Ordinal
+        return Uri.UnescapeDataString(
+            v?.Replace(
+                "+",
+                "%20"
+#if NET8_0_OR_GREATER || NETSTANDARD2_1
+                ,
+                StringComparison.Ordinal
 #endif
-            )!);
+            )!
+        );
     }
 
     internal static string Format(IEnumerable<KeyValuePair<string, string>> items)

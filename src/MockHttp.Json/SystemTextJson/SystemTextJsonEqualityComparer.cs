@@ -35,7 +35,7 @@ internal sealed class SystemTextJsonEqualityComparer
 
         JsonDocument? docX = JsonSerializer.Deserialize<JsonDocument>(x, _options);
         JsonDocument? docY = JsonSerializer.Deserialize<JsonDocument>(y, _options);
-#if !NET6_0_OR_GREATER
+#if !NET8_0_OR_GREATER
         if (docX is null && docY is null)
         {
             return true;
@@ -51,7 +51,7 @@ internal sealed class SystemTextJsonEqualityComparer
 
     public int GetHashCode(string obj)
     {
-#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         return obj.GetHashCode(StringComparison.Ordinal);
 #else
         return obj.GetHashCode();
