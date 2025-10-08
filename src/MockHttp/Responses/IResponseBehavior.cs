@@ -12,12 +12,18 @@ public delegate Task ResponseHandlerDelegate(MockHttpRequestContext requestConte
 public interface IResponseBehavior
 {
     /// <summary>
-    /// Executes the behavior. Call <paramref name="next" /> to execute the next behavior in the response pipeline and use its returned response message.
+    /// Executes the behavior. Call <paramref name="nextHandler" /> to execute the next behavior in the response pipeline and use its returned
+    /// response message.
     /// </summary>
     /// <param name="requestContext">The current request context.</param>
     /// <param name="responseMessage">The response message.</param>
-    /// <param name="next">The next behavior.</param>
+    /// <param name="nextHandler">The next handler.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>An awaitable that upon completion returns the HTTP response message.</returns>
-    Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken);
+    Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    );
 }

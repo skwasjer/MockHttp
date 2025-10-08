@@ -20,7 +20,12 @@ internal sealed class StatusCodeBehavior
         _reasonPhrase = reasonPhrase;
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    )
     {
         responseMessage.StatusCode = _statusCode;
         if (_reasonPhrase is not null)
@@ -28,6 +33,6 @@ internal sealed class StatusCodeBehavior
             responseMessage.ReasonPhrase = _reasonPhrase;
         }
 
-        return next(requestContext, responseMessage, cancellationToken);
+        return nextHandler(requestContext, responseMessage, cancellationToken);
     }
 }

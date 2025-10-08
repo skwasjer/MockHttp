@@ -19,7 +19,12 @@ internal sealed class TimeoutBehavior
         _timeoutAfter = timeoutAfter;
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    )
     {
         // It is somewhat unintuitive to throw TaskCanceledException but this is what HttpClient does,
         // so we simulate same behavior.

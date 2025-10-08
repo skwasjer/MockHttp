@@ -18,9 +18,14 @@ internal sealed class TransferRateBehavior : IResponseBehavior
         _bitRate = bitRate;
     }
 
-    public async Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public async Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    )
     {
-        await next(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
+        await nextHandler(requestContext, responseMessage, cancellationToken).ConfigureAwait(false);
         responseMessage.Content = new RateLimitedHttpContent(responseMessage.Content, _bitRate);
     }
 

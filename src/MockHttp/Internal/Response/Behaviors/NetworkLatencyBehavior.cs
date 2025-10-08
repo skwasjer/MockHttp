@@ -12,8 +12,13 @@ internal sealed class NetworkLatencyBehavior
         _networkLatency = networkLatency ?? throw new ArgumentNullException(nameof(networkLatency));
     }
 
-    public Task HandleAsync(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, ResponseHandlerDelegate next, CancellationToken cancellationToken)
+    public Task HandleAsync(
+        MockHttpRequestContext requestContext,
+        HttpResponseMessage responseMessage,
+        ResponseHandlerDelegate nextHandler,
+        CancellationToken cancellationToken
+    )
     {
-        return _networkLatency.SimulateAsync(() => next(requestContext, responseMessage, cancellationToken), cancellationToken);
+        return _networkLatency.SimulateAsync(() => nextHandler(requestContext, responseMessage, cancellationToken), cancellationToken);
     }
 }
