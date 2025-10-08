@@ -19,7 +19,7 @@ internal static class NameValueCollectionExtensions
             {
                 yield return new KeyValuePair<string, IEnumerable<string?>>(
                     key,
-                    nvc.GetValues(key) ?? Array.Empty<string?>()
+                    nvc.GetValues(key) ?? []
                 );
             }
         }

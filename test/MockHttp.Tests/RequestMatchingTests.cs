@@ -40,7 +40,7 @@ public class RequestMatchingTests
         IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
 
         // Assert
-        actual.Should().BeEquivalentTo(new[] { _matcher1, _matcher2 });
+        actual.Should().BeEquivalentTo([_matcher1, _matcher2]);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class RequestMatchingTests
         IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
 
         // Assert
-        actual.Should().BeEquivalentTo(new[] { _matcher1 });
+        actual.Should().BeEquivalentTo([_matcher1]);
     }
 
     [Fact]

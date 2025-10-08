@@ -15,7 +15,7 @@ namespace MockHttp;
 /// </summary>
 public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
 {
-    private readonly ConcurrentCollection<HttpCall> _setups = new();
+    private readonly ConcurrentCollection<HttpCall> _setups = [];
     private readonly HttpCall _fallbackSetup = new();
     private readonly Dictionary<Type, object> _items = new();
     private readonly ReadOnlyDictionary<Type, object> _readOnlyItems;

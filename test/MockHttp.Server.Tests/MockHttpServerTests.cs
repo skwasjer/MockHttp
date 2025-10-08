@@ -88,8 +88,8 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
     public static IEnumerable<object[]> RequestResponseTestCases()
     {
         // By method, returning status code.
-        yield return new object[]
-        {
+        yield return
+        [
             (Action<MockHttpHandler>)(m => m
                 .When(matching => matching.Method(HttpMethod.Post))
                 .Respond(with => with.StatusCode(HttpStatusCode.BadGateway))
@@ -100,11 +100,11 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 response.Should().HaveStatusCode(HttpStatusCode.BadGateway);
                 return Task.CompletedTask;
             })
-        };
+        ];
 
         // By wildcard path & query string, returning content
-        yield return new object[]
-        {
+        yield return
+        [
             (Action<MockHttpHandler>)(m => m
                 .When(matching => matching
                     .RequestUri("*path/child*")
@@ -117,13 +117,13 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             {
                 await response.Should().HaveContentAsync("has content");
             })
-        };
+        ];
 
         // By header.
         const string headerKey = "X-Correlation-ID";
         const string headerValue = "my-id";
-        yield return new object[]
-        {
+        yield return
+        [
             (Action<MockHttpHandler>)(m => m
                 .When(matching => matching
                     .Header(headerKey, headerValue)
@@ -136,7 +136,9 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
             {
                 Headers =
                 {
-                    { headerKey, headerValue }
+                    {
+                        headerKey, headerValue
+                    }
                 }
             },
             (Func<HttpResponseMessage, Task>)(response =>
@@ -144,7 +146,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
                 response.Should().HaveHeader(headerKey, headerValue);
                 return Task.CompletedTask;
             })
-        };
+        ];
     }
 
     [Fact]

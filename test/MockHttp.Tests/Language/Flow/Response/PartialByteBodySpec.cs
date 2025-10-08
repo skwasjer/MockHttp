@@ -15,6 +15,6 @@ public class PartialByteBodySpec : ByteBodySpec
         return response
             .Should()
             .HaveContentType(MediaTypes.OctetStream)
-            .And.HaveContentAsync(new byte[] { 5, 4, 3, 2 });
+            .And.HaveContentAsync([5, 4, 3, 2]);
     }
 }

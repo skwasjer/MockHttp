@@ -19,8 +19,8 @@ public class ContentMatcher : IAsyncHttpRequestMatcher
     /// Initializes a new instance of the <see cref="ContentMatcher" /> class.
     /// </summary>
     public ContentMatcher()
+        : this([])
     {
-        ByteContent = Array.Empty<byte>();
     }
 
     /// <summary>

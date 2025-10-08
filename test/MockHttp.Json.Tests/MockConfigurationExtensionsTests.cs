@@ -27,8 +27,8 @@ public class MockConfigurationExtensionsTests
         IMockConfiguration mockConfig = Substitute.For<IMockConfiguration>();
         IJsonAdapter jsonAdapter = Substitute.For<IJsonAdapter>();
 
-        yield return new object?[] { null, jsonAdapter, nameof(mockConfig) };
-        yield return new object?[] { mockConfig, null, nameof(jsonAdapter) };
+        yield return [null, jsonAdapter, nameof(mockConfig)];
+        yield return [mockConfig, null, nameof(jsonAdapter)];
     }
 
     [Fact]

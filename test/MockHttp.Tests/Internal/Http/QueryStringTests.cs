@@ -22,7 +22,7 @@ public class QueryStringTests
     public void Given_queryString_with_null_or_empty_key_when_creating_should_throw(string? key)
     {
         // Act
-        Func<QueryString> act = () => new QueryString(new[] { new KeyValuePair<string, IEnumerable<string>>(key!, new List<string>()) });
+        Func<QueryString> act = () => new QueryString([new KeyValuePair<string, IEnumerable<string>>(key!, new List<string>())]);
 
         // Assert
         act.Should()
@@ -57,7 +57,12 @@ public class QueryStringTests
     [Fact]
     public void Given_queryString_starts_with_questionMark_when_parsing_should_ignore_it()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value"]
+            }
+        };
 
         // Act
         var actual = QueryString.Parse("?key=value");
@@ -69,7 +74,12 @@ public class QueryStringTests
     [Fact]
     public void Given_queryString_contains_hashTerminator_when_parsing_should_ignore_it()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value"]
+            }
+        };
 
         // Act
         var actual = QueryString.Parse("key=value#hash");
@@ -81,7 +91,12 @@ public class QueryStringTests
     [Fact]
     public void Given_queryString_contains_encoded_key_or_value_when_parsing_should_url_decode()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "éôxÄ", new[] { "$%^&*" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "éôxÄ", ["$%^&*"]
+            }
+        };
 
         // Act
         var actual = QueryString.Parse("%C3%A9%C3%B4x%C3%84=%24%25%5E%26*");
@@ -93,7 +108,12 @@ public class QueryStringTests
     [Fact]
     public void Given_queryString_contains_multiple_same_keys_when_parsing_should_combine_into_single_entry()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^ &*", "another value" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value", "$%^ &*", "another value"]
+            }
+        };
 
         // Act
         var actual = QueryString.Parse("?key=value&key=%24%25%5E%20%26%2A&key=another%20value");
@@ -105,7 +125,12 @@ public class QueryStringTests
     [Fact]
     public void Given_queryString_contains_multiple_same_keys_when_formatting_should_produce_correct_string()
     {
-        var queryStringData = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^&*", "another value" } } };
+        var queryStringData = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value", "$%^&*", "another value"]
+            }
+        };
         const string expected = "?key=value&key=%24%25%5E%26%2A&key=another%20value";
         var queryString = new QueryString(queryStringData);
 
@@ -122,10 +147,18 @@ public class QueryStringTests
         const string queryString = "?key1&key2=value&key3=&key4=value1&key4=value2";
         var expected = new Dictionary<string, IEnumerable<string>>
         {
-            { "key1", Array.Empty<string>() },
-            { "key2", new[] { "value" } },
-            { "key3", new[] { "" } },
-            { "key4", new[] { "value1", "value2" } },
+            {
+                "key1", []
+            },
+            {
+                "key2", ["value"]
+            },
+            {
+                "key3", [""]
+            },
+            {
+                "key4", ["value1", "value2"]
+            }
         };
 
         // Act

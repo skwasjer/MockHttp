@@ -13,13 +13,23 @@ public class HttpHeadersMatcherTests
         DateTimeOffset lastModified = DateTimeOffset.UtcNow;
         HttpRequestMessage request = GetRequestWithHeaders(lastModified);
 
-        var sut = new HttpHeadersMatcher(new Dictionary<string, IEnumerable<string>>
-        {
-            { "Cache-Control", new[] { "must-revalidate", "public", "max-age=31536000" } },
-            { "Accept", new[] { MediaTypes.Json } },
-            { "Last-Modified", new[] { lastModified.ToString("R", CultureInfo.InvariantCulture) } },
-            { "Content-Length", new[] { "123" } }
-        });
+        var sut = new HttpHeadersMatcher(
+            new Dictionary<string, IEnumerable<string>>
+            {
+                {
+                    "Cache-Control", ["must-revalidate", "public", "max-age=31536000"]
+                },
+                {
+                    "Accept", [MediaTypes.Json]
+                },
+                {
+                    "Last-Modified", [lastModified.ToString("R", CultureInfo.InvariantCulture)]
+                },
+                {
+                    "Content-Length", ["123"]
+                }
+            }
+        );
 
         // Act & assert
         sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
@@ -95,7 +105,7 @@ public class HttpHeadersMatcherTests
         string? name = null;
 
         // Act
-        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(name!, Enumerable.Empty<string>());
+        Func<HttpHeadersMatcher> act = () => new HttpHeadersMatcher(name!, []);
 
         // Assert
         act.Should()
@@ -148,7 +158,17 @@ public class HttpHeadersMatcherTests
     public void When_formatting_multiple_headers_should_return_human_readable_representation()
     {
         string expectedText = $"Headers: {HeaderNames.ContentType}: {MediaTypes.PlainText}{Environment.NewLine}{HeaderNames.Accept}: {MediaTypes.PlainText}, {MediaTypes.Html}";
-        var headers = new HttpHeadersCollection { { HeaderNames.ContentType, MediaTypes.PlainText }, { HeaderNames.Accept, new[] { MediaTypes.PlainText, MediaTypes.Html } } };
+        var headers = new HttpHeadersCollection
+        {
+            {
+                HeaderNames.ContentType, MediaTypes.PlainText
+            },
+            {
+                HeaderNames.Accept, [
+                    MediaTypes.PlainText, MediaTypes.Html
+                ]
+            }
+        };
         var sut = new HttpHeadersMatcher(headers);
 
         // Act

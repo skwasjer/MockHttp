@@ -65,7 +65,7 @@ internal static class DataEscapingHelper
 
     internal static string Format(IEnumerable<KeyValuePair<string, string>> items)
     {
-        return Format(items.Select(kvp => new KeyValuePair<string, IEnumerable<string>>(kvp.Key, new[] { kvp.Value })));
+        return Format(items.Select(kvp => new KeyValuePair<string, IEnumerable<string>>(kvp.Key, [kvp.Value])));
     }
 
     internal static string Format(IEnumerable<KeyValuePair<string, IEnumerable<string>>> items)

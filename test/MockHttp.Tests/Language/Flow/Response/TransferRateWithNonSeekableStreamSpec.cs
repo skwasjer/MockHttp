@@ -10,7 +10,7 @@ public class TransferRateWithNonSeekableStreamSpec
 
     public TransferRateWithNonSeekableStreamSpec()
     {
-        _nonSeekableStream = new RateLimitedStream(new CanSeekMemoryStream(Array.Empty<byte>(), false), 1000);
+        _nonSeekableStream = new RateLimitedStream(new CanSeekMemoryStream([], false), 1000);
     }
 
     public override Task DisposeAsync()

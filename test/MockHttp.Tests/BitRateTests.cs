@@ -69,20 +69,20 @@ public sealed class BitRateTests
 
     public static IEnumerable<object[]> GetBitRateTestCases()
     {
-        yield return new object[] { TwoG(), 64_000 };
-        yield return new object[] { ThreeG(), 2_000_000 };
-        yield return new object[] { FourG(), 64_000_000 };
-        yield return new object[] { FiveG(), 512_000_000 };
-        yield return new object[] { TenMegabit(), 10_000_000 };
-        yield return new object[] { OneHundredMegabit(), 100_000_000 };
-        yield return new object[] { OneGigabit(), 1_000_000_000 };
-        yield return new object[] { FromInt32(999), 999 };
-        yield return new object[] { FromInt32(1_000), 1_000 };
-        yield return new object[] { FromInt32(1_234), 1_234 };
-        yield return new object[] { FromInt32(1_000_000), 1_000_000 };
-        yield return new object[] { FromInt32(1_234_567), 1_234_567 };
-        yield return new object[] { FromInt32(1_000_000_000), 1_000_000_000 };
-        yield return new object[] { FromInt32(1_234_567_890), 1_234_567_890 };
+        yield return [TwoG(), 64_000];
+        yield return [ThreeG(), 2_000_000];
+        yield return [FourG(), 64_000_000];
+        yield return [FiveG(), 512_000_000];
+        yield return [TenMegabit(), 10_000_000];
+        yield return [OneHundredMegabit(), 100_000_000];
+        yield return [OneGigabit(), 1_000_000_000];
+        yield return [FromInt32(999), 999];
+        yield return [FromInt32(1_000), 1_000];
+        yield return [FromInt32(1_234), 1_234];
+        yield return [FromInt32(1_000_000), 1_000_000];
+        yield return [FromInt32(1_234_567), 1_234_567];
+        yield return [FromInt32(1_000_000_000), 1_000_000_000];
+        yield return [FromInt32(1_234_567_890), 1_234_567_890];
     }
 
     [Theory]
@@ -95,19 +95,19 @@ public sealed class BitRateTests
     public static IEnumerable<object[]> GetBitRatePrettyTextTestCases()
     {
         const string prefix = nameof(BitRate) + ".";
-        yield return new object[] { TwoG(), prefix + nameof(TwoG) };
-        yield return new object[] { ThreeG(), prefix + nameof(ThreeG) };
-        yield return new object[] { FourG(), prefix + nameof(FourG) };
-        yield return new object[] { FiveG(), prefix + nameof(FiveG) };
-        yield return new object[] { TenMegabit(), prefix + nameof(TenMegabit) };
-        yield return new object[] { OneHundredMegabit(), prefix + nameof(OneHundredMegabit) };
-        yield return new object[] { OneGigabit(), prefix + nameof(OneGigabit) };
-        yield return new object[] { FromInt32(999), prefix + "Around(999bps)" };
-        yield return new object[] { FromInt32(1_000), prefix + "Around(1kbps)" };
-        yield return new object[] { FromInt32(1_234), prefix + "Around(1.23kbps)" };
-        yield return new object[] { FromInt32(1_000_000), prefix + "Around(1Mbps)" };
-        yield return new object[] { FromInt32(1_234_567), prefix + "Around(1.23Mbps)" };
-        yield return new object[] { FromInt32(1_000_000_000), prefix + "Around(1Gbps)" };
-        yield return new object[] { FromInt32(1_234_567_890), prefix + "Around(1.23Gbps)" };
+        yield return [TwoG(), prefix + nameof(TwoG)];
+        yield return [ThreeG(), prefix + nameof(ThreeG)];
+        yield return [FourG(), prefix + nameof(FourG)];
+        yield return [FiveG(), prefix + nameof(FiveG)];
+        yield return [TenMegabit(), prefix + nameof(TenMegabit)];
+        yield return [OneHundredMegabit(), prefix + nameof(OneHundredMegabit)];
+        yield return [OneGigabit(), prefix + nameof(OneGigabit)];
+        yield return [FromInt32(999), prefix + "Around(999bps)"];
+        yield return [FromInt32(1_000), prefix + "Around(1kbps)"];
+        yield return [FromInt32(1_234), prefix + "Around(1.23kbps)"];
+        yield return [FromInt32(1_000_000), prefix + "Around(1Mbps)"];
+        yield return [FromInt32(1_234_567), prefix + "Around(1.23Mbps)"];
+        yield return [FromInt32(1_000_000_000), prefix + "Around(1Gbps)"];
+        yield return [FromInt32(1_234_567_890), prefix + "Around(1.23Gbps)"];
     }
 }

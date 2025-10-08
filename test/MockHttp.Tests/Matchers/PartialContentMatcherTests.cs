@@ -147,7 +147,7 @@ public class PartialContentMatcherTests
     public void Given_empty_content_bytes_when_creating_matcher_should_throw()
     {
         // Act
-        Func<PartialContentMatcher> act = () => new PartialContentMatcher(Array.Empty<byte>());
+        Func<PartialContentMatcher> act = () => new PartialContentMatcher([]);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithParameterName("content");

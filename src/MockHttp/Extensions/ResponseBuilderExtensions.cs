@@ -9,6 +9,7 @@ using MockHttp.IO;
 using MockHttp.Language.Flow.Response;
 using MockHttp.Language.Response;
 using MockHttp.Response.Behaviors;
+using MockHttp.Threading;
 
 namespace MockHttp;
 
@@ -55,7 +56,7 @@ public static class ResponseBuilderExtensions
 #if NET8_0_OR_GREATER
             using Stream stream = httpContent.ReadAsStream();
 #else
-            using Stream stream = Threading.AsyncHelpers.RunSync(httpContent.ReadAsStreamAsync);
+            using Stream stream = AsyncHelpers.RunSync(httpContent.ReadAsStreamAsync);
 #endif
             return (IWithContentResult)BufferedStreamBody(builder, stream)
                 .Headers(httpContent.Headers.Select(kvp => new KeyValuePair<string, IEnumerable<string?>>(kvp.Key, kvp.Value)));
@@ -297,7 +298,7 @@ public static class ResponseBuilderExtensions
     public static IWithHeadersResult Header<T>(this IWithHeaders builder, string name, params T[] value)
     {
         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-        return builder.Header(name, (IEnumerable<T>)(value ?? Array.Empty<T>()));
+        return builder.Header(name, (IEnumerable<T>)(value ?? []));
     }
 
     /// <summary>
@@ -316,7 +317,7 @@ public static class ResponseBuilderExtensions
         }
 
         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(name, value ?? Array.Empty<T>()));
+        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(name, value ?? []));
     }
 
     /// <summary>
@@ -328,7 +329,7 @@ public static class ResponseBuilderExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is <see langword="null" />.</exception>
     public static IWithHeadersResult Header<T>(this IWithHeaders builder, KeyValuePair<string, T> header)
     {
-        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(header.Key, new [] { header.Value }));
+        return builder.Header(new KeyValuePair<string, IEnumerable<T>>(header.Key, [header.Value]));
     }
 
     /// <summary>

@@ -137,11 +137,31 @@ public sealed class JsonContentMatcherTests : IDisposable
 
     public static IEnumerable<object?[]> EmptyContentTestCases()
     {
-        yield return new object?[] { null };
+        yield return [null];
+
         // Edge case (empty content, but with content length > 0)
-        yield return new object?[] { new StringContent(string.Empty) { Headers = { ContentLength = 10 } } };
+        yield return
+        [
+            new StringContent(string.Empty)
+            {
+                Headers =
+                {
+                    ContentLength = 10
+                }
+            }
+        ];
+
         // Edge case (not empty content, but with content length == 0)
-        yield return new object?[] { new StringContent("not empty") { Headers = { ContentLength = 0 } } };
+        yield return
+        [
+            new StringContent("not empty")
+            {
+                Headers =
+                {
+                    ContentLength = 0
+                }
+            }
+        ];
     }
 
     [Theory]
@@ -161,10 +181,24 @@ public sealed class JsonContentMatcherTests : IDisposable
 
     public static IEnumerable<object[]> JsonMatchTestCases()
     {
-        yield return new object[] { new[] { 1, 2, 3 }, "[1,2,3]" };
-        yield return new object[] { new { value = 1 }, "{\"value\":1}" };
-        yield return new object[] { "some text", "\"some text\"" };
-        yield return new object[] { 123, "123" };
+        yield return
+        [
+            new[]
+            {
+                1, 2, 3
+            },
+            "[1,2,3]"
+        ];
+        yield return
+        [
+            new
+            {
+                value = 1
+            },
+            "{\"value\":1}"
+        ];
+        yield return ["some text", "\"some text\""];
+        yield return [123, "123"];
     }
 
     public void Dispose()

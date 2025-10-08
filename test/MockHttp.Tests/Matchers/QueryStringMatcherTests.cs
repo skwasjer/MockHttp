@@ -15,15 +15,19 @@ public class QueryStringMatcherTests
     {
         var request = new HttpRequestMessage { RequestUri = new Uri("http://localhost/" + queryString) };
 
-        var sut = new QueryStringMatcher(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>(
-                expectedKey,
-                expectedValue is null
-                    ? null!
-                    : new[] { expectedValue }
-            )
-        });
+        var sut = new QueryStringMatcher(
+            [
+                new KeyValuePair<string, IEnumerable<string>>(
+                    expectedKey,
+                    expectedValue is null
+                        ? null!
+                        : new[]
+                        {
+                            expectedValue
+                        }
+                )
+            ]
+        );
 
         // Act & assert
         sut.IsMatch(new MockHttpRequestContext(request)).Should().BeTrue();
@@ -39,7 +43,7 @@ public class QueryStringMatcherTests
     {
         var request = new HttpRequestMessage { RequestUri = new Uri("http://localhost/" + queryString) };
 
-        var sut = new QueryStringMatcher(new[] { new KeyValuePair<string, IEnumerable<string>>("key_not_in_uri", null!) });
+        var sut = new QueryStringMatcher([new KeyValuePair<string, IEnumerable<string>>("key_not_in_uri", null!)]);
 
         // Act & assert
         sut.IsMatch(new MockHttpRequestContext(request)).Should().BeFalse();

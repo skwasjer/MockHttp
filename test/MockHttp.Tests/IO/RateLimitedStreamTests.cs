@@ -50,7 +50,7 @@ public sealed class RateLimitedStreamTests : IDisposable
     [Fact]
     public void Given_that_next_block_read_is_0_when_reading_last_block_it_should_exit()
     {
-        byte[] sourceBuffer = { 0, 1, 2, 3 };
+        byte[] sourceBuffer = [0, 1, 2, 3];
         using var actualStream = new MemoryStream(sourceBuffer);
         using var sut = new RateLimitedStream(actualStream, 128);
 

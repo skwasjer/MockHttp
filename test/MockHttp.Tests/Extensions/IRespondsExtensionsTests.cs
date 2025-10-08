@@ -203,31 +203,38 @@ public class IRespondsExtensionsTests
             IResponds<IResponseResult> responds = Substitute.For<IResponds<IResponseResult>>();
 
             DelegateTestCase[] testCases =
-            {
+            [
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,
-                    () => new HttpResponseMessage()),
-                DelegateTestCase.Create<IResponds<IResponseResult>, Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>, IResponseResult>(
-                    IRespondsExtensions.Respond,
-                    responds,
-                    (_, _) => new HttpResponseMessage()),
+                    () => new HttpResponseMessage()
+                ),
+                DelegateTestCase
+                    .Create<IResponds<IResponseResult>, Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>, IResponseResult>(
+                        IRespondsExtensions.Respond,
+                        responds,
+                        (_, _) => new HttpResponseMessage()
+                    ),
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,
-                    (Action<MockHttpRequestContext, CancellationToken, IResponseBuilder>)((_, _, _) => { })),
+                    (Action<MockHttpRequestContext, CancellationToken, IResponseBuilder>)((_, _, _) => { })
+                ),
                 DelegateTestCase.Create(
                     IRespondsExtensions.RespondUsing<FakeResponseStrategy, IResponseResult>,
-                    responds),
+                    responds
+                ),
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,
-                    (Action<IResponseBuilder>)(_ => { })),
+                    (Action<IResponseBuilder>)(_ => { })
+                ),
                 DelegateTestCase.Create(
                     IRespondsExtensions.Respond,
                     responds,
-                    (Action<MockHttpRequestContext, IResponseBuilder>)((_, _) => { }))
-            };
+                    (Action<MockHttpRequestContext, IResponseBuilder>)((_, _) => { })
+                )
+            ];
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
         }

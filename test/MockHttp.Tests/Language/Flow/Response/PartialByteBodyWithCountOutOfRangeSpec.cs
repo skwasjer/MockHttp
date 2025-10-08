@@ -6,7 +6,7 @@ public class PartialByteBodyWithCountOutOfRangeSpec : GuardedResponseSpec
 {
     protected override void Given(IResponseBuilder with)
     {
-        with.Body(Array.Empty<byte>(), 0, 10);
+        with.Body([], 0, 10);
     }
 
     protected override Task ShouldThrow(Func<Task> act)
@@ -21,7 +21,7 @@ public class PartialByteBodyWithCountLessThanZeroSpec : GuardedResponseSpec
 {
     protected override void Given(IResponseBuilder with)
     {
-        with.Body(Array.Empty<byte>(), 0, -1);
+        with.Body([], 0, -1);
     }
 
     protected override Task ShouldThrow(Func<Task> act)

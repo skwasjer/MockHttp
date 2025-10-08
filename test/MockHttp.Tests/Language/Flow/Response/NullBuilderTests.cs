@@ -26,7 +26,7 @@ public class NullBuilderTests
             IWithHeaders withHeaders = Substitute.For<IWithHeaders>();
 
             DelegateTestCase[] testCases =
-            {
+            [
                 DelegateTestCase.Create(
                     ResponseBuilderExtensions.StatusCode,
                     withStatusCode,
@@ -157,7 +157,7 @@ public class NullBuilderTests
                     responseBuilder,
                     (int)BitRate.FourG()
                 )
-            };
+            ];
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
         }
