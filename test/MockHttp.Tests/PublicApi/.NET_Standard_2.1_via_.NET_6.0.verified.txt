@@ -458,14 +458,6 @@ namespace MockHttp.Matchers
         public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
         public override string ToString() { }
     }
-    [System.Obsolete("Replaced with UriMatcher. Will be removed in next major release.")]
-    public class RequestUriMatcher : MockHttp.Matchers.HttpRequestMatcher
-    {
-        public RequestUriMatcher(System.Uri uri) { }
-        public RequestUriMatcher(string uriString, bool allowWildcards = true) { }
-        public override bool IsMatch(MockHttp.Responses.MockHttpRequestContext requestContext) { }
-        public override string ToString() { }
-    }
     public abstract class ValueMatcher<T> : MockHttp.Matchers.HttpRequestMatcher
     {
         protected ValueMatcher(T value) { }
