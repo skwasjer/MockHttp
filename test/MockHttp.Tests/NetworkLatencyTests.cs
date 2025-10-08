@@ -47,14 +47,14 @@ public sealed class NetworkLatencyTests
 
     public static IEnumerable<object[]> GetNetworkLatencyTestCases()
     {
-        yield return new object[] { TwoG(), 300, 1200 };
-        yield return new object[] { ThreeG(), 100, 600 };
-        yield return new object[] { FourG(), 30, 50 };
-        yield return new object[] { FiveG(), 5, 10 };
-        yield return new object[] { Between(50, 60), 50, 60 };
-        yield return new object[] { Between(TimeSpan.FromMilliseconds(2500), TimeSpan.FromMilliseconds(3000)), 2500, 3000 };
-        yield return new object[] { Around(100), 100, 100 };
-        yield return new object[] { Around(TimeSpan.FromMilliseconds(70)), 70, 70 };
+        yield return [TwoG(), 300, 1200];
+        yield return [ThreeG(), 100, 600];
+        yield return [FourG(), 30, 50];
+        yield return [FiveG(), 5, 10];
+        yield return [Between(50, 60), 50, 60];
+        yield return [Between(TimeSpan.FromMilliseconds(2500), TimeSpan.FromMilliseconds(3000)), 2500, 3000];
+        yield return [Around(100), 100, 100];
+        yield return [Around(TimeSpan.FromMilliseconds(70)), 70, 70];
     }
 
     [Theory]
@@ -67,13 +67,16 @@ public sealed class NetworkLatencyTests
     public static IEnumerable<object[]> GetNetworkLatencyPrettyTextTestCases()
     {
         const string prefix = nameof(NetworkLatency) + ".";
-        yield return new object[] { TwoG(), prefix + nameof(TwoG) };
-        yield return new object[] { ThreeG(), prefix + nameof(ThreeG) };
-        yield return new object[] { FourG(), prefix + nameof(FourG) };
-        yield return new object[] { FiveG(), prefix + nameof(FiveG) };
-        yield return new object[] { Between(50, 60), prefix + "Between(50, 60)" };
-        yield return new object[] { Between(TimeSpan.FromMilliseconds(150), TimeSpan.FromMilliseconds(160)), prefix + "Between(00:00:00.1500000, 00:00:00.1600000)" };
-        yield return new object[] { Around(100), prefix + "Around(100)" };
-        yield return new object[] { Around(TimeSpan.FromMilliseconds(70)), prefix + "Around(00:00:00.0700000)" };
+        yield return [TwoG(), prefix + nameof(TwoG)];
+        yield return [ThreeG(), prefix + nameof(ThreeG)];
+        yield return [FourG(), prefix + nameof(FourG)];
+        yield return [FiveG(), prefix + nameof(FiveG)];
+        yield return [Between(50, 60), prefix + "Between(50, 60)"];
+        yield return
+        [
+            Between(TimeSpan.FromMilliseconds(150), TimeSpan.FromMilliseconds(160)), prefix + "Between(00:00:00.1500000, 00:00:00.1600000)"
+        ];
+        yield return [Around(100), prefix + "Around(100)"];
+        yield return [Around(TimeSpan.FromMilliseconds(70)), prefix + "Around(00:00:00.0700000)"];
     }
 }

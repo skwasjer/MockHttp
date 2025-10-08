@@ -29,7 +29,12 @@ public class DataEscapingHelperTests
     [Fact]
     public void Given_escapedString_contains_encoded_key_or_value_when_parsing_should_url_decode()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "éôxÄ", new[] { "$%^&*" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "éôxÄ", ["$%^&*"]
+            }
+        };
 
         // Act
         IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse("%C3%A9%C3%B4x%C3%84=%24%25%5E%26*");
@@ -41,7 +46,12 @@ public class DataEscapingHelperTests
     [Fact]
     public void Given_escapedString_contains_multiple_same_keys_when_parsing_should_combine_into_single_entry()
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^ &*", "another value" } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value", "$%^ &*", "another value"]
+            }
+        };
 
         // Act
         IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse("key=value&key=%24%25%5E+%26%2A&key=another%20value");
@@ -61,7 +71,12 @@ public class DataEscapingHelperTests
     [InlineData("a%2Bb", "a+b", "value", "value")]
     public void Given_escapedString_contains_space_when_parsing_it_should_return_expected(string key, string expectedKey, string value, string expectedValue)
     {
-        var expected = new Dictionary<string, IEnumerable<string>> { { expectedKey, new[] { expectedValue } } };
+        var expected = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                expectedKey, [expectedValue]
+            }
+        };
 
         // Act
         IEnumerable<KeyValuePair<string, IEnumerable<string>>> actual = DataEscapingHelper.Parse($"{key}={value}");
@@ -73,7 +88,12 @@ public class DataEscapingHelperTests
     [Fact]
     public void Given_escapedString_contains_multiple_same_keys_when_formatting_should_produce_correct_string()
     {
-        var items = new Dictionary<string, IEnumerable<string>> { { "key", new[] { "value", "$%^&*", "another value" } } };
+        var items = new Dictionary<string, IEnumerable<string>>
+        {
+            {
+                "key", ["value", "$%^&*", "another value"]
+            }
+        };
         const string expected = "key=value&key=%24%25%5E%26%2A&key=another%20value";
 
         // Act
@@ -89,10 +109,18 @@ public class DataEscapingHelperTests
         const string dataEscapedString = "key1&key2=value&key3=&key4=value1&key4=value2";
         var expected = new Dictionary<string, IEnumerable<string>>
         {
-            { "key1", Array.Empty<string>() },
-            { "key2", new[] { "value" } },
-            { "key3", new[] { "" } },
-            { "key4", new[] { "value1", "value2" } },
+            {
+                "key1", []
+            },
+            {
+                "key2", ["value"]
+            },
+            {
+                "key3", [""]
+            },
+            {
+                "key4", ["value1", "value2"]
+            }
         };
 
         // Act

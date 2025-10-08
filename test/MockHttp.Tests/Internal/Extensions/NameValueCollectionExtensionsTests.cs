@@ -29,9 +29,15 @@ public class NameValueCollectionExtensionsTests
         };
         var expectedKeyValuePairs = new Dictionary<string, IEnumerable<string>>
         {
-            { "key1", new[] { "value1", "value2" } },
-            { "key2", new[] { "value3" } },
-            { "key3", Array.Empty<string>() }
+            {
+                "key1", ["value1", "value2"]
+            },
+            {
+                "key2", ["value3"]
+            },
+            {
+                "key3", []
+            }
         };
 
         // Act

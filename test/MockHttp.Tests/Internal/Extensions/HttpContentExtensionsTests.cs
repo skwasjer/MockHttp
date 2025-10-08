@@ -60,7 +60,7 @@ public class HttpContentExtensionsTests
         {
             content.Headers.Add("Custom", "Header");
             content.Headers.ContentType = new MediaTypeHeaderValue(MediaTypes.Html);
-            return new object[] { content, expectedData };
+            return [content, expectedData];
         }
 
         const string data = "<b>data</b>";
@@ -68,7 +68,10 @@ public class HttpContentExtensionsTests
         yield return CreateTestCase(new StringContent(data), data);
         yield return CreateTestCase(new ByteArrayContent(buffer), data);
         yield return CreateTestCase(new StreamContent(new MemoryStream(buffer)), data);
-        yield return CreateTestCase(new FormUrlEncodedContent(new[] { new KeyValuePair<string?, string?>("key", data) }), "key=" + Uri.EscapeDataString(data));
+        yield return CreateTestCase(
+            new FormUrlEncodedContent([new KeyValuePair<string?, string?>("key", data)]),
+            "key=" + Uri.EscapeDataString(data)
+        );
 
         var mpc = new MultipartContent("subtype", "boundary") { new StringContent(data) };
         yield return CreateTestCase(mpc, "--boundary\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n<b>data</b>\r\n--boundary--\r\n");

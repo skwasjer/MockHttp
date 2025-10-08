@@ -11,7 +11,7 @@ namespace MockHttp;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public class RequestMatching : IFluentInterface
 {
-    private readonly List<IAsyncHttpRequestMatcher> _matchers = new();
+    private readonly List<IAsyncHttpRequestMatcher> _matchers = [];
     private RequestMatching? _not;
 
     internal RequestMatching()

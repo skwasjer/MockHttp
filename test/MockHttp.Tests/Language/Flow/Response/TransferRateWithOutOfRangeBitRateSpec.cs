@@ -7,7 +7,7 @@ public sealed class TransferRateWithOutOfRangeBitRateSpec : GuardedResponseSpec
 {
     protected override void Given(IResponseBuilder with)
     {
-        with.Body(Array.Empty<byte>())
+        with.Body([])
             .TransferRate(RateLimitedStream.MinBitRate - 1);
     }
 

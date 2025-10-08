@@ -265,20 +265,20 @@ public class MockHttpHandlerTests : IDisposable
     {
         get
         {
-            yield return new object[] { 1, IsSent.AtLeast(1) };
-            yield return new object[] { 3, IsSent.AtLeast(3) };
-            yield return new object[] { 5, IsSent.AtLeast(3) };
-            yield return new object[] { 1, IsSent.AtLeastOnce() };
-            yield return new object[] { 3, IsSent.AtLeastOnce() };
-            yield return new object[] { 1, IsSent.AtMost(1) };
-            yield return new object[] { 3, IsSent.AtMost(3) };
-            yield return new object[] { 3, IsSent.AtMost(5) };
-            yield return new object[] { 0, IsSent.AtMostOnce() };
-            yield return new object[] { 1, IsSent.AtMostOnce() };
-            yield return new object[] { 1, IsSent.Exactly(1) };
-            yield return new object[] { 3, IsSent.Exactly(3) };
-            yield return new object[] { 0, IsSent.Never() };
-            yield return new object[] { 1, IsSent.Once() };
+            yield return [1, IsSent.AtLeast(1)];
+            yield return [3, IsSent.AtLeast(3)];
+            yield return [5, IsSent.AtLeast(3)];
+            yield return [1, IsSent.AtLeastOnce()];
+            yield return [3, IsSent.AtLeastOnce()];
+            yield return [1, IsSent.AtMost(1)];
+            yield return [3, IsSent.AtMost(3)];
+            yield return [3, IsSent.AtMost(5)];
+            yield return [0, IsSent.AtMostOnce()];
+            yield return [1, IsSent.AtMostOnce()];
+            yield return [1, IsSent.Exactly(1)];
+            yield return [3, IsSent.Exactly(3)];
+            yield return [0, IsSent.Never()];
+            yield return [1, IsSent.Once()];
         }
     }
 
@@ -308,21 +308,21 @@ public class MockHttpHandlerTests : IDisposable
     {
         get
         {
-            yield return new object[] { 0, IsSent.AtLeast(1) };
-            yield return new object[] { 1, IsSent.AtLeast(3) };
-            yield return new object[] { 2, IsSent.AtLeast(3) };
-            yield return new object[] { 0, IsSent.AtLeastOnce() };
-            yield return new object[] { 2, IsSent.AtMost(1) };
-            yield return new object[] { 4, IsSent.AtMost(2) };
-            yield return new object[] { 2, IsSent.AtMostOnce() };
-            yield return new object[] { 4, IsSent.AtMostOnce() };
-            yield return new object[] { 0, IsSent.Exactly(1) };
-            yield return new object[] { 3, IsSent.Exactly(2) };
-            yield return new object[] { 1, IsSent.Never() };
-            yield return new object[] { 3, IsSent.Never() };
-            yield return new object[] { 0, IsSent.Once() };
-            yield return new object[] { 2, IsSent.Once() };
-            yield return new object[] { 3, IsSent.Once() };
+            yield return [0, IsSent.AtLeast(1)];
+            yield return [1, IsSent.AtLeast(3)];
+            yield return [2, IsSent.AtLeast(3)];
+            yield return [0, IsSent.AtLeastOnce()];
+            yield return [2, IsSent.AtMost(1)];
+            yield return [4, IsSent.AtMost(2)];
+            yield return [2, IsSent.AtMostOnce()];
+            yield return [4, IsSent.AtMostOnce()];
+            yield return [0, IsSent.Exactly(1)];
+            yield return [3, IsSent.Exactly(2)];
+            yield return [1, IsSent.Never()];
+            yield return [3, IsSent.Never()];
+            yield return [0, IsSent.Once()];
+            yield return [2, IsSent.Once()];
+            yield return [3, IsSent.Once()];
         }
     }
 
@@ -366,45 +366,41 @@ public class MockHttpHandlerTests : IDisposable
 #endif
 
         _sut
-            .When(
-                matching => matching
-                    .RequestUri("http://0.0.0.1/*/action*")
-                    .QueryString("test", "$%^&*")
-                    .QueryString("test2=value")
-                    .Method("POST")
-                    .Body(jsonPostContent)
-                    .PartialBody(jsonPostContent.Substring(10))
-                    .ContentType($"{MediaTypes.Json}; charset=utf-8")
-                    .BearerToken()
-                    .Header("Content-Length", jsonPostContent.Length)
-                    .Header("Last-Modified", lastModified)
-                    .Version(version)
-                    .Any(
-                        any => any
-                            .RequestUri("not-matching")
-                            .RequestUri("**controller**")
-                    )
-                    .Where(r => 0 < r.Version.Major)
+            .When(matching => matching
+                .RequestUri("http://0.0.0.1/*/action*")
+                .QueryString("test", "$%^&*")
+                .QueryString("test2=value")
+                .Method("POST")
+                .Body(jsonPostContent)
+                .PartialBody(jsonPostContent.Substring(10))
+                .ContentType($"{MediaTypes.Json}; charset=utf-8")
+                .BearerToken()
+                .Header("Content-Length", jsonPostContent.Length)
+                .Header("Last-Modified", lastModified)
+                .Version(version)
+                .Any(any => any
+                    .RequestUri("not-matching")
+                    .RequestUri("**controller**")
+                )
+                .Where(r => 0 < r.Version.Major)
             )
-            .Callback(
-                () =>
+            .Callback(() =>
                 {
                 }
             )
-            .Respond(
-                with => with
-                    .StatusCode(HttpStatusCode.Accepted)
-                    .Body(
-                        JsonConvert.SerializeObject(
-                            new
-                            {
-                                firstName = "John",
-                                lastName = "Doe"
-                            }
-                        )
+            .Respond(with => with
+                .StatusCode(HttpStatusCode.Accepted)
+                .Body(
+                    JsonConvert.SerializeObject(
+                        new
+                        {
+                            firstName = "John",
+                            lastName = "Doe"
+                        }
                     )
-                    .TransferRate(BitRate.TwoG)
-                    .Latency(NetworkLatency.TwoG)
+                )
+                .TransferRate(BitRate.TwoG)
+                .Latency(NetworkLatency.TwoG)
             )
             .Verifiable();
 
@@ -645,7 +641,7 @@ public class MockHttpHandlerTests : IDisposable
     [Fact]
     public async Task When_resetting_invoked_requests_it_should_reset_sequence()
     {
-        HttpStatusCode[] statusCodeSequence = { HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest };
+        HttpStatusCode[] statusCodeSequence = [HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.BadRequest];
 
         IResponds<IResponseResult> result = _sut.When(_ => { });
         _ = statusCodeSequence.Aggregate(result,
@@ -690,28 +686,32 @@ public class MockHttpHandlerTests : IDisposable
             string? because = null;
 
             DelegateTestCase[] testCases =
-            {
+            [
                 DelegateTestCase.Create(
                     mockHttp.Verify,
                     matching,
                     isSentFunc,
-                    because),
+                    because
+                ),
                 DelegateTestCase.Create(
                     mockHttp.Verify,
                     matching,
                     isSentFunc(),
-                    because),
+                    because
+                ),
                 DelegateTestCase.Create(
                     mockHttp.VerifyAsync,
                     matching,
                     isSentFunc,
-                    because),
+                    because
+                ),
                 DelegateTestCase.Create(
                     mockHttp.VerifyAsync,
                     matching,
                     isSentFunc(),
-                    because)
-            };
+                    because
+                )
+            ];
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
 

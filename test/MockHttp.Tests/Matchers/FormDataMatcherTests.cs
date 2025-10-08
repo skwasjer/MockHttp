@@ -26,14 +26,16 @@ public class FormDataMatcherTests
             }
         };
 
-        var sut = new FormDataMatcher(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>(
-                expectedKey,
-                expectedValue is null
-                    ? null!
-                    : new[] { expectedValue })
-        });
+        var sut = new FormDataMatcher(
+            [
+                new KeyValuePair<string, IEnumerable<string>>(
+                    expectedKey,
+                    expectedValue is null
+                        ? null!
+                        : [expectedValue]
+                )
+            ]
+        );
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
@@ -54,7 +56,7 @@ public class FormDataMatcherTests
             MediaTypes.FormUrlEncoded
         );
 
-        var sut = new FormDataMatcher(new[] { new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null!) });
+        var sut = new FormDataMatcher([new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null!)]);
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
@@ -126,11 +128,12 @@ public class FormDataMatcherTests
         request.RequestUri = new Uri("http://localhost/");
         request.Content = content;
 
-        var sut = new FormDataMatcher(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>("key1", new[] { "value1" }),
-            new KeyValuePair<string, IEnumerable<string>>("key2", new[] { "éôxÄ" })
-        });
+        var sut = new FormDataMatcher(
+            [
+                new KeyValuePair<string, IEnumerable<string>>("key1", ["value1"]),
+                new KeyValuePair<string, IEnumerable<string>>("key2", ["éôxÄ"])
+            ]
+        );
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeTrue();
@@ -148,10 +151,11 @@ public class FormDataMatcherTests
         request.RequestUri = new Uri("http://localhost/");
         request.Content = content;
 
-        var sut = new FormDataMatcher(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null!)
-        });
+        var sut = new FormDataMatcher(
+            [
+                new KeyValuePair<string, IEnumerable<string>>("key_not_in_formdata", null!)
+            ]
+        );
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
@@ -180,10 +184,11 @@ public class FormDataMatcherTests
         request.RequestUri = new Uri("http://localhost/");
         request.Content = content;
 
-        var sut = new FormDataMatcher(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>("key", new [] { "value" })
-        });
+        var sut = new FormDataMatcher(
+            [
+                new KeyValuePair<string, IEnumerable<string>>("key", ["value"])
+            ]
+        );
 
         // Act & assert
         (await sut.IsMatchAsync(new MockHttpRequestContext(request))).Should().BeFalse();
@@ -191,8 +196,8 @@ public class FormDataMatcherTests
 
     public static IEnumerable<object?[]> NonFormDataContentTestCases()
     {
-        yield return new object?[] { null };
-        yield return new object[] { new StringContent("") };
-        yield return new object[] { new ByteArrayContent(Array.Empty<byte>()) };
+        yield return [null];
+        yield return [new StringContent("")];
+        yield return [new ByteArrayContent([])];
     }
 }

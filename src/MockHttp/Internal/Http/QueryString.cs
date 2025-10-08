@@ -20,7 +20,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 
     public QueryString(IEnumerable<KeyValuePair<string, string>> values)
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        : this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, new[] { v.Value }))!)
+        : this(values?.Select(v => new KeyValuePair<string, IEnumerable<string>>(v.Key, [v.Value]))!)
     {
     }
 
@@ -48,7 +48,7 @@ internal sealed class QueryString : Dictionary<string, IEnumerable<string>>
 
         // Accept null values enumerable, but then use empty list.
         // Null values in values enumerable are filtered out.
-        Add(key, (values?.Where(v => v is not null).ToList() ?? new List<string?>())!);
+        Add(key, (values?.Where(v => v is not null).ToList() ?? [])!);
     }
 
     public override string ToString()

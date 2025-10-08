@@ -4,8 +4,8 @@ namespace MockHttp.Http;
 
 internal sealed class HttpHeadersCollection : HttpHeaders
 {
-    private static readonly char[] HeaderKeyValueSeparator = new[] { ':' };
-    private static readonly char[] HeaderValueSeparator = new[] { ',' };
+    private static readonly char[] HeaderKeyValueSeparator = [':'];
+    private static readonly char[] HeaderValueSeparator = [','];
 
     public HttpHeadersCollection()
     {

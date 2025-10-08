@@ -15,7 +15,7 @@ internal class ConcurrentCollection<T> : IReadOnlyList<T>
     {
         lock (_syncLock)
         {
-            _items ??= new List<T>();
+            _items ??= [];
             _items.Add(item);
         }
     }

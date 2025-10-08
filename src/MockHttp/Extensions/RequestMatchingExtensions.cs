@@ -144,8 +144,9 @@ public static class RequestMatchingExtensions
         return builder.QueryString(
             key,
             value is null
-                ? Array.Empty<string>()
-                : new[] { value });
+                ? []
+                : [value]
+        );
     }
 
     /// <summary>
@@ -175,7 +176,7 @@ public static class RequestMatchingExtensions
     public static RequestMatching QueryString(this RequestMatching builder, string key, params string[] values)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        return builder.QueryString(key, values?.AsEnumerable() ?? Array.Empty<string>());
+        return builder.QueryString(key, values?.AsEnumerable() ?? []);
     }
 
     /// <summary>
@@ -508,7 +509,7 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
     public static RequestMatching FormData(this RequestMatching builder, string key, string value)
     {
-        return builder.FormData(new[] { new KeyValuePair<string, string>(key, value) });
+        return builder.FormData([new KeyValuePair<string, string>(key, value)]);
     }
 
     /// <summary>

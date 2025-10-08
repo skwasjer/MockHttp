@@ -9,7 +9,7 @@ public class AnyMatcherTests
 
     public AnyMatcherTests()
     {
-        _matchers = new List<HttpRequestMatcher>();
+        _matchers = [];
         _sut = new AnyMatcher(_matchers);
     }
 

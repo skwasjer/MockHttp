@@ -411,10 +411,11 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri("http://127.0.0.1"),
-                Content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string?, string?>("key", null!)
-                })
+                Content = new FormUrlEncodedContent(
+                    [
+                        new KeyValuePair<string?, string?>("key", null!)
+                    ]
+                )
             };
 
             // Act
@@ -432,10 +433,11 @@ public abstract class RequestMatchingExtensionsTests
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri("http://127.0.0.1"),
-                Content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string?, string?>("key", string.Empty)
-                })
+                Content = new FormUrlEncodedContent(
+                    [
+                        new KeyValuePair<string?, string?>("key", string.Empty)
+                    ]
+                )
             };
 
             // Act
@@ -853,194 +855,237 @@ public abstract class RequestMatchingExtensionsTests
             var instance = new RequestMatching();
 
             DelegateTestCase[] testCases =
-            {
+            [
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.RequestUri,
                     instance,
                     uri.ToString(),
-                    true),
+                    true
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.RequestUri,
                     instance,
-                    uri),
+                    uri
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (string?)null),
+                    (string?)null
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (IEnumerable<string>?)null!),
+                    (IEnumerable<string>?)null!
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
                     "key",
-                    (string[]?)null!),
+                    (string[]?)null!
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
-                    new Dictionary<string, IEnumerable<string>>()),
+                    new Dictionary<string, IEnumerable<string>>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
-                    new NameValueCollection()),
+                    new NameValueCollection()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.QueryString,
                     instance,
-                    "?test"),
+                    "?test"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.WithoutQueryString,
-                    instance),
+                    instance
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Method,
                     instance,
-                    "GET"),
+                    "GET"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Method,
                     instance,
-                    HttpMethod.Get),
+                    HttpMethod.Get
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
                     (string?)null!,
-                    false),
+                    false
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    1),
+                    1
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    true),
+                    true
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    DateTime.Now),
+                    DateTime.Now
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    DateTimeOffset.Now),
+                    DateTimeOffset.Now
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    Enumerable.Empty<string>()),
+                    Enumerable.Empty<string>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
-                    "header"),
+                    "header"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Header,
                     instance,
                     "header",
-                    Array.Empty<string>()),
+                    Array.Empty<string>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Headers,
                     instance,
-                    "header: value"),
+                    "header: value"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Headers,
                     instance,
-                    new Dictionary<string, string>()),
+                    new Dictionary<string, string>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Headers,
                     instance,
-                    new Dictionary<string, IEnumerable<string>>()),
+                    new Dictionary<string, IEnumerable<string>>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
-                    MediaTypes.PlainText),
+                    MediaTypes.PlainText
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
                     MediaTypes.PlainText,
-                    Encoding.UTF8),
+                    Encoding.UTF8
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.ContentType,
                     instance,
-                    new MediaTypeHeaderValue(MediaTypes.PlainText)),
+                    new MediaTypeHeaderValue(MediaTypes.PlainText)
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
                     "key",
-                    (string?)null!),
+                    (string?)null!
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
-                    new Dictionary<string, string>()),
+                    new Dictionary<string, string>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
-                    new NameValueCollection()),
+                    new NameValueCollection()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
-                    new Dictionary<string, IEnumerable<string>>()),
+                    new Dictionary<string, IEnumerable<string>>()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.FormData,
                     instance,
-                    "key=value"),
+                    "key=value"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
-                    "content"),
+                    "content"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
                     "content",
-                    (Encoding?)null!),
+                    (Encoding?)null!
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
-                    "content"u8.ToArray()),
+                    "content"u8.ToArray()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Body,
                     instance,
-                    streamMock),
+                    streamMock
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.WithoutBody,
-                    instance),
+                    instance
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
-                    "partial content"),
+                    "partial content"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
                     "partial content",
-                    (Encoding?)null!),
+                    (Encoding?)null!
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
-                    "partial content"u8.ToArray()),
+                    "partial content"u8.ToArray()
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.PartialBody,
                     instance,
-                    streamMock),
+                    streamMock
+                ),
                 DelegateTestCase.Create<RequestMatching, Action<RequestMatching>, RequestMatching>(
                     RequestMatchingExtensions.Any,
                     instance,
-                    _ => { }),
+                    _ => { }
+                ),
                 DelegateTestCase.Create<RequestMatching, Expression<Func<HttpRequestMessage, bool>>, RequestMatching>(
                     RequestMatchingExtensions.Where,
                     instance,
-                    _ => true),
+                    _ => true
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Version,
                     instance,
-                    "1.0"),
+                    "1.0"
+                ),
                 DelegateTestCase.Create(
                     RequestMatchingExtensions.Version,
                     instance,
-                    System.Version.Parse("1.0"))
-            };
+                    System.Version.Parse("1.0")
+                )
+            ];
 
             return testCases.SelectMany(tc => tc.GetNullArgumentTestCases());
         }

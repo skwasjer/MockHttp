@@ -9,7 +9,7 @@ internal sealed class HttpCallSequence : HttpCall
 
     public HttpCallSequence()
     {
-        _responseSequence = new List<IResponseStrategy>();
+        _responseSequence = [];
         _requestIndex = -1;
     }
 

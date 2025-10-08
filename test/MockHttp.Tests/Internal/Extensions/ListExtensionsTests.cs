@@ -34,8 +34,8 @@ public static class ListExtensionsTests
             IList<object> list = new List<object>();
             Type? type = null;
 
-            yield return new object?[] { null, type, nameof(list) };
-            yield return new object?[] { list, null, nameof(type) };
+            yield return [null, type, nameof(list)];
+            yield return [list, null, nameof(type)];
         }
 
         [Theory]
@@ -85,8 +85,8 @@ public static class ListExtensionsTests
             IList<object> list = new List<object>();
             object? instance = null;
 
-            yield return new[] { null, instance, nameof(list) };
-            yield return new object?[] { list, null, nameof(instance) };
+            yield return [null, instance, nameof(list)];
+            yield return [list, null, nameof(instance)];
         }
 
         [Fact]
