@@ -4,7 +4,11 @@
 /// A delegate which when executed returns a configured HTTP response.
 /// </summary>
 /// <returns></returns>
-public delegate Task ResponseHandlerDelegate(MockHttpRequestContext requestContext, HttpResponseMessage responseMessage, CancellationToken cancellationToken);
+public delegate Task ResponseHandler(
+    MockHttpRequestContext requestContext,
+    HttpResponseMessage responseMessage,
+    CancellationToken cancellationToken
+);
 
 /// <summary>
 /// Describes a way to apply a response behavior in a response builder pipeline.
@@ -23,7 +27,7 @@ public interface IResponseBehavior
     Task HandleAsync(
         MockHttpRequestContext requestContext,
         HttpResponseMessage responseMessage,
-        ResponseHandlerDelegate nextHandler,
+        ResponseHandler nextHandler,
         CancellationToken cancellationToken
     );
 }

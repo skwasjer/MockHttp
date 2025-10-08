@@ -16,7 +16,7 @@ public class TimeoutBehaviorTests
         var timeout = TimeSpan.FromMilliseconds(timeoutInMilliseconds);
         var sut = new TimeoutBehavior(timeout);
         var sw = new Stopwatch();
-        ResponseHandlerDelegate nextStub = Substitute.For<ResponseHandlerDelegate>();
+        ResponseHandler nextStub = Substitute.For<ResponseHandler>();
 
         // Act
         Func<Task> act = () => sut.HandleAsync(
@@ -45,7 +45,7 @@ public class TimeoutBehaviorTests
         var timeout = TimeSpan.FromSeconds(60);
         var sut = new TimeoutBehavior(timeout);
         var ct = new CancellationToken(true);
-        ResponseHandlerDelegate nextStub = Substitute.For<ResponseHandlerDelegate>();
+        ResponseHandler nextStub = Substitute.For<ResponseHandler>();
 
         // Act
         var sw = Stopwatch.StartNew();

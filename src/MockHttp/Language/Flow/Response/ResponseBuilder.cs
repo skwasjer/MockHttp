@@ -96,8 +96,14 @@ internal sealed class ResponseBuilder
             };
 
             await _invertedBehaviors
-                .Aggregate((ResponseHandlerDelegate)Seed,
-                    (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(context, message, next, ct)
+                .Aggregate(
+                    (ResponseHandler)Seed,
+                    (next, pipeline) => (context, message, ct) => pipeline.HandleAsync(
+                        context,
+                        message,
+                        next,
+                        ct
+                    )
                 )(requestContext, response, cancellationToken)
                 .ConfigureAwait(false);
 
