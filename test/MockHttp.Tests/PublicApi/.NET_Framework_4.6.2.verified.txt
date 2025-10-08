@@ -94,10 +94,10 @@ namespace MockHttp
     public class NetworkLatency
     {
         public override string ToString() { }
-        public static MockHttp.NetworkLatency Around(int latencyInMs) { }
         public static MockHttp.NetworkLatency Around(System.TimeSpan latency) { }
-        public static MockHttp.NetworkLatency Between(int minMs, int maxMs) { }
+        public static MockHttp.NetworkLatency Around(int latencyInMs) { }
         public static MockHttp.NetworkLatency Between(System.TimeSpan min, System.TimeSpan max) { }
+        public static MockHttp.NetworkLatency Between(int minMs, int maxMs) { }
         public static MockHttp.NetworkLatency FiveG() { }
         public static MockHttp.NetworkLatency FourG() { }
         public static MockHttp.NetworkLatency ThreeG() { }
@@ -113,8 +113,8 @@ namespace MockHttp
     public static class RequestMatchingExtensions
     {
         public static MockHttp.RequestMatching Any(this MockHttp.RequestMatching builder, System.Action<MockHttp.RequestMatching> anyBuilder) { }
-        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, byte[] body) { }
         public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, System.IO.Stream body) { }
+        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, byte[] body) { }
         public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body) { }
         public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body, System.Text.Encoding encoding) { }
         public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, System.Net.Http.Headers.MediaTypeHeaderValue mediaType) { }
@@ -138,8 +138,8 @@ namespace MockHttp
         public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, string headers) { }
         public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, System.Net.Http.HttpMethod method) { }
         public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, string httpMethod) { }
-        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, byte[] partialBody) { }
         public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, System.IO.Stream partialBody) { }
+        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, byte[] partialBody) { }
         public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody) { }
         public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody, System.Text.Encoding encoding) { }
         public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
@@ -148,21 +148,21 @@ namespace MockHttp
         public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, System.Collections.Generic.IEnumerable<string> values) { }
         public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, params string[] values) { }
         public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, string? value) { }
-        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, string requestUri) { }
         public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, System.Uri requestUri) { }
-        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, string version) { }
+        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, string requestUri) { }
         public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, System.Version version) { }
+        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, string version) { }
         public static MockHttp.RequestMatching Where(this MockHttp.RequestMatching builder, System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
         public static MockHttp.RequestMatching WithoutBody(this MockHttp.RequestMatching builder) { }
         public static MockHttp.RequestMatching WithoutQueryString(this MockHttp.RequestMatching builder) { }
     }
     public static class ResponseBuilderExtensions
     {
-        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, byte[] binaryContent) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Func<System.IO.Stream> streamContentFactory) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<System.IO.Stream>> streamContentFactory) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.IO.Stream streamContent) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, System.Net.Http.HttpContent httpContent) { }
+        public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, byte[] binaryContent) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, string textContent, System.Text.Encoding? encoding = null) { }
         public static MockHttp.Language.Flow.Response.IWithContentResult Body(this MockHttp.Language.Response.IWithContent builder, byte[] binaryContent, int offset, int count) { }
         public static MockHttp.Language.Response.IWithResponse ClientTimeout(this MockHttp.IResponseBuilder builder, System.TimeSpan? timeoutAfter = default) { }
