@@ -39,7 +39,7 @@ internal sealed class TransferRateBehavior : IResponseBehavior
         {
             Stream originalStream = await _originalContent.ReadAsStreamAsync().ConfigureAwait(false);
             var rateLimitedStream = new RateLimitedStream(originalStream, _bitRate);
-#if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET8_0_OR_GREATER
             await using (originalStream)
             await using (rateLimitedStream)
 #else

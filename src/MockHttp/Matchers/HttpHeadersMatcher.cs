@@ -109,12 +109,13 @@ public class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
     public override string ToString()
     {
         string value = Value.ToString();
-#if !NET6_0_OR_GREATER
+#if !NET8_0_OR_GREATER
         value = value.Replace(
             "\r\n",
             Environment.NewLine
 #if NETSTANDARD2_1
-            , StringComparison.OrdinalIgnoreCase
+            ,
+            StringComparison.OrdinalIgnoreCase
 #endif
         );
 #endif
