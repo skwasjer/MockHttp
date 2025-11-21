@@ -8,10 +8,12 @@ public class JsonNotMatchTestCases : IEnumerable<object?[]>
     {
         // We want to test these cases for both left and right arguments of the equality operator.
         return new TestCases()
-            .Union(new TestCases()
-                .Select(tc => tc
-                    .Reverse()
-                    .ToArray())
+            .Union(
+                new TestCases()
+                    .Select(tc => ((IEnumerable<object?>)tc)
+                        .Reverse()
+                        .ToArray()
+                    )
             )
             .Distinct()
             .GetEnumerator();
