@@ -30,7 +30,7 @@ jobs:
 
   analysis:
     needs: authorize
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-dotnet@v5
         with:
@@ -46,6 +46,16 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+
+      # Install Mono
+      - name: Install Mono (Ubuntu)
+        run: |
+          sudo apt install ca-certificates gnupg
+          sudo gpg --homedir /tmp --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+          sudo chmod +r /usr/share/keyrings/mono-official-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+          sudo apt update
+          sudo apt install mono-complete
 
       - uses: actions/checkout@v5
         with:
@@ -84,6 +94,6 @@ jobs:
         run: |
           dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /o:"$SONAR_ORG_KEY" /d:sonar.host.url=https://sonarcloud.io /d:sonar.token="$SONAR_TOKEN" /d:sonar.cs.opencover.reportsPaths="**/*opencover.xml" /d:sonar.scanner.skipJreProvisioning=true $SONAR_PR_ARGS
 
-          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs" /p:VerifyPublicApi=false
+          dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByFile="test/**/*.cs" /p:VerifyPublicApi=false -- xUnit.AppDomain=denied
 
           dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
