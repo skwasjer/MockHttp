@@ -12,18 +12,6 @@ updates:
     target-branch: "main"
     commit-message:
       prefix: "chore(deps)"
-    exclude-paths:
-      - "test/**"
-
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    target-branch: "main"
-    commit-message:
-      prefix: "test(deps)"
-    exclude-paths:
-      - "src/**"
     groups:
       NET-Test-Sdk:
         patterns:
