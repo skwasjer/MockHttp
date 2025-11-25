@@ -12,6 +12,30 @@ updates:
     target-branch: "main"
     commit-message:
       prefix: "chore(deps)"
+    exclude-paths:
+      - "test/**"
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "main"
+    commit-message:
+      prefix: "test(deps)"
+    exclude-paths:
+      - "src/**"
+    groups:
+      NET-Test-Sdk:
+        patterns:
+          - Microsoft.NET.Test.Sdk
+          - Microsoft.TestPlatform.ObjectModel
+      Verify:
+        patterns:
+          - Verify*
+          - EmptyFiles
+          - PublicApiGenerator
+        update-types:
+          - major
 
   - package-ecosystem: "github-actions"
     directory: "/"
