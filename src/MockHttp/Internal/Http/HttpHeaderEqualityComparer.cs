@@ -10,7 +10,11 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {
+#if NET8_0_OR_GREATER
+        if (!Enum.IsDefined(matchType))
+#else
         if (!Enum.IsDefined(typeof(HttpHeaderMatchType), matchType))
+#endif
         {
             throw new InvalidEnumArgumentException(nameof(matchType), (int)matchType, typeof(HttpHeaderMatchType));
         }
