@@ -13,8 +13,8 @@
     <DefineConstants Condition="'$(TestNetStandard21)'=='true'">$(DefineConstants);TEST_NETSTANDARD2_1</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
-    <NetTestSdkVersion>17.3.3</NetTestSdkVersion>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
+    <NetTestSdkVersion>17.13.0</NetTestSdkVersion>
   </PropertyGroup>
 
   <ItemGroup>
