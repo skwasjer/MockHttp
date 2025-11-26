@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MockHttp.Http;
@@ -20,16 +22,21 @@ public sealed class MockHttpServer
 {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Uri _hostUri;
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly SemaphoreSlim _lock = new(1);
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private readonly IWebHostBuilder _webHostBuilder;
+    private readonly IHostBuilder _hostBuilder;
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private Action<IApplicationBuilder>? _configureAppBuilder;
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private bool _disposed;
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private IWebHost? _host;
+    private IHost? _host;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockHttpServer" /> using specified <paramref name="mockHttpHandler" /> and configures it to
@@ -57,9 +64,8 @@ public sealed class MockHttpServer
         }
 
         Handler = mockHttpHandler ?? throw new ArgumentNullException(nameof(mockHttpHandler));
-        _webHostBuilder = CreateWebHostBuilder(loggerFactory);
         _hostUri = new Uri(hostUri, "/"); // Ensure base URL.
-        _webHostBuilder.UseUrls(_hostUri.ToString());
+        _hostBuilder = CreateHostBuilder(loggerFactory, _hostUri);
     }
 
     /// <inheritdoc />
@@ -98,7 +104,8 @@ public sealed class MockHttpServer
             _lock.Wait();
             try
             {
-                string? url = _host?.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses.First();
+                IServer? server = _host?.Services.GetRequiredService<IServer>();
+                string? url = server?.Features.Get<IServerAddressesFeature>()?.Addresses.First();
                 return url is null
                     ? _hostUri
                     : new Uri(url);
@@ -130,7 +137,7 @@ public sealed class MockHttpServer
                 return;
             }
 
-            _host = _webHostBuilder.Build();
+            _host = _hostBuilder.Build();
             await _host.StartAsync(cancellationToken).ConfigureAwait(false);
         }
         finally
@@ -181,31 +188,37 @@ public sealed class MockHttpServer
         return new HttpClient { BaseAddress = HostUri };
     }
 
-    private IWebHostBuilder CreateWebHostBuilder(ILoggerFactory? loggerFactory)
+    private IHostBuilder CreateHostBuilder(ILoggerFactory? loggerFactory, Uri hostUri)
     {
-        return new WebHostBuilder()
+        return new HostBuilder()
             .ConfigureServices(services =>
-            {
+                {
 #pragma warning disable S4792 // Justification: not a security issue, we are injection a null impl. if none is provided.
-                services.Replace(ServiceDescriptor.Singleton(loggerFactory ?? new NullLoggerFactory()));
+                    services.Replace(ServiceDescriptor.Singleton(loggerFactory ?? new NullLoggerFactory()));
 #pragma warning restore S4792
-                services.AddSingleton(Handler);
-                services.AddTransient<ServerRequestHandler>();
-            })
-            .UseKestrel(options => options.AddServerHeader = false)
-            .CaptureStartupErrors(false)
-            .SuppressStatusMessages(true)
-            .Configure(applicationBuilder =>
-            {
-                _configureAppBuilder?.Invoke(applicationBuilder);
+                    services.AddSingleton(Handler);
+                    services.AddTransient<ServerRequestHandler>();
+                }
+            )
+            .ConfigureWebHost(builder => builder
+                .UseUrls(hostUri.ToString())
+                .UseKestrel(options => options.AddServerHeader = false)
+                .CaptureStartupErrors(false)
+                .SuppressStatusMessages(true)
+                .Configure(applicationBuilder =>
+                    {
+                        _configureAppBuilder?.Invoke(applicationBuilder);
 
-                AddMockHttpServerHeader(applicationBuilder);
+                        AddMockHttpServerHeader(applicationBuilder);
 
-                applicationBuilder.UseMockHttpExceptionHandler();
+                        applicationBuilder.UseMockHttpExceptionHandler();
 
-                ServerRequestHandler serverRequestHandler = applicationBuilder.ApplicationServices.GetRequiredService<ServerRequestHandler>();
-                applicationBuilder.Use(serverRequestHandler.HandleAsync);
-            });
+                        ServerRequestHandler serverRequestHandler =
+                            applicationBuilder.ApplicationServices.GetRequiredService<ServerRequestHandler>();
+                        applicationBuilder.Use(serverRequestHandler.HandleAsync);
+                    }
+                )
+            );
     }
 
     internal void Configure(Action<IApplicationBuilder> configureAppBuilder)
