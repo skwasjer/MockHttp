@@ -1,0 +1,19 @@
+﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/skwasjer/MockHttp")]
+[assembly: System.Resources.NeutralResourcesLanguage("en")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+namespace MockHttp
+{
+    public sealed class MockHttpServer : System.IAsyncDisposable, System.IDisposable
+    {
+        public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, System.Uri hostUri) { }
+        public MockHttpServer(MockHttp.MockHttpHandler mockHttpHandler, Microsoft.Extensions.Logging.ILoggerFactory? loggerFactory, System.Uri hostUri) { }
+        public MockHttp.MockHttpHandler Handler { get; }
+        public System.Uri HostUri { get; }
+        public bool IsStarted { get; }
+        public System.Net.Http.HttpClient CreateClient() { }
+        public void Dispose() { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        public System.Threading.Tasks.Task StartAsync(System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task StopAsync(System.Threading.CancellationToken cancellationToken = default) { }
+    }
+}
