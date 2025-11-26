@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

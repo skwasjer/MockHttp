@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Http;
-using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

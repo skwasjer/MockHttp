@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-namespace MockHttp.Matchers;
+﻿namespace MockHttp.Matchers;
 
 /// <summary>
 /// Matcher that inverts the final result of matching a set of inner matchers.

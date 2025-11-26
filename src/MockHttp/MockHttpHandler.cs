@@ -5,7 +5,6 @@ using MockHttp.Extensions;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
 using MockHttp.Matchers;
-using MockHttp.Response;
 using MockHttp.Threading;
 
 namespace MockHttp;
