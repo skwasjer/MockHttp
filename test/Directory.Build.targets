@@ -7,6 +7,8 @@
     <NetTestSdkVersion>18.0.1</NetTestSdkVersion>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+
     <TestNetStandard21 Condition="'$(TargetFramework)'=='net6.0'">true</TestNetStandard21>
     <DefineConstants Condition="'$(TestNetStandard21)'=='true'">$(DefineConstants);TEST_NETSTANDARD2_1</DefineConstants>
   </PropertyGroup>
