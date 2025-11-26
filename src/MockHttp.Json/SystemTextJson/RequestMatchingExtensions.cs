@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace MockHttp.Json.SystemTextJson;
 
