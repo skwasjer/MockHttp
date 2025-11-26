@@ -26,7 +26,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(value));
         }
 
-#if NETSTANDARD2_0 || NETFRAMEWORK
+#if NETSTANDARD2_0
         return value.Contains("*");
 #else
         return value.Contains('*', StringComparison.InvariantCultureIgnoreCase);
@@ -339,17 +339,7 @@ public static class RequestMatchingExtensions
     {
         // https://tools.ietf.org/html/rfc2616#section-3.3.1
         CultureInfo ci = CultureInfo.InvariantCulture;
-#if NETFRAMEWORK && NET452
-			// .NET Framework does not normalize other common date formats,
-			// so we use multiple matches.
-			return builder.Any(any => any
-				.Header(name, date.ToString("R", ci))
-				.Header(name, date.ToString("dddd, dd-MMM-yy HH:mm:ss 'GMT'", ci))	// RFC 1036
-				.Header(name, date.ToString("ddd MMM  d  H:mm:ss yyyy", ci))		// ANSI C's asctime()
-			);
-#else
         return builder.Header(name, date.ToString("R", ci));
-#endif
     }
 
     /// <summary>
