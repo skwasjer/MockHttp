@@ -17,8 +17,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(VerifyPublicApi)'=='true'">
-    <PackageReference Include="PublicApiGenerator" Version="11.5.2" />
-    <PackageReference Include="Verify.Xunit" Version="30.20.1" />
+    <PackageReference Include="PublicApiGenerator" Version="11.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Verify.Xunit" Version="31.7.2" />
   </ItemGroup>
 
   <ItemGroup>
