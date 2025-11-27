@@ -4,8 +4,8 @@ namespace MockHttp
 {
     public static class AuthenticationRequestMatchingExtensions
     {
-        public static MockHttp.RequestMatching BearerToken(this MockHttp.RequestMatching builder) { }
-        public static MockHttp.RequestMatching BearerToken(this MockHttp.RequestMatching builder, string token) { }
+        public static MockHttp.Language.IRequestMatching BearerToken(this MockHttp.Language.IRequestMatching builder) { }
+        public static MockHttp.Language.IRequestMatching BearerToken(this MockHttp.Language.IRequestMatching builder, string token) { }
     }
     public sealed class BitRate
     {
@@ -83,13 +83,13 @@ namespace MockHttp
         public void Reset() { }
         protected override System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) { }
         public void Verify() { }
-        public void Verify(System.Action<MockHttp.RequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
-        public void Verify(System.Action<MockHttp.RequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
+        public void Verify(System.Action<MockHttp.Language.IRequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
+        public void Verify(System.Action<MockHttp.Language.IRequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
         public void VerifyAll() { }
-        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.RequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
-        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.RequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
+        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.Language.IRequestMatching> matching, MockHttp.IsSent times, string? because = null) { }
+        public System.Threading.Tasks.Task VerifyAsync(System.Action<MockHttp.Language.IRequestMatching> matching, System.Func<MockHttp.IsSent> times, string? because = null) { }
         public void VerifyNoOtherRequests() { }
-        public MockHttp.Language.IConfiguredRequest When(System.Action<MockHttp.RequestMatching> matching) { }
+        public MockHttp.Language.IConfiguredRequest When(System.Action<MockHttp.Language.IRequestMatching> matching) { }
     }
     public class MockHttpRequestContext
     {
@@ -110,58 +110,51 @@ namespace MockHttp
         public static MockHttp.NetworkLatency ThreeG() { }
         public static MockHttp.NetworkLatency TwoG() { }
     }
-    public class RequestMatching : MockHttp.IFluentInterface
-    {
-        public MockHttp.RequestMatching Not { get; }
-        protected virtual MockHttp.RequestMatching RegisterMatcher(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
-        protected virtual void ValidateMatcher(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
-        public MockHttp.RequestMatching With(MockHttp.Matchers.IAsyncHttpRequestMatcher matcher) { }
-    }
     public static class RequestMatchingExtensions
     {
-        public static MockHttp.RequestMatching Any(this MockHttp.RequestMatching builder, System.Action<MockHttp.RequestMatching> anyBuilder) { }
-        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, System.IO.Stream body) { }
-        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, byte[] body) { }
-        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body) { }
-        public static MockHttp.RequestMatching Body(this MockHttp.RequestMatching builder, string body, System.Text.Encoding encoding) { }
-        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, System.Net.Http.Headers.MediaTypeHeaderValue mediaType) { }
-        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, string mediaType) { }
-        public static MockHttp.RequestMatching ContentType(this MockHttp.RequestMatching builder, string contentType, System.Text.Encoding encoding) { }
-        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> formData) { }
-        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> formData) { }
-        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, System.Collections.Specialized.NameValueCollection formData) { }
-        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, string urlEncodedFormData) { }
-        public static MockHttp.RequestMatching FormData(this MockHttp.RequestMatching builder, string key, string value) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.Collections.Generic.IEnumerable<string> values) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.DateTime date) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, System.DateTimeOffset date) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, params string[] values) { }
-        public static MockHttp.RequestMatching Header(this MockHttp.RequestMatching builder, string name, string value, bool allowWildcards) { }
-        public static MockHttp.RequestMatching Header<T>(this MockHttp.RequestMatching builder, string name, T value)
+        public static MockHttp.Language.IRequestMatching Any(this MockHttp.Language.IRequestMatching builder, System.Action<MockHttp.Language.IRequestMatching> anyBuilder) { }
+        public static MockHttp.Language.IRequestMatching Body(this MockHttp.Language.IRequestMatching builder, System.IO.Stream body) { }
+        public static MockHttp.Language.IRequestMatching Body(this MockHttp.Language.IRequestMatching builder, byte[] body) { }
+        public static MockHttp.Language.IRequestMatching Body(this MockHttp.Language.IRequestMatching builder, string body) { }
+        public static MockHttp.Language.IRequestMatching Body(this MockHttp.Language.IRequestMatching builder, string body, System.Text.Encoding encoding) { }
+        public static MockHttp.Language.IRequestMatching ContentType(this MockHttp.Language.IRequestMatching builder, System.Net.Http.Headers.MediaTypeHeaderValue mediaType) { }
+        public static MockHttp.Language.IRequestMatching ContentType(this MockHttp.Language.IRequestMatching builder, string mediaType) { }
+        public static MockHttp.Language.IRequestMatching ContentType(this MockHttp.Language.IRequestMatching builder, string contentType, System.Text.Encoding encoding) { }
+        public static MockHttp.Language.IRequestMatching FormData(this MockHttp.Language.IRequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> formData) { }
+        public static MockHttp.Language.IRequestMatching FormData(this MockHttp.Language.IRequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> formData) { }
+        public static MockHttp.Language.IRequestMatching FormData(this MockHttp.Language.IRequestMatching builder, System.Collections.Specialized.NameValueCollection formData) { }
+        public static MockHttp.Language.IRequestMatching FormData(this MockHttp.Language.IRequestMatching builder, string urlEncodedFormData) { }
+        public static MockHttp.Language.IRequestMatching FormData(this MockHttp.Language.IRequestMatching builder, string key, string value) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name, System.Collections.Generic.IEnumerable<string> values) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name, System.DateTime date) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name, System.DateTimeOffset date) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name, params string[] values) { }
+        public static MockHttp.Language.IRequestMatching Header(this MockHttp.Language.IRequestMatching builder, string name, string value, bool allowWildcards) { }
+        public static MockHttp.Language.IRequestMatching Header<T>(this MockHttp.Language.IRequestMatching builder, string name, T value)
             where T :  struct { }
-        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> headers) { }
-        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> headers) { }
-        public static MockHttp.RequestMatching Headers(this MockHttp.RequestMatching builder, string headers) { }
-        public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, System.Net.Http.HttpMethod method) { }
-        public static MockHttp.RequestMatching Method(this MockHttp.RequestMatching builder, string httpMethod) { }
-        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, System.IO.Stream partialBody) { }
-        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, byte[] partialBody) { }
-        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody) { }
-        public static MockHttp.RequestMatching PartialBody(this MockHttp.RequestMatching builder, string partialBody, System.Text.Encoding encoding) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, System.Collections.Specialized.NameValueCollection parameters) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string queryString) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, System.Collections.Generic.IEnumerable<string> values) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, params string[] values) { }
-        public static MockHttp.RequestMatching QueryString(this MockHttp.RequestMatching builder, string key, string? value) { }
-        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, System.Uri requestUri) { }
-        public static MockHttp.RequestMatching RequestUri(this MockHttp.RequestMatching builder, string requestUri) { }
-        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, System.Version version) { }
-        public static MockHttp.RequestMatching Version(this MockHttp.RequestMatching builder, string version) { }
-        public static MockHttp.RequestMatching Where(this MockHttp.RequestMatching builder, System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
-        public static MockHttp.RequestMatching WithoutBody(this MockHttp.RequestMatching builder) { }
-        public static MockHttp.RequestMatching WithoutQueryString(this MockHttp.RequestMatching builder) { }
+        public static MockHttp.Language.IRequestMatching Headers(this MockHttp.Language.IRequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> headers) { }
+        public static MockHttp.Language.IRequestMatching Headers(this MockHttp.Language.IRequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> headers) { }
+        public static MockHttp.Language.IRequestMatching Headers(this MockHttp.Language.IRequestMatching builder, string headers) { }
+        public static MockHttp.Language.IRequestMatching Method(this MockHttp.Language.IRequestMatching builder, System.Net.Http.HttpMethod method) { }
+        public static MockHttp.Language.IRequestMatching Method(this MockHttp.Language.IRequestMatching builder, string httpMethod) { }
+        public static MockHttp.Language.IRequestMatching PartialBody(this MockHttp.Language.IRequestMatching builder, System.IO.Stream partialBody) { }
+        public static MockHttp.Language.IRequestMatching PartialBody(this MockHttp.Language.IRequestMatching builder, byte[] partialBody) { }
+        public static MockHttp.Language.IRequestMatching PartialBody(this MockHttp.Language.IRequestMatching builder, string partialBody) { }
+        public static MockHttp.Language.IRequestMatching PartialBody(this MockHttp.Language.IRequestMatching builder, string partialBody, System.Text.Encoding encoding) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>> parameters) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, System.Collections.Specialized.NameValueCollection parameters) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string queryString) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, System.Collections.Generic.IEnumerable<string> values) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, params string[] values) { }
+        public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, string? value) { }
+        public static MockHttp.Language.IRequestMatching RequestUri(this MockHttp.Language.IRequestMatching builder, System.Uri requestUri) { }
+        public static MockHttp.Language.IRequestMatching RequestUri(this MockHttp.Language.IRequestMatching builder, string requestUri) { }
+        public static MockHttp.Language.IRequestMatching Version(this MockHttp.Language.IRequestMatching builder, System.Version version) { }
+        public static MockHttp.Language.IRequestMatching Version(this MockHttp.Language.IRequestMatching builder, string version) { }
+        public static MockHttp.Language.IRequestMatching Where(this MockHttp.Language.IRequestMatching builder, System.Linq.Expressions.Expression<System.Func<System.Net.Http.HttpRequestMessage, bool>> expression) { }
+        public static MockHttp.Language.IRequestMatching WithoutBody(this MockHttp.Language.IRequestMatching builder) { }
+        public static MockHttp.Language.IRequestMatching WithoutQueryString(this MockHttp.Language.IRequestMatching builder) { }
     }
     public static class ResponseBuilderExtensions
     {
@@ -334,6 +327,16 @@ namespace MockHttp.Language
         MockHttp.Language.Flow.ICallbackResult<TResponseResult, TThrowsResult> Callback(System.Action<System.Net.Http.HttpRequestMessage> callback);
     }
     public interface IConfiguredRequest : MockHttp.IFluentInterface, MockHttp.Language.Flow.ICallbackResult<MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.Flow.IResponseResult, MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult, MockHttp.Language.Flow.IThrowsResult, MockHttp.Language.ICallback<MockHttp.Language.Flow.ISequenceResponseResult, MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IResponds<MockHttp.Language.Flow.ISequenceResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.ISequenceThrowsResult>, MockHttp.Language.IVerifies { }
+    public interface IMatchBuilder<T, out TSelf>
+        where out TSelf : MockHttp.Language.IMatchBuilder<T, TSelf>
+    {
+        TSelf Add(T matcher);
+        System.Collections.Generic.IReadOnlyCollection<T> Build();
+    }
+    public interface IRequestMatching : MockHttp.Language.IMatchBuilder<MockHttp.Matchers.IAsyncHttpRequestMatcher, MockHttp.Language.IRequestMatching>
+    {
+        MockHttp.Language.IRequestMatching Not { get; }
+    }
     public interface IRespondsThrows : MockHttp.IFluentInterface, MockHttp.Language.IResponds<MockHttp.Language.Flow.IResponseResult>, MockHttp.Language.IThrows<MockHttp.Language.Flow.IThrowsResult> { }
     public interface IResponds<out TResult> : MockHttp.IFluentInterface
         where out TResult : MockHttp.Language.Flow.IResponseResult

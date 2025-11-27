@@ -1,4 +1,5 @@
-﻿using MockHttp.Matchers;
+﻿using MockHttp.Language;
+using MockHttp.Matchers;
 
 namespace MockHttp.Request;
 
@@ -11,8 +12,8 @@ internal sealed class InvertRequestMatching : RequestMatching
         _requestMatching = requestMatching;
     }
 
-    protected internal override RequestMatching RegisterMatcher(IAsyncHttpRequestMatcher matcher)
+    public override IRequestMatching Add(IAsyncHttpRequestMatcher matcher)
     {
-        return _requestMatching.RegisterMatcher(new NotMatcher(matcher));
+        return _requestMatching.Add(new NotMatcher(matcher));
     }
 }

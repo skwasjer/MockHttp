@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using MockHttp.Extensions;
 using MockHttp.Http;
+using MockHttp.Language;
 using MockHttp.Matchers;
 using MockHttp.Patterns;
 using MockHttp.Request;
@@ -15,7 +16,7 @@ using static MockHttp.Http.UriExtensions;
 namespace MockHttp;
 
 /// <summary>
-/// Extensions for <see cref="RequestMatching" />.
+/// Extensions for <see cref="IRequestMatching" />.
 /// </summary>
 public static class RequestMatchingExtensions
 {
@@ -40,8 +41,8 @@ public static class RequestMatchingExtensions
     /// <param name="requestUri">The request URI or a URI wildcard.</param>
     /// <returns>The request matching builder instance.</returns>
 #pragma warning disable CA1054
-    public static RequestMatching RequestUri(
-        this RequestMatching builder,
+    public static IRequestMatching RequestUri(
+        this IRequestMatching builder,
 #if NET8_0_OR_GREATER
         [StringSyntax(StringSyntaxAttribute.Uri)]
 #endif
@@ -61,7 +62,7 @@ public static class RequestMatchingExtensions
     /// <returns>The request matching builder instance.</returns>
 #pragma warning disable CA1054
     // For now, keep this internal. For coverage, and most likely, the API will change so then we'd have more to deprecate (using patterns).
-    internal static RequestMatching RequestUri(this RequestMatching builder, string requestUri, bool allowWildcards)
+    internal static IRequestMatching RequestUri(this IRequestMatching builder, string requestUri, bool allowWildcards)
 #pragma warning restore CA1054
     {
         if (requestUri is null)
@@ -80,7 +81,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="requestUri">The relative or absolute request URI.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching RequestUri(this RequestMatching builder, Uri requestUri)
+    public static IRequestMatching RequestUri(this IRequestMatching builder, Uri requestUri)
     {
         if (requestUri is null)
         {
@@ -110,8 +111,8 @@ public static class RequestMatchingExtensions
             static bool IsRelativeUriMatch(Uri pattern, Uri uri)
             {
                 return !pattern.IsAbsoluteUri
-                 && uri.IsBaseOf(pattern)
-                 && uri.ToString().EndsWith(pattern.ToString(), StringComparison.Ordinal);
+                    && uri.IsBaseOf(pattern)
+                    && uri.ToString().EndsWith(pattern.ToString(), StringComparison.Ordinal);
             }
         }
     }
@@ -122,14 +123,14 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="pattern">The pattern that must match the request URI.</param>
     /// <returns>The request matching builder instance.</returns>
-    private static RequestMatching RequestUri(this RequestMatching builder, Pattern pattern)
+    private static IRequestMatching RequestUri(this IRequestMatching builder, Pattern pattern)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new UriMatcher(pattern));
+        return builder.Add(new UriMatcher(pattern));
     }
 
     /// <summary>
@@ -139,7 +140,7 @@ public static class RequestMatchingExtensions
     /// <param name="key">The query string parameter key.</param>
     /// <param name="value">The query string value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, string key, string? value)
+    public static IRequestMatching QueryString(this IRequestMatching builder, string key, string? value)
     {
         return builder.QueryString(
             key,
@@ -156,7 +157,7 @@ public static class RequestMatchingExtensions
     /// <param name="key">The query string parameter key.</param>
     /// <param name="values">The query string values.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, string key, IEnumerable<string> values)
+    public static IRequestMatching QueryString(this IRequestMatching builder, string key, IEnumerable<string> values)
     {
         if (key is null)
         {
@@ -173,7 +174,7 @@ public static class RequestMatchingExtensions
     /// <param name="key">The query string parameter key.</param>
     /// <param name="values">The query string value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, string key, params string[] values)
+    public static IRequestMatching QueryString(this IRequestMatching builder, string key, params string[] values)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         return builder.QueryString(key, values?.AsEnumerable() ?? []);
@@ -185,14 +186,17 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="parameters">The query string parameters.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters)
+    public static IRequestMatching QueryString(
+        this IRequestMatching builder,
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> parameters
+    )
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new QueryStringMatcher(parameters));
+        return builder.Add(new QueryStringMatcher(parameters));
     }
 
     /// <summary>
@@ -201,7 +205,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="parameters">The query string parameters.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, NameValueCollection parameters)
+    public static IRequestMatching QueryString(this IRequestMatching builder, NameValueCollection parameters)
     {
         if (builder is null)
         {
@@ -213,7 +217,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(parameters));
         }
 
-        return builder.With(new QueryStringMatcher(parameters.AsEnumerable()!));
+        return builder.Add(new QueryStringMatcher(parameters.AsEnumerable()!));
     }
 
     /// <summary>
@@ -222,7 +226,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="queryString">The query string.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching QueryString(this RequestMatching builder, string queryString)
+    public static IRequestMatching QueryString(this IRequestMatching builder, string queryString)
     {
         if (builder is null)
         {
@@ -234,7 +238,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentException("Specify a query string, or use 'WithoutQueryString'.", nameof(queryString));
         }
 
-        return builder.With(new QueryStringMatcher(queryString));
+        return builder.Add(new QueryStringMatcher(queryString));
     }
 
     /// <summary>
@@ -242,14 +246,14 @@ public static class RequestMatchingExtensions
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching WithoutQueryString(this RequestMatching builder)
+    public static IRequestMatching WithoutQueryString(this IRequestMatching builder)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new QueryStringMatcher(""));
+        return builder.Add(new QueryStringMatcher(""));
     }
 
     /// <summary>
@@ -258,7 +262,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="httpMethod">The HTTP method.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Method(this RequestMatching builder, string httpMethod)
+    public static IRequestMatching Method(this IRequestMatching builder, string httpMethod)
     {
         if (httpMethod is null)
         {
@@ -274,14 +278,14 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="method">The HTTP method.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Method(this RequestMatching builder, HttpMethod method)
+    public static IRequestMatching Method(this IRequestMatching builder, HttpMethod method)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpMethodMatcher(method));
+        return builder.Add(new HttpMethodMatcher(method));
     }
 
     /// <summary>
@@ -292,14 +296,14 @@ public static class RequestMatchingExtensions
     /// <param name="value">The header value.</param>
     /// <param name="allowWildcards"><see langword="true" /> to allow wildcards, or <see langword="false" /> if exact matching.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name, string value, bool allowWildcards)
+    public static IRequestMatching Header(this IRequestMatching builder, string name, string value, bool allowWildcards)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpHeadersMatcher(name, value, allowWildcards));
+        return builder.Add(new HttpHeadersMatcher(name, value, allowWildcards));
     }
 
     /// <summary>
@@ -309,7 +313,7 @@ public static class RequestMatchingExtensions
     /// <param name="name">The header name.</param>
     /// <param name="value">The header value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header<T>(this RequestMatching builder, string name, T value)
+    public static IRequestMatching Header<T>(this IRequestMatching builder, string name, T value)
         where T : struct
     {
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
@@ -323,7 +327,7 @@ public static class RequestMatchingExtensions
     /// <param name="name">The header name.</param>
     /// <param name="date">The header value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name, DateTime date)
+    public static IRequestMatching Header(this IRequestMatching builder, string name, DateTime date)
     {
         return builder.Header(name, (DateTimeOffset)date.ToUniversalTime());
     }
@@ -335,7 +339,7 @@ public static class RequestMatchingExtensions
     /// <param name="name">The header name.</param>
     /// <param name="date">The header value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name, DateTimeOffset date)
+    public static IRequestMatching Header(this IRequestMatching builder, string name, DateTimeOffset date)
     {
         // https://tools.ietf.org/html/rfc2616#section-3.3.1
         CultureInfo ci = CultureInfo.InvariantCulture;
@@ -349,14 +353,14 @@ public static class RequestMatchingExtensions
     /// <param name="name">The header name.</param>
     /// <param name="values">The header values.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name, IEnumerable<string> values)
+    public static IRequestMatching Header(this IRequestMatching builder, string name, IEnumerable<string> values)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpHeadersMatcher(name, values));
+        return builder.Add(new HttpHeadersMatcher(name, values));
     }
 
     /// <summary>
@@ -366,7 +370,7 @@ public static class RequestMatchingExtensions
     /// <param name="name">The header name.</param>
     /// <param name="values">The header values.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name, params string[] values)
+    public static IRequestMatching Header(this IRequestMatching builder, string name, params string[] values)
     {
         return builder.Header(name, values.AsEnumerable());
     }
@@ -377,14 +381,14 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="name">The header name.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Header(this RequestMatching builder, string name)
+    public static IRequestMatching Header(this IRequestMatching builder, string name)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpHeadersMatcher(name));
+        return builder.Add(new HttpHeadersMatcher(name));
     }
 
     /// <summary>
@@ -393,7 +397,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="headers">The headers.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Headers(this RequestMatching builder, string headers)
+    public static IRequestMatching Headers(this IRequestMatching builder, string headers)
     {
         return builder.Headers(HttpHeadersCollection.Parse(headers));
     }
@@ -404,14 +408,14 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="headers">The headers.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> headers)
+    public static IRequestMatching Headers(this IRequestMatching builder, IEnumerable<KeyValuePair<string, string>> headers)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpHeadersMatcher(headers));
+        return builder.Add(new HttpHeadersMatcher(headers));
     }
 
     /// <summary>
@@ -420,14 +424,17 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="headers">The headers.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Headers(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
+    public static IRequestMatching Headers(
+        this IRequestMatching builder,
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers
+    )
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new HttpHeadersMatcher(headers));
+        return builder.Add(new HttpHeadersMatcher(headers));
     }
 
     /// <summary>
@@ -436,7 +443,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="mediaType">The content type.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching ContentType(this RequestMatching builder, string mediaType)
+    public static IRequestMatching ContentType(this IRequestMatching builder, string mediaType)
     {
         if (mediaType is null)
         {
@@ -453,7 +460,7 @@ public static class RequestMatchingExtensions
     /// <param name="contentType">The content type.</param>
     /// <param name="encoding">The content encoding.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching ContentType(this RequestMatching builder, string contentType, Encoding encoding)
+    public static IRequestMatching ContentType(this IRequestMatching builder, string contentType, Encoding encoding)
     {
         if (contentType is null)
         {
@@ -475,7 +482,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="mediaType">The media type.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching ContentType(this RequestMatching builder, MediaTypeHeaderValue mediaType)
+    public static IRequestMatching ContentType(this IRequestMatching builder, MediaTypeHeaderValue mediaType)
     {
         if (builder is null)
         {
@@ -487,7 +494,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(mediaType));
         }
 
-        return builder.With(new MediaTypeHeaderMatcher(mediaType));
+        return builder.Add(new MediaTypeHeaderMatcher(mediaType));
     }
 
     /// <summary>
@@ -497,7 +504,7 @@ public static class RequestMatchingExtensions
     /// <param name="key">The form data parameter key.</param>
     /// <param name="value">The form data value.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching FormData(this RequestMatching builder, string key, string value)
+    public static IRequestMatching FormData(this IRequestMatching builder, string key, string value)
     {
         return builder.FormData([new KeyValuePair<string, string>(key, value)]);
     }
@@ -508,7 +515,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="formData">The form data parameters.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
+    public static IRequestMatching FormData(this IRequestMatching builder, IEnumerable<KeyValuePair<string, string>> formData)
     {
         if (formData is null)
         {
@@ -528,7 +535,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="formData">The form data parameters.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching FormData(this RequestMatching builder, NameValueCollection formData)
+    public static IRequestMatching FormData(this IRequestMatching builder, NameValueCollection formData)
     {
         if (formData is null)
         {
@@ -544,14 +551,17 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="formData">The form data parameters.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching FormData(this RequestMatching builder, IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData)
+    public static IRequestMatching FormData(
+        this IRequestMatching builder,
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> formData
+    )
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new FormDataMatcher(formData));
+        return builder.Add(new FormDataMatcher(formData));
     }
 
     /// <summary>
@@ -560,7 +570,9 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="urlEncodedFormData">The form data.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching FormData(this RequestMatching builder, string urlEncodedFormData)
+#pragma warning disable CA1054 // Justification: the intent is that callee has full control over the encoding.
+    public static IRequestMatching FormData(this IRequestMatching builder, string urlEncodedFormData)
+#pragma warning restore CA1054
     {
         if (builder is null)
         {
@@ -572,7 +584,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentException("Specify the url encoded form data.", nameof(urlEncodedFormData));
         }
 
-        return builder.With(new FormDataMatcher(urlEncodedFormData));
+        return builder.Add(new FormDataMatcher(urlEncodedFormData));
     }
 
     /// <summary>
@@ -581,7 +593,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="body">The expected request body.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Body(this RequestMatching builder, string body)
+    public static IRequestMatching Body(this IRequestMatching builder, string body)
     {
         return builder.Body(body, MockHttpHandler.DefaultEncoding);
     }
@@ -593,7 +605,7 @@ public static class RequestMatchingExtensions
     /// <param name="body">The expected request body.</param>
     /// <param name="encoding">The request content encoding.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Body(this RequestMatching builder, string body, Encoding encoding)
+    public static IRequestMatching Body(this IRequestMatching builder, string body, Encoding encoding)
     {
         if (builder is null)
         {
@@ -605,7 +617,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(body));
         }
 
-        return builder.With(new ContentMatcher(body, encoding));
+        return builder.Add(new ContentMatcher(body, encoding));
     }
 
     /// <summary>
@@ -614,7 +626,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="body">The expected request body.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Body(this RequestMatching builder, byte[] body)
+    public static IRequestMatching Body(this IRequestMatching builder, byte[] body)
     {
         if (builder is null)
         {
@@ -626,7 +638,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(body));
         }
 
-        return builder.With(new ContentMatcher(body));
+        return builder.Add(new ContentMatcher(body));
     }
 
     /// <summary>
@@ -635,7 +647,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="body">The expected request body.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Body(this RequestMatching builder, Stream body)
+    public static IRequestMatching Body(this IRequestMatching builder, Stream body)
     {
         if (body is null)
         {
@@ -652,14 +664,14 @@ public static class RequestMatchingExtensions
     /// </summary>
     /// <param name="builder">The request matching builder instance.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching WithoutBody(this RequestMatching builder)
+    public static IRequestMatching WithoutBody(this IRequestMatching builder)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new ContentMatcher());
+        return builder.Add(new ContentMatcher());
     }
 
     /// <summary>
@@ -668,7 +680,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="partialBody">The partial request body.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching PartialBody(this RequestMatching builder, string partialBody)
+    public static IRequestMatching PartialBody(this IRequestMatching builder, string partialBody)
     {
         return builder.PartialBody(partialBody, MockHttpHandler.DefaultEncoding);
     }
@@ -680,7 +692,7 @@ public static class RequestMatchingExtensions
     /// <param name="partialBody">The partial request body.</param>
     /// <param name="encoding">The request content encoding.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching PartialBody(this RequestMatching builder, string partialBody, Encoding encoding)
+    public static IRequestMatching PartialBody(this IRequestMatching builder, string partialBody, Encoding encoding)
     {
         if (builder is null)
         {
@@ -692,7 +704,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(partialBody));
         }
 
-        return builder.With(new PartialContentMatcher(partialBody, encoding));
+        return builder.Add(new PartialContentMatcher(partialBody, encoding));
     }
 
     /// <summary>
@@ -701,7 +713,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="partialBody">The partial request body.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching PartialBody(this RequestMatching builder, byte[] partialBody)
+    public static IRequestMatching PartialBody(this IRequestMatching builder, byte[] partialBody)
     {
         if (builder is null)
         {
@@ -713,7 +725,7 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(partialBody));
         }
 
-        return builder.With(new PartialContentMatcher(partialBody));
+        return builder.Add(new PartialContentMatcher(partialBody));
     }
 
     /// <summary>
@@ -722,7 +734,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="partialBody">The request content.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching PartialBody(this RequestMatching builder, Stream partialBody)
+    public static IRequestMatching PartialBody(this IRequestMatching builder, Stream partialBody)
     {
         if (partialBody is null)
         {
@@ -740,7 +752,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="anyBuilder">An action to configure an inner request matching builder.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Any(this RequestMatching builder, Action<RequestMatching> anyBuilder)
+    public static IRequestMatching Any(this IRequestMatching builder, Action<IRequestMatching> anyBuilder)
     {
         if (builder is null)
         {
@@ -752,9 +764,9 @@ public static class RequestMatchingExtensions
             throw new ArgumentNullException(nameof(anyBuilder));
         }
 
-        var anyRequestMatching = new AnyRequestMatching();
-        anyBuilder(anyRequestMatching);
-        return builder.With(new AnyMatcher(anyRequestMatching.Build()));
+        var anyIRequestMatchBuilder = new AnyRequestMatching();
+        anyBuilder(anyIRequestMatchBuilder);
+        return builder.Add(new AnyMatcher(anyIRequestMatchBuilder.Build()));
     }
 
     /// <summary>
@@ -763,14 +775,14 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="expression">The expression.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Where(this RequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
+    public static IRequestMatching Where(this IRequestMatching builder, Expression<Func<HttpRequestMessage, bool>> expression)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new ExpressionMatcher(expression));
+        return builder.Add(new ExpressionMatcher(expression));
     }
 
     /// <summary>
@@ -779,7 +791,7 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="version">The message version.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Version(this RequestMatching builder, string version)
+    public static IRequestMatching Version(this IRequestMatching builder, string version)
     {
         if (version is null)
         {
@@ -795,13 +807,13 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="version">The message version.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching Version(this RequestMatching builder, Version version)
+    public static IRequestMatching Version(this IRequestMatching builder, Version version)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        return builder.With(new VersionMatcher(version));
+        return builder.Add(new VersionMatcher(version));
     }
 }

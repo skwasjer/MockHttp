@@ -680,7 +680,7 @@ public class MockHttpHandlerTests : IDisposable
             var mockHttp = new MockHttpHandler();
 #pragma warning disable IDE0039
             // ReSharper disable once ConvertToLocalFunction
-            Action<RequestMatching> matching = _ => { };
+            Action<IRequestMatching> matching = _ => { };
 #pragma warning restore IDE0039
             Func<IsSent> isSentFunc = IsSent.Once;
             string? because = null;

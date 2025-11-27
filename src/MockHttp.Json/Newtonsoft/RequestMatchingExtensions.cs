@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MockHttp.Language;
+using Newtonsoft.Json;
 
 namespace MockHttp.Json.Newtonsoft;
 
@@ -14,7 +15,7 @@ public static class RequestMatchingExtensions
     /// <param name="body">The JSON request body.</param>
     /// <param name="serializerSettings">The serializer settings.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching JsonBody<T>(this RequestMatching builder, T body, JsonSerializerSettings? serializerSettings)
+    public static IRequestMatching JsonBody<T>(this IRequestMatching builder, T body, JsonSerializerSettings? serializerSettings)
     {
         if (builder is null)
         {
