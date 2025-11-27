@@ -1,4 +1,4 @@
-﻿namespace MockHttp.Responses;
+﻿namespace MockHttp.Response;
 
 /// <summary>
 /// Represents a strategy that produces a mocked response.

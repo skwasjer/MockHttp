@@ -6,7 +6,7 @@ using System.Xml;
 using MockHttp.Extensions;
 using MockHttp.Http;
 using MockHttp.Matchers;
-using MockHttp.Responses;
+using MockHttp.Response;
 using static MockHttp.Http.UriExtensions;
 
 namespace MockHttp;
