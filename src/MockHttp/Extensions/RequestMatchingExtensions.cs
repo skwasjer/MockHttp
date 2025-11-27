@@ -71,7 +71,7 @@ public static class RequestMatchingExtensions
         }
 
         return allowWildcards && requestUri.ContainsWildcard()
-            ? builder.RequestUri(WildcardPattern.Create(requestUri))
+            ? builder.RequestUri(Pattern.Wildcard(requestUri))
             : builder.RequestUri(new Uri(requestUri, DotNetRelativeOrAbsolute));
     }
 

@@ -41,7 +41,7 @@ internal sealed class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
         }
 
         _equalityComparer = allowWildcards
-            ? new HttpHeaderEqualityComparer(WildcardPattern.Create(value))
+            ? new HttpHeaderEqualityComparer(Pattern.Wildcard(value))
             : new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues);
 
         Value.Add(name, value);
