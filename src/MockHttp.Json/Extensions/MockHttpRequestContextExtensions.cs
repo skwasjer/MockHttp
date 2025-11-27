@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-// ReSharper disable once CheckNamespace : BREAKING - change namespace with next release. (remove Extensions)
+﻿// ReSharper disable once CheckNamespace : BREAKING - change namespace with next release. (remove Extensions)
 namespace MockHttp.Json.Extensions;
 
 internal static class MockHttpRequestContextExtensions

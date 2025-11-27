@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-namespace MockHttp.Matchers;
+﻿namespace MockHttp.Matchers;
 
 /// <summary>
 /// Represents a condition for matching a <see cref="HttpRequestMessage" />.

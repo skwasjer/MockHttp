@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-namespace MockHttp.Matchers;
+﻿namespace MockHttp.Matchers;
 
 /// <summary>
 /// Matches a request by the HTTP message version.

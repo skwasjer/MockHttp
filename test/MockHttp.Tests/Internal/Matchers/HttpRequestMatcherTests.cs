@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-namespace MockHttp.Matchers;
+﻿namespace MockHttp.Matchers;
 
 public class HttpRequestMatcherTests
 {

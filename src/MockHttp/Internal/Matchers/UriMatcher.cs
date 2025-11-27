@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using MockHttp.Patterns;
-using MockHttp.Response;
 
 namespace MockHttp.Matchers;
 

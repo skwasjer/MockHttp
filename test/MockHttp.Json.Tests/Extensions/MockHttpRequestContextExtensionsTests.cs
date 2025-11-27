@@ -1,5 +1,4 @@
 ﻿using MockHttp.Json.SystemTextJson;
-using MockHttp.Response;
 
 namespace MockHttp.Json.Extensions;
 

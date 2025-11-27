@@ -1,6 +1,4 @@
-﻿using MockHttp.Response;
-
-namespace MockHttp.Json;
+﻿namespace MockHttp.Json;
 
 public sealed class JsonContentMatcherTests : IDisposable
 {
