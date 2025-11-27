@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using MockHttp.Language;
 using MockHttp.Matchers;
 using MockHttp.Request;
 
@@ -9,37 +10,16 @@ namespace MockHttp;
 /// A builder to configure request matchers.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class RequestMatching : IFluentInterface
+internal class RequestMatching : IRequestMatching, IFluentInterface
 {
     private readonly List<IAsyncHttpRequestMatcher> _matchers = [];
     private RequestMatching? _not;
 
-    internal RequestMatching()
-    {
-    }
+    /// <inheritdoc />
+    public IRequestMatching Not => _not ??= new InvertRequestMatching(this);
 
-    /// <summary>
-    /// Gets a request matcher that will not match any constraint configured on it.
-    /// </summary>
-    public RequestMatching Not => _not ??= new InvertRequestMatching(this);
-
-    /// <summary>
-    /// Adds a matcher.
-    /// </summary>
-    /// <param name="matcher">The matcher instance.</param>
-    /// <returns>The request matching builder.</returns>
-    public RequestMatching With(IAsyncHttpRequestMatcher matcher)
-    {
-        return RegisterMatcher(matcher);
-    }
-
-    /// <summary>
-    /// Adds a matcher.
-    /// </summary>
-    /// <param name="matcher">The matcher instance.</param>
-    /// <returns>The request matching builder.</returns>
-    // ReSharper disable once MemberCanBeProtected.Global
-    protected internal virtual RequestMatching RegisterMatcher(IAsyncHttpRequestMatcher matcher)
+    /// <inheritdoc />
+    public virtual IRequestMatching Add(IAsyncHttpRequestMatcher matcher)
     {
         if (matcher is null)
         {
@@ -77,7 +57,8 @@ public class RequestMatching : IFluentInterface
         }
     }
 
-    internal IReadOnlyCollection<IAsyncHttpRequestMatcher> Build()
+    /// <inheritdoc />
+    public IReadOnlyCollection<IAsyncHttpRequestMatcher> Build()
     {
         return new ReadOnlyCollection<IAsyncHttpRequestMatcher>(_matchers.ToArray());
     }

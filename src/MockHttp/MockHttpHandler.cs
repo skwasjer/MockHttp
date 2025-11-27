@@ -82,7 +82,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// </summary>
     /// <param name="matching">The request match builder.</param>
     /// <returns>The configured request.</returns>
-    public IConfiguredRequest When(Action<RequestMatching> matching)
+    public IConfiguredRequest When(Action<IRequestMatching> matching)
     {
         if (matching is null)
         {
@@ -126,7 +126,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public void Verify(Action<RequestMatching> matching, Func<IsSent> times, string? because = null)
+    public void Verify(Action<IRequestMatching> matching, Func<IsSent> times, string? because = null)
     {
         if (times is null)
         {
@@ -143,9 +143,10 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
     /// <remarks>
-    /// When verifying <see cref="HttpContent" /> using a <see cref="ContentMatcher" /> use the <see cref="VerifyAsync(Action{RequestMatching},Func{IsSent},string)" /> overload to prevent potential deadlocks.
+    /// When verifying <see cref="HttpContent" /> using a <see cref="ContentMatcher" /> use the
+    /// <see cref="VerifyAsync(Action{IRequestMatching},Func{IsSent},string)" /> overload to prevent potential deadlocks.
     /// </remarks>
-    public void Verify(Action<RequestMatching> matching, IsSent times, string? because = null)
+    public void Verify(Action<IRequestMatching> matching, IsSent times, string? because = null)
     {
         AsyncHelpers.RunSync(() => VerifyAsync(matching, times, because));
     }
@@ -156,7 +157,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public Task VerifyAsync(Action<RequestMatching> matching, Func<IsSent> times, string? because = null)
+    public Task VerifyAsync(Action<IRequestMatching> matching, Func<IsSent> times, string? because = null)
     {
         if (times is null)
         {
@@ -172,7 +173,7 @@ public sealed class MockHttpHandler : HttpMessageHandler, IMockConfiguration
     /// <param name="matching">The conditions to match.</param>
     /// <param name="times">The number of times a request is allowed to be sent.</param>
     /// <param name="because">The reasoning for this expectation.</param>
-    public Task VerifyAsync(Action<RequestMatching> matching, IsSent times, string? because = null)
+    public Task VerifyAsync(Action<IRequestMatching> matching, IsSent times, string? because = null)
     {
         if (matching is null)
         {

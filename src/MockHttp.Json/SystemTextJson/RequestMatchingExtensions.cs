@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MockHttp.Language;
 
 namespace MockHttp.Json.SystemTextJson;
 
@@ -14,7 +15,7 @@ public static class RequestMatchingExtensions
     /// <param name="body">The JSON request body.</param>
     /// <param name="serializerOptions">The serializer options.</param>
     /// <returns>The request matching builder instance.</returns>
-    public static RequestMatching JsonBody<T>(this RequestMatching builder, T body, JsonSerializerOptions? serializerOptions)
+    public static IRequestMatching JsonBody<T>(this IRequestMatching builder, T body, JsonSerializerOptions? serializerOptions)
     {
         if (builder is null)
         {

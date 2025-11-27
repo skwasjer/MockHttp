@@ -8,8 +8,8 @@ namespace MockHttp.Json
     }
     public static class JsonRequestMatchingExtensions
     {
-        public static MockHttp.RequestMatching JsonBody<T>(this MockHttp.RequestMatching builder, T content) { }
-        public static MockHttp.RequestMatching JsonBody<T>(this MockHttp.RequestMatching builder, T body, MockHttp.Json.IJsonAdapter? adapter) { }
+        public static MockHttp.Language.IRequestMatching JsonBody<T>(this MockHttp.Language.IRequestMatching builder, T content) { }
+        public static MockHttp.Language.IRequestMatching JsonBody<T>(this MockHttp.Language.IRequestMatching builder, T body, MockHttp.Json.IJsonAdapter? adapter) { }
     }
     public static class MockConfigurationExtensions
     {
@@ -34,7 +34,7 @@ namespace MockHttp.Json.Newtonsoft
     }
     public static class RequestMatchingExtensions
     {
-        public static MockHttp.RequestMatching JsonBody<T>(this MockHttp.RequestMatching builder, T body, Newtonsoft.Json.JsonSerializerSettings? serializerSettings) { }
+        public static MockHttp.Language.IRequestMatching JsonBody<T>(this MockHttp.Language.IRequestMatching builder, T body, Newtonsoft.Json.JsonSerializerSettings? serializerSettings) { }
     }
     public static class ResponseBuilderExtensions
     {
@@ -50,7 +50,7 @@ namespace MockHttp.Json.SystemTextJson
     }
     public static class RequestMatchingExtensions
     {
-        public static MockHttp.RequestMatching JsonBody<T>(this MockHttp.RequestMatching builder, T body, System.Text.Json.JsonSerializerOptions? serializerOptions) { }
+        public static MockHttp.Language.IRequestMatching JsonBody<T>(this MockHttp.Language.IRequestMatching builder, T body, System.Text.Json.JsonSerializerOptions? serializerOptions) { }
     }
     public static class ResponseBuilderExtensions
     {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using MockHttp.Extensions;
 using MockHttp.Http;
+using MockHttp.Language;
 using MockHttp.Matchers;
 using static MockHttp.Http.UriExtensions;
 
@@ -1064,12 +1065,12 @@ public abstract class RequestMatchingExtensionsTests
                     instance,
                     streamMock
                 ),
-                DelegateTestCase.Create<RequestMatching, Action<RequestMatching>, RequestMatching>(
+                DelegateTestCase.Create<IRequestMatching, Action<IRequestMatching>, IRequestMatching>(
                     RequestMatchingExtensions.Any,
                     instance,
                     _ => { }
                 ),
-                DelegateTestCase.Create<RequestMatching, Expression<Func<HttpRequestMessage, bool>>, RequestMatching>(
+                DelegateTestCase.Create<IRequestMatching, Expression<Func<HttpRequestMessage, bool>>, IRequestMatching>(
                     RequestMatchingExtensions.Where,
                     instance,
                     _ => true

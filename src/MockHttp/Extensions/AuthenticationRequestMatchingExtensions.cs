@@ -1,7 +1,9 @@
-﻿namespace MockHttp;
+﻿using MockHttp.Language;
+
+namespace MockHttp;
 
 /// <summary>
-/// Extensions for <see cref="RequestMatching" />.
+/// Extensions for <see cref="IRequestMatching" />.
 /// </summary>
 public static class AuthenticationRequestMatchingExtensions
 {
@@ -10,7 +12,7 @@ public static class AuthenticationRequestMatchingExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static RequestMatching BearerToken(this RequestMatching builder)
+    public static IRequestMatching BearerToken(this IRequestMatching builder)
     {
         return builder.Header("Authorization", "Bearer *", true);
     }
@@ -21,7 +23,7 @@ public static class AuthenticationRequestMatchingExtensions
     /// <param name="builder"></param>
     /// <param name="token">The bearer token (without 'Bearer').</param>
     /// <returns></returns>
-    public static RequestMatching BearerToken(this RequestMatching builder, string token)
+    public static IRequestMatching BearerToken(this IRequestMatching builder, string token)
     {
         if (token is null)
         {

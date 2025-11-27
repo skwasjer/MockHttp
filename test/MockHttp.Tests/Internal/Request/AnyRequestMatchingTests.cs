@@ -4,7 +4,7 @@ namespace MockHttp.Request;
 
 public class AnyRequestMatchingTests
 {
-    private readonly RequestMatching _sut;
+    private readonly AnyRequestMatching _sut;
     private readonly HttpRequestMatcher _matcher1;
     private readonly HttpRequestMatcher _matcher2;
     private bool _isExclusive1;
@@ -31,10 +31,10 @@ public class AnyRequestMatchingTests
     {
         _isExclusive1 = true;
         _isExclusive2 = true;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().NotThrow();
@@ -45,10 +45,10 @@ public class AnyRequestMatchingTests
     {
         _isExclusive1 = true;
         _isExclusive2 = false;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().NotThrow();
@@ -59,10 +59,10 @@ public class AnyRequestMatchingTests
     {
         _isExclusive1 = false;
         _isExclusive2 = true;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().NotThrow();

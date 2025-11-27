@@ -33,8 +33,8 @@ public class RequestMatchingTests
         _isExclusive1 = false;
         _isExclusive2 = false;
 
-        _sut.With(_matcher1)
-            .With(_matcher2);
+        _sut.Add(_matcher1)
+            .Add(_matcher2);
 
         // Act
         IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
@@ -48,10 +48,10 @@ public class RequestMatchingTests
     {
         _isExclusive1 = true;
         _isExclusive2 = true;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().Throw<InvalidOperationException>().WithMessage("Cannot add matcher*");
@@ -62,10 +62,10 @@ public class RequestMatchingTests
     {
         _isExclusive1 = true;
         _isExclusive2 = false;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().Throw<InvalidOperationException>().WithMessage("Cannot add matcher*");
@@ -76,10 +76,10 @@ public class RequestMatchingTests
     {
         _isExclusive1 = false;
         _isExclusive2 = true;
-        _sut.With(_matcher1);
+        _sut.Add(_matcher1);
 
         // Act
-        Action act = () => _sut.With(_matcher2);
+        Action act = () => _sut.Add(_matcher2);
 
         // Assert
         act.Should().Throw<InvalidOperationException>().WithMessage("Cannot add matcher*");
@@ -88,8 +88,8 @@ public class RequestMatchingTests
     [Fact]
     public void Given_same_instance_is_added_more_than_once_when_building_should_return_only_return_one()
     {
-        _sut.With(_matcher1)
-            .With(_matcher1);
+        _sut.Add(_matcher1)
+            .Add(_matcher1);
 
         // Act
         IReadOnlyCollection<IAsyncHttpRequestMatcher> actual = _sut.Build();
@@ -103,7 +103,7 @@ public class RequestMatchingTests
     {
         IAsyncHttpRequestMatcher? matcher = null;
 
-        Action act = () => _sut.With(matcher!);
+        Action act = () => _sut.Add(matcher!);
 
         // Assert
         act.Should()
