@@ -25,7 +25,6 @@ namespace MockHttp
     [System.Serializable]
     public class HttpMockException : System.Exception
     {
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         [System.Obsolete(DiagnosticId="SYSLIB0051")]
         protected HttpMockException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
     }
