@@ -40,6 +40,30 @@ public abstract class PatternTests
         }
     }
 
+    public sealed class EmptyTests : PatternTests
+    {
+        [Fact]
+        public void When_uninitialized_it_should_be_empty()
+        {
+#pragma warning disable S1481
+#pragma warning disable CS8887
+            Pattern sut;
+
+            sut.Should().BeEquivalentTo(Pattern.Empty);
+#pragma warning restore CS8887
+#pragma warning restore S1481
+        }
+
+        [Theory]
+        [InlineData(null, true)]
+        [InlineData("", true)]
+        [InlineData("123", false)]
+        public void It_should_only_match_null_or_empty_strings(string? value, bool shouldMatch)
+        {
+            Pattern.Empty.IsMatch(value!).Should().Be(shouldMatch);
+        }
+    }
+
     public sealed class AnyTests : PatternTests
     {
         [Theory]
@@ -57,6 +81,7 @@ public abstract class PatternTests
             Pattern.Any.Value.Should()
                 .Be(Pattern.Any.ToString())
                 .And.Be(nameof(Pattern.Any));
+            Pattern.Any.Should().BeEquivalentTo(Pattern.Any);
         }
     }
 

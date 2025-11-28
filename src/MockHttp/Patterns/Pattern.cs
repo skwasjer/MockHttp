@@ -12,11 +12,17 @@ internal readonly record struct Pattern : IPattern
     /// <summary>
     /// A pattern that always matches (anything).
     /// </summary>
-    public static readonly Pattern Any = new()
+    public static Pattern Any { get; } = new()
     {
         Value = nameof(Any),
         IsMatch = _ => true
     };
+
+    /// <summary>
+    /// A pattern that is empty and matches empty/null strings.
+    /// </summary>
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
+    public static Pattern Empty { get; }
 
     private readonly string _value;
     private readonly Func<string, bool> _isMatch;
@@ -34,7 +40,18 @@ internal readonly record struct Pattern : IPattern
     /// <inheritdoc />
     public required Func<string, bool> IsMatch
     {
-        get => _isMatch;
+        get
+        {
+            if (_isMatch is not null)
+            {
+                return _isMatch;
+            }
+
+            // When pattern and value are null, effectively this is an Empty pattern so match null or empty strings.
+            return _value is null
+                ? string.IsNullOrEmpty
+                : throw new InvalidOperationException("Pattern is in invalid state.");
+        }
 #if !NETSTANDARD2_1
         [MemberNotNull(nameof(_isMatch))]
 #endif
