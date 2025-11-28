@@ -49,6 +49,11 @@ public abstract class PatternTests
 #pragma warning disable CS8887
             Pattern sut;
 
+            sut.Value.Should()
+                .BeSameAs(Pattern.Empty.Value)
+                .And.BeSameAs(Pattern.Empty.ToString())
+                .And.BeSameAs(nameof(Pattern.Empty));
+            sut.IsMatch.Should().BeSameAs(Pattern.Empty.IsMatch);
             sut.Should().BeEquivalentTo(Pattern.Empty);
 #pragma warning restore CS8887
 #pragma warning restore S1481
@@ -79,8 +84,8 @@ public abstract class PatternTests
         public void It_should_have_expected_value()
         {
             Pattern.Any.Value.Should()
-                .Be(Pattern.Any.ToString())
-                .And.Be(nameof(Pattern.Any));
+                .BeSameAs(Pattern.Any.ToString())
+                .And.BeSameAs(nameof(Pattern.Any));
             Pattern.Any.Should().BeEquivalentTo(Pattern.Any);
         }
     }
