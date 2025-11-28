@@ -1,4 +1,5 @@
 ﻿#if VERIFY_PUBLIC_API
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
@@ -15,7 +16,8 @@ public abstract class PublicApiSpec
     {
         ExcludeAttributes =
         [
-            typeof(InternalsVisibleToAttribute).FullName!
+            typeof(InternalsVisibleToAttribute).FullName!,
+            typeof(ExcludeFromCodeCoverageAttribute).FullName!
         ],
         DenyNamespacePrefixes = []
     };
