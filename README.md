@@ -46,7 +46,3 @@ mockHttp.Verify();
 ### Contributions
 
 Please check out the [contribution guidelines](./CONTRIBUTING.md).
-
-### Other info
-
-> While this library was inspired by Moq - it does not and will not include [SponsorLink](https://github.com/moq/moq/issues/1372). I have no direct relation to Moq or its author.
