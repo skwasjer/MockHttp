@@ -8,7 +8,7 @@ namespace MockHttp.Matchers;
 /// <summary>
 /// A string matcher encapsulating a delegate and 'pretty' name for debug/display needs when reporting errors to the user.
 /// </summary>
-internal readonly record struct Matches : IStringMatcher
+public readonly record struct Matches : IStringMatcher
 {
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly string _value;

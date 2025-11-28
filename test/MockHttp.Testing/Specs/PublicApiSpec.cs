@@ -17,7 +17,10 @@ public abstract class PublicApiSpec
         ExcludeAttributes =
         [
             typeof(InternalsVisibleToAttribute).FullName!,
-            typeof(ExcludeFromCodeCoverageAttribute).FullName!
+            typeof(ExcludeFromCodeCoverageAttribute).FullName!,
+#if NET8_0_OR_GREATER
+            typeof(MemberNotNullAttribute).FullName!
+#endif
         ],
         DenyNamespacePrefixes = []
     };
