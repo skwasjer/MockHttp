@@ -148,6 +148,7 @@ namespace MockHttp
         public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, System.Collections.Generic.IEnumerable<string> values) { }
         public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, params string[] values) { }
         public static MockHttp.Language.IRequestMatching QueryString(this MockHttp.Language.IRequestMatching builder, string key, string? value) { }
+        public static MockHttp.Language.IRequestMatching RequestUri(this MockHttp.Language.IRequestMatching builder, [System.Diagnostics.CodeAnalysis.StringSyntax("Uri")] MockHttp.Matchers.Matches requestUri) { }
         public static MockHttp.Language.IRequestMatching RequestUri(this MockHttp.Language.IRequestMatching builder, System.Uri requestUri) { }
         public static MockHttp.Language.IRequestMatching RequestUri(this MockHttp.Language.IRequestMatching builder, [System.Diagnostics.CodeAnalysis.StringSyntax("Uri")] string requestUri) { }
         public static MockHttp.Language.IRequestMatching Version(this MockHttp.Language.IRequestMatching builder, System.Version version) { }
@@ -385,6 +386,26 @@ namespace MockHttp.Matchers
     {
         bool IsExclusive { get; }
         System.Threading.Tasks.Task<bool> IsMatchAsync(MockHttp.MockHttpRequestContext requestContext);
+    }
+    public readonly struct Matches : System.IEquatable<MockHttp.Matchers.Matches>
+    {
+        public required System.Func<string, bool> IsMatch { get; init; }
+        public required string Value { get; init; }
+        public static MockHttp.Matchers.Matches Any { get; }
+        public static MockHttp.Matchers.Matches Empty { get; }
+        public override string ToString() { }
+        public static MockHttp.Matchers.Matches Exactly(string value) { }
+        public static MockHttp.Matchers.Matches Expression(System.Linq.Expressions.Expression<System.Func<string, bool>> expression) { }
+        public static MockHttp.Matchers.Matches Regex(System.Text.RegularExpressions.Regex regex) { }
+        public static MockHttp.Matchers.Matches Regex([System.Diagnostics.CodeAnalysis.StringSyntax("Regex")] string regex) { }
+        public static MockHttp.Matchers.Matches Wildcard(string value) { }
+        public static MockHttp.Matchers.Matches op_Implicit(string value) { }
+        public static MockHttp.Matchers.Matches operator !(MockHttp.Matchers.Matches matches) { }
+        public static MockHttp.Matchers.Matches operator &(MockHttp.Matchers.Matches left, MockHttp.Matchers.Matches right) { }
+        public static MockHttp.Matchers.Matches operator ^(MockHttp.Matchers.Matches left, MockHttp.Matchers.Matches right) { }
+        public static bool operator false(MockHttp.Matchers.Matches _) { }
+        public static bool operator true(MockHttp.Matchers.Matches _) { }
+        public static MockHttp.Matchers.Matches operator |(MockHttp.Matchers.Matches left, MockHttp.Matchers.Matches right) { }
     }
 }
 namespace MockHttp.Response

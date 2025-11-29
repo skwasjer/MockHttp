@@ -19,20 +19,6 @@ namespace MockHttp;
 /// </summary>
 public static class RequestMatchingExtensions
 {
-    private static bool ContainsWildcard(this string value)
-    {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-#if NETSTANDARD2_0
-        return value.Contains("*");
-#else
-        return value.Contains('*', StringComparison.InvariantCultureIgnoreCase);
-#endif
-    }
-
     /// <summary>
     /// Matches a request by specified <paramref name="requestUri" />.
     /// </summary>
@@ -49,29 +35,7 @@ public static class RequestMatchingExtensions
     )
 #pragma warning restore CA1054
     {
-        return builder.RequestUri(requestUri, true);
-    }
-
-    /// <summary>
-    /// Matches a request by specified <paramref name="requestUri" />.
-    /// </summary>
-    /// <param name="builder">The request matching builder instance.</param>
-    /// <param name="requestUri">The request URI or a URI wildcard.</param>
-    /// <param name="allowWildcards"><see langword="true" /> to allow wildcards, or <see langword="false" /> if exact matching.</param>
-    /// <returns>The request matching builder instance.</returns>
-#pragma warning disable CA1054
-    // For now, keep this internal. For coverage, and most likely, the API will change so then we'd have more to deprecate (using patterns).
-    internal static IRequestMatching RequestUri(this IRequestMatching builder, string requestUri, bool allowWildcards)
-#pragma warning restore CA1054
-    {
-        if (requestUri is null)
-        {
-            throw new ArgumentNullException(nameof(requestUri));
-        }
-
-        return allowWildcards && requestUri.ContainsWildcard()
-            ? builder.RequestUri(Matches.Wildcard(requestUri))
-            : builder.RequestUri(new Uri(requestUri, DotNetRelativeOrAbsolute));
+        return builder.RequestUri(new Uri(requestUri, DotNetRelativeOrAbsolute));
     }
 
     /// <summary>
@@ -119,7 +83,13 @@ public static class RequestMatchingExtensions
     /// <param name="builder">The request matching builder instance.</param>
     /// <param name="requestUri">The string matcher to use to match the request URI.</param>
     /// <returns>The request matching builder instance.</returns>
-    private static IRequestMatching RequestUri(this IRequestMatching builder, Matches requestUri)
+    public static IRequestMatching RequestUri(
+        this IRequestMatching builder,
+#if NET8_0_OR_GREATER
+        [StringSyntax(StringSyntaxAttribute.Uri)]
+#endif
+        Matches requestUri
+    )
     {
         if (builder is null)
         {

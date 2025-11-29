@@ -6,6 +6,7 @@ using MockHttp.FluentAssertions;
 using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Language.Flow;
+using MockHttp.Matchers;
 using Newtonsoft.Json;
 
 namespace MockHttp;
@@ -251,7 +252,7 @@ public class MockHttpHandlerTests : IDisposable
 
         // Act
         Action verifyGet = () => _sut.Verify(
-            matching => matching.RequestUri("**/url"),
+            matching => matching.RequestUri(Matches.Wildcard("**/url")),
             isSent
         );
 
@@ -293,7 +294,7 @@ public class MockHttpHandlerTests : IDisposable
 
         // Act
         Action verifyGet = () => _sut.Verify(
-            matching => matching.RequestUri("**/url"),
+            matching => matching.RequestUri(Matches.Wildcard("**/url")),
             isSent
         );
 
@@ -367,7 +368,7 @@ public class MockHttpHandlerTests : IDisposable
 
         _sut
             .When(matching => matching
-                .RequestUri("http://0.0.0.1/*/action*")
+                .RequestUri(Matches.Wildcard("http://0.0.0.1/*/action*"))
                 .QueryString("test", "$%^&*")
                 .QueryString("test2=value")
                 .Method("POST")
@@ -380,7 +381,7 @@ public class MockHttpHandlerTests : IDisposable
                 .Version(version)
                 .Any(any => any
                     .RequestUri("not-matching")
-                    .RequestUri("**controller**")
+                    .RequestUri(Matches.Wildcard("**controller**"))
                 )
                 .Where(r => 0 < r.Version.Major)
             )
@@ -418,7 +419,9 @@ public class MockHttpHandlerTests : IDisposable
         HttpResponseMessage response = await _httpClient.SendAsync(req);
 
         // Assert
-        _sut.Verify(matching => matching.RequestUri("**/controller/**"), IsSent.Exactly(2), "we sent it");
+#pragma warning disable S6966
+        _sut.Verify(matching => matching.RequestUri(Matches.Wildcard("**/controller/**")), IsSent.Exactly(2), "we sent it");
+#pragma warning restore S6966
 #if !NETFRAMEWORK
         await _sut.VerifyAsync(matching => matching.Body(jsonPostContent), IsSent.Once, "we sent it");
 #endif
