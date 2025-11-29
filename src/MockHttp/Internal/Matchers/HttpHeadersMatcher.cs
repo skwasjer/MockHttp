@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using MockHttp.Http;
-using MockHttp.Patterns;
 
 namespace MockHttp.Matchers;
 
@@ -41,7 +40,7 @@ internal sealed class HttpHeadersMatcher : ValueMatcher<HttpHeaders>
         }
 
         _equalityComparer = allowWildcards
-            ? new HttpHeaderEqualityComparer(Pattern.Wildcard(value))
+            ? new HttpHeaderEqualityComparer(Matches.Wildcard(value))
             : new HttpHeaderEqualityComparer(HttpHeaderMatchType.HeaderNameAndPartialValues);
 
         Value.Add(name, value);

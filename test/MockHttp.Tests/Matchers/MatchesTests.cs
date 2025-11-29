@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace MockHttp.Patterns;
+namespace MockHttp.Matchers;
 
-public abstract class PatternTests
+public abstract class MatchesTests
 {
-    public sealed class InstanceTests
+    public sealed class InstanceTests : MatchesTests
     {
         [Fact]
         public void Given_that_value_is_null_when_initializing_it_should_throw()
@@ -13,7 +13,7 @@ public abstract class PatternTests
             string? value = null;
 
             // Act
-            Func<Pattern> act = () => new Pattern
+            Func<Matches> act = () => new Matches
             {
                 Value = value!,
                 IsMatch = _ => true
@@ -29,7 +29,7 @@ public abstract class PatternTests
             Func<string, bool>? value = null;
 
             // Act
-            Func<Pattern> act = () => new Pattern
+            Func<Matches> act = () => new Matches
             {
                 Value = string.Empty,
                 IsMatch = value!
@@ -40,21 +40,21 @@ public abstract class PatternTests
         }
     }
 
-    public sealed class EmptyTests : PatternTests
+    public sealed class EmptyTests : MatchesTests
     {
         [Fact]
         public void When_uninitialized_it_should_be_empty()
         {
 #pragma warning disable S1481
 #pragma warning disable CS8887
-            Pattern sut;
+            Matches sut;
 
             sut.Value.Should()
-                .BeSameAs(Pattern.Empty.Value)
-                .And.BeSameAs(Pattern.Empty.ToString())
-                .And.BeSameAs(nameof(Pattern.Empty));
-            sut.IsMatch.Should().BeSameAs(Pattern.Empty.IsMatch);
-            sut.Should().BeEquivalentTo(Pattern.Empty);
+                .BeSameAs(Matches.Empty.Value)
+                .And.BeSameAs(Matches.Empty.ToString())
+                .And.BeSameAs(nameof(Matches.Empty));
+            sut.IsMatch.Should().BeSameAs(Matches.Empty.IsMatch);
+            sut.Should().BeEquivalentTo(Matches.Empty);
 #pragma warning restore CS8887
 #pragma warning restore S1481
         }
@@ -65,11 +65,11 @@ public abstract class PatternTests
         [InlineData("123", false)]
         public void It_should_only_match_null_or_empty_strings(string? value, bool shouldMatch)
         {
-            Pattern.Empty.IsMatch(value!).Should().Be(shouldMatch);
+            Matches.Empty.IsMatch(value!).Should().Be(shouldMatch);
         }
     }
 
-    public sealed class AnyTests : PatternTests
+    public sealed class AnyTests : MatchesTests
     {
         [Theory]
         [InlineData("")]
@@ -77,20 +77,20 @@ public abstract class PatternTests
         [InlineData("abcdef")]
         public void It_should_always_match(string value)
         {
-            Pattern.Any.IsMatch(value).Should().BeTrue();
+            Matches.Any.IsMatch(value).Should().BeTrue();
         }
 
         [Fact]
         public void It_should_have_expected_value()
         {
-            Pattern.Any.Value.Should()
-                .BeSameAs(Pattern.Any.ToString())
-                .And.BeSameAs(nameof(Pattern.Any));
-            Pattern.Any.Should().BeEquivalentTo(Pattern.Any);
+            Matches.Any.Value.Should()
+                .BeSameAs(Matches.Any.ToString())
+                .And.BeSameAs(nameof(Matches.Any));
+            Matches.Any.Should().BeEquivalentTo(Matches.Any);
         }
     }
 
-    public sealed class ExactTests : PatternTests
+    public sealed class ExactTests : MatchesTests
     {
         [Theory]
         [InlineData("")]
@@ -98,16 +98,16 @@ public abstract class PatternTests
         [InlineData("abcdef")]
         public void It_should_match_exactly(string value)
         {
-            Pattern.Exactly(value).IsMatch(value).Should().BeTrue();
+            Matches.Exactly(value).IsMatch(value).Should().BeTrue();
         }
 
         [Theory]
         [InlineData("", " ")]
         [InlineData("123", "124")]
         [InlineData("abcdef", "Abcdef")]
-        public void It_should_not_match_exactly(string pattern, string value)
+        public void It_should_not_match_exactly(string value, string valueToMatch)
         {
-            Pattern.Exactly(pattern).IsMatch(value).Should().BeFalse();
+            Matches.Exactly(value).IsMatch(valueToMatch).Should().BeFalse();
         }
 
         [Theory]
@@ -117,7 +117,7 @@ public abstract class PatternTests
         public void It_should_have_expected_value(string value)
         {
             // Act
-            var actual = Pattern.Exactly(value);
+            var actual = Matches.Exactly(value);
 
             // Assert
             actual.Value.Should()
@@ -126,35 +126,35 @@ public abstract class PatternTests
         }
     }
 
-    public sealed class WildcardTests : PatternTests
+    public sealed class WildcardTests : MatchesTests
     {
         [Fact]
-        public void Given_that_pattern_is_null_when_creating_instance_it_should_throw()
+        public void Given_that_value_is_null_when_creating_instance_it_should_throw()
         {
-            string? pattern = null;
+            string? value = null;
 
             // Act
-            Func<Pattern> act = () => Pattern.Wildcard(pattern!);
+            Func<Matches> act = () => Matches.Wildcard(value!);
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName(nameof(pattern));
+                .WithParameterName(nameof(value));
         }
 
         [Fact]
-        public void Given_that_pattern_is_empty_when_creating_instance_it_should_throw()
+        public void Given_that_value_is_empty_when_creating_instance_it_should_throw()
         {
-            string pattern = string.Empty;
+            string value = string.Empty;
 
             // Act
-            Func<Pattern> act = () => Pattern.Wildcard(pattern);
+            Func<Matches> act = () => Matches.Wildcard(value);
 
             // Assert
             act.Should()
                 .Throw<ArgumentException>()
-                .WithParameterName(nameof(pattern))
-                .WithMessage("The pattern cannot be empty.*");
+                .WithParameterName(nameof(value))
+                .WithMessage("The value cannot be empty.*");
         }
 
         [Theory]
@@ -173,16 +173,16 @@ public abstract class PatternTests
         [InlineData("/path?*", @"^(/path\?).*")]
         [InlineData("/path/file.jpg?q=*&p=1&m=[a,b]", @"^(/path/file\.jpg\?q=).+(&p=1&m=\[a,b\])$")]
         [InlineData(@".+?^$()[]{}|\", @"^(\.\+\?\^\$\(\)\[\]\{\}\|\\)$")]
-        public void When_creating_pattern_it_should_return_expected_instance(string wildcardPattern, string expectedRegex)
+        public void When_creating_matcher_it_should_return_expected_instance(string value, string expectedRegex)
         {
             // Act
-            var sut = WildcardPattern.Create(wildcardPattern);
+            var sut = WildcardStringMatcher.Create(value);
 
             // Assert
-            sut.RegexPattern.Value.Should().Be(expectedRegex);
+            sut.RegexMatches.Value.Should().Be(expectedRegex);
             sut.Value.Should()
                 .Be(sut.ToString())
-                .And.Be(wildcardPattern);
+                .And.Be(value);
             sut.IsMatch.Should().NotBeNull();
         }
 
@@ -207,55 +207,55 @@ public abstract class PatternTests
         [InlineData("/path/file.jpg?q=*&p=1&m=[a,b]", "/path/file.jpg?q=search%20term&p=1&m=[a,b]", true)]
         [InlineData("/path/file.jpg?q=*&p=1&m=[a,b]", "/path/file.jpg?q=search%20term&p=1&m=(a,b)", false)]
         [InlineData("/path/file.jpg?q=*&p=*&m=*", "/path/file.jpg?q=search%20term&p=1&m=[a,b]", true)]
-        public void Given_that_value_matches_pattern_when_matching_it_should_pass(string wildcardPattern, string value, bool shouldMatch)
+        public void Given_that_valueToMatch_matches_value_when_matching_it_should_pass(string value, string valueToMatch, bool shouldMatch)
         {
-            var sut = Pattern.Wildcard(wildcardPattern);
-            sut.IsMatch(value).Should().Be(shouldMatch);
+            var sut = Matches.Wildcard(value);
+            sut.IsMatch(valueToMatch).Should().Be(shouldMatch);
         }
     }
 
-    public sealed class RegexTests : PatternTests
+    public sealed class RegexTests : MatchesTests
     {
         [Fact]
-        public void Given_that_pattern_is_null_when_creating_instance_it_should_throw()
+        public void Given_that_regex_string_is_null_when_creating_instance_it_should_throw()
         {
-            string? pattern = null;
+            string? regex = null;
 
             // Act
-            Func<Pattern> act = () => Pattern.Regex(pattern!);
+            Func<Matches> act = () => Matches.Regex(regex!);
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName(nameof(pattern));
+                .WithParameterName(nameof(regex));
         }
 
         [Fact]
         public void Given_that_regex_is_null_when_creating_instance_it_should_throw()
         {
-            Regex? pattern = null;
+            Regex? regex = null;
 
             // Act
-            Func<Pattern> act = () => Pattern.Regex(pattern!);
+            Func<Matches> act = () => Matches.Regex(regex!);
 
             // Assert
             act.Should()
                 .Throw<ArgumentNullException>()
-                .WithParameterName(nameof(pattern));
+                .WithParameterName(nameof(regex));
         }
 
         [Theory]
         [InlineData("test")]
         [InlineData("^t.+st.*")]
-        public void When_creating_pattern_it_should_return_expected_instance(string regexPattern)
+        public void When_creating_regex_matcher_it_should_return_expected_instance(string regex)
         {
             // Act
-            var sut = Pattern.Regex(regexPattern);
+            var sut = Matches.Regex(regex);
 
             // Assert
             sut.Value.Should()
                 .Be(sut.ToString())
-                .And.Be(regexPattern);
+                .And.Be(regex);
             sut.IsMatch.Should().NotBeNull();
         }
 
@@ -263,14 +263,18 @@ public abstract class PatternTests
         [InlineData("^123$", "123", true)]
         [InlineData("^123$", "1234", false)]
         [InlineData("^123", "1234", true)]
-        public void Given_that_value_matches_pattern_when_matching_it_should_pass(string regexPattern, string value, bool shouldMatch)
+        public void Given_that_valueToMatch_matches_regex_when_matching_it_should_pass(
+            string regex,
+            string valueToMatch,
+            bool shouldMatch
+        )
         {
-            var sut = Pattern.Regex(regexPattern);
-            sut.IsMatch(value).Should().Be(shouldMatch);
+            var sut = Matches.Regex(regex);
+            sut.IsMatch(valueToMatch).Should().Be(shouldMatch);
         }
     }
 
-    public sealed class ExpressionTests : PatternTests
+    public sealed class ExpressionTests : MatchesTests
     {
         [Fact]
         public void Given_that_expression_is_null_when_creating_instance_it_should_throw()
@@ -278,7 +282,7 @@ public abstract class PatternTests
             Expression<Func<string, bool>>? expression = null;
 
             // Act
-            Func<Pattern> act = () => Pattern.Expression(expression!);
+            Func<Matches> act = () => Matches.Expression(expression!);
 
             // Assert
             act.Should()
@@ -287,12 +291,12 @@ public abstract class PatternTests
         }
 
         [Fact]
-        public void When_creating_pattern_it_should_return_expected_instance()
+        public void When_creating_matcher_it_should_return_expected_instance()
         {
             Expression<Func<string, bool>> expression = s => s == "1";
 
             // Act
-            var sut = Pattern.Expression(expression);
+            var sut = Matches.Expression(expression);
 
             // Assert
             sut.Value.Should()
@@ -307,27 +311,27 @@ public abstract class PatternTests
         [InlineData("123", true)]
         [InlineData("1abc", true)]
         [InlineData("1c", false)]
-        public void Given_that_value_matches_pattern_when_matching_it_should_pass(string value, bool shouldMatch)
+        public void Given_that_valueToMatch_matches_expression_when_matching_it_should_pass(string valueToMatch, bool shouldMatch)
         {
             Expression<Func<string, bool>> expression = s => s.StartsWith("12") || s.EndsWith("bc");
 
             // Act
-            var sut = Pattern.Expression(expression);
+            var sut = Matches.Expression(expression);
 
             // Assert
-            sut.IsMatch(value).Should().Be(shouldMatch);
+            sut.IsMatch(valueToMatch).Should().Be(shouldMatch);
         }
     }
 
-    public sealed class OperatorTests : PatternTests
+    public sealed class OperatorTests : MatchesTests
     {
         [Fact]
-        public void Given_that_value_is_string_when_implicit_casting_it_should_return_exact_pattern_match()
+        public void Given_that_value_is_string_when_implicit_casting_it_should_return_exact_string_matcher()
         {
             const string value = "123abc";
 
             // Act
-            Pattern actual = value;
+            Matches actual = value;
 
             // Assert
             actual.Value.Should().Be(value);
@@ -338,10 +342,10 @@ public abstract class PatternTests
         [Fact]
         public void When_negating_it_should_not_match()
         {
-            Pattern pattern = Pattern.Any;
+            Matches matches = Matches.Any;
 
             // Act
-            Pattern actual = !pattern;
+            Matches actual = !matches;
 
             // Assert
             actual.Value.Should()
@@ -359,11 +363,11 @@ public abstract class PatternTests
         [InlineData("abcDEF", false)]
         public void When_and_ing_it_should_match_both(string valueToTest, bool shouldMatch)
         {
-            var pattern1 = Pattern.Regex(@"\d+");
-            var pattern2 = Pattern.Wildcard("*abc*");
+            var matcher1 = Matches.Regex(@"\d+");
+            var matcher2 = Matches.Wildcard("*abc*");
 
             // Act
-            Pattern actual = pattern1 & pattern2;
+            Matches actual = matcher1 & matcher2;
 
             // Assert
             actual.Value.Should()
@@ -381,11 +385,11 @@ public abstract class PatternTests
         [InlineData("abcDEF", true)]
         public void When_or_ing_it_should_match_either_or_both(string valueToTest, bool shouldMatch)
         {
-            var pattern1 = Pattern.Regex(@"\d+");
-            var pattern2 = Pattern.Wildcard("*abc*");
+            var matcher1 = Matches.Regex(@"\d+");
+            var matcher2 = Matches.Wildcard("*abc*");
 
             // Act
-            Pattern actual = pattern1 | pattern2;
+            Matches actual = matcher1 | matcher2;
 
             // Assert
             actual.Value.Should()
@@ -403,11 +407,11 @@ public abstract class PatternTests
         [InlineData("abcDEF", true)]
         public void When_xor_ing_it_should_match_either(string valueToTest, bool shouldMatch)
         {
-            var pattern1 = Pattern.Regex(@"\d+");
-            var pattern2 = Pattern.Wildcard("*abc*");
+            var matcher1 = Matches.Regex(@"\d+");
+            var matcher2 = Matches.Wildcard("*abc*");
 
             // Act
-            Pattern actual = pattern1 ^ pattern2;
+            Matches actual = matcher1 ^ matcher2;
 
             // Assert
             actual.Value.Should()
@@ -448,47 +452,47 @@ public abstract class PatternTests
             1,
             2
         )]
-        public void It_should_short_circuit(string valueToTest, bool shouldMatch, params int[] expectedEvaluatedPatterns)
+        public void It_should_short_circuit(string valueToTest, bool shouldMatch, params int[] expectedEvaluatedMatchers)
         {
-            Pattern pattern1 = CreateMockedPattern(@"\d+");
-            Pattern pattern2 = CreateMockedPattern("[a-z]+");
-            Pattern pattern3 = CreateMockedPattern("[A-Z]+");
-            Pattern[] allPatterns = [pattern1, pattern2, pattern3];
+            Matches matcher1 = CreateMockedStringMatcher(@"\d+");
+            Matches matcher2 = CreateMockedStringMatcher("[a-z]+");
+            Matches matcher3 = CreateMockedStringMatcher("[A-Z]+");
+            Matches[] allMatchers = [matcher1, matcher2, matcher3];
 
             // Act
-            Pattern actual = pattern1 | (pattern2 & pattern3);
+            Matches actual = matcher1 | (matcher2 & matcher3);
 
             // Assert
             actual.Value.Should()
                 .Be(actual.ToString())
                 .And.Be(@"(\d+ | ([a-z]+ & [A-Z]+))");
             actual.IsMatch(valueToTest).Should().Be(shouldMatch);
-            for (int i = 0; i < allPatterns.Length; i++)
+            for (int i = 0; i < allMatchers.Length; i++)
             {
-                Pattern pattern = allPatterns[i];
-                if (expectedEvaluatedPatterns.Contains(i))
+                Matches matches = allMatchers[i];
+                if (expectedEvaluatedMatchers.Contains(i))
                 {
-                    pattern.IsMatch.Received().Invoke(Arg.Any<string>());
+                    matches.IsMatch.Received().Invoke(Arg.Any<string>());
                 }
                 else
                 {
-                    pattern.IsMatch.DidNotReceive().Invoke(Arg.Any<string>());
+                    matches.IsMatch.DidNotReceive().Invoke(Arg.Any<string>());
                 }
             }
 
             return;
 
-            Pattern CreateMockedPattern(string regex)
+            static Matches CreateMockedStringMatcher(string regex)
             {
-                var pattern = new Pattern
+                var matcher = new Matches
                 {
                     Value = regex,
                     IsMatch = Substitute.For<Func<string, bool>>()
                 };
-                pattern.IsMatch
+                matcher.IsMatch
                     .Invoke(Arg.Any<string>())
-                    .Returns(callInfo => Regex.IsMatch((string)callInfo[0], pattern.Value));
-                return pattern;
+                    .Returns(callInfo => Regex.IsMatch((string)callInfo[0], matcher.Value));
+                return matcher;
             }
         }
     }
