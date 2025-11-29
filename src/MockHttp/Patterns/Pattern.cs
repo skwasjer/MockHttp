@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
@@ -9,36 +10,46 @@ namespace MockHttp.Patterns;
 /// </summary>
 internal readonly record struct Pattern : IPattern
 {
-    /// <summary>
-    /// A pattern that always matches (anything).
-    /// </summary>
-    public static readonly Pattern Any = new()
-    {
-        Value = nameof(Any),
-        IsMatch = _ => true
-    };
-
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly string _value;
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly Func<string, bool> _isMatch;
 
     /// <inheritdoc />
     public required string Value
     {
-        get => _value;
-#if !NETSTANDARD2_1
+        get
+        {
+            return _value ?? nameof(Empty);
+        }
         [MemberNotNull(nameof(_value))]
-#endif
-        init => _value = value ?? throw new ArgumentNullException(nameof(value));
+        init
+        {
+            _value = value ?? throw new ArgumentNullException(nameof(value));
+        }
     }
 
     /// <inheritdoc />
     public required Func<string, bool> IsMatch
     {
-        get => _isMatch;
-#if !NETSTANDARD2_1
+        get
+        {
+            if (_isMatch is not null)
+            {
+                return _isMatch;
+            }
+
+            // When pattern and value are null, effectively this is an Empty pattern so match null or empty strings.
+            return _value is null
+                ? string.IsNullOrEmpty
+                : throw new InvalidOperationException("Pattern is in invalid state.");
+        }
         [MemberNotNull(nameof(_isMatch))]
-#endif
-        init => _isMatch = value ?? throw new ArgumentNullException(nameof(value));
+        init
+        {
+            _isMatch = value ?? throw new ArgumentNullException(nameof(value));
+        }
     }
 
     /// <inheritdoc />
@@ -46,6 +57,21 @@ internal readonly record struct Pattern : IPattern
     {
         return Value;
     }
+
+    /// <summary>
+    /// A pattern that always matches (anything).
+    /// </summary>
+    public static Pattern Any { get; } = new()
+    {
+        Value = nameof(Any),
+        IsMatch = _ => true
+    };
+
+    /// <summary>
+    /// A pattern that is empty and matches empty/null strings.
+    /// </summary>
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
+    public static Pattern Empty { get; }
 
     /// <summary>
     /// Returns a pattern that matches the exact <paramref name="value" />.
@@ -182,11 +208,15 @@ internal readonly record struct Pattern : IPattern
         };
     }
 
+    [ExcludeFromCodeCoverage]
+    // ReSharper disable once UnusedParameter.Global
     public static bool operator true(Pattern _)
     {
         return false;
     }
 
+    [ExcludeFromCodeCoverage]
+    // ReSharper disable once UnusedParameter.Global
     public static bool operator false(Pattern _)
     {
         return false;
