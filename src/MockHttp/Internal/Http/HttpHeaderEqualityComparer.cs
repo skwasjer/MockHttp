@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using MockHttp.Patterns;
+using MockHttp.Matchers;
 
 namespace MockHttp.Http;
 

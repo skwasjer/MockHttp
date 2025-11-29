@@ -1,4 +1,4 @@
-﻿namespace MockHttp.Patterns;
+﻿namespace MockHttp.Matchers;
 
 /// <summary>
 /// Describes a string matcher.

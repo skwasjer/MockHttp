@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using MockHttp.Http;
-using MockHttp.Patterns;
 
 namespace MockHttp.Matchers;
 

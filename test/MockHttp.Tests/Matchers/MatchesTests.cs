@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace MockHttp.Patterns;
+namespace MockHttp.Matchers;
 
 public abstract class MatchesTests
 {

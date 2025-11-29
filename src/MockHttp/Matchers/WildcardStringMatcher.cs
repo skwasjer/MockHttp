@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace MockHttp.Patterns;
+namespace MockHttp.Matchers;
 
 internal readonly record struct WildcardStringMatcher : IStringMatcher
 {

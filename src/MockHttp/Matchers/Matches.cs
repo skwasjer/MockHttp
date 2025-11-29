@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace MockHttp.Patterns;
+namespace MockHttp.Matchers;
 
 /// <summary>
 /// A string matcher encapsulating a delegate and 'pretty' name for debug/display needs when reporting errors to the user.

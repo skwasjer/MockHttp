@@ -9,7 +9,6 @@ using MockHttp.Extensions;
 using MockHttp.Http;
 using MockHttp.Language;
 using MockHttp.Matchers;
-using MockHttp.Patterns;
 using MockHttp.Request;
 using static MockHttp.Http.UriExtensions;
 

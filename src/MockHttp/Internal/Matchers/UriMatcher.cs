@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using MockHttp.Patterns;
 
 namespace MockHttp.Matchers;
 
