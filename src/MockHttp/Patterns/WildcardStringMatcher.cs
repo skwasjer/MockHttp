@@ -2,12 +2,12 @@
 
 namespace MockHttp.Patterns;
 
-internal readonly record struct WildcardPattern : IPattern
+internal readonly record struct WildcardStringMatcher : IStringMatcher
 {
     private static readonly char[] WildcardSplit = ['*'];
     private static readonly char[] SpecialRegexChars = ['.', '+', '*', '?', '^', '$', '(', ')', '[', ']', '{', '}', '|', '\\'];
 
-    internal Pattern RegexPattern { get; private init; }
+    internal Matches RegexMatches { get; private init; }
 
     /// <inheritdoc />
     public required string Value { get; internal init; }
@@ -21,35 +21,35 @@ internal readonly record struct WildcardPattern : IPattern
         return Value;
     }
 
-    internal static WildcardPattern Create(string pattern)
+    internal static WildcardStringMatcher Create(string value)
     {
-        var regexPattern = Pattern.Regex(GetMatchPattern(pattern));
-        return new WildcardPattern
+        var regexMatches = Matches.Regex(ConvertWildcardToRegex(value));
+        return new WildcardStringMatcher
         {
-            RegexPattern = regexPattern,
-            Value = pattern,
-            IsMatch = regexPattern.IsMatch
+            RegexMatches = regexMatches,
+            Value = value,
+            IsMatch = regexMatches.IsMatch
         };
     }
 
-    private static string GetMatchPattern(string pattern)
+    private static string ConvertWildcardToRegex(string value)
     {
-        if (pattern is null)
+        if (value is null)
         {
-            throw new ArgumentNullException(nameof(pattern));
+            throw new ArgumentNullException(nameof(value));
         }
 
-        if (pattern.Length == 0)
+        if (value.Length == 0)
         {
-            throw new ArgumentException("The pattern cannot be empty.", nameof(pattern));
+            throw new ArgumentException("The value cannot be empty.", nameof(value));
         }
 
         var sb = new StringBuilder();
-        bool startsWithWildcard = pattern[0] == '*';
-        bool endsWithWildcard = pattern[pattern.Length - 1] == '*';
+        bool startsWithWildcard = value[0] == '*';
+        bool endsWithWildcard = value[value.Length - 1] == '*';
         if (startsWithWildcard)
         {
-            pattern = pattern.TrimStart('*');
+            value = value.TrimStart('*');
             sb.Append(".*");
         }
         else
@@ -59,15 +59,15 @@ internal readonly record struct WildcardPattern : IPattern
 
         if (endsWithWildcard)
         {
-            if (startsWithWildcard && pattern.Length == 0)
+            if (startsWithWildcard && value.Length == 0)
             {
                 return sb.ToString();
             }
 
-            pattern = pattern.TrimEnd('*');
+            value = value.TrimEnd('*');
         }
 
-        IEnumerable<string> matchGroups = pattern
+        IEnumerable<string> matchGroups = value
             .Split(WildcardSplit, StringSplitOptions.RemoveEmptyEntries)
             .Select(s => $"({EscapeSpecialRegexChars(s)})");
 

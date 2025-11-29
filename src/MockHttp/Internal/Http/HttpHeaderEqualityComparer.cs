@@ -6,7 +6,7 @@ namespace MockHttp.Http;
 internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePair<string, IEnumerable<string>>>
 {
     private readonly HttpHeaderMatchType? _matchType;
-    private readonly Pattern? _valuePatternMatcher;
+    private readonly Matches? _valueMatches;
 
     public HttpHeaderEqualityComparer(HttpHeaderMatchType matchType)
     {
@@ -22,9 +22,9 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
         _matchType = matchType;
     }
 
-    public HttpHeaderEqualityComparer(Pattern valuePatternMatcher)
+    public HttpHeaderEqualityComparer(Matches valueMatches)
     {
-        _valuePatternMatcher = valuePatternMatcher;
+        _valueMatches = valueMatches;
     }
 
     public bool Equals(KeyValuePair<string, IEnumerable<string>> x, KeyValuePair<string, IEnumerable<string>> y)
@@ -50,8 +50,8 @@ internal sealed class HttpHeaderEqualityComparer : IEqualityComparer<KeyValuePai
                             .All(xValue =>
                             {
                                 string[] headerValues = HttpHeadersCollection.ParseHttpHeaderValue(yValue).ToArray();
-                                return (!_valuePatternMatcher.HasValue && headerValues.Contains(xValue))
-                                    || (_valuePatternMatcher.HasValue && headerValues.Any(_valuePatternMatcher.Value.IsMatch));
+                                return (!_valueMatches.HasValue && headerValues.Contains(xValue))
+                                    || (_valueMatches.HasValue && headerValues.Any(_valueMatches.Value.IsMatch));
                             })
                     ))
                 {

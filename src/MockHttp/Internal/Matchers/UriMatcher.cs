@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using MockHttp.Patterns;
 
 namespace MockHttp.Matchers;
@@ -10,27 +9,22 @@ namespace MockHttp.Matchers;
 internal sealed class UriMatcher : HttpRequestMatcher
 {
     private readonly string _name;
-    private readonly Pattern _pattern;
-    private readonly string _patternDescription;
-    private readonly Func<Uri, string>? _selectorFn;
+    private readonly Matches _matches;
+    private readonly string _description;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UriMatcher" /> class.
     /// </summary>
-    /// <param name="pattern">The pattern to match.</param>
-    /// <param name="selector">An expression to extract the part of the URI to match against. If <see langword="null" />, uses the complete URI.</param>
+    /// <param name="matches">The string matcher to use to match the URI.</param>
     /// <param name="name">The name of this matcher.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required argument is <see langword="null" />.</exception>
-    internal UriMatcher
-    (
-        Pattern pattern,
-        Expression<Func<Uri, string>>? selector = null,
+    internal UriMatcher(
+        Matches matches,
         [CallerMemberName] string? name = null
     )
     {
-        _pattern = pattern;
-        _selectorFn = selector?.Compile();
-        _patternDescription = pattern.Value;
+        _matches = matches;
+        _description = matches.Value;
 
         name ??= GetType().Name;
         if (name.EndsWith("Matcher", StringComparison.Ordinal))
@@ -55,13 +49,12 @@ internal sealed class UriMatcher : HttpRequestMatcher
             return false;
         }
 
-        string value = _selectorFn?.Invoke(uri) ?? uri.ToString();
-        return _pattern.IsMatch(value);
+        return _matches.IsMatch(uri.ToString());
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{_name}: '{_patternDescription}'";
+        return $"{_name}: '{_description}'";
     }
 }
