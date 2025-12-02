@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MockHttp.Fixtures;
 using MockHttp.FluentAssertions;
 using MockHttp.Http;
+using MockHttp.Matchers;
 using Xunit.Abstractions;
 
 namespace MockHttp;
@@ -107,7 +108,7 @@ public sealed class MockHttpServerTests : IClassFixture<MockHttpServerFixture>, 
         [
             (Action<MockHttpHandler>)(m => m
                 .When(matching => matching
-                    .RequestUri("*path/child*")
+                    .RequestUri(Matches.Wildcard("*path/child*"))
                     .QueryString("?key=value")
                 )
                 .Respond(with => with.Body("has content"))
