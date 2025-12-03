@@ -35,7 +35,7 @@
   <ItemGroup Condition="'$(IsTestProject)'=='true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NetTestSdkVersion)" />
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="$(NetTestSdkVersion)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
